@@ -1,0 +1,96 @@
+@use "../index.scss";
+
+.parentSidebar {
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: center;
+  width: 100%;
+  // height: calc(100vh - 150px);
+  overflow: overlay;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+    gap: 10px;
+    max-width: 1200px;
+
+    & .parentSidebar__wrapper {
+      display: flex;
+      justify-content: center;
+      // align-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 5px;
+      margin: 5px;
+      margin-top: 20px;
+      //! remove this line if it malfunction
+      // height: calc(100vh - 230px);
+
+      @media (max-width: 590px) {
+        height: 100%;
+      }
+    }
+
+    // @media (max-width: 590px) {
+    //     // gap: 0;
+    //     // flex-direction: column;
+    //     height: 100%;
+    // }
+  }
+
+  &__card {
+    // justify-self: center;
+    align-self: center;
+    padding: 10px;
+    width: min(250px, 230px);
+    max-width: 200px;
+    height: 240px;
+    max-height: 240px;
+    cursor: pointer;
+
+    @media (max-width: 590px) {
+      height: auto;
+      // max-height: auto;
+      // min-height: auto;
+      width: 80%;
+      min-width: 95%;
+      margin-right: 5px;
+    }
+  }
+
+  &__card:hover {
+    // opacity: 100%;
+    background-color: #faba5b98;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    height: 100%;
+
+    & .parentSidebar__icon {
+      align-self: flex-start;
+      pointer-events: none;
+      pointer-events: none;
+      color: index.$secondary;
+      background-color: #faba5b98;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 590px) {
+      align-items: flex-start;
+    }
+  }
+
+  &__action-area {
+    pointer-events: none;
+    height: 100%;
+  }
+}

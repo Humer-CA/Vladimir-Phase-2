@@ -1,0 +1,120 @@
+@use "../index.scss";
+
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  height: 100%;
+  width: 250px;
+  transition: 0.3s ease-in-out;
+  overflow: auto;
+
+  &__logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 17px;
+
+    // @media only screen and (max-width: 801px) {
+    //   padding-top: 55px;
+    //   padding-bottom: 20px;
+    // }
+  }
+
+  & > img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  // Menus
+  &__menus {
+    flex: 1;
+    color: index.$text;
+    width: 100%;
+    overflow: overlay;
+    overflow-x: hidden;
+    transition: 0.3s ease-in-out;
+    white-space: nowrap;
+  }
+
+  &__menu-btn.active {
+    color: index.$background;
+    background: index.$secondary;
+    & svg {
+      color: index.$primary;
+    }
+  }
+
+  &__menu-btn.active:hover {
+    color: index.$background;
+    background: index.$secondary;
+    & svg {
+      color: index.$primary;
+    }
+  }
+
+  &__menu-btn-list.active,
+  &__menu-btn-list.active:hover {
+    color: index.$secondary;
+    background: index.$primaryLight;
+
+    & svg {
+      color: index.$secondary;
+    }
+  }
+
+  &__menu-btn-list {
+    display: flex;
+  }
+
+  &__copyright {
+    text-align: center;
+    line-height: 10px;
+    width: 100%;
+    user-select: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    & > p {
+      font-size: 8px;
+      color: index.$text;
+      white-space: nowrap;
+      margin: 0;
+    }
+  }
+
+  &__closeBtn {
+    @media only screen and (min-width: 801px) {
+      display: none !important;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    z-index: 2;
+    position: absolute;
+    background-color: #f8f8f8;
+    box-shadow: 20px 20px 64px #e7e7e7, -20px -20px 64px #fdfdfd;
+    transition: 0.3s ease-in-out;
+  }
+}
+
+.collapsed {
+  width: 0px;
+  padding: 0;
+  margin: 0;
+
+  @media only screen and (min-width: 801px) {
+    width: 75px;
+  }
+}
+.collapsed85 {
+  width: 0px;
+  padding: 0;
+  margin: 0;
+
+  @media only screen and (min-width: 801px) {
+    width: 85px;
+  }
+}

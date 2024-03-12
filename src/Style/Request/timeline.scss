@@ -1,0 +1,38 @@
+@use "../../index.scss";
+
+.timelineSteps {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px 30px;
+
+  &__timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    overflow: auto;
+  }
+
+  &__dateAndTime {
+    position: absolute;
+    align-items: flex-end;
+    justify-content: center;
+    // top: 20px;
+    left: -90px;
+  }
+
+  &__box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    width: 95%;
+    border-radius: 5px;
+  }
+}

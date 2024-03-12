@@ -1,0 +1,102 @@
+@use "../../index.scss";
+
+.add-userAccount {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 10px;
+  gap: 10px;
+  min-width: 350px;
+  width: 100%;
+  overflow: overlay;
+
+  @media (max-width: 350px) {
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow: overlay;
+    min-width: 100%;
+    width: 100%;
+  }
+
+  &__title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    gap: 5px;
+  }
+
+  // &__back {
+  //   position: absolute;
+  //   left: 0;
+  // }
+
+  &__wrapper {
+    display: flex;
+    width: 100%;
+    padding: 5px;
+
+    @media (max-width: 750px) {
+      flex-wrap: wrap;
+      padding: 5px;
+    }
+  }
+
+  &__employee {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 5px 10px;
+    gap: 15px;
+  }
+
+  // &__user-permission {
+  //   display: flex;
+  //   flex-direction: column;
+  //   flex-wrap: wrap;
+  //   width: 100%;
+  //   padding: 5px 20px;
+  //   gap: 15px;
+  // }
+
+  // &__user-modules {
+  //   display: flex;
+  //   flex-direction: row;
+  //   justify-content: center;
+  //   border: 2px solid rgba(128, 128, 128, 0.205);
+  //   padding: 20px 0;
+  //   border-radius: 10px;
+  //   white-space: nowrap;
+  //   width: 100%;
+
+  //   @media (max-width: 450px) {
+  //     flex-wrap: wrap;
+  //     padding: 10px;
+  //     justify-content: flex-start;
+  //   }
+  // }
+
+  // &__user-modules1 {
+  //   display: flex;
+  //   flex-direction: column;
+  //   margin: 0;
+  //   padding: 0 20px;
+
+  //   @media (min-width: 150px) {
+  //     flex-wrap: wrap;
+  //     padding: 10px;
+  //   }
+  // }
+
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+
+    // @media (min-width: 150px) {
+    //   padding-top: 20px;
+    // }
+  }
+}

@@ -1,0 +1,76 @@
+@use "../index.scss";
+
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  &__main-content {
+    position: relative;
+  }
+
+  & &__title {
+    margin-bottom: 10px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px auto 20px;
+    padding: 20px;
+    height: 100px;
+    width: 90%;
+
+    border-radius: 10px;
+    background-color: #344955;
+    background: rgb(249, 170, 51);
+    background: linear-gradient(
+        145deg,
+        rgba(249, 170, 51, 0.212) 0%,
+        rgba(52, 73, 85, 0.332) 79%
+      ),
+      url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23cecece' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+
+    @media (max-width: 480px) {
+      margin: 0 auto;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__header-image {
+    display: flex;
+    right: 0;
+    padding-bottom: 20px;
+
+    width: 200px;
+
+    @media (max-width: 510px) {
+      display: none;
+      width: 100%;
+    }
+  }
+
+  &__charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  &__charts-item {
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+  }
+}

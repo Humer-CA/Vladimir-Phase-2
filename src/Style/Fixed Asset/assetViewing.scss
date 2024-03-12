@@ -1,0 +1,148 @@
+@use "../../index.scss";
+
+.tableCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+  overflow: hidden;
+  @media (max-width: 600px) {
+    padding: 0 15px;
+  }
+
+  &__container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    // border: 1px solid #dbdbdb71;
+    border-radius: 10px;
+    padding: 5px;
+    overflow: auto;
+
+    @media (max-width: 1100px) {
+      display: block;
+      overflow: auto;
+    }
+  }
+
+  &__wrapperCapex {
+    flex: 1;
+    height: 500px;
+    overflow: auto;
+    padding-right: 5px;
+  }
+
+  &__wrapper {
+    flex: 1;
+    height: calc(100vh - 250px);
+    overflow: auto;
+    width: 100%;
+    // min-width: 250px;
+    // padding-right: 5px;
+
+    @media (max-width: 1100px) {
+      height: auto;
+      overflow: hidden;
+    }
+  }
+
+  &__title {
+    font-family: Anton !important;
+    color: index.$secondary;
+  }
+
+  &__cardCapex {
+    align-self: flex-start;
+    justify-self: center;
+    min-width: 400px;
+    width: 100%;
+    // max-width: 400px;
+    // text-align: center;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+
+    @media (max-width: 1100px) {
+      align-self: stretch;
+      flex: 1;
+      // max-width: inherit !important;
+      min-width: auto;
+    }
+  }
+
+  &__propertiesCapex {
+    display: flex;
+    color: index.$secondaryText;
+    padding: 10px 0;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-bottom: 1px solid #dbdbdb3c;
+    font-size: 14px;
+  }
+
+  &__infoCapex {
+    text-align: right;
+    padding-left: 10px;
+    color: white;
+
+    margin-left: 10px;
+    // font-weight: bold !important
+    padding-left: 5px;
+    white-space: nowrap;
+  }
+
+  &__cardCapexInfo {
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    gap: 20px;
+    align-self: flex-start;
+    padding: 10px 20px;
+    border-color: index.$background;
+    flex: 1;
+  }
+
+  &__card {
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    padding: 10px 20px;
+    border-color: index.$background;
+    flex: 1;
+    margin-bottom: 1px;
+
+    @media (max-width: 400px) {
+      align-self: stretch;
+      max-width: 100%;
+    }
+  }
+
+  &__properties {
+    display: flex;
+    color: index.$text;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    // white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-bottom: 1px solid index.$background;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  &__info {
+    text-align: right;
+    color: index.$secondary;
+    font-weight: bold !important;
+    padding-left: 20px;
+    font-size: 200px;
+    white-space: wrap;
+    font-size: 14px;
+  }
+
+  &__border {
+    // border: 1px solid index.$background;
+    border-radius: 10px;
+  }
+}

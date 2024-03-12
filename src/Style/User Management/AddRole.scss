@@ -1,0 +1,31 @@
+.add-role {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 10px;
+
+    &__container{
+       display: flex;
+       justify-content: center;
+       align-self: center;
+       max-width: 500px;
+       max-height : 400px;
+       overflow: auto;
+       padding-right: 5px;
+       padding: 0 5px ;
+       margin-top: 15px;
+    }
+
+    &__wrapper {
+        // background-color: red;
+        max-width: 470px;
+        border: 1px solid #a6a6a6;
+        border-radius: 10px;
+       padding: 0 10px 10px;
+       gap: 10px;
+    }
+
+
+}

@@ -1,0 +1,43 @@
+@use "../../index.scss";
+
+.masterlist-toolbar {
+  position: relative;
+  padding: 10px;
+  background-color: inherit;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+
+    @media (max-width: 545px) {
+      display: flex;
+      // flex-wrap: wrap;
+      // margin-top: 50px;
+    }
+  }
+
+  &__title {
+    display: flex;
+    gap: 10px;
+
+    @media (max-width: 570px) {
+      display: none;
+    }
+  }
+
+  &__addBtn {
+    display: flex;
+    position: absolute;
+    top: -45px;
+    right: 5px;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    @media (max-width: 700px) {
+      top: -10;
+      right: 0;
+    }
+  }
+}

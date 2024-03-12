@@ -1,0 +1,27 @@
+@use "../index.scss";
+
+.pageNotFound {
+  &__container {
+    position: relative;
+  }
+
+  &__background {
+    background: index.$secondary;
+    color: index.$background;
+    height: 50vh;
+    height: 50svh;
+    border-bottom-left-radius: 50% 38%;
+    border-bottom-right-radius: 50% 38%;
+  }
+
+  &__content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    height: 100svh;
+  }
+}

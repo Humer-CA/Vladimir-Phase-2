@@ -1,0 +1,40 @@
+@use "../../index.scss";
+
+.tbl-container {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.tbl-row {
+  outline: 1px solid lightgray;
+}
+
+.tbl-row-collapsed {
+  background-color: index.$secondary;
+}
+
+.tbl-cell-col-tr {
+  font-size: small;
+  color: index.$secondary;
+  padding: 10px 20px;
+  overflow-y: overlay;
+
+  @media (max-height: 600px) {
+    padding: 8px 20px;
+  }
+}
+
+.tbl-cell-col {
+  font-size: small;
+  padding: 10px 20px;
+  overflow-y: overlay;
+
+  @media (max-height: 600px) {
+    padding: 8px 20px;
+  }
+}
+
+.tr-cen-pad45 {
+  text-align: center;
+  padding-right: 45px;
+}

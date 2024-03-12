@@ -1,0 +1,27 @@
+@use "../index.scss";
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 30px;
+  width: 100%;
+  padding: 20px;
+  gap: 10px;
+  color: index.$secondary;
+  user-select: none;
+  box-shadow: 0px -3px 19px -7px rgba(166, 166, 166, 0.4);
+
+  &__label {
+    color: index.$secondary;
+    font-size: 14px;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    // color: index.$primary;
+    font-weight: bold;
+    gap: 5px;
+  }
+}

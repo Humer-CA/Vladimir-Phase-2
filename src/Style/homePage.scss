@@ -1,0 +1,32 @@
+@use "../index.scss";
+
+.homepage {
+  display: flex;
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  background: #f8f8f8;
+  // overflow-x: auto;
+
+  &__sidebar {
+    z-index: 10;
+    box-shadow: 20px 20px 24px #e7e7e7, -20px -20px 24px #fdfdfd;
+    border-radius: 10px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__body {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: overlay;
+    margin: 10px;
+  }
+}

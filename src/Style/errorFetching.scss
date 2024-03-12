@@ -1,0 +1,49 @@
+@use "../index.scss";
+
+.errorFetching {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  // margin-top: 10px;
+
+  // height: 60vh;
+  height: min(550px, 60%);
+  width: min(850px, 85%);
+
+  border-radius: 21px;
+  background: linear-gradient(225deg, #d6d6d6, #ffffff);
+  box-shadow: -6px 6px 12px #d9d9d9, 6px -6px 12px #ffffff;
+
+  @media (max-width: 350px) {
+    margin: 35% auto;
+  }
+
+  &__wrapper {
+    z-index: 1;
+    margin-top: -20%;
+    gap: 10px;
+    color: index.$text;
+    text-align: center;
+
+      @media (max-width: 510px) {
+        margin-top: -150px ;
+      }
+  }
+
+
+  & &__svgBg {
+    position: absolute;
+    z-index: 0;
+    background-image: url("../Img/ErrorFetch.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: inherit;
+    height: 100%;
+    width: 100%;
+    top: 0;
+  }
+}

@@ -1,0 +1,24 @@
+@use "../../index.scss";
+
+.request {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+  position: relative;
+  //   max-width: 270px;
+
+  &__form {
+    width: 250px;
+    padding-right: 8px;
+    margin-top: 10px;
+    overflow: auto;
+    height: calc(100vh - 310px);
+  }
+
+  &__table {
+    overflow: auto;
+    width: 100%;
+  }
+}

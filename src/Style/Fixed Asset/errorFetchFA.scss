@@ -1,0 +1,35 @@
+@use "../../index.scss";
+
+.errorFetchFA {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  height: 60%;
+  max-width: 650px;
+  width: 80%;
+  border-radius: 21px;
+  background: linear-gradient(225deg, #d6d6d6, #ffffff);
+  box-shadow: -6px 6px 12px #d9d9d9, 6px -6px 12px #ffffff;
+  background-image: url("../../Img/SVG/ErrorFetchFA.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+
+  &__logo {
+    justify-self: center;
+    align-self: center;
+    width: 80%;
+    height: 80%;
+    border-radius: 10px;
+    user-select: none;
+
+    -webkit-backdrop-filter: blur(8px); /* Safari 9+ */
+    backdrop-filter: blur(8px); /* Chrome and Opera */
+    box-shadow: 0px 10px 15px 10px rgb(0 0 0 / 15%);
+    background-color: rgb(228 228 228 / 15%);
+  }
+}

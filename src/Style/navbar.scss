@@ -1,0 +1,30 @@
+@use "../index.scss";
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  margin: 5px 20px;
+  z-index: 1;
+  user-select: none;
+
+  &__user-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+
+    & &__iconBtn {
+      border: 1px solid index.$secondary;
+      padding: 20px;
+    }
+  }
+
+  &__menu-settings {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 15px;
+  }
+}
