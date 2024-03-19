@@ -105,72 +105,54 @@ const router = createBrowserRouter([
                 element: <></>,
                 // element: <Navigate to="/masterlist/company" />,
               },
-
-              // {
-              //   path: "modules",
-              //   element: <Modules />,
-              // },
-
               {
                 path: "company",
                 element: <Company />,
               },
-
               {
                 path: "business-unit",
                 element: <BusinessUnit />,
               },
-
               {
                 path: "department",
                 element: <Department />,
               },
-
               {
                 path: "unit",
                 element: <Unit />,
               },
-
-              {
-                path: "location",
-                element: <Location />,
-              },
-
-              {
-                path: "account-title",
-                element: <AccountTitle />,
-              },
-
-              {
-                path: "supplier",
-                element: <Supplier />,
-              },
-
               {
                 path: "sub-unit",
                 element: <SubUnit />,
               },
-
               {
-                path: "type-of-request",
-                element: <TypeOfRequest />,
+                path: "location",
+                element: <Location />,
               },
-
               {
-                path: "capex",
-                element: <Capex />,
+                path: "account-title",
+                element: <AccountTitle />,
               },
-
+              {
+                path: "supplier",
+                element: <Supplier />,
+              },
               {
                 path: "division",
                 element: <Division />,
               },
-
+              {
+                path: "type-of-request",
+                element: <TypeOfRequest />,
+              },
+              {
+                path: "capex",
+                element: <Capex />,
+              },
               {
                 path: "service-provider",
                 element: <ServiceProvider />,
               },
-
               {
                 path: "category",
                 element: <Category />,

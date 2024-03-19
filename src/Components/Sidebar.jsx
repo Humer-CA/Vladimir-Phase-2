@@ -164,14 +164,12 @@ const Sidebar = () => {
           path: "/masterlist/business-unit",
           permission: "business-unit",
         },
-
         {
           label: "Department",
           icon: Schema,
           path: "/masterlist/department",
           permission: "department",
         },
-
         {
           label: "Unit",
           icon: Ballot,
@@ -179,75 +177,65 @@ const Sidebar = () => {
           permission: "unit",
         },
         {
+          label: "Sub Unit",
+          icon: Segment,
+          path: "/masterlist/sub-unit",
+          permission: "sub-unit",
+        },
+        {
           label: "Location",
           icon: LocationOn,
           path: "/masterlist/location",
           permission: "location",
         },
-
         {
           label: "Account Title",
           icon: badgeIcon,
           path: "/masterlist/account-title",
           permission: "account-title",
         },
-
         {
           label: "Supplier",
           icon: StoreRounded,
           path: "/masterlist/supplier",
           permission: "supplier",
         },
-
-        {
-          label: "Sub Unit",
-          icon: Segment,
-          path: "/masterlist/sub-unit",
-          permission: "sub-unit",
-        },
-
         {
           label: "Division",
           icon: Groups2Rounded,
           path: "/masterlist/division",
           permission: "division",
         },
-
         {
           label: "Type of Request",
           icon: BackupTableRounded,
           path: "/masterlist/type-of-request",
           permission: "type-of-request",
         },
-
         {
           label: "Capex",
           icon: MonetizationOn,
           path: "/masterlist/capex",
           permission: "capex",
         },
-
         // {
         //   label: "Service Provider",
         //   icon: Construction,
         //   path: "/masterlist/service-provider",
         //   permission: [],
         // },
-
         {
           label: "Category",
           icon: Category,
           path: "/masterlist/category",
           permission: "category",
         },
-
         {
           label: "Status Category",
           icon: FactCheck,
           path: "/masterlist/status-category",
           permission: "status-category",
         },
-
         // {
         //   label: "Asset Registration",
         //   icon: NoteAddRounded,
