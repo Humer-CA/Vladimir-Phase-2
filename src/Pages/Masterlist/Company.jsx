@@ -9,8 +9,8 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 
 import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
 
-import { useLazyGetFistoCompanyAllApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/FistoCompany";
-import { usePostCompanyApiMutation, useGetCompanyApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/Company";
+import { useLazyGetYmirCompanyAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import { usePostCompanyApiMutation, useGetCompanyApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/Company";
 
 // MUI
 import {
@@ -82,15 +82,15 @@ const Company = () => {
   const [
     trigger,
     {
-      data: fistoCompanyApi,
-      isLoading: fistoCompanyApiLoading,
-      isSuccess: fistoCompanyApiSuccess,
-      isFetching: fistoCompanyApiFetching,
-      isError: fistoCompanyApiError,
+      data: ymirCompanyApi,
+      isLoading: ymirCompanyApiLoading,
+      isSuccess: ymirCompanyApiSuccess,
+      isFetching: ymirCompanyApiFetching,
+      isError: ymirCompanyApiError,
 
-      refetch: fistoCompanyApiRefetch,
+      refetch: ymirCompanyApiRefetch,
     },
-  ] = useLazyGetFistoCompanyAllApiQuery();
+  ] = useLazyGetYmirCompanyAllApiQuery();
 
   const {
     data: companyApiData,
@@ -118,10 +118,10 @@ const Company = () => {
   ] = usePostCompanyApiMutation();
 
   useEffect(() => {
-    if (fistoCompanyApiSuccess) {
-      postCompany(fistoCompanyApi);
+    if (ymirCompanyApiSuccess) {
+      postCompany(ymirCompanyApi);
     }
-  }, [fistoCompanyApiSuccess, fistoCompanyApiFetching]);
+  }, [ymirCompanyApiSuccess, ymirCompanyApiFetching]);
 
   useEffect(() => {
     if (isPostError) {
@@ -129,7 +129,7 @@ const Company = () => {
       let variant = "error";
 
       if (postError?.status === 404 || postError?.status === 422) {
-        message = postError?.data?.message;
+        message = postError?.data?.errors.detail || postError?.data?.message;
         if (postError?.status === 422) {
           console.log(postError);
           dispatch(closeConfirm());

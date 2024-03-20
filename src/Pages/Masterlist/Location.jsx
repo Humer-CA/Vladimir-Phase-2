@@ -9,8 +9,8 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 
 import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
 
-import { useLazyGetFistoLocationAllApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/FistoLocation";
-import { usePostLocationApiMutation, useGetLocationApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/Location";
+import { useLazyGetYmirLocationAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import { usePostLocationApiMutation, useGetLocationApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/Location";
 
 // MUI
 import {
@@ -39,7 +39,7 @@ const Location = () => {
   const [status, setStatus] = useState("active");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [viewDepartment, setViewDepartment] = useState({
+  const [viewSubUnit, setViewSubUnit] = useState({
     id: null,
     sync_id: null,
     department_name: "",
@@ -89,14 +89,14 @@ const Location = () => {
   const [
     trigger,
     {
-      data: fistoLocationApi,
-      isLoading: fistoLocationApiLoading,
-      isSuccess: fistoLocationApiSuccess,
-      isFetching: fistoLocationApiFetching,
-      isError: fistoLocationApiError,
-      refetch: fistoLocationApiRefetch,
+      data: ymirLocationApi,
+      isLoading: ymirLocationApiLoading,
+      isSuccess: ymirLocationApiSuccess,
+      isFetching: ymirLocationApiFetching,
+      isError: ymirLocationApiError,
+      refetch: ymirLocationApiRefetch,
     },
-  ] = useLazyGetFistoLocationAllApiQuery();
+  ] = useLazyGetYmirLocationAllApiQuery();
 
   const {
     data: locationApiData,
@@ -122,10 +122,10 @@ const Location = () => {
   ] = usePostLocationApiMutation();
 
   useEffect(() => {
-    if (fistoLocationApiSuccess) {
-      postLocation(fistoLocationApi);
+    if (ymirLocationApiSuccess) {
+      postLocation(ymirLocationApi);
     }
-  }, [fistoLocationApiSuccess, fistoLocationApiFetching]);
+  }, [ymirLocationApiSuccess, ymirLocationApiFetching]);
 
   const dispatch = useDispatch();
 
@@ -140,6 +140,23 @@ const Location = () => {
       dispatch(closeConfirm());
     }
   }, [isPostSuccess]);
+
+  useEffect(() => {
+    if (isPostError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if (postError?.status === 404 || postError?.status === 422) {
+        message = postError?.data?.errors.detail || postError?.data?.message;
+        if (postError?.status === 422) {
+          console.log(postError);
+          dispatch(closeConfirm());
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
+    }
+  }, [isPostError]);
 
   const onSyncHandler = async () => {
     dispatch(
@@ -183,79 +200,48 @@ const Location = () => {
     );
   };
 
-  useEffect(() => {
-    if (isPostError && postError?.status === 404) {
-      dispatch(
-        openToast({
-          message: postError?.data?.message,
-          duration: 5000,
-          variant: "error",
-        })
-      );
-    } else if (isPostError && postError?.status === 422) {
-      dispatch(
-        openToast({
-          message: postError?.data?.message,
-          duration: 5000,
-          variant: "error",
-        })
-      );
-      console.log(postError);
-      dispatch(closeConfirm());
-    } else if (isPostError) {
-      dispatch(
-        openToast({
-          message: "Something went wrong. Please try again.",
-          duration: 5000,
-          variant: "error",
-        })
-      );
-    }
-  }, [isPostError]);
-
   const onSetPage = () => {
     setPage(1);
   };
 
-  // View Departments --------------------------------------------------------
-  const onViewDepartmentHandler = (props) => {
-    const { id, department, sync_id } = props;
-    setViewDepartment({
+  // View Sub_unit --------------------------------------------------------
+  const onViewSubUnitHandler = (props) => {
+    const { id, subunit, sync_id } = props;
+    setViewSubUnit({
       id: id,
       sync_id: sync_id,
-      department: department,
+      subunit: subunit,
     });
   };
 
-  const handleViewDepartment = (data) => {
-    onViewDepartmentHandler(data);
+  const handleViewSubUnit = (data) => {
+    onViewSubUnitHandler(data);
     dispatch(openDialog());
   };
 
   const filteredData = locationApiData?.data
-    ?.find((item) => item.id === viewDepartment.id)
-    ?.departments?.map((mapItem) => {
+    ?.find((item) => item.id === viewSubUnit.id)
+    ?.subunit?.map((mapItem) => {
       // console.log(mapItem?.department_status);
-      if (mapItem?.department_status === true) {
-        return `${mapItem?.department_code} - ${mapItem?.department_name}`;
+      if (mapItem?.subunit_status === true) {
+        return `${mapItem?.subunit_code} - ${mapItem?.subunit_name}`;
       } else {
         return "";
       }
     });
   const mapDepartmentData = [...new Set(filteredData)];
 
-  // console.log(mapDepartmentData);
-  // console.log(locationApiData);
+  // console.log(filteredData);
+  console.log(locationApiData);
 
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
         Location
       </Typography>
+
       {locationApiLoading && <MasterlistSkeleton onSync={true} />}
-
       {locationApiError && <ErrorFetching refetch={locationApiRefetch} error={errorData} />}
-
       {locationApiData && !locationApiError && (
         <>
           <Box className="mcontainer__wrapper">
@@ -317,7 +303,7 @@ const Location = () => {
                           direction={orderBy === `location_name` ? order : `asc`}
                           onClick={() => onSort(`location_name`)}
                         >
-                          Department
+                          Subunit
                         </TableSortLabel>
                       </TableCell>
 
@@ -367,7 +353,7 @@ const Location = () => {
                                   variant="text"
                                   size="small"
                                   color="link"
-                                  onClick={() => handleViewDepartment(data)}
+                                  onClick={() => handleViewSubUnit(data)}
                                 >
                                   <Typography fontSize={13}>View</Typography>
                                 </Button>
@@ -431,12 +417,7 @@ const Location = () => {
         </>
       )}
       <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
-        <ViewTagged
-          data={viewDepartment}
-          mapData={mapDepartmentData}
-          setViewDepartment={setViewDepartment}
-          name="Departments"
-        />
+        <ViewTagged data={viewSubUnit} mapData={mapDepartmentData} setViewSubUnit={setViewSubUnit} name="Sub-Unit" />
       </Dialog>
     </Box>
   );

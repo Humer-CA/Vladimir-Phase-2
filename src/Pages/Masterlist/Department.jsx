@@ -9,11 +9,11 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 
 import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
 
-import { useLazyGetFistoDepartmentAllApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/FistoDepartment";
+import { useLazyGetYmirDepartmentAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 import {
   usePostDepartmentApiMutation,
   useGetDepartmentApiQuery,
-} from "../../Redux/Query/Masterlist/FistoCoa/Department";
+} from "../../Redux/Query/Masterlist/YmirCoa/Department";
 
 // MUI
 import {
@@ -92,14 +92,16 @@ const Department = () => {
   const [
     trigger,
     {
-      data: fistoDepartmentApi,
-      isLoading: fistoDepartmentApiLoading,
-      isSuccess: fistoDepartmentApiSuccess,
-      isFetching: fistoDepartmentApiFetching,
-      isError: fistoDepartmentApiError,
-      refetch: fistoDepartmentApiRefetch,
+      data: ymirDepartmentApi,
+      isLoading: ymirDepartmentApiLoading,
+      isSuccess: ymirDepartmentApiSuccess,
+      isFetching: ymirDepartmentApiFetching,
+      isError: ymirDepartmentApiError,
+      refetch: ymirDepartmentApiRefetch,
     },
-  ] = useLazyGetFistoDepartmentAllApiQuery();
+  ] = useLazyGetYmirDepartmentAllApiQuery();
+
+  console.log(ymirDepartmentApi);
 
   const {
     data: departmentApiData,
@@ -125,10 +127,10 @@ const Department = () => {
   ] = usePostDepartmentApiMutation();
 
   useEffect(() => {
-    if (fistoDepartmentApiSuccess) {
-      postDepartment(fistoDepartmentApi);
+    if (ymirDepartmentApiSuccess) {
+      postDepartment(ymirDepartmentApi);
     }
-  }, [fistoDepartmentApiSuccess, fistoDepartmentApiFetching]);
+  }, [ymirDepartmentApiSuccess, ymirDepartmentApiFetching]);
 
   const dispatch = useDispatch();
 
@@ -143,6 +145,23 @@ const Department = () => {
       dispatch(closeConfirm());
     }
   }, [isPostSuccess]);
+
+  useEffect(() => {
+    if (isPostError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if (postError?.status === 404 || postError?.status === 422) {
+        message = postError?.data?.errors.detail || postError?.data?.message;
+        if (postError?.status === 422) {
+          console.log(postError);
+          dispatch(closeConfirm());
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
+    }
+  }, [isPostError]);
 
   const onSyncHandler = async () => {
     dispatch(
@@ -185,36 +204,6 @@ const Department = () => {
     );
   };
 
-  useEffect(() => {
-    if (isPostError && postError?.status === 404) {
-      dispatch(
-        openToast({
-          message: postError?.data?.message,
-          duration: 5000,
-          variant: "error",
-        })
-      );
-    } else if (isPostError && postError?.status === 422) {
-      dispatch(
-        openToast({
-          message: postError?.data?.message,
-          duration: 5000,
-          variant: "error",
-        })
-      );
-      console.log(postError);
-      dispatch(closeConfirm());
-    } else if (isPostError) {
-      dispatch(
-        openToast({
-          message: "Something went wrong. Please try again.",
-          duration: 5000,
-          variant: "error",
-        })
-      );
-    }
-  }, [isPostError]);
-
   const onSetPage = () => {
     setPage(1);
   };
@@ -249,20 +238,6 @@ const Department = () => {
   // );
   // const mapLocationData = [...new Set(filteredData)];
   // // console.log(mapLocationData);
-
-  const filteredData = departmentApiData?.data
-    ?.find((item) => item.id === viewLocation.id)
-    ?.locations?.map((mapItem) => {
-      console.log(mapItem?.location_status);
-      if (mapItem?.location_status === true) {
-        return `${mapItem?.location_code} - ${mapItem?.location_name}`;
-      } else {
-        return "";
-      }
-    });
-
-  // console.log(filteredData);
-  const mapLocationData = [...new Set(filteredData)];
 
   return (
     <Box className="mcontainer">
@@ -331,11 +306,11 @@ const Department = () => {
                           direction={orderBy === `company_code` ? order : `asc`}
                           onClick={() => onSort(`company_code`)}
                         >
-                          Company
+                          Business Unit
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell" align="center">
+                      {/*<TableCell className="tbl-cell" align="center">
                         <TableSortLabel
                           active={orderBy === `location_code`}
                           direction={orderBy === `location_code` ? order : `asc`}
@@ -343,7 +318,7 @@ const Department = () => {
                         >
                           Location
                         </TableSortLabel>
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel
@@ -391,19 +366,19 @@ const Department = () => {
                               }}
                             >
                               <TableCell className="tbl-cell tr-cen-pad45 tbl-coa">{data.id}</TableCell>
-
                               <TableCell className="tbl-cell">{data.department_code}</TableCell>
-
                               <TableCell className="tbl-cell">{data.department_name}</TableCell>
 
                               <TableCell className="tbl-cell">
-                                {data.company?.company_code + " - " + data.company?.company_name}
+                                {data.business_unit?.business_unit_code +
+                                  " - " +
+                                  data.business_unit?.business_unit_name}
                               </TableCell>
 
-                              <TableCell className="tbl-cell" align="center">
-                                {/* {data.location?.location_code +
+                              {/* <TableCell className="tbl-cell" align="center">
+                                {data.location?.location_code +
                                     " - " +
-                                    data.location?.location_name} */}
+                                    data.location?.location_name} 
                                 <Button
                                   sx={{
                                     textTransform: "capitalize",
@@ -417,7 +392,7 @@ const Department = () => {
                                 >
                                   <Typography fontSize={13}>View</Typography>
                                 </Button>
-                              </TableCell>
+                              </TableCell> */}
 
                               <TableCell className="tbl-cell">
                                 {data.division?.division_id === "-"
@@ -482,9 +457,9 @@ const Department = () => {
           </Box>
         </>
       )}
-      <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      {/* <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <ViewTagged data={viewLocation} mapData={mapLocationData} setViewLocation={setViewLocation} name="Location" />
-      </Dialog>
+      </Dialog> */}
     </Box>
   );
 };
