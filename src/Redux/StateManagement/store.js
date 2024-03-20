@@ -39,12 +39,12 @@ import { fistoLocationApi } from "../Query/Masterlist/FistoCoa/FistoLocation";
 import { fistoAccountTitleApi } from "../Query/Masterlist/FistoCoa/FistoAccountTitle";
 import { fistoSupplierApi } from "../Query/Masterlist/FistoCoa/FistoSupplier";
 
-import { companyApi } from "../Query/Masterlist/FistoCoa/Company";
+import { companyApi } from "../Query/Masterlist/YmirCoa/Company";
 import { businessUnitApi } from "../Query/Masterlist/YmirCoa/BusinessUnit";
-import { departmentApi } from "../Query/Masterlist/FistoCoa/Department";
+import { departmentApi } from "../Query/Masterlist/YmirCoa/Department";
 import { unitApi } from "../Query/Masterlist/YmirCoa/Unit";
-import { subUnitApi } from "../Query/Masterlist/SubUnit";
-import { locationApi } from "../Query/Masterlist/FistoCoa/Location";
+import { subUnitApi } from "../Query/Masterlist/YmirCoa/SubUnit";
+import { locationApi } from "../Query/Masterlist/YmirCoa/Location";
 import { accountTitleApi } from "../Query/Masterlist/FistoCoa/AccountTitle";
 import { supplierApi } from "../Query/Masterlist/FistoCoa/Supplier";
 import { divisionApi } from "../Query/Masterlist/Division";

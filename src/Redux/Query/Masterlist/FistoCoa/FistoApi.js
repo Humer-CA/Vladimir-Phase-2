@@ -16,25 +16,25 @@ export const fistoApi = createApi({
   }),
 
   endpoints: (builder) => ({
-    getFistoCompanyAllApi: builder.query({
-      query: () => `/dropdown/company?status=all&paginate=0&api_for=vladimir`,
-    }),
+    // getFistoCompanyAllApi: builder.query({
+    //   query: () => `/dropdown/company?status=all&paginate=0&api_for=vladimir`,
+    // }),
 
-    getFistoBusinessUnitAllApi: builder.query({
-      query: () => `/dropdown/business-unit?status=all&paginate=0&api_for=vladimir`,
-    }),
+    // getFistoBusinessUnitAllApi: builder.query({
+    //   query: () => `/dropdown/business-unit?status=all&paginate=0&api_for=vladimir`,
+    // }),
 
-    getFistoDepartmentAllApi: builder.query({
-      query: () => `/dropdown/department?status=all&paginate=0&api_for=vladimir`,
-    }),
+    // getFistoDepartmentAllApi: builder.query({
+    //   query: () => `/dropdown/department?status=all&paginate=0&api_for=vladimir`,
+    // }),
 
-    getFistoUnitAllApi: builder.query({
-      query: () => `/dropdown/unit?status=all&paginate=0&api_for=vladimir`,
-    }),
+    // getFistoUnitAllApi: builder.query({
+    //   query: () => `/dropdown/unit?status=all&paginate=0&api_for=vladimir`,
+    // }),
 
-    getFistoLocationAllApi: builder.query({
-      query: () => `/dropdown/location?status=all&paginate=0&api_for=vladimir`,
-    }),
+    // getFistoLocationAllApi: builder.query({
+    //   query: () => `/dropdown/location?status=all&paginate=0&api_for=vladimir`,
+    // }),
 
     getFistoSupplierAllApi: builder.query({
       query: () => `/dropdown/suppliers?paginate=0&api_for=vladimir`,
