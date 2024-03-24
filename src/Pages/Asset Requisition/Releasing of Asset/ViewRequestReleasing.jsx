@@ -347,9 +347,30 @@ const ViewRequestReleasing = (props) => {
                   </Box>
 
                   <Box className="tableCard__properties">
+                    Business Unit:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {releasingData?.business_unit.business_unit_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
                     Department:
                     <Typography className="tableCard__info" fontSize="14px">
                       {releasingData?.department.department_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Unit:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {releasingData?.unit.unit_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Sub Unit:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {releasingData?.subunit.subunit_name}
                     </Typography>
                   </Box>
 

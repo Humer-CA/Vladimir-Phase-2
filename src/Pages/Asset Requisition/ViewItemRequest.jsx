@@ -121,6 +121,8 @@ const ViewItemRequest = (props) => {
                     "& > *": {
                       fontWeight: "bold!important",
                       whiteSpace: "nowrap",
+                      bgcolor: "secondary.main",
+                      color: "white",
                     },
                   }}
                 >
@@ -160,7 +162,9 @@ const ViewItemRequest = (props) => {
                           {index}
                         </TableCell>
                         <TableCell className="tbl-cell">{data.type_of_request}</TableCell>
-                        <TableCell className="tbl-cell">{data.vladimir_tag_number}</TableCell>
+                        <TableCell className="tbl-cell" sx={{ fontWeight: 600, color: "secondary.main" }}>
+                          {data.vladimir_tag_number}
+                        </TableCell>
 
                         <TableCell className="tbl-cell">
                           <Typography fontWeight={600} fontSize="14px" color="secondary.main">
@@ -189,11 +193,17 @@ const ViewItemRequest = (props) => {
                           <Typography fontSize={10} color="gray">
                             {data.company}
                           </Typography>
-                          {/* <Typography fontSize={10} color="gray" noWrap>
-                              {data.business_unit}
-                            </Typography> */}
+                          <Typography fontSize={10} color="gray" noWrap>
+                            {data.business_unit}
+                          </Typography>
                           <Typography fontSize={10} color="gray" noWrap>
                             {data.department}
+                          </Typography>
+                          <Typography fontSize={10} color="gray" noWrap>
+                            {data.unit}
+                          </Typography>
+                          <Typography fontSize={10} color="gray" noWrap>
+                            {data.subunit}
                           </Typography>
                           <Typography fontSize={10} color="gray" noWrap>
                             {data.sub_unit}
