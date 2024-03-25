@@ -21,8 +21,6 @@ const RequestTimeline = (props) => {
   const { data: transactionData } = props;
   const dispatch = useDispatch();
 
-  console.log(transactionData.history);
-
   return (
     <Box className="timelineSteps">
       <IconButton onClick={() => dispatch(closeDialog())} sx={{ position: "absolute", top: 10, right: 10 }}>
@@ -203,14 +201,14 @@ const RequestTimeline = (props) => {
                                 ? "error.light"
                                 : "secondary.light",
                             width: "3px",
-                            height: "30px",
+                            height: item?.action === "Claimed" ? "70px" : "50px",
                             ml: "5px",
                             borderRadius: "20px",
                             border: "none",
                           }}
                         />
                         <Box>
-                          <Typography fontSize={13} fontWeight={600} textTransform="uppercase">
+                          <Typography fontSize={14} fontWeight={600} textTransform="uppercase" color="text.main">
                             {item?.action}
                           </Typography>
 
@@ -218,11 +216,18 @@ const RequestTimeline = (props) => {
                             {`(${item?.causer?.employee_id}) - ${item?.causer?.firstname}  ${item?.causer?.lastname}`}
                           </Typography>
 
+                          {/* PO */}
+                          {item?.action === "Added PO Number and RR Number" && (
+                            <Typography fontSize={12} fontWeight={600} color="text.light">
+                              Asset Description: {item?.asset_description}
+                            </Typography>
+                          )}
+
                           {/* CLAIMED */}
                           {item?.action === "Claimed" && (
                             <>
                               <Typography fontSize={12} fontWeight={600} color="text.light">
-                                {item?.vladimir_tag_number}
+                                Tag Number: {item?.vladimir_tag_number}
                               </Typography>
                               <Typography fontSize={12} fontWeight={400} color="text.light">
                                 Asset Description: {item?.asset_description}
@@ -231,7 +236,7 @@ const RequestTimeline = (props) => {
                           )}
 
                           {item?.action === "Claimed" && (
-                            <Typography fontSize={12} fontWeight={600} color="text.light">
+                            <Typography fontSize={12} fontWeight={600} color="primary.dark">
                               Received by: {item?.received_by}
                             </Typography>
                           )}
@@ -242,7 +247,12 @@ const RequestTimeline = (props) => {
                               Asset Description: {item?.asset_description}
                             </Typography>
                           )}
-                          <Typography fontSize={12}>{item?.remarks ? `Remarks: ${item?.remarks}` : null}</Typography>
+
+                          {item?.remarks && (
+                            <Typography fontSize={12} fontWeight={600}>
+                              Remarks: {item?.remarks}
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
                     </StepLabel>
