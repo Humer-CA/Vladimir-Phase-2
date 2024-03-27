@@ -29,8 +29,8 @@ import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import { useGetRoleAllApiQuery } from "../../../Redux/Query/UserManagement/RoleManagementApi";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/SubUnit";
+import { useGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 
 const schema = yup.object().shape({
   id: yup.string().nullable(),
@@ -38,13 +38,13 @@ const schema = yup.object().shape({
   sedar_employee: yup.object().typeError("Employee ID is a required field").required(),
   firstname: yup.string().required(),
   lastname: yup.string().required(),
-  department_id: yup
+  unit_id: yup
     .string()
     .transform((value) => {
       return value?.id.toString();
     })
     .required()
-    .label("Department"),
+    .label("Unit"),
   subunit_id: yup
     .string()
     .transform((value) => {
@@ -85,11 +85,11 @@ const AddUserAccount = (props) => {
   } = useGetSedarUsersApiQuery();
 
   const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-  } = useGetDepartmentAllApiQuery();
+    data: unitData = [],
+    isLoading: isUnitLoading,
+    isSuccess: isUnitSuccess,
+    isError: isUnitError,
+  } = useGetUnitAllApiQuery();
 
   const {
     data: subUnitData = [],
@@ -117,7 +117,7 @@ const AddUserAccount = (props) => {
       employee_id: null || "",
       firstname: "",
       lastname: "",
-      department_id: null,
+      unit_id: null,
       subunit_id: null,
       // position: "",
       username: "",
@@ -174,13 +174,15 @@ const AddUserAccount = (props) => {
       });
       setValue("firstname", data.firstname);
       setValue("lastname", data.lastname);
-      setValue("department_id", data.department);
+      setValue("unit_id", data.unit);
       setValue("subunit_id", data.subunit);
       // setValue("position", data.position);
       setValue("username", data.username);
       setValue("role_id", data.role);
     }
   }, [data]);
+
+  console.log(data);
 
   const onSubmitHandler = (formData) => {
     const newFormData = {
@@ -259,7 +261,7 @@ const AddUserAccount = (props) => {
                   setValue("employee_id", value?.general_info?.full_id_number);
                   setValue("firstname", value?.general_info?.first_name);
                   setValue("lastname", value?.general_info?.last_name);
-                  // setValue("department_id", value.unit_info.department_id);
+                  // setValue("unit_id", value.unit_info.unit_id);
                   // setValue("subunit_id", value.unit_info.subunit_id);
                   // setValue("position", value.position_info.position_name);
                   setValue(
@@ -277,7 +279,7 @@ const AddUserAccount = (props) => {
                   setValue("employee_id", null);
                   setValue("firstname", "");
                   setValue("lastname", "");
-                  // setValue("department_id", "");
+                  // setValue("unit_id", "");
                   // setValue("subunit_id", "");
                   setValue("username", "");
                 }
@@ -326,20 +328,20 @@ const AddUserAccount = (props) => {
 
           <CustomAutoComplete
             autoComplete
-            name="department_id"
+            name="unit_id"
             control={control}
-            options={departmentData}
-            loading={isDepartmentLoading}
+            options={unitData}
+            loading={isUnitLoading}
             size="small"
-            getOptionLabel={(option) => option.department_name}
+            getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField
                 color="secondary"
                 {...params}
-                label="Department"
-                error={!!errors?.department_id?.message}
-                helperText={errors?.department_id?.message}
+                label="Unit"
+                error={!!errors?.unit_id?.message}
+                helperText={errors?.unit_id?.message}
               />
             )}
             onChange={(_, value) => {
@@ -354,10 +356,10 @@ const AddUserAccount = (props) => {
             autoComplete
             name="subunit_id"
             control={control}
-            options={subUnitData?.filter((item) => item?.department?.id === watch("department_id")?.id)}
+            options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
             loading={isSubUnitLoading}
             size="small"
-            getOptionLabel={(option) => option.subunit_name}
+            getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField

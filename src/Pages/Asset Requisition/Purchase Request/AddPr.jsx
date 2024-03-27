@@ -19,7 +19,7 @@ import {
   useAddPurchaseRequestApiMutation,
   useGetPurchaseRequestAllApiQuery,
 } from "../../../Redux/Query/Request/PurchaseRequest";
-import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Company";
+import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
 import { useNavigate } from "react-router-dom";
 import CustomTextField from "../../../Components/Reusable/CustomTextField";
 

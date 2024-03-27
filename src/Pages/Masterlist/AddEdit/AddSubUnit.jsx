@@ -14,10 +14,10 @@ import { useDispatch } from "react-redux";
 import {
   usePostSubUnitApiMutation,
   useUpdateSubUnitApiMutation,
-} from "../../../Redux/Query/Masterlist/SubUnit";
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
+import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -39,13 +39,7 @@ const AddSubUnit = (props) => {
 
   const [
     postSubUnit,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostSubUnitApiMutation();
 
   const {
@@ -150,18 +144,11 @@ const AddSubUnit = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Sub Unit" : "Add Sub Unit"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomAutoComplete
           disabled={data.tagged === true}
           autoComplete
@@ -170,9 +157,7 @@ const AddSubUnit = (props) => {
           options={departmentData}
           loading={isDepartmentLoading}
           size="small"
-          getOptionLabel={(option) =>
-            option.department_code + " - " + option.department_name
-          }
+          getOptionLabel={(option) => option.department_code + " - " + option.department_name}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
             <TextField

@@ -14,8 +14,8 @@ import { LoadingButton } from "@mui/lab";
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch } from "react-redux";
 import { usePostDivisionApiMutation, useUpdateDivisionApiMutation } from "../../../Redux/Query/Masterlist/Division";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { departmentApi } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
+import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import { departmentApi } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 
 const schema = yup.object().shape({
