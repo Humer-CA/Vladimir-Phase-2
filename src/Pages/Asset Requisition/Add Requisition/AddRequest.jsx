@@ -5,7 +5,7 @@ import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import CustomAttachment from "../../../Components/Reusable/CustomAttachment";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
+import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import {
   requestContainerApi,
   useDeleteRequestContainerAllApiMutation,
@@ -58,10 +58,22 @@ import { LoadingButton } from "@mui/lab";
 // RTK
 import { useDispatch, useSelector } from "react-redux";
 import { closeDialog, closeDrawer, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Company";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { useGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Location";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import {
+  useGetCompanyAllApiQuery,
+  useLazyGetCompanyAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import {
+  useGetDepartmentAllApiQuery,
+  useLazyGetDepartmentAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import {
+  useGetLocationAllApiQuery,
+  useLazyGetLocationAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import {
+  useGetAccountTitleAllApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
+} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
 import {
   useGetByTransactionApiQuery,
   usePostRequisitionApiMutation,
@@ -71,10 +83,16 @@ import {
   useGetByTransactionPageApiQuery,
 } from "../../../Redux/Query/Request/Requisition";
 
-import { useGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
+import {
+  useGetTypeOfRequestAllApiQuery,
+  useLazyGetTypeOfRequestAllApiQuery,
+} from "../../../Redux/Query/Masterlist/TypeOfRequest";
 import { useLocation, useNavigate } from "react-router-dom";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
-import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/SubUnit";
+import {
+  useGetSubUnitAllApiQuery,
+  useLazyGetSubUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import {
   // useGetRequestContainerAllApiQuery,
@@ -92,6 +110,8 @@ import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
+import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
+import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -99,16 +119,10 @@ const schema = yup.object().shape({
   type_of_request_id: yup.object().required().label("Type of Request").typeError("Type of Request is a required field"),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
 
-  // company_id: yup
-  //   .string()
-  //   .transform((value) => {
-  //     return value?.id.toString();
-  //   })
-  //   .required()
-  //   .label("Company"),
-
-  subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
+  company_id: yup.object().required().label("Company").typeError("Company is a required field"),
+  business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
+  subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
   account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
@@ -119,10 +133,11 @@ const schema = yup.object().shape({
       is: (value) => value === "Personal Issued",
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
-  acquisition_details: yup.string().required().label("Acquisition Details"),
 
+  acquisition_details: yup.string().required().label("Acquisition Details"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
+  date_needed: yup.string().required().label("Date Needed").typeError("Date Needed is a required field"),
   brand: yup.string().required().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
@@ -141,8 +156,10 @@ const AddRequisition = (props) => {
     type_of_request_id: null,
     attachment_type: null,
 
-    company_id: null,
     department_id: null,
+    company_id: null,
+    business_unit_id: null,
+    unit_id: null,
     subunit_id: null,
     location_id: null,
     account_title_id: null,
@@ -218,51 +235,99 @@ const AddRequisition = (props) => {
     { data: smsData, isLoading: isSmsLoading, isSuccess: isSmsSuccess, isError: isSmsError, error: smsError },
   ] = usePostRequisitionSmsApiMutation();
 
-  const {
-    data: typeOfRequestData = [],
-    isLoading: isTypeOfRequestLoading,
-    isSuccess: isTypeOfRequestSuccess,
-    isError: isTypeOfRequestError,
-    refetch: isTypeOfRequestRefetch,
-  } = useGetTypeOfRequestAllApiQuery();
+  // QUERY
+  const [
+    typeOfRequestTrigger,
+    {
+      data: typeOfRequestData = [],
+      isLoading: isTypeOfRequestLoading,
+      isSuccess: isTypeOfRequestSuccess,
+      isError: isTypeOfRequestError,
+      refetch: isTypeOfRequestRefetch,
+    },
+  ] = useLazyGetTypeOfRequestAllApiQuery();
 
-  const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-    refetch: isDepartmentRefetch,
-  } = useGetDepartmentAllApiQuery();
+  const [
+    companyTrigger,
+    {
+      data: companyData = [],
+      isLoading: isCompanyLoading,
+      isSuccess: isCompanySuccess,
+      isError: isCompanyError,
+      refetch: isCompanyRefetch,
+    },
+  ] = useLazyGetCompanyAllApiQuery();
 
-  const {
-    data: subUnitData = [],
-    isLoading: isSubUnitLoading,
-    isSuccess: isSubUnitSuccess,
-    isError: isSubUnitError,
-  } = useGetSubUnitAllApiQuery();
+  const [
+    businessUnitTrigger,
+    {
+      data: businessUnitData = [],
+      isLoading: isBusinessUnitLoading,
+      isSuccess: isBusinessUnitSuccess,
+      isError: isBusinessUnitError,
+      refetch: isBusinessUnitRefetch,
+    },
+  ] = useLazyGetBusinessUnitAllApiQuery();
 
-  const {
-    data: locationData = [],
-    isLoading: isLocationLoading,
-    isSuccess: isLocationSuccess,
-    isError: isLocationError,
-    refetch: isLocationRefetch,
-  } = useGetLocationAllApiQuery();
+  const [
+    departmentTrigger,
+    {
+      data: departmentData = [],
+      isLoading: isDepartmentLoading,
+      isSuccess: isDepartmentSuccess,
+      isError: isDepartmentError,
+      refetch: isDepartmentRefetch,
+    },
+  ] = useLazyGetDepartmentAllApiQuery();
 
-  const {
-    data: accountTitleData = [],
-    isLoading: isAccountTitleLoading,
-    isSuccess: isAccountTitleSuccess,
-    isError: isAccountTitleError,
-    refetch: isAccountTitleRefetch,
-  } = useGetAccountTitleAllApiQuery();
+  const [
+    unitTrigger,
+    {
+      data: unitData = [],
+      isLoading: isUnitLoading,
+      isSuccess: isUnitSuccess,
+      isError: isUnitError,
+      refetch: isUnitRefetch,
+    },
+  ] = useLazyGetUnitAllApiQuery();
 
-  const {
-    data: sedarData = [],
-    isLoading: isSedarLoading,
-    isSuccess: isSedarSuccess,
-    isError: isSedarError,
-  } = useGetSedarUsersApiQuery();
+  const [
+    subunitTrigger,
+    {
+      data: subUnitData = [],
+      isLoading: isSubUnitLoading,
+      isSuccess: isSubUnitSuccess,
+      isError: isSubUnitError,
+      refetch: isSubUnitRefetch,
+    },
+  ] = useLazyGetSubUnitAllApiQuery();
+
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      refetch: isLocationRefetch,
+    },
+  ] = useLazyGetLocationAllApiQuery();
+
+  const [
+    accountTitleTrigger,
+    {
+      data: accountTitleData = [],
+      isLoading: isAccountTitleLoading,
+      isSuccess: isAccountTitleSuccess,
+      isError: isAccountTitleError,
+      refetch: isAccountTitleRefetch,
+    },
+  ] = useLazyGetAccountTitleAllApiQuery();
+
+  const [
+    sedarTrigger,
+    { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
+  ] = useLazyGetSedarUsersApiQuery();
 
   const {
     data: addRequestAllApi = [],
@@ -284,14 +349,6 @@ const AddRequisition = (props) => {
     { transaction_number: transactionData?.transaction_number },
     { refetchOnMountOrArgChange: true }
   );
-
-  const {
-    data: vTagNumberData = [],
-    isLoading: isVTagNumberLoading,
-    isSuccess: isVTagNumberSuccess,
-    isError: isVTagNumberError,
-    error: vTagNumberError,
-  } = useGetFixedAssetAllApiQuery();
 
   const [postRequest, { data: postRequestData }] = usePostRequestContainerApiMutation();
   const [upDateRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
@@ -317,7 +374,9 @@ const AddRequisition = (props) => {
       attachment_type: null,
 
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
       subunit_id: null,
       location_id: null,
       account_title_id: null,
@@ -363,23 +422,6 @@ const AddRequisition = (props) => {
     }
   }, [isPostError]);
 
-  // useEffect(() => {
-  //   if (isPostSuccess || isUpdateSuccess) {
-  //     reset();
-  //     handleCloseDrawer();
-  //     dispatch(
-  //       openToast({
-  //         message: postData?.message || updateData?.message,
-  //         duration: 5000,
-  //       })
-  //     );
-
-  //     // setTimeout(() => {
-  //     //   onUpdateResetHandler();
-  //     // }, 500);
-  //   }
-  // }, [isPostSuccess, isUpdateSuccess]);
-
   useEffect(() => {
     if (transactionData?.additionalCost) {
       setDisable(false);
@@ -388,29 +430,15 @@ const AddRequisition = (props) => {
     // deleteAllRequest();
   }, []);
 
-  // useEffect(() => {
-  //   if (transactionDataApi)
-  //     transactionDataApi?.map((transaction) => {
-  //       setValue("type_of_request_id", transaction?.type_of_request);
-  //       setValue("attachment_type", transaction?.attachment_type);
-  //       setValue("department_id", transaction?.department);
-  //       setValue("company_id", transaction?.company);
-  //       setValue("subunit_id", transaction?.subunit);
-  //       setValue("location_id", transaction?.location);
-  //       setValue("account_title_id", transaction?.account_title);
-  //       setValue("acquisition_details", transaction?.acquisition_details);
-  //     });
-  //   // setShowEdit(true)
-  // }, [transactionDataApi]);
-
   useEffect(() => {
     if (updateRequest.id) {
       const dateNeededFormat = new Date(updateRequest.date_needed);
-
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("department_id", updateRequest?.department);
-      setValue("company_id", updateRequest?.company?.id);
+      setValue("company_id", updateRequest?.company);
+      setValue("business_unit_id", updateRequest?.business_unit);
+      setValue("unit_id", updateRequest?.unit);
       setValue("subunit_id", updateRequest?.subunit);
       setValue("location_id", updateRequest?.location);
       setValue("account_title_id", updateRequest?.account_title);
@@ -429,7 +457,10 @@ const AddRequisition = (props) => {
 
       setValue("quantity", updateRequest?.quantity);
       setValue("brand", updateRequest?.brand);
-      setValue("cellphone_number", updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number);
+      setValue(
+        "cellphone_number",
+        updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2)
+      );
       setValue("additional_info", updateRequest?.additional_info);
       // ATTACHMENTS
       setValue("letter_of_request", updateRequest?.letter_of_request === "-" ? "" : updateRequest?.letter_of_request);
@@ -497,15 +528,19 @@ const AddRequisition = (props) => {
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
-      company_id: updateRequest ? formData?.company_id : formData?.company_id?.company?.company_id.toString(),
+      company_id: updateRequest ? formData?.company_id.id : formData?.company_id?.company?.id.toString(),
+      business_unit_id: updateRequest
+        ? formData?.business_unit_id.id
+        : formData?.business_unit_id?.business_unit?.id.toString(),
+      unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
       account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable:
         formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
-      acquisition_details: formData?.acquisition_details?.toString(),
 
+      acquisition_details: formData?.acquisition_details?.toString(),
       asset_description: formData?.asset_description?.toString(),
       asset_specification: formData?.asset_specification?.toString(),
       date_needed: moment(new Date(formData.date_needed)).format("YYYY-MM-DD"),
@@ -542,6 +577,38 @@ const AddRequisition = (props) => {
 
     const token = localStorage.getItem("token");
 
+    const validation = () => {
+      if (transactionData) {
+        if (transactionDataApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+          return true;
+        }
+        if (transactionDataApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+          return true;
+        }
+        if (transactionDataApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+          return true;
+        }
+        if (transactionDataApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+          return true;
+        }
+        return false;
+      } else {
+        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+          return true;
+        }
+        return false;
+      }
+    };
+
     const submitData = () => {
       setIsLoading(true);
       axios
@@ -565,31 +632,44 @@ const AddRequisition = (props) => {
               duration: 5000,
             })
           );
-        })
-        .then(() => {
-          transactionData ? setDisable(true) : setDisable(false);
-          setUpdateToggle(true);
-          isTransactionRefetch();
-          dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
-
+          setIsLoading(false);
           transactionData
             ? reset()
             : reset({
                 type_of_request_id: formData?.type_of_request_id,
                 attachment_type: formData?.attachment_type,
+
                 company_id: formData?.company_id,
+                business_unit_id: formData?.business_unit_id,
                 department_id: formData?.department_id,
+                unit_id: formData?.unit_id,
                 subunit_id: formData?.subunit_id,
                 location_id: formData?.location_id,
                 account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
+
+                asset_description: "",
+                asset_specification: "",
+                date_needed: null,
+                brand: "",
+                accountability: null,
+                accountable: null,
+                cellphone_number: "",
+                quantity: 1,
+                additional_info: "",
+
                 letter_of_request: null,
                 quotation: null,
                 specification_form: null,
                 tool_of_trade: null,
                 other_attachments: null,
               });
-          // setShowEdit(false)
+        })
+        .then(() => {
+          transactionData ? setDisable(true) : setDisable(false);
+          setUpdateToggle(true);
+          isTransactionRefetch();
+          dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
         })
         .catch((err) => {
           // console.log(err);
@@ -604,79 +684,8 @@ const AddRequisition = (props) => {
               variant: "error",
             })
           );
-        })
-        .finally(() => {
-          setIsLoading(false);
-          // updateRequest
-          //   ? reset()
-          //   :
-          // reset({
-          //   company_id: formData?.company_id,
-          //   department_id: formData?.department_id,
-          //   subunit_id: formData?.subunit_id,
-          //   location_id: formData?.location_id,
-          //   account_title_id: formData?.account_title_id,
-          //   acquisition_details: formData?.acquisition_details,
-          //   letter_of_request: null,
-          //   quotation: null,
-          //   specification_form: null,
-          //   tool_of_trade: null,
-          //   other_attachments: null,
-          // });
         });
     };
-
-    const validation = () => {
-      if (transactionData) {
-        // console.log("UPDATE trigger");
-        if (transactionDataApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          console.log("change the department");
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          console.log("change the subunit");
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          console.log("change the location");
-          return true;
-        }
-        return false;
-      } else {
-        // console.log("ADD trigger");
-        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          // console.log("change the department");
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          // console.log("change the subunit");
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          // console.log("change the location");
-          return true;
-        }
-
-        return false;
-      }
-    };
-
-    // !GPT Validation
-    // const validation = () => {
-    //   const data = transactionData ? transactionDataApi : addRequestAllApi?.data;
-    //   console.log(transactionData ? "UPDATE trigger" : "ADD trigger");
-
-    //   const fieldsToCheck = ["department_id", "subunit_id", "location_id"];
-
-    //   for (const field of fieldsToCheck) {
-    //     if (data.every((item) => item?.[field]?.id !== watch(field)?.id)) {
-    //       console.log(`change the ${field}`);
-    //       return true || { field };
-    //     }
-    //   }
-
-    //   return false;
-    // };
 
     const addConfirmation = () => {
       dispatch(
@@ -708,16 +717,15 @@ const AddRequisition = (props) => {
       );
     };
 
-    transactionData // check if update
-      ? validation() // if update check validation
-        ? addConfirmation() // if validation is true show confirmation
-        : submitData() // else submit the update
+    transactionData
+      ? validation()
+        ? addConfirmation()
+        : submitData()
       : addRequestAllApi?.data.length === 0
       ? submitData()
       : validation()
       ? addConfirmation()
       : submitData();
-    // : console.log("submit add") && submitData();
   };
 
   const onSubmitHandler = () => {
@@ -1002,8 +1010,10 @@ const AddRequisition = (props) => {
       reference_number,
       type_of_request,
       attachment_type,
-      department,
       company,
+      business_unit,
+      department,
+      unit,
       subunit,
       location,
       account_title,
@@ -1025,8 +1035,11 @@ const AddRequisition = (props) => {
       reference_number,
       type_of_request,
       attachment_type,
-      department,
+
       company,
+      business_unit,
+      department,
+      unit,
       subunit,
       location,
       account_title,
@@ -1129,47 +1142,13 @@ const AddRequisition = (props) => {
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Request Information</Typography>
 
-              {transactionData?.additionalCost && (
-                <CustomAutoComplete
-                  control={control}
-                  name="fixed_asset_id"
-                  options={vTagNumberData}
-                  loading={isVTagNumberLoading}
-                  size="small"
-                  getOptionLabel={(option) => "(" + option.vladimir_tag_number + ")" + " - " + option.asset_description}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  renderInput={(params) => (
-                    <TextField
-                      color="secondary"
-                      {...params}
-                      label="Tag Number"
-                      error={!!errors?.vladimir_tag_number}
-                      helperText={errors?.vladimir_tag_number?.message}
-                    />
-                  )}
-                  onChange={(_, value) => {
-                    setValue("type_of_request_id", value?.type_of_request);
-                    setValue("attachment_type", value?.attachment_type);
-                    setValue("department_id", value?.department);
-                    // setValue("company_id", value?.company?.id);
-                    setValue("subunit_id", value?.subunit);
-                    setValue("location_id", value?.location);
-                    setValue("account_title_id", value?.account_title);
-                    setValue("accountability", value?.accountability);
-                    setValue("accountable", value?.accountable);
-                    setValue("acquisition_details", value?.acquisition_details);
-                    return value;
-                  }}
-                />
-              )}
-
               <CustomAutoComplete
                 control={control}
                 name="type_of_request_id"
                 options={typeOfRequestData}
+                onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
                 loading={isTypeOfRequestLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.type_of_request_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1184,23 +1163,32 @@ const AddRequisition = (props) => {
                 )}
               />
 
-              <CustomAutoComplete
+              <CustomTextField
                 control={control}
-                name="attachment_type"
-                options={attachmentType}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-
+                name="acquisition_details"
+                label="Acquisition Details"
+                type="text"
                 disabled={updateRequest && disable}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    color="secondary"
-                    label="Attachment Type"
-                    error={!!errors?.attachment_type}
-                    helperText={errors?.attachment_type?.message}
-                  />
-                )}
+                onBlur={() => handleDispatchDetails()}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                error={!!errors?.acquisition_details}
+                helperText={errors?.acquisition_details?.message}
+                fullWidth
+                multiline
+              />
+
+              <CustomTextField
+                control={control}
+                name="acquisition_details"
+                label="Acquisition Details"
+                type="text"
+                disabled={updateRequest && disable}
+                onBlur={() => handleDispatchDetails()}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                error={!!errors?.acquisition_details}
+                helperText={errors?.acquisition_details?.message}
+                fullWidth
+                multiline
               />
             </Box>
 
@@ -1208,42 +1196,114 @@ const AddRequisition = (props) => {
 
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Charging Information</Typography>
-
-              {/* OLD Departments */}
               <CustomAutoComplete
                 autoComplete
-                name="department_id"
                 control={control}
-                options={departmentData}
-                loading={isDepartmentLoading}
+                name="department_id"
                 disabled={updateRequest && disable}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                getOptionLabel={(option) => option.department_name}
+                options={departmentData}
+                onOpen={() =>
+                  isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
+                }
+                loading={isDepartmentLoading}
+                size="small"
+                getOptionLabel={(option) => option.department_code + " - " + option.department_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
+                    {...params}
                     label="Department"
-                    error={!!errors?.department_id?.message}
+                    error={!!errors?.department_id}
                     helperText={errors?.department_id?.message}
                   />
                 )}
-                fullWidth
                 onChange={(_, value) => {
-                  const Company = departmentData?.map((mapitem) => mapitem?.company);
-                  const companyValue = Company.find((item) => item?.company_id === value.company.company_id);
+                  const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+                  const businessUnitID = businessUnitData?.find(
+                    (item) => item.sync_id === value.business_unit.business_unit_sync_id
+                  );
 
                   if (value) {
-                    setValue("company_id", companyValue?.company_id);
+                    setValue("company_id", companyID);
+                    setValue("business_unit_id", businessUnitID);
                   } else {
                     setValue("company_id", null);
+                    setValue("business_unit_id", null);
                   }
-
+                  setValue("unit_id", null);
                   setValue("subunit_id", null);
                   setValue("location_id", null);
+                  return value;
+                }}
+              />
 
+              <CustomAutoComplete
+                autoComplete
+                name="company_id"
+                control={control}
+                options={companyData}
+                onOpen={() => (isCompanySuccess ? null : company())}
+                loading={isCompanyLoading}
+                size="small"
+                getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+                isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Company"
+                    error={!!errors?.company_id}
+                    helperText={errors?.company_id?.message}
+                  />
+                )}
+                disabled
+              />
+
+              <CustomAutoComplete
+                autoComplete
+                name="business_unit_id"
+                control={control}
+                options={businessUnitData}
+                loading={isBusinessUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+                isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Business Unit"
+                    error={!!errors?.business_unit_id}
+                    helperText={errors?.business_unit_id?.message}
+                  />
+                )}
+                disabled
+              />
+
+              <CustomAutoComplete
+                autoComplete
+                name="unit_id"
+                control={control}
+                disabled={updateRequest && disable}
+                options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
+                onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+                loading={isUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Unit"
+                    error={!!errors?.unit_id}
+                    helperText={errors?.unit_id?.message}
+                  />
+                )}
+                onChange={(_, value) => {
+                  setValue("subunit_id", null);
+                  setValue("location_id", null);
                   return value;
                 }}
               />
@@ -1252,80 +1312,58 @@ const AddRequisition = (props) => {
                 autoComplete
                 name="subunit_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                options={subUnitData?.filter((item) => item?.department?.id === watch("department_id")?.id)}
-                loading={isSubUnitLoading}
                 disabled={updateRequest && disable}
-                getOptionLabel={(option) => option.subunit_name}
+                options={
+                  unitData?.filter((obj) => {
+                    return obj?.id === watch("unit_id")?.id;
+                  })[0]?.subunit || []
+                }
+                loading={isSubUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
-                    label="Subunit"
+                    {...params}
+                    label="Sub Unit"
                     error={!!errors?.subunit_id}
                     helperText={errors?.subunit_id?.message}
                   />
                 )}
               />
 
-              {/* <CustomAutoComplete
-      autoComplete
-      name="company_id"
-      control={control}
-      options={companyData}
-      loading={isCompanyLoading}
-      
-      getOptionLabel={(option) =>
-        option.company_code + " - " + option.company_name
-      }
-      isOptionEqualToValue={(option, value) =>
-        option.company_id === value.company_id
-      }
-      renderInput={(params) => (
-        <TextField
-          color="secondary"
-          {...params}
-          label="Company"
-          error={!!errors?.company_id}
-          helperText={errors?.company_id?.message}
-        />
-      )}
-      // disabled
-    /> */}
-
               <CustomAutoComplete
                 autoComplete
                 name="location_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
+                disabled={updateRequest && disable}
                 options={locationData?.filter((item) => {
-                  return item.departments.some((department) => {
-                    return department?.sync_id === watch("department_id")?.sync_id;
+                  return item.subunit.some((subunit) => {
+                    return subunit?.sync_id === watch("subunit_id")?.sync_id;
                   });
                 })}
                 loading={isLocationLoading}
-                disabled={updateRequest && disable}
+                size="small"
                 getOptionLabel={(option) => option.location_code + " - " + option.location_name}
                 isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
+                    {...params}
                     label="Location"
                     error={!!errors?.location_id}
                     helperText={errors?.location_id?.message}
                   />
                 )}
               />
+
               <CustomAutoComplete
                 name="account_title_id"
                 control={control}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 options={accountTitleData}
+                onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
                 loading={isAccountTitleLoading}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
@@ -1340,13 +1378,11 @@ const AddRequisition = (props) => {
                   />
                 )}
               />
-
               <CustomAutoComplete
                 autoComplete
                 name="accountability"
                 control={control}
                 options={["Personal Issued", "Common"]}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 disabled={updateRequest && disable}
                 isOptionEqualToValue={(option, value) => option === value}
                 renderInput={(params) => (
@@ -1363,17 +1399,16 @@ const AddRequisition = (props) => {
                   return value;
                 }}
               />
-
               {watch("accountability") === "Personal Issued" && (
                 <CustomAutoComplete
                   name="accountable"
                   control={control}
                   includeInputInList
                   disablePortal
-                  // disabled={transactionDataApi[0]?.can_edit === 0}
                   disabled={updateRequest && disable}
                   filterOptions={filterOptions}
                   options={sedarData}
+                  onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
                   loading={isSedarLoading}
                   getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
                   isOptionEqualToValue={(option, value) =>
@@ -1390,19 +1425,6 @@ const AddRequisition = (props) => {
                   )}
                 />
               )}
-              <CustomTextField
-                control={control}
-                name="acquisition_details"
-                label="Acquisition Details"
-                type="text"
-                disabled={updateRequest && disable}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                error={!!errors?.acquisition_details}
-                helperText={errors?.acquisition_details?.message}
-                fullWidth
-                multiline
-              />
             </Box>
 
             <Divider />
@@ -1419,7 +1441,6 @@ const AddRequisition = (props) => {
                 helperText={errors?.asset_description?.message}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
               <CustomTextField
                 control={control}
@@ -1431,7 +1452,17 @@ const AddRequisition = (props) => {
                 helperText={errors?.asset_specification?.message}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
+              />
+
+              <CustomTextField
+                control={control}
+                name="brand"
+                label="Brand"
+                type="text"
+                disabled={updateRequest && disable}
+                error={!!errors?.brand}
+                helperText={errors?.brand?.message}
+                fullWidth
               />
 
               <CustomDatePicker
@@ -1446,17 +1477,6 @@ const AddRequisition = (props) => {
                 reduceAnimations
               />
 
-              <CustomTextField
-                control={control}
-                name="brand"
-                label="Brand"
-                type="text"
-                disabled={updateRequest && disable}
-                error={!!errors?.brand}
-                helperText={errors?.brand?.message}
-                fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-              />
               <CustomNumberField
                 control={control}
                 name="quantity"
@@ -1466,7 +1486,6 @@ const AddRequisition = (props) => {
                 error={!!errors?.quantity}
                 helperText={errors?.quantity?.message}
                 fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 isAllowed={(values) => {
                   const { floatValue } = values;
                   return floatValue >= 1;
@@ -1484,7 +1503,6 @@ const AddRequisition = (props) => {
                 // allowEmptyFormatting
                 valueIsNumericString
                 fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
               <CustomTextField
                 control={control}
@@ -1494,7 +1512,6 @@ const AddRequisition = (props) => {
                 disabled={updateRequest && disable}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
             </Box>
 
@@ -1519,7 +1536,6 @@ const AddRequisition = (props) => {
                     label="Letter of Request"
                     disabled={updateRequest && disable}
                     inputRef={LetterOfRequestRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
 
@@ -1541,7 +1557,6 @@ const AddRequisition = (props) => {
                     label="Quotation"
                     disabled={updateRequest && disable}
                     inputRef={QuotationRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("quotation") !== null && <RemoveFile title="Quotation" value="quotation" />}
@@ -1561,7 +1576,6 @@ const AddRequisition = (props) => {
                     disabled={updateRequest && disable}
                     inputRef={SpecificationRef}
                     updateData={updateRequest}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("specification_form") !== null && (
@@ -1582,7 +1596,6 @@ const AddRequisition = (props) => {
                     label="Tool of Trade"
                     disabled={updateRequest && disable}
                     inputRef={ToolOfTradeRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("tool_of_trade") !== null && <RemoveFile title="Tool of Trade" value="tool_of_trade" />}
@@ -1601,7 +1614,6 @@ const AddRequisition = (props) => {
                     label="Other Attachments"
                     disabled={updateRequest && disable}
                     inputRef={OthersRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("other_attachments") !== null && (
@@ -1631,8 +1643,41 @@ const AddRequisition = (props) => {
     );
   };
 
+  const handleDispatchDetails = () => {
+    if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
+      return dispatch(
+        openConfirm({
+          icon: Warning,
+          iconColor: "alert",
+          message: (
+            <Box>
+              <Typography>Are you sure you want to change</Typography>
+              <Typography
+                sx={{
+                  display: "inline-block",
+                  color: "secondary.main",
+                  fontWeight: "bold",
+                }}
+              >
+                ACQUISITION DETAILS?
+              </Typography>
+              <Typography>it will apply to all Items after clicking {transactionData ? "Update" : "Add"}</Typography>
+            </Box>
+          ),
+
+          onConfirm: () => {
+            dispatch(closeConfirm());
+          },
+          onDismiss: () => {
+            setValue("acquisition_details", updateRequest?.acquisition_details);
+          },
+        })
+      );
+    }
+  };
+
   const handleShowItems = (data) => {
-    data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
+    transactionData && data?.po_number && data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
   };
 
   return (
@@ -1689,6 +1734,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
+                      <TableCell className="tbl-cell">Brand</TableCell>
                       <TableCell className="tbl-cell">Date Needed</TableCell>
 
                       {addRequestAllApi && !transactionDataApi[0]?.po_number && (
@@ -1759,7 +1805,13 @@ const AddRequisition = (props) => {
                                 {`(${data.company?.company_code}) - ${data.company?.company_name}`}
                               </Typography>
                               <Typography fontSize={10} color="gray">
+                                {`(${data.business_unit?.business_unit_code}) - ${data.business_unit?.business_unit_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
                                 {`(${data.department?.department_code}) - ${data.department?.department_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${data.unit?.unit_code}) - ${data.unit?.unit_name}`}
                               </Typography>
                               <Typography fontSize={10} color="gray">
                                 {`(${data.subunit?.subunit_code}) - ${data.subunit?.subunit_name}`}
@@ -1775,10 +1827,10 @@ const AddRequisition = (props) => {
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.accountability === "Personal Issued" ? (
                                 <>
-                                  <Typography fontSize={14}>
+                                  <Typography fontSize={12}>
                                     {data?.accountable?.general_info?.full_id_number || data?.accountable}
                                   </Typography>
-                                  <Typography fontSize={14}>{data?.accountable?.general_info?.full_name}</Typography>
+                                  <Typography fontSize={12}>{data?.accountable?.general_info?.full_name}</Typography>
                                 </>
                               ) : (
                                 "Common"
@@ -1793,7 +1845,9 @@ const AddRequisition = (props) => {
                                 {data.asset_specification}
                               </Typography>
                             </TableCell>
-
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.brand}
+                            </TableCell>
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.date_needed}
                             </TableCell>

@@ -5,7 +5,7 @@ import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import CustomAttachment from "../../../Components/Reusable/CustomAttachment";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
+import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import {
   requestContainerApi,
   useDeleteRequestContainerAllApiMutation,
@@ -58,10 +58,22 @@ import { LoadingButton } from "@mui/lab";
 // RTK
 import { useDispatch, useSelector } from "react-redux";
 import { closeDialog, closeDrawer, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Company";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { useGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Location";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import {
+  useGetCompanyAllApiQuery,
+  useLazyGetCompanyAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import {
+  useGetDepartmentAllApiQuery,
+  useLazyGetDepartmentAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import {
+  useGetLocationAllApiQuery,
+  useLazyGetLocationAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import {
+  useGetAccountTitleAllApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
+} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
 import {
   useGetByTransactionApiQuery,
   usePostRequisitionApiMutation,
@@ -71,10 +83,16 @@ import {
   useGetByTransactionPageApiQuery,
 } from "../../../Redux/Query/Request/Requisition";
 
-import { useGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
+import {
+  useGetTypeOfRequestAllApiQuery,
+  useLazyGetTypeOfRequestAllApiQuery,
+} from "../../../Redux/Query/Masterlist/TypeOfRequest";
 import { useLocation, useNavigate } from "react-router-dom";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
-import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/SubUnit";
+import {
+  useGetSubUnitAllApiQuery,
+  useLazyGetSubUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import {
   useGetRequestContainerAllApiQuery,
@@ -88,9 +106,14 @@ import CustomPatternField from "../../../Components/Reusable/CustomPatternField"
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 import ErrorFetching from "../../ErrorFetching";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
-import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
+import {
+  useGetFixedAssetAllApiQuery,
+  useLazyGetFixedAssetAllApiQuery,
+} from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
+import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
+import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -103,8 +126,10 @@ const schema = yup.object().shape({
   type_of_request_id: yup.object().required().label("Type of Request").typeError("Type of Request is a required field"),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
 
-  //   company_id: yup.object().label("Company"),
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
+  company_id: yup.object().required().label("Company").typeError("Company is a required field"),
+  business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
+  unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
   account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
@@ -116,10 +141,11 @@ const schema = yup.object().shape({
       is: (value) => value === "Personal Issued",
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
-  acquisition_details: yup.string().required().label("Acquisition Details"),
 
+  acquisition_details: yup.string().required().label("Acquisition Details"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
+  date_needed: yup.date().typeError("Date Needed is a required field"),
   brand: yup.string().required().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
@@ -132,23 +158,25 @@ const schema = yup.object().shape({
   other_attachments: yup.mixed().label("Other Attachment"),
 });
 
-const AddRequisition = (props) => {
+const AdditionalCostRequest = (props) => {
   const [updateRequest, setUpdateRequest] = useState({
     id: null,
     fixed_asset_id: null,
     type_of_request_id: null,
     attachment_type: null,
 
-    company_id: null,
     department_id: null,
+    company_id: null,
+    business_unit_id: null,
+    unit_id: null,
     subunit_id: null,
     location_id: null,
     account_title_id: null,
 
     asset_description: "",
     asset_specification: "",
-    date_needed: null,
     brand: "",
+    date_needed: null,
     accountability: null,
     accountable: null,
     cellphone_number: "",
@@ -217,51 +245,98 @@ const AddRequisition = (props) => {
     { data: smsData, isLoading: isSmsLoading, isSuccess: isSmsSuccess, isError: isSmsError, error: smsError },
   ] = usePostRequisitionSmsApiMutation();
 
-  const {
-    data: typeOfRequestData = [],
-    isLoading: isTypeOfRequestLoading,
-    isSuccess: isTypeOfRequestSuccess,
-    isError: isTypeOfRequestError,
-    refetch: isTypeOfRequestRefetch,
-  } = useGetTypeOfRequestAllApiQuery();
+  const [
+    typeOfRequestTrigger,
+    {
+      data: typeOfRequestData = [],
+      isLoading: isTypeOfRequestLoading,
+      isSuccess: isTypeOfRequestSuccess,
+      isError: isTypeOfRequestError,
+      refetch: isTypeOfRequestRefetch,
+    },
+  ] = useLazyGetTypeOfRequestAllApiQuery();
 
-  const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-    refetch: isDepartmentRefetch,
-  } = useGetDepartmentAllApiQuery();
+  const [
+    companyTrigger,
+    {
+      data: companyData = [],
+      isLoading: isCompanyLoading,
+      isSuccess: isCompanySuccess,
+      isError: isCompanyError,
+      refetch: isCompanyRefetch,
+    },
+  ] = useLazyGetCompanyAllApiQuery();
 
-  const {
-    data: subUnitData = [],
-    isLoading: isSubUnitLoading,
-    isSuccess: isSubUnitSuccess,
-    isError: isSubUnitError,
-  } = useGetSubUnitAllApiQuery();
+  const [
+    businessUnitTrigger,
+    {
+      data: businessUnitData = [],
+      isLoading: isBusinessUnitLoading,
+      isSuccess: isBusinessUnitSuccess,
+      isError: isBusinessUnitError,
+      refetch: isBusinessUnitRefetch,
+    },
+  ] = useLazyGetBusinessUnitAllApiQuery();
 
-  const {
-    data: locationData = [],
-    isLoading: isLocationLoading,
-    isSuccess: isLocationSuccess,
-    isError: isLocationError,
-    refetch: isLocationRefetch,
-  } = useGetLocationAllApiQuery();
+  const [
+    departmentTrigger,
+    {
+      data: departmentData = [],
+      isLoading: isDepartmentLoading,
+      isSuccess: isDepartmentSuccess,
+      isError: isDepartmentError,
+      refetch: isDepartmentRefetch,
+    },
+  ] = useLazyGetDepartmentAllApiQuery();
 
-  const {
-    data: accountTitleData = [],
-    isLoading: isAccountTitleLoading,
-    isSuccess: isAccountTitleSuccess,
-    isError: isAccountTitleError,
-    refetch: isAccountTitleRefetch,
-  } = useGetAccountTitleAllApiQuery();
+  const [
+    unitTrigger,
+    {
+      data: unitData = [],
+      isLoading: isUnitLoading,
+      isSuccess: isUnitSuccess,
+      isError: isUnitError,
+      refetch: isUnitRefetch,
+    },
+  ] = useLazyGetUnitAllApiQuery();
 
-  const {
-    data: sedarData = [],
-    isLoading: isSedarLoading,
-    isSuccess: isSedarSuccess,
-    isError: isSedarError,
-  } = useGetSedarUsersApiQuery();
+  const [
+    subunitTrigger,
+    {
+      data: subUnitData = [],
+      isLoading: isSubUnitLoading,
+      isSuccess: isSubUnitSuccess,
+      isError: isSubUnitError,
+      refetch: isSubUnitRefetch,
+    },
+  ] = useLazyGetSubUnitAllApiQuery();
+
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      refetch: isLocationRefetch,
+    },
+  ] = useLazyGetLocationAllApiQuery();
+
+  const [
+    accountTitleTrigger,
+    {
+      data: accountTitleData = [],
+      isLoading: isAccountTitleLoading,
+      isSuccess: isAccountTitleSuccess,
+      isError: isAccountTitleError,
+      refetch: isAccountTitleRefetch,
+    },
+  ] = useLazyGetAccountTitleAllApiQuery();
+
+  const [
+    sedarTrigger,
+    { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
+  ] = useLazyGetSedarUsersApiQuery();
 
   const {
     data: addRequestAllApi = [],
@@ -284,15 +359,16 @@ const AddRequisition = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const {
-    data: vTagNumberData = [],
-    isLoading: isVTagNumberLoading,
-    isSuccess: isVTagNumberSuccess,
-    isError: isVTagNumberError,
-    error: vTagNumberError,
-  } = useGetFixedAssetAllApiQuery();
-
-  // console.log("vtagnumber", vTagNumberData);
+  const [
+    fixedAssetTrigger,
+    {
+      data: vTagNumberData = [],
+      isLoading: isVTagNumberLoading,
+      isSuccess: isVTagNumberSuccess,
+      isError: isVTagNumberError,
+      error: vTagNumberError,
+    },
+  ] = useLazyGetFixedAssetAllApiQuery();
 
   const [postRequest, { data: postRequestData }] = usePostRequestContainerApiMutation();
   const [upDateRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
@@ -318,8 +394,10 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       attachment_type: null,
 
-      company_id: null,
       department_id: null,
+      company_id: null,
+      business_unit_id: null,
+      unit_id: null,
       subunit_id: null,
       location_id: null,
       account_title_id: null,
@@ -343,29 +421,26 @@ const AddRequisition = (props) => {
     },
   });
 
-  // console.log(addRequestAllApi?.data);
-
   useEffect(() => {
-    if (isPostError) {
-      if (postError?.status === 422) {
-        dispatch(
-          openToast({
-            message: postError?.data?.errors.detail || postError?.data?.errors.pr_number[0],
-            duration: 5000,
-            variant: "error",
-          })
-        );
-      } else {
-        dispatch(
-          openToast({
-            message: "Something went wrong. Please try again.",
-            duration: 5000,
-            variant: "error",
-          })
-        );
-      }
+    const errorData = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
+
+    if (errorData) {
+      const errors = (postError?.data || updateError?.data)?.errors || {};
+      Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
     }
-  }, [isPostError]);
+
+    const showToast = () => {
+      dispatch(
+        openToast({
+          message: postError?.data?.errors.detail || Object.entries(postError?.data?.errors).at(0).at(1).at(0),
+          duration: 5000,
+          variant: "error",
+        })
+      );
+    };
+
+    errorData && showToast();
+  }, [isPostError, isUpdateError]);
 
   useEffect(() => {
     if (transactionData?.additionalCost) {
@@ -383,9 +458,12 @@ const AddRequisition = (props) => {
       const dateNeededFormat = new Date(updateRequest.date_needed);
       setValue("fixed_asset_id", updateRequest?.fixed_asset_id);
       setValue("type_of_request_id", updateRequest?.type_of_request);
+      setValue("acquisition_details", updateRequest?.acquisition_details);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("department_id", updateRequest?.department);
-      setValue("company_id", updateRequest?.company?.id);
+      setValue("company_id", updateRequest?.company);
+      setValue("business_unit_id", updateRequest?.business_unit);
+      setValue("unit_id", updateRequest?.unit);
       setValue("subunit_id", updateRequest?.subunit);
       setValue("location_id", updateRequest?.location);
       setValue("account_title_id", updateRequest?.account_title);
@@ -396,14 +474,16 @@ const AddRequisition = (props) => {
           full_id_number_full_name: updateRequest.accountable,
         },
       });
-      setValue("acquisition_details", updateRequest?.acquisition_details);
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
       setValue("asset_specification", updateRequest?.asset_specification);
-      setValue("date_needed", updateRequest.date_needed === "-" ? null : dateNeededFormat);
+      setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
       setValue("brand", updateRequest?.brand);
-      setValue("cellphone_number", updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number);
+      setValue(
+        "cellphone_number",
+        updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2)
+      );
       setValue("additional_info", updateRequest?.additional_info);
       // ATTACHMENTS
       setValue("letter_of_request", updateRequest?.letter_of_request === "-" ? "" : updateRequest?.letter_of_request);
@@ -449,6 +529,22 @@ const AddRequisition = (props) => {
     dispatch(closeDrawer());
   };
 
+  const attachmentValidation = (fieldName, formData) => {
+    const validate = transactionDataApi.find((item) => item.id === updateRequest.id);
+
+    if (watch(`${fieldName}`) === null) {
+      return "";
+    } else if (updateRequest[fieldName] !== null)
+      if (validate?.attachments?.[fieldName]?.file_name === updateRequest?.[fieldName]?.file_name) {
+        return "x";
+      } else {
+        return formData?.[fieldName];
+      }
+    else {
+      return formData?.[fieldName];
+    }
+  };
+
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
@@ -459,87 +555,34 @@ const AddRequisition = (props) => {
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
-      company_id:
-        // formData?.company_id?.id,
-        updateRequest
-          ? // ? formData?.company_id || formData?.company_id?.id
-            formData?.company_id?.id || formData?.company_id
-          : formData?.company_id?.company?.company_id?.id.toString() ||
-            formData?.company_id?.company?.company_id.toString(),
+      company_id: updateRequest ? formData?.company_id.id : formData?.company_id?.company?.id.toString(),
+      business_unit_id: updateRequest
+        ? formData?.business_unit_id.id
+        : formData?.business_unit_id?.business_unit?.id.toString(),
+      unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
       account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable:
         formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
-      acquisition_details: formData?.acquisition_details?.toString(),
 
+      acquisition_details: formData?.acquisition_details?.toString(),
       asset_description: formData?.asset_description?.toString(),
       asset_specification: formData?.asset_specification?.toString(),
       date_needed: moment(new Date(formData.date_needed)).format("YYYY-MM-DD"),
-      cellphone_number: formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number?.toString(),
+      cellphone_number: formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number.toString(),
 
       brand: formData?.brand?.toString(),
       quantity: formData?.quantity?.toString(),
       additional_info: formData?.additional_info?.toString(),
 
-      letter_of_request:
-        updateRequest &&
-        (watch("letter_of_request") === null
-          ? ""
-          : updateRequest.letter_of_request !== null
-          ? transactionDataApi[0]?.attachments?.letter_of_request?.file_name ===
-            updateRequest?.letter_of_request?.file_name
-            ? "x"
-            : formData.letter_of_request
-          : formData.letter_of_request),
+      letter_of_request: updateRequest && attachmentValidation("letter_of_request", formData),
 
-      quotation:
-        updateRequest && watch("quotation") === null
-          ? ""
-          : updateRequest.quotation !== null
-          ? transactionDataApi[0]?.attachments?.quotation?.file_name === updateRequest?.quotation?.file_name
-            ? "x"
-            : formData.quotation
-          : formData.quotation,
-
-      specification_form:
-        updateRequest && watch("specification_form") === null
-          ? ""
-          : updateRequest.specification_form !== null
-          ? transactionDataApi[0]?.attachments?.specification_form?.file_name ===
-            updateRequest?.specification_form?.file_name
-            ? "x"
-            : formData.specification_form
-          : formData.specification_form,
-
-      tool_of_trade:
-        updateRequest && watch("tool_of_trade") === null
-          ? ""
-          : updateRequest.tool_of_trade !== null
-          ? transactionDataApi[0]?.attachments?.tool_of_trade?.file_name === updateRequest?.tool_of_trade?.file_name
-            ? "x"
-            : formData.tool_of_trade
-          : formData.tool_of_trade,
-
-      other_attachments:
-        updateRequest && watch("other_attachments") === null
-          ? ""
-          : updateRequest.other_attachments !== null
-          ? transactionDataApi[0]?.attachments?.other_attachments?.file_name ===
-            updateRequest?.other_attachments?.file_name
-            ? "x"
-            : formData.other_attachments
-          : formData.other_attachments,
-
-      // // (watch("other_attachments") === null
-      // //   ? ""
-      // //   : updateRequest.other_attachments !== null
-      // //   ? transactionDataApi[0]?.attachments?.other_attachments?.file_name ===
-      // //     updateRequest?.other_attachments?.file_name
-      // //     ? "x"
-      // //     : formData.other_attachments
-      // //   : formData.other_attachments),
+      quotation: updateRequest && attachmentValidation("quotation", formData),
+      specification_form: updateRequest && attachmentValidation("specification_form", formData),
+      tool_of_trade: updateRequest && attachmentValidation("tool_of_trade", formData),
+      other_attachments: updateRequest && attachmentValidation("other_attachments", formData),
     };
 
     // console.log("data", data);
@@ -547,7 +590,6 @@ const AddRequisition = (props) => {
     const payload = new FormData();
     Object.entries(data).forEach((item) => {
       const [name, value] = item;
-
       payload.append(name, value);
     });
 
@@ -576,39 +618,52 @@ const AddRequisition = (props) => {
               duration: 5000,
             })
           );
-        })
-        .then(() => {
-          transactionData ? setDisable(true) : setDisable(false);
-          setUpdateToggle(true);
-          isTransactionRefetch();
-          dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
-
+          setIsLoading(false);
           transactionData
             ? reset()
             : reset({
-                fixed_asset_id: formData?.fixed_asset_id,
                 type_of_request_id: formData?.type_of_request_id,
                 attachment_type: formData?.attachment_type,
+
                 company_id: formData?.company_id,
+                business_unit_id: formData?.business_unit_id,
                 department_id: formData?.department_id,
+                unit_id: formData?.unit_id,
                 subunit_id: formData?.subunit_id,
                 location_id: formData?.location_id,
                 account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
+
+                asset_description: "",
+                asset_specification: "",
+                brand: "",
+                date_needed: null,
+                accountability: null,
+                accountable: null,
+                cellphone_number: "",
+                quantity: 1,
+                additional_info: "",
+
                 letter_of_request: null,
                 quotation: null,
                 specification_form: null,
                 tool_of_trade: null,
                 other_attachments: null,
               });
-          // setShowEdit(false)
+        })
+        .then(() => {
+          transactionData ? setDisable(true) : setDisable(false);
+          setUpdateToggle(true);
+          isTransactionRefetch();
+          dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
         })
         .catch((err) => {
-          // console.log(err);
+          console.log(err);
           setIsLoading(false);
           dispatch(
             openToast({
               message:
+                Object.entries(err?.response?.data?.errors).at(0).at(1).at(0) ||
                 err?.response?.data?.errors?.detail ||
                 err?.response?.data?.errors[0]?.detail ||
                 err?.response?.data?.message,
@@ -616,63 +671,42 @@ const AddRequisition = (props) => {
               variant: "error",
             })
           );
-        })
-        .finally(() => {
-          setIsLoading(false);
-          // updateRequest
-          //   ? reset()
-          //   :
-          // reset({
-          //   company_id: formData?.company_id,
-          //   department_id: formData?.department_id,
-          //   subunit_id: formData?.subunit_id,
-          //   location_id: formData?.location_id,
-          //   account_title_id: formData?.account_title_id,
-          //   acquisition_details: formData?.acquisition_details,
-          //   letter_of_request: null,
-          //   quotation: null,
-          //   specification_form: null,
-          //   tool_of_trade: null,
-          //   other_attachments: null,
-          // });
         });
     };
 
     const validation = () => {
       if (transactionData) {
-        // console.log("UPDATE trigger");
         if (transactionDataApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          // console.log("change the department");
+          return true;
+        }
+        if (transactionDataApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
           return true;
         }
         if (transactionDataApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          // console.log("change the subunit");
           return true;
         }
         if (transactionDataApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          // console.log("change the location");
           return true;
         }
         return false;
       } else {
-        console.log("ADD trigger");
         if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          // console.log("change the department");
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
           return true;
         }
         if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          // console.log("change the subunit");
           return true;
         }
         if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          // console.log("change the location");
           return true;
         }
         return false;
       }
     };
 
-    const addConfirmation = () => {
+    const addCoaConfirmation = () => {
       dispatch(
         openConfirm({
           icon: Warning,
@@ -702,26 +736,26 @@ const AddRequisition = (props) => {
       );
     };
 
-    // transactionData
-    //   ? validation()
-    //     ? addConfirmation()
-    //     : submitData()
-    //   : addRequestAllApi?.data.length === 0
-    //   ? console.log("submit update") && submitData()
-    //   : validation()
-    //   ? addConfirmation()
-    //   : console.log("submit add") && submitData();
-
-    transactionData // check if update
-      ? validation() // if update check validation
-        ? addConfirmation() // if validation is true show confirmation
-        : submitData() // else submit the update
+    transactionData
+      ? validation()
+        ? addCoaConfirmation()
+        : submitData()
       : addRequestAllApi?.data.length === 0
       ? submitData()
       : validation()
-      ? addConfirmation()
+      ? addCoaConfirmation()
       : submitData();
     // : console.log("submit add") && submitData();
+
+    // transactionData
+    // ? validation()
+    //   ? addConfirmation()
+    //   : submitData()
+    // : addRequestAllApi?.data.length === 0
+    // ? submitData()
+    // : validation()
+    // ? addConfirmation()
+    // : submitData();
   };
 
   const onSubmitHandler = () => {
@@ -751,17 +785,27 @@ const AddRequisition = (props) => {
             if (transactionData) {
               if (transactionDataApi[0]?.can_resubmit === 0) {
                 const res = await resubmitRequest(...transactionDataApi).unwrap();
-                // console.log(res?.message);
 
+                dispatch(
+                  openToast({
+                    message: "Successfully Resubmitted",
+                    duration: 5000,
+                  })
+                );
                 navigate(-1);
                 deleteAllRequest();
               } else if (transactionDataApi[0]?.can_resubmit === 1) {
-                resubmitRequest({
+                const res = await resubmitRequest({
                   transaction_number: transactionData?.transaction_number,
                   ...transactionDataApi,
                 });
+                dispatch(
+                  openToast({
+                    message: "Successfully Resubmitted",
+                    duration: 5000,
+                  })
+                );
                 navigate(-1);
-
                 return;
               }
             } else {
@@ -842,26 +886,62 @@ const AddRequisition = (props) => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            let result = await deleteRequest(id).unwrap();
+            if (transactionData) {
+              if (transactionDataApi[0]?.can_resubmit === 0) {
+                const res = await resubmitRequest(...transactionDataApi).unwrap();
+                console.log(res?.message);
 
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            dispatch(closeConfirm());
+                navigate(-1);
+                deleteAllRequest();
+              } else if (transactionDataApi[0]?.can_resubmit === 1) {
+                resubmitRequest({
+                  transaction_number: transactionData?.transaction_number,
+                  ...transactionDataApi,
+                });
+                navigate(-1);
+
+                return;
+              }
+            } else {
+              const res = await postRequisition(addRequestAllApi).unwrap();
+              console.log(res?.message);
+              deleteAllRequest();
+              reset({
+                letter_of_request: null,
+                quotation: null,
+                specification_form: null,
+                tool_of_trade: null,
+                other_attachments: null,
+              });
+
+              dispatch(
+                openToast({
+                  message: res?.message,
+                  duration: 5000,
+                })
+              );
+            }
+
+            const smsData = {
+              system_name: "Vladimir",
+              message: "You have a pending approval",
+              mobile_number: "+639913117181",
+            };
+
+            postRequestSms(smsData);
           } catch (err) {
             console.log(err);
             if (err?.status === 422) {
               dispatch(
                 openToast({
-                  message: err.data.message,
+                  message: err?.data?.errors?.detail || err.data.message,
                   duration: 5000,
                   variant: "error",
                 })
               );
             } else if (err?.status !== 422) {
+              console.error(err);
+
               dispatch(
                 openToast({
                   message: "Something went wrong. Please try again.",
@@ -1007,13 +1087,17 @@ const AddRequisition = (props) => {
       fixed_asset,
       type_of_request,
       attachment_type,
+
       department,
       company,
+      business_unit,
+      unit,
       subunit,
       location,
       account_title,
       accountability,
       accountable,
+
       acquisition_details,
       asset_description,
       asset_specification,
@@ -1031,8 +1115,11 @@ const AddRequisition = (props) => {
       reference_number,
       type_of_request,
       attachment_type,
+
       department,
       company,
+      business_unit,
+      unit,
       subunit,
       location,
       account_title,
@@ -1064,7 +1151,9 @@ const AddRequisition = (props) => {
       attachment_type: null,
 
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
       subunit_id: null,
       location_id: null,
       account_title_id: null,
@@ -1117,6 +1206,7 @@ const AddRequisition = (props) => {
                 control={control}
                 name="fixed_asset_id"
                 options={vTagNumberData}
+                onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
                 loading={isVTagNumberLoading}
                 disabled={updateRequest || addRequestAllApi?.data === 0 ? disable : false}
                 size="small"
@@ -1133,16 +1223,37 @@ const AddRequisition = (props) => {
                   />
                 )}
                 onChange={(_, value) => {
-                  setValue("type_of_request_id", value?.type_of_request);
-                  setValue("attachment_type", value?.attachment_type);
-                  setValue("department_id", value?.department);
-                  setValue("company_id", value?.company);
-                  setValue("subunit_id", value?.subunit);
-                  setValue("location_id", value?.location);
-                  setValue("account_title_id", value?.account_title);
-                  setValue("accountability", value?.accountability);
-                  value?.accountability !== "Common" && setValue("accountable", value?.accountable);
-
+                  if (value) {
+                    setValue("type_of_request_id", value?.type_of_request);
+                    setValue("attachment_type", value?.attachment_type);
+                    setValue("department_id", value?.department);
+                    setValue("company_id", value?.company);
+                    setValue("business_unit_id", value?.business_unit);
+                    setValue("unit_id", value?.unit);
+                    setValue("subunit_id", value?.subunit);
+                    setValue("location_id", value?.location);
+                    setValue("account_title_id", value?.account_title);
+                    setValue("accountability", value?.accountability);
+                    value.accountability === "Personal Issued" &&
+                      setValue("accountable", {
+                        general_info: {
+                          full_id_number: value.accountable.split(" ")[0],
+                          full_id_number_full_name: value.accountable,
+                        },
+                      });
+                  } else {
+                    setValue("type_of_request_id", null);
+                    setValue("attachment_type", null);
+                    setValue("department_id", null);
+                    setValue("company_id", null);
+                    setValue("business_unit_id", null);
+                    setValue("unit_id", null);
+                    setValue("subunit_id", null);
+                    setValue("location_id", null);
+                    setValue("account_title_id", null);
+                    setValue("accountability", null);
+                    setValue("accountable", null);
+                  }
                   // console.log("value", value);
                   return value;
                 }}
@@ -1152,9 +1263,9 @@ const AddRequisition = (props) => {
                 control={control}
                 name="type_of_request_id"
                 options={typeOfRequestData}
+                onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
                 loading={isTypeOfRequestLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.type_of_request_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1174,7 +1285,6 @@ const AddRequisition = (props) => {
                 name="attachment_type"
                 options={attachmentType}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
 
                 disabled={updateRequest && disable}
                 renderInput={(params) => (
@@ -1187,48 +1297,134 @@ const AddRequisition = (props) => {
                   />
                 )}
               />
+
+              <CustomTextField
+                control={control}
+                name="acquisition_details"
+                label="Acquisition Details"
+                type="text"
+                disabled={updateRequest && disable}
+                onBlur={() => handleDispatchDetails()}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                error={!!errors?.acquisition_details}
+                helperText={errors?.acquisition_details?.message}
+                fullWidth
+                multiline
+              />
             </Box>
 
             <Divider />
 
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Charging Information</Typography>
-
-              {/* OLD Departments */}
               <CustomAutoComplete
                 autoComplete
-                name="department_id"
                 control={control}
-                options={departmentData}
-                loading={isDepartmentLoading}
+                name="department_id"
                 disabled={updateRequest && disable}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                getOptionLabel={(option) => option.department_name}
+                options={departmentData}
+                onOpen={() =>
+                  isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
+                }
+                loading={isDepartmentLoading}
+                size="small"
+                getOptionLabel={(option) => option.department_code + " - " + option.department_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
+                    {...params}
                     label="Department"
-                    error={!!errors?.department_id?.message}
+                    error={!!errors?.department_id}
                     helperText={errors?.department_id?.message}
                   />
                 )}
-                fullWidth
                 onChange={(_, value) => {
-                  const Company = departmentData?.map((mapitem) => mapitem?.company);
-                  const companyValue = Company.find((item) => item?.company_id === value.company.company_id);
+                  const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+                  const businessUnitID = businessUnitData?.find(
+                    (item) => item.sync_id === value.business_unit.business_unit_sync_id
+                  );
 
                   if (value) {
-                    setValue("company_id", companyValue?.company_id || companyValue?.company_id?.id);
+                    setValue("company_id", companyID);
+                    setValue("business_unit_id", businessUnitID);
                   } else {
                     setValue("company_id", null);
+                    setValue("business_unit_id", null);
                   }
-
+                  setValue("unit_id", null);
                   setValue("subunit_id", null);
                   setValue("location_id", null);
+                  return value;
+                }}
+              />
 
+              <CustomAutoComplete
+                autoComplete
+                name="company_id"
+                control={control}
+                options={companyData}
+                onOpen={() => (isCompanySuccess ? null : company())}
+                loading={isCompanyLoading}
+                size="small"
+                getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+                isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Company"
+                    error={!!errors?.company_id}
+                    helperText={errors?.company_id?.message}
+                  />
+                )}
+                disabled
+              />
+
+              <CustomAutoComplete
+                autoComplete
+                name="business_unit_id"
+                control={control}
+                options={businessUnitData}
+                loading={isBusinessUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+                isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Business Unit"
+                    error={!!errors?.business_unit_id}
+                    helperText={errors?.business_unit_id?.message}
+                  />
+                )}
+                disabled
+              />
+
+              <CustomAutoComplete
+                autoComplete
+                name="unit_id"
+                control={control}
+                disabled={updateRequest && disable}
+                options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
+                onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+                loading={isUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Unit"
+                    error={!!errors?.unit_id}
+                    helperText={errors?.unit_id?.message}
+                  />
+                )}
+                onChange={(_, value) => {
+                  setValue("subunit_id", null);
+                  setValue("location_id", null);
                   return value;
                 }}
               />
@@ -1237,18 +1433,21 @@ const AddRequisition = (props) => {
                 autoComplete
                 name="subunit_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                options={subUnitData?.filter((item) => item?.department?.id === watch("department_id")?.id)}
-                loading={isSubUnitLoading}
                 disabled={updateRequest && disable}
-                getOptionLabel={(option) => option.subunit_name}
+                options={
+                  unitData?.filter((obj) => {
+                    return obj?.id === watch("unit_id")?.id;
+                  })[0]?.subunit || []
+                }
+                loading={isSubUnitLoading}
+                size="small"
+                getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
-                    label="Subunit"
+                    {...params}
+                    label="Sub Unit"
                     error={!!errors?.subunit_id}
                     helperText={errors?.subunit_id?.message}
                   />
@@ -1259,33 +1458,33 @@ const AddRequisition = (props) => {
                 autoComplete
                 name="location_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
+                disabled={updateRequest && disable}
                 options={locationData?.filter((item) => {
-                  return item.departments.some((department) => {
-                    return department?.sync_id === watch("department_id")?.sync_id;
+                  return item.subunit.some((subunit) => {
+                    return subunit?.sync_id === watch("subunit_id")?.sync_id;
                   });
                 })}
                 loading={isLocationLoading}
-                disabled={updateRequest && disable}
+                size="small"
                 getOptionLabel={(option) => option.location_code + " - " + option.location_name}
                 isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
                 renderInput={(params) => (
                   <TextField
-                    {...params}
                     color="secondary"
+                    {...params}
                     label="Location"
                     error={!!errors?.location_id}
                     helperText={errors?.location_id?.message}
                   />
                 )}
               />
+
               <CustomAutoComplete
                 name="account_title_id"
                 control={control}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 options={accountTitleData}
+                onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
                 loading={isAccountTitleLoading}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
@@ -1300,13 +1499,11 @@ const AddRequisition = (props) => {
                   />
                 )}
               />
-
               <CustomAutoComplete
                 autoComplete
                 name="accountability"
                 control={control}
                 options={["Personal Issued", "Common"]}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
                 disabled={updateRequest && disable}
                 isOptionEqualToValue={(option, value) => option === value}
                 renderInput={(params) => (
@@ -1323,49 +1520,32 @@ const AddRequisition = (props) => {
                   return value;
                 }}
               />
-
               {watch("accountability") === "Personal Issued" && (
                 <CustomAutoComplete
                   name="accountable"
                   control={control}
-                  size="small"
                   includeInputInList
                   disablePortal
+                  disabled={updateRequest && disable}
                   filterOptions={filterOptions}
                   options={sedarData}
+                  onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
                   loading={isSedarLoading}
-                  getOptionLabel={
-                    (option) => option.general_info?.full_id_number_full_name
-                    // `(${option.general_info?.full_id_number}) - ${option.general_info?.full_name}`
-                  }
+                  getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
                   isOptionEqualToValue={(option, value) =>
                     option.general_info?.full_id_number === value.general_info?.full_id_number
                   }
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Accountable"
                       color="secondary"
+                      label="Accountable"
                       error={!!errors?.accountable?.message}
                       helperText={errors?.accountable?.message}
                     />
                   )}
                 />
               )}
-
-              <CustomTextField
-                control={control}
-                name="acquisition_details"
-                label="Acquisition Details"
-                type="text"
-                disabled={updateRequest && disable}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                error={!!errors?.acquisition_details}
-                helperText={errors?.acquisition_details?.message}
-                fullWidth
-                multiline
-              />
             </Box>
 
             <Divider />
@@ -1382,7 +1562,6 @@ const AddRequisition = (props) => {
                 helperText={errors?.asset_description?.message}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
               <CustomTextField
                 control={control}
@@ -1394,7 +1573,17 @@ const AddRequisition = (props) => {
                 helperText={errors?.asset_specification?.message}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
+              />
+
+              <CustomTextField
+                control={control}
+                name="brand"
+                label="Brand"
+                type="text"
+                disabled={updateRequest && disable}
+                error={!!errors?.brand}
+                helperText={errors?.brand?.message}
+                fullWidth
               />
 
               <CustomDatePicker
@@ -1409,17 +1598,6 @@ const AddRequisition = (props) => {
                 reduceAnimations
               />
 
-              <CustomTextField
-                control={control}
-                name="brand"
-                label="Brand"
-                type="text"
-                disabled={updateRequest && disable}
-                error={!!errors?.brand}
-                helperText={errors?.brand?.message}
-                fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-              />
               <CustomNumberField
                 control={control}
                 name="quantity"
@@ -1429,11 +1607,10 @@ const AddRequisition = (props) => {
                 error={!!errors?.quantity}
                 helperText={errors?.quantity?.message}
                 fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
-                // isAllowed={(values) => {
-                //   const { floatValue } = values;
-                //   return floatValue >= 1;
-                // }}
+                isAllowed={(values) => {
+                  const { floatValue } = values;
+                  return floatValue >= 1;
+                }}
               />
               <CustomPatternField
                 control={control}
@@ -1447,7 +1624,6 @@ const AddRequisition = (props) => {
                 // allowEmptyFormatting
                 valueIsNumericString
                 fullWidth
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
               <CustomTextField
                 control={control}
@@ -1457,7 +1633,6 @@ const AddRequisition = (props) => {
                 disabled={updateRequest && disable}
                 fullWidth
                 multiline
-                // disabled={transactionDataApi[0]?.can_edit === 0}
               />
             </Box>
 
@@ -1482,7 +1657,6 @@ const AddRequisition = (props) => {
                     label="Letter of Request"
                     disabled={updateRequest && disable}
                     inputRef={LetterOfRequestRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
 
@@ -1504,7 +1678,6 @@ const AddRequisition = (props) => {
                     label="Quotation"
                     disabled={updateRequest && disable}
                     inputRef={QuotationRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("quotation") !== null && <RemoveFile title="Quotation" value="quotation" />}
@@ -1524,7 +1697,6 @@ const AddRequisition = (props) => {
                     disabled={updateRequest && disable}
                     inputRef={SpecificationRef}
                     updateData={updateRequest}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("specification_form") !== null && (
@@ -1545,7 +1717,6 @@ const AddRequisition = (props) => {
                     label="Tool of Trade"
                     disabled={updateRequest && disable}
                     inputRef={ToolOfTradeRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("tool_of_trade") !== null && <RemoveFile title="Tool of Trade" value="tool_of_trade" />}
@@ -1564,7 +1735,6 @@ const AddRequisition = (props) => {
                     label="Other Attachments"
                     disabled={updateRequest && disable}
                     inputRef={OthersRef}
-                    // disabled={transactionDataApi[0]?.can_edit === 0}
                   />
                 )}
                 {watch("other_attachments") !== null && (
@@ -1587,17 +1757,48 @@ const AddRequisition = (props) => {
           fullWidth
           sx={{ gap: 1 }}
         >
-          {transactionData ? <Update /> : <AddToPhotos />}{" "}
-          <Typography variant="p">{transactionData ? "UPDATE" : "ADD"}</Typography>
+          {transactionData ? <Update /> : <AddToPhotos />} <Typography>{transactionData ? "UPDATE" : "ADD"}</Typography>
         </LoadingButton>
         <Divider orientation="vertical" />
       </Box>
     );
   };
 
+  const handleDispatchDetails = () => {
+    if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
+      return dispatch(
+        openConfirm({
+          icon: Warning,
+          iconColor: "alert",
+          message: (
+            <Box>
+              <Typography>Are you sure you want to change</Typography>
+              <Typography
+                sx={{
+                  display: "inline-block",
+                  color: "secondary.main",
+                  fontWeight: "bold",
+                }}
+              >
+                ACQUISITION DETAILS?
+              </Typography>
+              <Typography>it will apply to all Items after clicking {transactionData ? "Update" : "Add"}</Typography>
+            </Box>
+          ),
+
+          onConfirm: () => {
+            dispatch(closeConfirm());
+          },
+          onDismiss: () => {
+            setValue("acquisition_details", updateRequest?.acquisition_details);
+          },
+        })
+      );
+    }
+  };
+
   const handleShowItems = (data) => {
-    dispatch(openDialog());
-    setItemData(data);
+    transactionData && data?.po_number && data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
   };
 
   const filterOptions = createFilterOptions({
@@ -1619,11 +1820,6 @@ const AddRequisition = (props) => {
     width: "100%",
     pb: "10px",
   };
-
-  // console.log(transactionDataApi);
-  // console.log("watch", watch("fixed_asset_id"));
-
-  console.log(errors);
 
   return (
     <>
@@ -1679,6 +1875,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
+                      <TableCell className="tbl-cell">Brand</TableCell>
                       <TableCell className="tbl-cell">Date Needed</TableCell>
 
                       {addRequestAllApi && !transactionDataApi[0]?.po_number && (
@@ -1706,7 +1903,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Cellphone #</TableCell>
                       <TableCell className="tbl-cell">Additional Info.</TableCell>
                       <TableCell className="tbl-cell">Attachments</TableCell>
-                      {transactionDataApi[0]?.is_removed === 1 && <TableCell className="tbl-cell">Action</TableCell>}
+                      <TableCell className="tbl-cell">Action</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -1755,7 +1952,13 @@ const AddRequisition = (props) => {
                                 {`(${data.company?.company_code}) - ${data.company?.company_name}`}
                               </Typography>
                               <Typography fontSize={10} color="gray">
+                                {`(${data.business_unit?.business_unit_code}) - ${data.business_unit?.business_unit_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
                                 {`(${data.department?.department_code}) - ${data.department?.department_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${data.unit?.unit_code}) - ${data.unit?.unit_name}`}
                               </Typography>
                               <Typography fontSize={10} color="gray">
                                 {`(${data.subunit?.subunit_code}) - ${data.subunit?.subunit_name}`}
@@ -1770,10 +1973,10 @@ const AddRequisition = (props) => {
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.accountability === "Personal Issued" ? (
                                 <>
-                                  <Typography fontSize={14}>
+                                  <Typography fontSize={12}>
                                     {data?.accountable?.general_info?.full_id_number || data?.accountable}
                                   </Typography>
-                                  <Typography fontSize={14}>{data?.accountable?.general_info?.full_name}</Typography>
+                                  <Typography fontSize={12}>{data?.accountable?.general_info?.full_name}</Typography>
                                 </>
                               ) : (
                                 "Common"
@@ -1787,7 +1990,9 @@ const AddRequisition = (props) => {
                                 {data.asset_specification}
                               </Typography>
                             </TableCell>
-
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.brand}
+                            </TableCell>
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.date_needed}
                             </TableCell>
@@ -1903,19 +2108,10 @@ const AddRequisition = (props) => {
                                     transactionData.item_count !== 1 &&
                                     transactionDataApi.length !== 1 &&
                                     onVoidReferenceHandler
-
-                                    // // transactionData
-                                    // //   ? transactionData?.item_count !== 1
-                                    // //     ? transactionDataApi.length !== 1
-                                    // //       ? onVoidReferenceHandler
-                                    // //       : false
-                                    // //     : false
-                                    // //   : false
                                   }
                                   onUpdateHandler={onUpdateHandler}
                                   onUpdateResetHandler={onUpdateResetHandler}
                                   setUpdateToggle={setUpdateToggle}
-                                  // setShowEdit={setShowEdit}
                                 />
                               )}
                             </TableCell>
@@ -1926,16 +2122,7 @@ const AddRequisition = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              {/* {(isTransactionSuccess || isRequestSuccess) && (
-              <CustomTablePagination
-                total={(transactionDataApiPage || addRequestAllApi)?.total}
-                success={isTransactionSuccess || isRequestSuccess}
-                current_page={(transactionDataApiPage || addRequestAllApi)?.current_page}
-                per_page={(transactionDataApiPage || addRequestAllApi)?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            )} */}
+
               {/* Buttons */}
               <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
                 <Typography
@@ -1948,7 +2135,6 @@ const AddRequisition = (props) => {
                   {transactionData ? transactionDataApi?.length : addRequestAllApi?.data?.length} request
                 </Typography>
                 <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
-                  {/* {transactionData && transactionDataApi[0]?.can_edit === 1 && ( */}
                   {transactionDataApi[0]?.can_edit === 1 ? (
                     <LoadingButton
                       onClick={onSubmitHandler}
@@ -2002,4 +2188,4 @@ const AddRequisition = (props) => {
   );
 };
 
-export default AddRequisition;
+export default AdditionalCostRequest;
