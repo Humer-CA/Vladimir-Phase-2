@@ -2,7 +2,7 @@ import { TextField as MuiTextField, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
 
 const CustomTextField = (props) => {
-  const { name, control, onChange: onValueChange, errors, validateText = true, ...textfield } = props;
+  const { name, control, onChange: onValueChange, onBlur, errors, validateText = true, ...textfield } = props;
 
   const validateInput = (value) => {
     const regex = /^[a-zA-Z0-9-\s+&,]*$/g;
@@ -34,6 +34,7 @@ const CustomTextField = (props) => {
                 if (onValueChange) return setValue(onValueChange(inputValue.replace(/\s+/g, " ")));
                 setValue(inputValue.replace(/\s+/g, " "));
               }}
+              onBlur={onBlur}
               sx={{
                 ".MuiInputBase-root": {
                   borderRadius: "12px",
