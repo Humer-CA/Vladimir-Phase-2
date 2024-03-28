@@ -466,6 +466,7 @@ function App() {
     message: confirmMessage,
     loading: confirmLoading,
     onConfirm: confirmFunction,
+    onDismiss: confirmDismiss,
     autoClose: confirmAutoClose,
     remarks: confirmRemarks,
   } = useSelector((state) => state.confirm);
@@ -527,6 +528,7 @@ function App() {
             iconColor={confirmIconColor}
             iconProps={confirmIconProps}
             onConfirm={confirmFunction}
+            onDismiss={confirmDismiss}
             loading={confirmLoading}
             autoClose={confirmAutoClose}
             remarks={confirmRemarks}

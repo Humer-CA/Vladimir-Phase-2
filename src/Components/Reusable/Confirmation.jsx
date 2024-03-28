@@ -37,6 +37,7 @@ const Confirmation = (props) => {
     iconProps,
     iconColor,
     onConfirm,
+    onDismiss,
     loading,
     autoClose,
     remarks,
@@ -65,6 +66,7 @@ const Confirmation = (props) => {
 
   const handleClose = () => {
     dispatch(closeConfirm());
+    onDismiss();
   };
 
   // WORKING --------------------------
