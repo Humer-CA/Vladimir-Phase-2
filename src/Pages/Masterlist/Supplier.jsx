@@ -127,7 +127,7 @@ const Supplier = () => {
       let variant = "error";
 
       if (postError?.status === 404 || postError?.status === 422) {
-        message = postError?.data?.message;
+        message = postError?.data?.errors.detail || postError?.data?.message;
         if (postError?.status === 422) {
           console.log(postError);
           dispatch(closeConfirm());
