@@ -129,7 +129,7 @@ const Unit = () => {
       let variant = "error";
 
       if (postError?.status === 404 || postError?.status === 422) {
-        message = postError?.data?.message;
+        message = postError?.data?.errors.detail || postError?.data?.message;
         if (postError?.status === 422) {
           console.log(postError);
           dispatch(closeConfirm());
@@ -290,9 +290,7 @@ const Unit = () => {
                               }}
                             >
                               <TableCell className="tbl-cell tr-cen-pad45 tbl-coa">{data.id}</TableCell>
-
                               <TableCell className="tbl-cell">{data.unit_code}</TableCell>
-
                               <TableCell className="tbl-cell">{data.unit_name}</TableCell>
 
                               <TableCell className="tbl-cell text-center">
