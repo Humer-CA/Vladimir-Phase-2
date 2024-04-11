@@ -222,7 +222,6 @@ const AddContainer = (props) => {
 
     if (errorData) {
       const errors = (postError?.data || updateError?.data)?.errors || {};
-
       Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
     }
 

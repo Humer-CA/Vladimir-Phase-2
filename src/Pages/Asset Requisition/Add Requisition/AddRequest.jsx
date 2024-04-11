@@ -1177,18 +1177,22 @@ const AddRequisition = (props) => {
                 multiline
               />
 
-              <CustomTextField
+              <CustomAutoComplete
                 control={control}
-                name="acquisition_details"
-                label="Acquisition Details"
-                type="text"
+                name="attachment_type"
+                options={attachmentType}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
+
                 disabled={updateRequest && disable}
-                onBlur={() => handleDispatchDetails()}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                error={!!errors?.acquisition_details}
-                helperText={errors?.acquisition_details?.message}
-                fullWidth
-                multiline
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="Attachment Type"
+                    error={!!errors?.attachment_type}
+                    helperText={errors?.attachment_type?.message}
+                  />
+                )}
               />
             </Box>
 

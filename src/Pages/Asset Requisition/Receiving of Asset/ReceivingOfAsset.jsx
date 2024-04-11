@@ -4,9 +4,11 @@ import { Badge, Box, Tab, Tabs, Typography } from "@mui/material";
 
 import ReceivingTable from "./ReceivingTable";
 import { useGetNotificationApiQuery } from "../../../Redux/Query/Notification";
+import { useLocation } from "react-router-dom";
 
 const ReceivingOfAsset = () => {
   const [value, setValue] = useState("1");
+  const location = useLocation();
 
   const { data: notifData, refetch } = useGetNotificationApiQuery();
 
