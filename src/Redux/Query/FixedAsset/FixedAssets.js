@@ -111,7 +111,7 @@ export const fixedAssetApi = createApi({
     postPrintApi: builder.mutation({
       query: (params) => {
         return {
-          url: `http://10.10.10.11:8000/api/fixed-asset/barcode`,
+          url: `http://10.10.10.11:9000/api/fixed-asset/barcode`,
           method: "POST",
           body: params,
         };
@@ -164,6 +164,7 @@ export const fixedAssetApi = createApi({
 
 export const {
   useGetFixedAssetApiQuery,
+  useLazyGetFixedAssetAllApiQuery,
   useGetFixedAssetAllApiQuery,
   useGetFixedAssetIdApiQuery,
   useArchiveFixedAssetStatusApiMutation,
