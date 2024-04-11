@@ -6,7 +6,7 @@ import CustomPatternField from "../../../Components/Reusable/CustomPatternField"
 import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import CustomRadioGroup from "../../../Components/Reusable/CustomRadioGroup";
-import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
+import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,13 +30,40 @@ import { LoadingButton } from "@mui/lab";
 // RTK
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useGetMinorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+import {
+  useGetMinorCategoryAllApiQuery,
+  useLazyGetMinorCategoryAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Category/MinorCategory";
+import {
+  useGetMajorCategoryAllApiQuery,
+  useLazyGetMajorCategoryAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
-import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Company";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { useGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Location";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import {
+  useGetCompanyAllApiQuery,
+  useLazyGetCompanyAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import {
+  useGetBusinessUnitAllApiQuery,
+  useLazyGetBusinessUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
+import {
+  useGetDepartmentAllApiQuery,
+  useLazyGetDepartmentAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import {
+  useGetSubUnitAllApiQuery,
+  useLazyGetSubUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import {
+  useGetLocationAllApiQuery,
+  useLazyGetLocationAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import {
+  useGetAccountTitleAllApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
+} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
 import {
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
@@ -44,16 +71,30 @@ import {
 
 import moment from "moment";
 // import { useGetCapexAllApiQuery } from "../../../../Redux/Query/Masterlist/Capex";
-import { useGetSubCapexAllApiQuery } from "../../../Redux/Query/Masterlist/SubCapex";
-import { useGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
-import { useGetAssetStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/AssetStatus";
-import { useGetAssetMovementStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/AssetMovementStatus";
-import { useGetCycleCountStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
-import { useGetDepreciationStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
+import { useGetSubCapexAllApiQuery, useLazyGetSubCapexAllApiQuery } from "../../../Redux/Query/Masterlist/SubCapex";
+import {
+  useGetTypeOfRequestAllApiQuery,
+  useLazyGetTypeOfRequestAllApiQuery,
+} from "../../../Redux/Query/Masterlist/TypeOfRequest";
+import {
+  useGetAssetStatusAllApiQuery,
+  useLazyGetAssetStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/AssetStatus";
+import {
+  useGetAssetMovementStatusAllApiQuery,
+  useLazyGetAssetMovementStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/AssetMovementStatus";
+import {
+  useGetCycleCountStatusAllApiQuery,
+  useLazyGetCycleCountStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
+import {
+  useGetDepreciationStatusAllApiQuery,
+  useLazyGetDepreciationStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
 
 const schema = yup.object().shape({
   id: yup.string(),
-
   type_of_request_id: yup
     .string()
     .transform((value) => {
@@ -61,7 +102,6 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Type of Request"),
-
   sub_capex_id: yup
     .string()
     .transform((value) => {
@@ -84,19 +124,15 @@ const schema = yup.object().shape({
     })
     .nullable()
     .label("Charging"),
-
   is_old_asset: yup.boolean(),
-
   tag_number: yup.string().when("is_old_asset", {
     is: (value) => value == 1,
     then: (yup) => yup.required().label("Tag Number"),
   }),
-
-  tag_number_old: yup.string().when("is_old_asset", {
+  _number_old: yup.string().when("is_old_asset", {
     is: (value) => value == 1,
     then: (yup) => yup.required().label("Old Tag Number"),
   }),
-
   // division_id: yup
   //   .string()
   //   .transform((value) => {
@@ -111,7 +147,6 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Major Category"),
-
   minor_category_id: yup
     .string()
     .transform((value) => {
@@ -119,7 +154,6 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Minor Category"),
-
   company_id: yup
     .string()
     .transform((value) => {
@@ -127,7 +161,13 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Company"),
-
+  business_unit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Business Unit"),
   department_id: yup
     .string()
     .transform((value) => {
@@ -135,7 +175,20 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Department"),
-
+  unit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Unit"),
+  subunit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Sub Unit"),
   location_id: yup
     .string()
     .transform((value) => {
@@ -143,7 +196,6 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Location"),
-
   account_title_id: yup
     .string()
     .transform((value) => {
@@ -151,15 +203,10 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Account Title"),
-
   asset_description: yup.string().required().label("Asset Description"),
-
   asset_specification: yup.string().required().label("Asset Specification"),
-
   acquisition_date: yup.string().required().label("Acquisition Date").typeError("Acquisition Date is a required field"),
-
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
-
   accountable: yup
     .object()
     .nullable()
@@ -169,23 +216,18 @@ const schema = yup.object().shape({
     }),
 
   // accountable: yup.string().required().label("Accountable"),
-
   cellphone_number: yup.string().nullable(),
   brand: yup.string(),
   care_of: yup.string().label("Care Of"),
-
   voucher: yup.string(),
   voucher_date: yup.string().nullable().label("Voucher Date").typeError("Voucher Date is a required field"),
   receipt: yup.string(),
-
   quantity: yup.number().required().typeError("Quantity is a required field"),
-
   asset_status_id: yup
     .string()
     .transform((value) => value?.id.toString())
     .required()
     .label("Asset Status"),
-
   cycle_count_status_id: yup
     .string()
     .transform((value) => {
@@ -193,7 +235,6 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Cycle Count Status"),
-
   movement_status_id: yup
     .string()
     .transform((value) => {
@@ -201,27 +242,21 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Asset Movement Status"),
-
   po_number: yup.string().required().label("PO Number"),
-
   depreciation_status_id: yup
     .string()
     .transform((value) => {
       return value?.id.toString();
     })
     .required()
-    .label("Asset Movement Status"),
-
+    .label("Depreciation Status"),
   depreciation_method: yup
     .string()
     .typeError("Depreciation Method is a required field")
     .required()
     .label("Depreciation Method"),
-
   est_useful_life: yup.string().required().label("Estimated Useful Life"),
-
   release_date: yup.string().nullable().typeError("Release Date is a required field").label("Release Date"),
-
   acquisition_cost: yup.number().required().typeError("Acquisition Cost is a required field"),
   months_depreciated: yup.number().required().typeError("Months Depreciated is a required field"),
   scrap_value: yup.number().required().typeError("Scrap Value is a required field"),
@@ -267,13 +302,16 @@ const AddFixedAsset = (props) => {
     },
   ] = useUpdateFixedAssetApiMutation();
 
-  const {
-    data: typeOfRequestData = [],
-    isLoading: isTypeOfRequestLoading,
-    isSuccess: isTypeOfRequestSuccess,
-    isError: isTypeOfRequestError,
-    refetch: isTypeOfRequestRefetch,
-  } = useGetTypeOfRequestAllApiQuery();
+  const [
+    typeOfRequestTrigger,
+    {
+      data: typeOfRequestData = [],
+      isLoading: isTypeOfRequestLoading,
+      isSuccess: isTypeOfRequestSuccess,
+      isError: isTypeOfRequestError,
+      refetch: isTypeOfRequestRefetch,
+    },
+  ] = useLazyGetTypeOfRequestAllApiQuery();
 
   // const {
   //   data: capexData = [],
@@ -283,13 +321,16 @@ const AddFixedAsset = (props) => {
   //   refetch: isCapexRefetch,
   // } = useGetCapexAllApiQuery();
 
-  const {
-    data: subCapexData = [],
-    isLoading: isSubCapexLoading,
-    isSuccess: isSubCapexSuccess,
-    isError: iSsubCapexError,
-    refetch: iSsubCapexRefetch,
-  } = useGetSubCapexAllApiQuery();
+  const [
+    subCapexTrigger,
+    {
+      data: subCapexData = [],
+      isLoading: isSubCapexLoading,
+      isSuccess: isSubCapexSuccess,
+      isError: iSsubCapexError,
+      refetch: iSsubCapexRefetch,
+    },
+  ] = useLazyGetSubCapexAllApiQuery();
 
   // const {
   //   data: divisionData = [],
@@ -299,87 +340,148 @@ const AddFixedAsset = (props) => {
   //   refetch: isDivisionRefetch,
   // } = useGetDivisionAllApiQuery();
 
-  const {
-    data: majorCategoryData = [],
-    isLoading: isMajorCategoryLoading,
-    isSuccess: isMajorCategorySuccess,
-    isError: isMajorCategoryError,
-    refetch: isMajorCategoryRefetch,
-  } = useGetMajorCategoryAllApiQuery();
+  const [
+    majorCategoryTrigger,
+    {
+      data: majorCategoryData = [],
+      isLoading: isMajorCategoryLoading,
+      isSuccess: isMajorCategorySuccess,
+      isError: isMajorCategoryError,
+      refetch: isMajorCategoryRefetch,
+    },
+  ] = useLazyGetMajorCategoryAllApiQuery();
 
-  const {
-    data: minorCategoryData = [],
-    isLoading: isMinorCategoryLoading,
-    isSuccess: isMinorCategorySuccess,
-    isError: isMinorCategoryError,
-  } = useGetMinorCategoryAllApiQuery();
+  const [
+    minorCategoryTrigger,
+    {
+      data: minorCategoryData = [],
+      isLoading: isMinorCategoryLoading,
+      isSuccess: isMinorCategorySuccess,
+      isError: isMinorCategoryError,
+    },
+  ] = useLazyGetMinorCategoryAllApiQuery();
 
-  const {
-    data: companyData = [],
-    isLoading: isCompanyLoading,
-    isSuccess: isCompanySuccess,
-    isError: isCompanyError,
-    refetch: isCompanyRefetch,
-  } = useGetCompanyAllApiQuery();
+  const [
+    companyTrigger,
+    {
+      data: companyData = [],
+      isLoading: isCompanyLoading,
+      isSuccess: isCompanySuccess,
+      isError: isCompanyError,
+      refetch: isCompanyRefetch,
+    },
+  ] = useLazyGetCompanyAllApiQuery();
 
-  const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-    refetch: isDepartmentRefetch,
-  } = useGetDepartmentAllApiQuery();
+  const [
+    businessUnitTrigger,
+    {
+      data: businessUnitData = [],
+      isLoading: isBusinessUnitLoading,
+      isSuccess: isBusinessUnitSuccess,
+      isError: isBusinessUnitError,
+      refetch: isBusinessUnitRefetch,
+    },
+  ] = useLazyGetBusinessUnitAllApiQuery();
 
-  const {
-    data: locationData = [],
-    isLoading: isLocationLoading,
-    isSuccess: isLocationSuccess,
-    isError: isLocationError,
-    refetch: isLocationRefetch,
-  } = useGetLocationAllApiQuery();
+  const [
+    departmentTrigger,
+    {
+      data: departmentData = [],
+      isLoading: isDepartmentLoading,
+      isSuccess: isDepartmentSuccess,
+      isError: isDepartmentError,
+      refetch: isDepartmentRefetch,
+    },
+  ] = useLazyGetDepartmentAllApiQuery();
 
-  const {
-    data: accountTitleData = [],
-    isLoading: isAccountTitleLoading,
-    isSuccess: isAccountTitleSuccess,
-    isError: isAccountTitleError,
-    refetch: isAccountTitleRefetch,
-  } = useGetAccountTitleAllApiQuery();
+  const [
+    unitTrigger,
+    {
+      data: unitData = [],
+      isLoading: isUnitLoading,
+      isSuccess: isUnitSuccess,
+      isError: isUnitError,
+      refetch: isUnitRefetch,
+    },
+  ] = useLazyGetUnitAllApiQuery();
 
-  const {
-    data: sedarData = [],
-    isLoading: isSedarLoading,
-    isSuccess: isSedarSuccess,
-    isError: isSedarError,
-  } = useGetSedarUsersApiQuery();
+  const [
+    subunitTrigger,
+    {
+      data: subUnitData = [],
+      isLoading: isSubUnitLoading,
+      isSuccess: isSubUnitSuccess,
+      isError: isSubUnitError,
+      refetch: isSubUnitRefetch,
+    },
+  ] = useLazyGetSubUnitAllApiQuery();
 
-  const {
-    data: assetStatusData = [],
-    isLoading: isAssetStatusLoading,
-    isSuccess: isAssetStatusSuccess,
-    isError: isAssetStatusError,
-  } = useGetAssetStatusAllApiQuery();
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      refetch: isLocationRefetch,
+    },
+  ] = useLazyGetLocationAllApiQuery();
 
-  const {
-    data: movementStatusData = [],
-    isLoading: isMovementStatusStatusLoading,
-    isSuccess: isMovementStatusStatusSuccess,
-    isError: isMovementStatusStatusError,
-  } = useGetAssetMovementStatusAllApiQuery();
+  const [
+    accountTitleTrigger,
+    {
+      data: accountTitleData = [],
+      isLoading: isAccountTitleLoading,
+      isSuccess: isAccountTitleSuccess,
+      isError: isAccountTitleError,
+      refetch: isAccountTitleRefetch,
+    },
+  ] = useLazyGetAccountTitleAllApiQuery();
 
-  const {
-    data: cycleCountStatusData = [],
-    isLoading: isCycleCountStatusLoading,
-    isSuccess: isCycleCountStatusSuccess,
-    isError: isCycleCountStatusError,
-  } = useGetCycleCountStatusAllApiQuery();
+  const [
+    sedarTrigger,
+    { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
+  ] = useLazyGetSedarUsersApiQuery();
 
-  const {
-    data: depreciationStatusData = [],
-    isLoading: isDepreciationStatusLoading,
-    isSuccess: isDepreciationStatusSuccess,
-    isError: isDepreciationStatusError,
-  } = useGetDepreciationStatusAllApiQuery();
+  const [
+    assetStatusTrigger,
+    {
+      data: assetStatusData = [],
+      isLoading: isAssetStatusLoading,
+      isSuccess: isAssetStatusSuccess,
+      isError: isAssetStatusError,
+    },
+  ] = useLazyGetAssetStatusAllApiQuery();
+
+  const [
+    movementTrigger,
+    {
+      data: movementStatusData = [],
+      isLoading: isMovementStatusStatusLoading,
+      isSuccess: isMovementStatusStatusSuccess,
+      isError: isMovementStatusStatusError,
+    },
+  ] = useLazyGetAssetMovementStatusAllApiQuery();
+
+  const [
+    cycleCountTrigger,
+    {
+      data: cycleCountStatusData = [],
+      isLoading: isCycleCountStatusLoading,
+      isSuccess: isCycleCountStatusSuccess,
+      isError: isCycleCountStatusError,
+    },
+  ] = useLazyGetCycleCountStatusAllApiQuery();
+
+  const [
+    depreciationTrigger,
+    {
+      data: depreciationStatusData = [],
+      isLoading: isDepreciationStatusLoading,
+      isSuccess: isDepreciationStatusSuccess,
+      isError: isDepreciationStatusError,
+    },
+  ] = useLazyGetDepreciationStatusAllApiQuery();
 
   const {
     handleSubmit,
@@ -408,8 +510,12 @@ const AddFixedAsset = (props) => {
       // division_id: null,
       major_category_id: null,
       minor_category_id: null,
+
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
+      subunit_id: null,
       location_id: null,
       account_title_id: null,
 
@@ -552,7 +658,10 @@ const AddFixedAsset = (props) => {
       setValue("minor_category_id", data.minor_category === "-" ? [] : data.minor_category);
 
       setValue("company_id", data.company);
+      setValue("business_unit_id", data.business_unit);
       setValue("department_id", data.department);
+      setValue("unit_id", data.unit);
+      setValue("subunit_id", data.subunit);
       setValue("location_id", data.location);
       setValue("account_title_id", data.account_title);
 
@@ -675,7 +784,7 @@ const AddFixedAsset = (props) => {
 
   // console.log(errors);
   // console.log(watch("depreciation_method"));
-  console.log(data);
+  // console.log(data);
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="addFixedAsset">
@@ -708,6 +817,7 @@ const AddFixedAsset = (props) => {
               options={typeOfRequestData}
               loading={isTypeOfRequestLoading}
               size="small"
+              onOpen={() => (isTypeOfRequestSuccess ? false : typeOfRequestTrigger())}
               getOptionLabel={(option) => option.type_of_request_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
@@ -731,6 +841,7 @@ const AddFixedAsset = (props) => {
                 control={control}
                 name="sub_capex_id"
                 options={subCapexData}
+                onOpen={() => (isSubCapexSuccess ? null : subCapexTrigger())}
                 loading={isSubCapexLoading}
                 size="small"
                 getOptionLabel={(option) => `${option.sub_capex}  (${option.sub_project})`}
@@ -744,141 +855,12 @@ const AddFixedAsset = (props) => {
                     helperText={errors?.sub_capex_id?.message}
                   />
                 )}
-                // onChange={(_, value) => {
-                //   setValue("project_name", value.project_name);
-                //   return value;
-                // }}
               />
             )}
-
-            {/* {watch("type_of_request_id")?.type_of_request_name === "Capex" ? (
-              <CustomTextField
-                control={control}
-                disabled
-                name="project_name"
-                label="Project Name"
-                type="text"
-                color="secondary"
-                size="small"
-                fullWidth
-              />
-            ) : null} */}
           </Box>
-
-          {/* 
-          <CustomAutoComplete
-            autoComplete
-            name="charging"
-            control={control}
-            options={departmentData}
-            loading={isDepartmentLoading}
-            size="small"
-            fullWidth
-            getOptionLabel={(option) => option.department_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Charged Department"
-                error={!!errors?.charging}
-                helperText={errors?.charging?.message}
-              />
-            )}
-          /> */}
         </Box>
 
         <Divider />
-
-        {/* <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-          }}
-        >
-          <Typography sx={sxSubtitle}>Asset Status</Typography>
-          <CustomRadioGroup control={control} name="is_old_asset">
-            <FormControlLabel
-              value={0}
-              label="New Asset"
-              control={<Radio size="small" />}
-              onChange={(_, value) => {
-                setValue("tag_number", "");
-                setValue("tag_number_old", "");
-                return value;
-              }}
-            />
-
-            {parseInt(watch("is_old_asset")) === 0 ? (
-              <Box className="addFixedAsset__status" sx={{ my: "5px" }}>
-                <CustomAutoComplete
-                  autoComplete
-                  name="charging"
-                  control={control}
-                  options={departmentData}
-                  loading={isDepartmentLoading}
-                  size="small"
-                  getOptionLabel={(option) => option.department_name}
-                  isOptionEqualToValue={(option, value) =>
-                    option.department_name === value.department_name
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      color="secondary"
-                      {...params}
-                      label="Charged Department"
-                      error={!!errors?.charging}
-                      helperText={errors?.charging?.message}
-                    />
-                  )}
-                  fullWidth
-                />
-              </Box>
-            ) : null}
-
-            <FormControlLabel
-              value={1}
-              label="Old Asset"
-              control={<Radio size="small" />}
-              onChange={(_, value) => {
-                if (data.status) {
-                  setValue("tag_number", data.tag_number);
-                  setValue("tag_number_old", data.tag_number_old);
-                  return value;
-                }
-              }}
-            />
-
-            {parseInt(watch("is_old_asset")) ? (
-              <Box className="addFixedAsset__status" sx={{ mt: "5px" }}>
-                <CustomNumberField
-                  control={control}
-                  name="tag_number"
-                  label="Tag Number"
-                  color="secondary"
-                  size="small"
-                  error={!!errors?.tag_number}
-                  helperText={errors?.tag_number?.message}
-                  fullWidth
-                />
-
-                <CustomNumberField
-                  control={control}
-                  name="tag_number_old"
-                  label="Old Tag Number"
-                  color="secondary"
-                  size="small"
-                  error={!!errors?.tag_number_old}
-                  helperText={errors?.tag_number_old?.message}
-                  fullWidth
-                />
-              </Box>
-            ) : null}
-          </CustomRadioGroup>
-        </Box>
-
-        <Divider /> */}
 
         <Box
           sx={{
@@ -897,6 +879,7 @@ const AddFixedAsset = (props) => {
             name="major_category_id"
             control={control}
             options={majorCategoryData}
+            onOpen={() => (isMajorCategorySuccess ? null : majorCategoryTrigger())}
             loading={isMajorCategoryLoading}
             size="small"
             getOptionLabel={(option) => option.major_category_name}
@@ -938,6 +921,7 @@ const AddFixedAsset = (props) => {
                 return obj?.id === watch("major_category_id")?.id;
               })[0]?.minor_category || []
             }
+            onOpen={() => (isMinorCategorySuccess ? null : minorCategoryTrigger())}
             loading={isMinorCategoryLoading}
             size="small"
             getOptionLabel={(option) => option.minor_category_name}
@@ -952,7 +936,7 @@ const AddFixedAsset = (props) => {
               />
             )}
             onChange={(_, value) => {
-              setValue("account_title_id", value.account_title);
+              setValue("account_title_id", value ? value.account_title : null);
               return value;
             }}
           />
@@ -976,6 +960,7 @@ const AddFixedAsset = (props) => {
             name="department_id"
             control={control}
             options={departmentData}
+            onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
             loading={isDepartmentLoading}
             size="small"
             getOptionLabel={(option) => option.department_code + " - " + option.department_name}
@@ -991,13 +976,20 @@ const AddFixedAsset = (props) => {
             )}
             onChange={(_, value) => {
               const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+              const businessUnitID = businessUnitData?.find(
+                (item) => item.sync_id === value.business_unit.business_unit_sync_id
+              );
 
               if (value) {
                 setValue("company_id", companyID);
+                setValue("business_unit_id", businessUnitID);
               } else {
                 setValue("company_id", null);
+                setValue("business_unit_id", null);
               }
-
+              setValue("unit_id", null);
+              setValue("subunit_id", null);
+              setValue("location_id", null);
               return value;
             }}
           />
@@ -1007,6 +999,7 @@ const AddFixedAsset = (props) => {
             name="company_id"
             control={control}
             options={companyData}
+            onOpen={() => (isCompanySuccess ? null : companyTrigger())}
             loading={isCompanyLoading}
             size="small"
             getOptionLabel={(option) => option.company_code + " - " + option.company_name}
@@ -1025,17 +1018,93 @@ const AddFixedAsset = (props) => {
 
           <CustomAutoComplete
             autoComplete
+            name="business_unit_id"
+            control={control}
+            options={businessUnitData}
+            onOpen={() => (isBusinessUnitSuccess ? null : businessUnitTrigger())}
+            loading={isBusinessUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+            isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Business Unit"
+                error={!!errors?.business_unit_id}
+                helperText={errors?.business_unit_id?.message}
+              />
+            )}
+            disabled
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="unit_id"
+            control={control}
+            options={
+              departmentData?.filter((obj) => {
+                return obj?.id === watch("department_id")?.id;
+              })[0]?.unit || []
+            }
+            onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+            loading={isUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Unit"
+                error={!!errors?.unit_id}
+                helperText={errors?.unit_id?.message}
+              />
+            )}
+            onChange={(_, value) => {
+              setValue("subunit_id", null);
+              setValue("location_id", null);
+              return value;
+            }}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="subunit_id"
+            control={control}
+            options={
+              unitData?.filter((obj) => {
+                return obj?.id === watch("unit_id")?.id;
+              })[0]?.subunit || []
+            }
+            loading={isSubUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Sub Unit"
+                error={!!errors?.subunit_id}
+                helperText={errors?.subunit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
             name="location_id"
             control={control}
             options={locationData?.filter((item) => {
-              return item.departments.some((department) => {
-                return department?.sync_id === watch("department_id")?.sync_id;
+              return item.subunit.some((subunit) => {
+                return subunit?.id === watch("subunit_id")?.id;
               });
             })}
             loading={isLocationLoading}
             size="small"
             getOptionLabel={(option) => option.location_code + " - " + option.location_name}
-            isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField
                 color="secondary"
@@ -1051,6 +1120,7 @@ const AddFixedAsset = (props) => {
             name="account_title_id"
             disabled
             control={control}
+            onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
             options={accountTitleData}
             loading={isAccountTitleLoading}
             size="small"
@@ -1162,6 +1232,7 @@ const AddFixedAsset = (props) => {
               disablePortal
               filterOptions={filterOptions}
               options={sedarData}
+              onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
               loading={isSedarLoading}
               getOptionLabel={
                 (option) => option.general_info?.full_id_number_full_name
@@ -1302,6 +1373,7 @@ const AddFixedAsset = (props) => {
               size="small"
               name="asset_status_id"
               control={control}
+              onOpen={() => (isAssetStatusSuccess ? null : assetStatusTrigger())}
               options={assetStatusData}
               loading={isAssetStatusLoading}
               getOptionLabel={(option) => option.asset_status_name}
@@ -1311,8 +1383,8 @@ const AddFixedAsset = (props) => {
                   color="secondary"
                   {...params}
                   label="Asset Status"
-                  error={!!errors?.asset_status}
-                  helperText={errors?.asset_status?.message}
+                  error={!!errors?.asset_status_id}
+                  helperText={errors?.asset_status_id?.message}
                 />
               )}
               fullWidth
@@ -1326,6 +1398,7 @@ const AddFixedAsset = (props) => {
               name="cycle_count_status_id"
               control={control}
               options={cycleCountStatusData}
+              onOpen={() => (isCycleCountStatusSuccess ? null : cycleCountTrigger())}
               loading={isCycleCountStatusLoading}
               getOptionLabel={(option) => option.cycle_count_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1334,8 +1407,8 @@ const AddFixedAsset = (props) => {
                   color="secondary"
                   {...params}
                   label="Cycle Count Status"
-                  error={!!errors?.cycle_count_status}
-                  helperText={errors?.cycle_count_status?.message}
+                  error={!!errors?.cycle_count_status_id}
+                  helperText={errors?.cycle_count_status_id?.message}
                 />
               )}
               fullWidth
@@ -1347,6 +1420,7 @@ const AddFixedAsset = (props) => {
               name="movement_status_id"
               control={control}
               options={movementStatusData}
+              onOpen={() => (isMovementStatusStatusSuccess ? null : movementTrigger())}
               loading={isMovementStatusStatusLoading}
               getOptionLabel={(option) => option.movement_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1355,8 +1429,8 @@ const AddFixedAsset = (props) => {
                   color="secondary"
                   {...params}
                   label="Movement Status"
-                  error={!!errors?.movement_status}
-                  helperText={errors?.movement_status?.message}
+                  error={!!errors?.movement_status_id}
+                  helperText={errors?.movement_status_id?.message}
                 />
               )}
               fullWidth
@@ -1464,6 +1538,7 @@ const AddFixedAsset = (props) => {
               size="small"
               name="depreciation_status_id"
               control={control}
+              onOpen={() => (isDepreciationStatusSuccess ? null : depreciationTrigger())}
               options={depreciationStatusData}
               loading={isDepreciationStatusLoading}
               getOptionLabel={(option) => option.depreciation_status_name}

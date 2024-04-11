@@ -32,14 +32,13 @@ import {
   useArrangeUnitApproversApiMutation,
   usePostUnitApproversApiMutation,
 } from "../../../Redux/Query/Settings/UnitApprovers";
-// import { useGetUserAccountAllApiQuery } from "../../../Redux/Query/UserManagement/UserAccountsApi";
-import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/SubUnit";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
+import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import { useGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 
 const schema = yup.object().shape({
   id: yup.string(),
 
-  department_id: yup.object().required().typeError("Sub Unit is required").label("Department"),
+  unit_id: yup.object().required().typeError("Sub Unit is required").label("Unit"),
   subunit_id: yup.object().required().typeError("Sub Unit is required").label("Sub Unit"),
 
   approver_id: yup.array().required().label("Approver"),
@@ -74,12 +73,12 @@ const AddUnitApprovers = (props) => {
   // } = useGetUserAccountAllApiQuery();
 
   const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-    refetch: isDepartmentRefetch,
-  } = useGetDepartmentAllApiQuery();
+    data: unitData = [],
+    isLoading: isUnitLoading,
+    isSuccess: isUnitSuccess,
+    isError: isUnitError,
+    refetch: isUnitRefetch,
+  } = useGetUnitAllApiQuery();
 
   const {
     data: subUnitData = [],
@@ -108,7 +107,7 @@ const AddUnitApprovers = (props) => {
     resolver: yupResolver(schema),
     defaultValues: {
       id: "",
-      department_id: null,
+      unit_id: null,
       subunit_id: null,
       approver_id: [],
     },
@@ -155,7 +154,7 @@ const AddUnitApprovers = (props) => {
 
   useEffect(() => {
     if (data.status) {
-      setValue("department_id", data.department);
+      setValue("unit_id", data.unit);
       setValue("subunit_id", data.subunit);
       setValue(
         "approver_id",
@@ -231,54 +230,23 @@ const AddUnitApprovers = (props) => {
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content" gap={1.5}>
         <Divider />
 
-        {/* <CustomAutoComplete
-          name="subunit_id"
-          control={control}
-          size="small"
-          required
-          fullWidth
-          disabled={data.action === "view" || data.action === "update"}
-          // includeInputInList
-          filterOptions={filterOptions}
-          options={subUnitData}
-          loading={isSubUnitLoading}
-          getOptionLabel={(option) =>
-            `(${option.subunit_code}) - ${option.subunit_name}`
-          }
-          isOptionEqualToValue={(option, value) => option?.id === value?.id}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Sub Unit"
-              color="secondary"
-              error={!!errors?.subunit_id?.message}
-              helperText={errors?.subunit_id?.message}
-            />
-          )}
-          onChange={(_, value) => {
-            setSelectedApprovers(null);
-            setValue("approvers_id", []);
-            return value;
-          }}
-        /> */}
-
         <CustomAutoComplete
           autoComplete
-          name="department_id"
+          name="unit_id"
           control={control}
-          options={departmentData}
-          loading={isDepartmentLoading}
+          options={unitData}
+          loading={isUnitLoading}
           size="small"
           disabled={data.status}
-          getOptionLabel={(option) => option.department_name}
+          getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
             <TextField
               color="secondary"
               {...params}
-              label="Department"
-              error={!!errors?.department_id?.message}
-              helperText={errors?.department_id?.message}
+              label="Unit"
+              error={!!errors?.unit_id?.message}
+              helperText={errors?.unit_id?.message}
             />
           )}
           fullWidth
@@ -292,11 +260,11 @@ const AddUnitApprovers = (props) => {
           autoComplete
           name="subunit_id"
           control={control}
-          options={subUnitData?.filter((item) => item?.department?.id === watch("department_id")?.id)}
+          options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
           loading={isSubUnitLoading}
           size="small"
           disabled={data.status}
-          getOptionLabel={(option) => option.subunit_name}
+          getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
             <TextField

@@ -11,15 +11,13 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 import {
   useGetSubUnitApiQuery,
   usePatchSubUnitApiMutation,
-} from "../../Redux/Query/Masterlist/SubUnit";
-import {
-  closeConfirm,
-  onLoading,
-  openConfirm,
-} from "../../Redux/StateManagement/confirmSlice";
+  usePostSubUnitApiMutation,
+} from "../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import { closeConfirm, onLoading, openConfirm } from "../../Redux/StateManagement/confirmSlice";
 
 import {
   Box,
+  Button,
   Chip,
   Dialog,
   Table,
@@ -36,20 +34,24 @@ import Moment from "moment";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import CustomChip from "../../Components/Reusable/CustomChip";
 import { Help, ReportProblem } from "@mui/icons-material";
+import ViewTagged from "../../Components/Reusable/ViewTagged";
+import { openDialog } from "../../Redux/StateManagement/booleanStateSlice";
+import { useLazyGetYmirSubUnitAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 
 const SubUnit = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [status, setStatus] = useState("active");
   const [search, setSearch] = useState("");
-  const [updateSubUnit, setUpdateSubUnit] = useState({
-    status: false,
+  const [viewLocation, setViewLocation] = useState({
     id: null,
-    subunit_name: "",
+    sync_id: null,
+    location_name: "",
   });
 
   const dispatch = useDispatch();
-  const drawer = useSelector((state) => state.booleanState.drawer);
+  // const drawer = useSelector((state) => state.booleanState.drawer);
+  const dialog = useSelector((state) => state.booleanState.dialog);
 
   // Table Sorting --------------------------------
 
@@ -93,6 +95,19 @@ const SubUnit = () => {
     setPage(1);
   };
 
+  const [
+    trigger,
+    {
+      data: ymirSubUnitApi,
+      isLoading: ymirSubUnitApiLoading,
+      isSuccess: ymirSubUnitApiSuccess,
+      isFetching: ymirSubUnitApiFetching,
+      isError: ymirSubUnitApiError,
+
+      refetch: ymirSubUnitApiRefetch,
+    },
+  ] = useLazyGetYmirSubUnitAllApiQuery();
+
   const {
     data: subUnitData,
     isLoading: subUnitLoading,
@@ -110,15 +125,51 @@ const SubUnit = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  // console.log(subUnitData?.data?.tagged);
+  const [
+    postSubUnit,
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
+  ] = usePostSubUnitApiMutation();
 
-  const [patchSubUnitApi, { isLoading }] = usePatchSubUnitApiMutation();
+  useEffect(() => {
+    if (ymirSubUnitApiSuccess) {
+      postSubUnit(ymirSubUnitApi);
+    }
+  }, [ymirSubUnitApiSuccess, ymirSubUnitApiFetching]);
 
-  const onArchiveRestoreHandler = async (id) => {
+  useEffect(() => {
+    if (isPostError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if (postError?.status === 404 || postError?.status === 422) {
+        message = postError?.data?.errors.detail || postError?.data?.message;
+        if (postError?.status === 422) {
+          console.log(postError);
+          dispatch(closeConfirm());
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
+    }
+  }, [isPostError]);
+
+  useEffect(() => {
+    if (isPostSuccess && !isPostLoading) {
+      dispatch(
+        openToast({
+          message: postData?.message,
+          duration: 5000,
+        })
+      );
+      dispatch(closeConfirm());
+    }
+  }, [isPostSuccess, isPostLoading]);
+
+  const onSyncHandler = async () => {
     dispatch(
       openConfirm({
-        icon: status === "active" ? ReportProblem : Help,
-        iconColor: status === "active" ? "alert" : "info",
+        icon: Help,
+        iconColor: "info",
         message: (
           <Box>
             <Typography> Are you sure you want to</Typography>
@@ -127,81 +178,69 @@ const SubUnit = () => {
                 display: "inline-block",
                 color: "secondary.main",
                 fontWeight: "bold",
-                fontFamily: "Raleway",
               }}
             >
-              {status === "active" ? "ARCHIVE" : "ACTIVATE"}
+              SYNC
             </Typography>{" "}
-            this data?
+            the data?
           </Box>
         ),
+        autoClose: true,
 
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            const result = await patchSubUnitApi({
-              id: id,
-              status: status === "active" ? false : true,
-            }).unwrap();
-
+            await trigger();
+            refetch();
+          } catch (err) {
+            console.log(err.message);
             dispatch(
               openToast({
-                message: result.message,
+                message: postData?.message,
                 duration: 5000,
               })
             );
             dispatch(closeConfirm());
-          } catch (err) {
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.errors?.detail,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
           }
         },
       })
     );
   };
 
-  const onUpdateHandler = (props) => {
-    const { id, department, subunit_name, tagged } = props;
-    setUpdateSubUnit({
-      status: true,
+  const onViewLocationHandler = (props) => {
+    const { id, location, sync_id } = props;
+    setViewLocation({
       id: id,
-      department,
-      subunit_name,
-      tagged,
+      sync_id: sync_id,
+      location: location,
     });
   };
 
-  const onUpdateResetHandler = () => {
-    setUpdateSubUnit({
-      status: false,
-      id: null,
-      department_id: null,
-      subunit_name: "",
-      // tagged: tagged,
-    });
+  const handleViewLocation = (data) => {
+    // console.log(data);
+    onViewLocationHandler(data);
+    dispatch(openDialog());
   };
+
+  const filteredData = subUnitData?.data
+    ?.find((item) => item.id === viewLocation.id)
+    ?.location?.map((mapItem) => {
+      console.log(mapItem?.location_status);
+      if (mapItem?.location_status === true) {
+        return `${mapItem?.location_code} - ${mapItem?.location_name}`;
+      } else {
+        return "";
+      }
+    });
+
+  // console.log(filteredData);
+  const mapLocationData = [...new Set(filteredData)];
+
+  console.log(subUnitData);
 
   return (
     <Box className="mcontainer">
-      <Typography
-        className="mcontainer__title"
-        sx={{ fontFamily: "Anton", fontSize: "2rem" }}
-      >
+      <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
         Sub Unit
       </Typography>
 
@@ -214,7 +253,9 @@ const SubUnit = () => {
             onStatusChange={setStatus}
             onSearchChange={setSearch}
             onSetPage={setPage}
-            onAdd={() => {}}
+            onSyncHandler={onSyncHandler}
+            onSync={() => {}}
+            // onAdd={() => {}}
           />
 
           <Box>
@@ -251,17 +292,25 @@ const SubUnit = () => {
 
                     <TableCell className="tbl-cell">
                       <TableSortLabel
-                        active={orderBy === `subunit_name`}
-                        direction={orderBy === `subunit_name` ? order : `asc`}
-                        onClick={() => onSort(`subunit_name`)}
+                        active={orderBy === `unit`}
+                        direction={orderBy === `unit` ? order : `asc`}
+                        onClick={() => onSort(`unit`)}
                       >
-                        Department
+                        Unit
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell text-center">
-                      Status
+                    <TableCell className="tbl-cell" align="center">
+                      <TableSortLabel
+                        active={orderBy === `location`}
+                        direction={orderBy === `location` ? order : `asc`}
+                        onClick={() => onSort(`location`)}
+                      >
+                        Location
+                      </TableSortLabel>
                     </TableCell>
+
+                    <TableCell className="tbl-cell text-center">Status</TableCell>
 
                     <TableCell className="tbl-cell text-center">
                       <TableSortLabel
@@ -283,51 +332,63 @@ const SubUnit = () => {
                   ) : (
                     <>
                       {subUnitSuccess &&
-                        [...subUnitData?.data]
-                          ?.sort(comparator(order, orderBy))
-                          ?.map((data) => (
-                            <TableRow
-                              key={data.id}
-                              hover={true}
-                              sx={{
-                                "&:last-child td, &:last-child th": {
-                                  borderBottom: 0,
-                                },
-                              }}
-                            >
-                              <TableCell className="tbl-cell tr-cen-pad45">
-                                {data.id}
-                              </TableCell>
+                        [...subUnitData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
+                          <TableRow
+                            key={data.id}
+                            hover={true}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                borderBottom: 0,
+                              },
+                            }}
+                          >
+                            <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
 
-                              <TableCell className="tbl-cell text-weight">
-                                ({data.subunit_code}) - {data.subunit_name}
-                              </TableCell>
+                            <TableCell className="tbl-cell text-weight">
+                              ({data.subunit_code}) - {data.subunit_name}
+                            </TableCell>
 
-                              <TableCell className="tbl-cell">
-                                ({data?.department?.department_code}) -{" "}
-                                {data?.department?.department_name}
-                              </TableCell>
+                            <TableCell className="tbl-cell">
+                              ({data?.unit?.unit_code}) - {data?.unit?.unit_name}
+                            </TableCell>
 
-                              <TableCell className="tbl-cell text-center">
-                                <CustomChip status={status} />
-                              </TableCell>
+                            <TableCell className="tbl-cell" align="center">
+                              {/* {data.location?.location_code +
+                                    " - " +
+                                    data.location?.location_name} */}
+                              <Button
+                                sx={{
+                                  textTransform: "capitalize",
+                                  textDecoration: "underline",
+                                  mr: 3,
+                                }}
+                                variant="text"
+                                size="small"
+                                color="link"
+                                onClick={() => handleViewLocation(data)}
+                              >
+                                <Typography fontSize={13}>View</Typography>
+                              </Button>
+                            </TableCell>
 
-                              <TableCell className="tbl-cell tr-cen-pad45">
-                                {Moment(data.created_at).format("MMM DD, YYYY")}
-                              </TableCell>
+                            <TableCell className="tbl-cell text-center">
+                              <CustomChip status={status} />
+                            </TableCell>
 
-                              <TableCell className="tbl-cell ">
-                                <ActionMenu
-                                  status={status}
-                                  data={data}
-                                  onUpdateHandler={onUpdateHandler}
-                                  onArchiveRestoreHandler={
-                                    onArchiveRestoreHandler
-                                  }
-                                />
-                              </TableCell>
-                            </TableRow>
-                          ))}
+                            <TableCell className="tbl-cell tr-cen-pad45">
+                              {Moment(data.created_at).format("MMM DD, YYYY")}
+                            </TableCell>
+
+                            <TableCell className="tbl-cell ">
+                              <ActionMenu
+                                status={status}
+                                data={data}
+                                // onUpdateHandler={onUpdateHandler}
+                                // onArchiveRestoreHandler={onArchiveRestoreHandler}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </>
                   )}
                 </TableBody>
@@ -345,11 +406,8 @@ const SubUnit = () => {
           />
         </Box>
       )}
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
-        <AddSubUnit
-          data={updateSubUnit}
-          onUpdateResetHandler={onUpdateResetHandler}
-        />
+      <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
+        <ViewTagged data={viewLocation} mapData={mapLocationData} setViewLocation={setViewLocation} name="Location" />
       </Dialog>
     </Box>
   );

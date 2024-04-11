@@ -51,7 +51,7 @@ const UserAccounts = () => {
     employee_id: "",
     firstname: "",
     lastname: "",
-    department_id: "",
+    unit_id: "",
     sub_unit_name: "",
     username: "",
     role_id: null,
@@ -120,7 +120,6 @@ const UserAccounts = () => {
     useLazyGetUserAccountAllApiQuery();
 
   const [postUserStatusApi, { isLoading: isPostUserLoading }] = usePostUserStatusApiMutation();
-
   const [resetUserApi] = useResetUserApiMutation();
 
   const dispatch = useDispatch();
@@ -188,18 +187,18 @@ const UserAccounts = () => {
   };
 
   const onUpdateHandler = (props) => {
-    const { id, employee_id, firstname, lastname, department, subunit, username, role, role_id } = props;
+    const { id, employee_id, firstname, lastname, unit, subunit, username, role, role_id } = props;
     setUpdateUser({
       status: true,
       id: id,
-      employee_id: employee_id,
-      firstname: firstname,
-      lastname: lastname,
-      department,
+      employee_id,
+      firstname,
+      lastname,
+      unit,
       subunit,
-      username: username,
-      role: role,
-      role_id: role_id,
+      username,
+      role,
+      role_id,
     });
   };
 
@@ -210,8 +209,8 @@ const UserAccounts = () => {
       employee_id: null,
       firstname: "",
       lastname: "",
-      department_id: null,
-      sub_unit_name: "",
+      unit: null,
+      sub_unit: "",
       username: "",
       role_id: null,
     });
@@ -288,7 +287,7 @@ const UserAccounts = () => {
           "Employee ID": item?.employee_id,
           Firstname: item?.firstname,
           Lastname: item?.lastname,
-          Department: item?.department,
+          Unit: item?.unit,
           "Sub Unit": item?.subunit,
           Username: item?.username,
           Role: item?.role?.role_name,
@@ -389,11 +388,11 @@ const UserAccounts = () => {
 
                     <TableCell className="tbl-cell">
                       <TableSortLabel
-                        active={orderBy === `department`}
-                        direction={orderBy === `department` ? order : `asc`}
-                        onClick={() => onSort(`department`)}
+                        active={orderBy === `unit`}
+                        direction={orderBy === `unit` ? order : `asc`}
+                        onClick={() => onSort(`unit`)}
                       >
-                        Department
+                        Unit
                       </TableSortLabel>
                     </TableCell>
 
@@ -460,7 +459,7 @@ const UserAccounts = () => {
                             <TableCell className="tbl-cell">{users.lastname}</TableCell>
 
                             <TableCell className="tbl-cell">
-                              {users.department?.department_code} - {users.department?.department_name}
+                              {users.unit?.unit_code} - {users.unit?.unit_name}
                             </TableCell>
 
                             <TableCell className="tbl-cell">

@@ -235,11 +235,11 @@ const UnitApprovers = () => {
   };
 
   const onUpdateHandler = (props) => {
-    const { id, department, subunit, approvers } = props;
+    const { id, unit, subunit, approvers } = props;
     setUpdateUnitApprovers({
       status: true,
       action: "update",
-      department,
+      unit,
       subunit,
       approvers,
     });
@@ -248,18 +248,18 @@ const UnitApprovers = () => {
   const onUpdateResetHandler = () => {
     setUpdateUnitApprovers({
       status: false,
-      department_id: null,
+      unit_id: null,
       subunit_id: null,
       approvers: [],
     });
   };
 
   const onViewHandler = (props) => {
-    const { department, subunit, approvers } = props;
+    const { unit, subunit, approvers } = props;
     setUpdateUnitApprovers({
       status: true,
       action: "view",
-      department,
+      unit,
       subunit,
       approvers,
     });
@@ -315,11 +315,11 @@ const UnitApprovers = () => {
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `department_name`}
-                          direction={orderBy === `department_name` ? order : `asc`}
-                          onClick={() => onSort(`department_name`)}
+                          active={orderBy === `unit_name`}
+                          direction={orderBy === `unit_name` ? order : `asc`}
+                          onClick={() => onSort(`unit_name`)}
                         >
-                          Department
+                          Unit
                         </TableSortLabel>
                       </TableCell>
 
@@ -362,9 +362,7 @@ const UnitApprovers = () => {
                             >
                               <TableCell className="tbl-cell capitalized">{data?.subunit?.subunit_name}</TableCell>
 
-                              <TableCell className="tbl-cell capitalized">
-                                {data?.department?.department_name}
-                              </TableCell>
+                              <TableCell className="tbl-cell capitalized">{data?.unit?.unit_name}</TableCell>
 
                               <TableCell align="center" className="tbl-cell text-weight capitalized">
                                 <Button

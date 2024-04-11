@@ -6,7 +6,7 @@ import CustomPatternField from "../../../Components/Reusable/CustomPatternField"
 import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import CustomRadioGroup from "../../../Components/Reusable/CustomRadioGroup";
-import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
+import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -37,33 +37,73 @@ import { LoadingButton } from "@mui/lab";
 // RTK
 import { useDispatch } from "react-redux";
 import { closeAdd, closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useGetMinorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+import {
+  useGetMinorCategoryAllApiQuery,
+  useLazyGetMinorCategoryAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Category/MinorCategory";
+import {
+  useGetMajorCategoryAllApiQuery,
+  useLazyGetMajorCategoryAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
-import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Company";
-import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Department";
-import { useGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Location";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
-import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
+import {
+  useGetCompanyAllApiQuery,
+  useLazyGetCompanyAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import {
+  useGetDepartmentAllApiQuery,
+  useLazyGetDepartmentAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import {
+  useGetLocationAllApiQuery,
+  useLazyGetLocationAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import {
+  useGetAccountTitleAllApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
+} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import {
+  useGetFixedAssetAllApiQuery,
+  useLazyGetFixedAssetAllApiQuery,
+} from "../../../Redux/Query/FixedAsset/FixedAssets";
 
 import moment from "moment";
 // import { useGetCapexAllApiQuery } from "../../../../Redux/Query/Masterlist/Capex";
-import { useGetSubCapexAllApiQuery } from "../../../Redux/Query/Masterlist/SubCapex";
-import { useGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
-import { useGetAssetStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/AssetStatus";
-import { useGetAssetMovementStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/AssetMovementStatus";
-import { useGetCycleCountStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
-import { useGetDepreciationStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
+import { useGetSubCapexAllApiQuery, useLazyGetSubCapexAllApiQuery } from "../../../Redux/Query/Masterlist/SubCapex";
+import {
+  useGetTypeOfRequestAllApiQuery,
+  useLazyGetTypeOfRequestAllApiQuery,
+} from "../../../Redux/Query/Masterlist/TypeOfRequest";
+import {
+  useGetAssetStatusAllApiQuery,
+  useLazyGetAssetStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/AssetStatus";
+import {
+  useGetAssetMovementStatusAllApiQuery,
+  useLazyGetAssetMovementStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/AssetMovementStatus";
+import {
+  useGetCycleCountStatusAllApiQuery,
+  useLazyGetCycleCountStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
+import {
+  useGetDepreciationStatusAllApiQuery,
+  useLazyGetDepreciationStatusAllApiQuery,
+} from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
 import {
   usePostAdditionalCostApiMutation,
   useUpdateAdditionalCostApiMutation,
 } from "../../../Redux/Query/FixedAsset/AdditionalCost";
+import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
+import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 
 const schema = yup.object().shape({
   id: yup.string(),
 
   fixed_asset_id: yup
     .string()
+    .required()
     .transform((value) => {
       return value?.id.toString();
     })
@@ -169,11 +209,8 @@ const schema = yup.object().shape({
     .label("Account Title"),
 
   asset_description: yup.string().required().label("Asset Description"),
-
   asset_specification: yup.string().required().label("Asset Specification"),
-
   acquisition_date: yup.string().required().label("Acquisition Date").typeError("Acquisition Date is a required field"),
-
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
 
   accountable: yup
@@ -191,10 +228,9 @@ const schema = yup.object().shape({
   care_of: yup.string().label("Care Of"),
 
   voucher: yup.string(),
-  voucher_date: yup.string().nullable().label("Voucher Date").typeError("Voucher Date is a required field"),
-  receipt: yup.string().required(),
-  po_number: yup.string().required().label("PO Number"),
-
+  voucher_date: yup.date().nullable().label("Voucher Date").typeError("Voucher Date is a required field"),
+  receipt: yup.string(),
+  po_number: yup.number().label("PO Number").typeError("PO Number is a required field"),
   quantity: yup.number().required().typeError("Quantity is a required field"),
 
   asset_status_id: yup
@@ -236,9 +272,7 @@ const schema = yup.object().shape({
     .label("Depreciation Method"),
 
   est_useful_life: yup.string().required().label("Estimated Useful Life"),
-
   release_date: yup.string().nullable().typeError("Release Date is a required field").label("Release Date"),
-
   acquisition_cost: yup.number().required().typeError("Acquisition Cost is a required field"),
   months_depreciated: yup.number().required().typeError("Months Depreciated is a required field"),
   scrap_value: yup.number().required().typeError("Scrap Value is a required field"),
@@ -268,13 +302,16 @@ const AddCost = (props) => {
   //   []
   // );
 
-  const {
-    data: vTagNumberData = [],
-    isLoading: isVTagNumberLoading,
-    isSuccess: isVTagNumberSuccess,
-    isError: isVTagNumberError,
-    error: vTagNumberError,
-  } = useGetFixedAssetAllApiQuery();
+  const [
+    fixedAssetTrigger,
+    {
+      data: vTagNumberData = [],
+      isLoading: isVTagNumberLoading,
+      isSuccess: isVTagNumberSuccess,
+      isError: isVTagNumberError,
+      error: vTagNumberError,
+    },
+  ] = useLazyGetFixedAssetAllApiQuery();
 
   const [
     postAddCost,
@@ -292,13 +329,16 @@ const AddCost = (props) => {
     },
   ] = useUpdateAdditionalCostApiMutation();
 
-  const {
-    data: typeOfRequestData = [],
-    isLoading: isTypeOfRequestLoading,
-    isSuccess: isTypeOfRequestSuccess,
-    isError: isTypeOfRequestError,
-    refetch: isTypeOfRequestRefetch,
-  } = useGetTypeOfRequestAllApiQuery();
+  const [
+    typeOfRequestTrigger,
+    {
+      data: typeOfRequestData = [],
+      isLoading: isTypeOfRequestLoading,
+      isSuccess: isTypeOfRequestSuccess,
+      isError: isTypeOfRequestError,
+      refetch: isTypeOfRequestRefetch,
+    },
+  ] = useLazyGetTypeOfRequestAllApiQuery();
 
   // const {
   //   data: capexData = [],
@@ -308,13 +348,16 @@ const AddCost = (props) => {
   //   refetch: isCapexRefetch,
   // } = useGetCapexAllApiQuery();
 
-  const {
-    data: subCapexData = [],
-    isLoading: isSubCapexLoading,
-    isSuccess: isSubCapexSuccess,
-    isError: iSsubCapexError,
-    refetch: iSsubCapexRefetch,
-  } = useGetSubCapexAllApiQuery();
+  const [
+    subCapexTrigger,
+    {
+      data: subCapexData = [],
+      isLoading: isSubCapexLoading,
+      isSuccess: isSubCapexSuccess,
+      isError: iSsubCapexError,
+      refetch: iSsubCapexRefetch,
+    },
+  ] = useLazyGetSubCapexAllApiQuery();
 
   // const {
   //   data: divisionData = [],
@@ -324,87 +367,148 @@ const AddCost = (props) => {
   //   refetch: isDivisionRefetch,
   // } = useGetDivisionAllApiQuery();
 
-  const {
-    data: majorCategoryData = [],
-    isLoading: isMajorCategoryLoading,
-    isSuccess: isMajorCategorySuccess,
-    isError: isMajorCategoryError,
-    refetch: isMajorCategoryRefetch,
-  } = useGetMajorCategoryAllApiQuery();
+  const [
+    majorCategoryTrigger,
+    {
+      data: majorCategoryData = [],
+      isLoading: isMajorCategoryLoading,
+      isSuccess: isMajorCategorySuccess,
+      isError: isMajorCategoryError,
+      refetch: isMajorCategoryRefetch,
+    },
+  ] = useLazyGetMajorCategoryAllApiQuery();
 
-  const {
-    data: minorCategoryData = [],
-    isLoading: isMinorCategoryLoading,
-    isSuccess: isMinorCategorySuccess,
-    isError: isMinorCategoryError,
-  } = useGetMinorCategoryAllApiQuery();
+  const [
+    minorCategoryTrigger,
+    {
+      data: minorCategoryData = [],
+      isLoading: isMinorCategoryLoading,
+      isSuccess: isMinorCategorySuccess,
+      isError: isMinorCategoryError,
+    },
+  ] = useLazyGetMinorCategoryAllApiQuery();
 
-  const {
-    data: companyData = [],
-    isLoading: isCompanyLoading,
-    isSuccess: isCompanySuccess,
-    isError: isCompanyError,
-    refetch: isCompanyRefetch,
-  } = useGetCompanyAllApiQuery();
+  const [
+    companyTrigger,
+    {
+      data: companyData = [],
+      isLoading: isCompanyLoading,
+      isSuccess: isCompanySuccess,
+      isError: isCompanyError,
+      refetch: isCompanyRefetch,
+    },
+  ] = useLazyGetCompanyAllApiQuery();
 
-  const {
-    data: departmentData = [],
-    isLoading: isDepartmentLoading,
-    isSuccess: isDepartmentSuccess,
-    isError: isDepartmentError,
-    refetch: isDepartmentRefetch,
-  } = useGetDepartmentAllApiQuery();
+  const [
+    businessUnitTrigger,
+    {
+      data: businessUnitData = [],
+      isLoading: isBusinessUnitLoading,
+      isSuccess: isBusinessUnitSuccess,
+      isError: isBusinessUnitError,
+      refetch: isBusinessUnitRefetch,
+    },
+  ] = useLazyGetBusinessUnitAllApiQuery();
 
-  const {
-    data: locationData = [],
-    isLoading: isLocationLoading,
-    isSuccess: isLocationSuccess,
-    isError: isLocationError,
-    refetch: isLocationRefetch,
-  } = useGetLocationAllApiQuery();
+  const [
+    departmentTrigger,
+    {
+      data: departmentData = [],
+      isLoading: isDepartmentLoading,
+      isSuccess: isDepartmentSuccess,
+      isError: isDepartmentError,
+      refetch: isDepartmentRefetch,
+    },
+  ] = useLazyGetDepartmentAllApiQuery();
 
-  const {
-    data: accountTitleData = [],
-    isLoading: isAccountTitleLoading,
-    isSuccess: isAccountTitleSuccess,
-    isError: isAccountTitleError,
-    refetch: isAccountTitleRefetch,
-  } = useGetAccountTitleAllApiQuery();
+  const [
+    unitTrigger,
+    {
+      data: unitData = [],
+      isLoading: isUnitLoading,
+      isSuccess: isUnitSuccess,
+      isError: isUnitError,
+      refetch: isUnitRefetch,
+    },
+  ] = useLazyGetUnitAllApiQuery();
 
-  const {
-    data: sedarData = [],
-    isLoading: isSedarLoading,
-    isSuccess: isSedarSuccess,
-    isError: isSedarError,
-  } = useGetSedarUsersApiQuery();
+  const [
+    subunitTrigger,
+    {
+      data: subUnitData = [],
+      isLoading: isSubUnitLoading,
+      isSuccess: isSubUnitSuccess,
+      isError: isSubUnitError,
+      refetch: isSubUnitRefetch,
+    },
+  ] = useLazyGetSubUnitAllApiQuery();
 
-  const {
-    data: assetStatusData = [],
-    isLoading: isAssetStatusLoading,
-    isSuccess: isAssetStatusSuccess,
-    isError: isAssetStatusError,
-  } = useGetAssetStatusAllApiQuery();
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      refetch: isLocationRefetch,
+    },
+  ] = useLazyGetLocationAllApiQuery();
 
-  const {
-    data: movementStatusData = [],
-    isLoading: isMovementStatusStatusLoading,
-    isSuccess: isMovementStatusStatusSuccess,
-    isError: isMovementStatusStatusError,
-  } = useGetAssetMovementStatusAllApiQuery();
+  const [
+    accountTitleTrigger,
+    {
+      data: accountTitleData = [],
+      isLoading: isAccountTitleLoading,
+      isSuccess: isAccountTitleSuccess,
+      isError: isAccountTitleError,
+      refetch: isAccountTitleRefetch,
+    },
+  ] = useLazyGetAccountTitleAllApiQuery();
 
-  const {
-    data: cycleCountStatusData = [],
-    isLoading: isCycleCountStatusLoading,
-    isSuccess: isCycleCountStatusSuccess,
-    isError: isCycleCountStatusError,
-  } = useGetCycleCountStatusAllApiQuery();
+  const [
+    sedarTrigger,
+    { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
+  ] = useLazyGetSedarUsersApiQuery();
 
-  const {
-    data: depreciationStatusData = [],
-    isLoading: isDepreciationStatusLoading,
-    isSuccess: isDepreciationStatusSuccess,
-    isError: isDepreciationStatusError,
-  } = useGetDepreciationStatusAllApiQuery();
+  const [
+    assetStatusTrigger,
+    {
+      data: assetStatusData = [],
+      isLoading: isAssetStatusLoading,
+      isSuccess: isAssetStatusSuccess,
+      isError: isAssetStatusError,
+    },
+  ] = useLazyGetAssetStatusAllApiQuery();
+
+  const [
+    movementTrigger,
+    {
+      data: movementStatusData = [],
+      isLoading: isMovementStatusStatusLoading,
+      isSuccess: isMovementStatusStatusSuccess,
+      isError: isMovementStatusStatusError,
+    },
+  ] = useLazyGetAssetMovementStatusAllApiQuery();
+
+  const [
+    cycleCountTrigger,
+    {
+      data: cycleCountStatusData = [],
+      isLoading: isCycleCountStatusLoading,
+      isSuccess: isCycleCountStatusSuccess,
+      isError: isCycleCountStatusError,
+    },
+  ] = useLazyGetCycleCountStatusAllApiQuery();
+
+  const [
+    depreciationTrigger,
+    {
+      data: depreciationStatusData = [],
+      isLoading: isDepreciationStatusLoading,
+      isSuccess: isDepreciationStatusSuccess,
+      isError: isDepreciationStatusError,
+    },
+  ] = useLazyGetDepreciationStatusAllApiQuery();
 
   const {
     handleSubmit,
@@ -464,54 +568,9 @@ const AddCost = (props) => {
       acquisition_cost: "",
       months_depreciated: "",
       scrap_value: "",
-      depreciable_basis: "",
-      // accumulated_cost: "",
-      // start_depreciation: null,
-      // end_depreciation: null,
-      // depreciation_per_year: "",
-      // depreciation_per_month: "",
-      // remaining_book_value: "",
+      depreciable_basis: null,
     },
   });
-
-  // setError fetching ----------------------------------------------------------
-  // useEffect(() => {
-  //   if (
-  //     (isPostError || isUpdateError) &&
-  //     (postError?.status === 422 || updateError?.status === 422)
-  //   ) {
-  //     if (isPostError || isUpdateError) {
-  //       const { errors } = postError?.data || updateError?.data;
-
-  //       Object.entries(errors).forEach((errorData) => {
-  //         const [name, [message]] = errorData;
-
-  //         setError(name, { type: "validate", message: message });
-  //       });
-  //     }
-
-  //     dispatch(
-  //       openToast({
-  //         message: "Something went wrong. Please try again.",
-  //         duration: 5000,
-  //         variant: "error",
-  //       })
-  //     );
-  //   } else if (
-  //     (isPostError && postError?.faStatus !== 422) ||
-  //     (isUpdateError && updateError?.faStatus !== 422)
-  //   ) {
-  //     dispatch(
-  //       openToast({
-  //         message: "Something went wrong. Please try again.",
-  //         duration: 5000,
-  //         variant: "error",
-  //       })
-  //     );
-  //   }
-  // }, [isPostError, isUpdateError]);
-
-  // GPT error fetching ----------------------------------------------------------
 
   useEffect(() => {
     const errorData = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
@@ -576,11 +635,14 @@ const AddCost = (props) => {
       setValue("tag_number_old", data.tag_number_old);
 
       // setValue("division_id", data.division);
-      setValue("major_category_id", data.major_category);
-      setValue("minor_category_id", data.minor_category);
+      setValue("major_category_id", data.major_category === "-" ? [] : data.major_category);
+      setValue("minor_category_id", data.minor_category === "-" ? [] : data.minor_category);
 
       setValue("company_id", data.company);
+      setValue("business_unit_id", data.business_unit);
       setValue("department_id", data.department);
+      setValue("unit_id", data.unit);
+      setValue("subunit_id", data.subunit);
       setValue("location_id", data.location);
       setValue("account_title_id", data.account_title);
 
@@ -588,11 +650,14 @@ const AddCost = (props) => {
       setValue("asset_specification", data.asset_specification);
       setValue("acquisition_date", acquisitionDateFormat);
       setValue("accountability", data.accountability);
+
       setValue("accountable", {
         general_info: {
+          full_id_number: data.accountable.split(" ")[0],
           full_id_number_full_name: data.accountable,
         },
       });
+
       setValue("cellphone_number", data.cellphone_number === "-" ? null : data.cellphone_number.slice(2));
       setValue("brand", data.brand);
       setValue("care_of", data.care_of);
@@ -607,8 +672,8 @@ const AddCost = (props) => {
 
       setValue("depreciation_method", data.depreciation_method);
       setValue("est_useful_life", data.est_useful_life);
-      setValue("depreciation_status_id", data.depreciation_status);
-      setValue("release_date", data.voucher_date === "-" ? null : releaseDateFormat);
+      setValue("depreciation_status_id", data.depreciation_status === "-" ? [] : data.depreciation_status);
+      setValue("release_date", data.release_date === "-" ? null : releaseDateFormat);
       setValue("acquisition_cost", data.acquisition_cost);
       setValue("months_depreciated", data.months_depreciated);
       setValue("scrap_value", data.scrap_value);
@@ -621,7 +686,6 @@ const AddCost = (props) => {
       // setValue("remaining_book_value", data.remaining_book_value);
     }
   }, [data]);
-
   useEffect(() => {
     if (watch("acquisition_cost") && watch("scrap_value")) {
       setValue("depreciable_basis", watch("acquisition_cost") - watch("scrap_value"));
@@ -645,23 +709,16 @@ const AddCost = (props) => {
       ...formData,
       cellphone_number: formData.cellphone_number ? "09" + formData.cellphone_number : null,
       acquisition_date: moment(new Date(formData.acquisition_date)).format("YYYY-MM-DD"),
-
       release_date:
         formData.release_date === null ? null : moment(new Date(formData.release_date)).format("YYYY-MM-DD"),
-
       voucher_date:
         formData.voucher_date === null ? null : moment(new Date(formData.voucher_date)).format("YYYY-MM-DD"),
-
       start_depreciation: moment(new Date(formData.start_depreciation)).format("YYYY-MM"),
       end_depreciation: moment(new Date(formData.end_depreciation)).format("YYYY-MM"),
       accountable: formData.accountable === null ? null : formData.accountable,
-
       months_depreciated: formData.months_depreciated === null ? 0 : formData.months_depreciated,
-
       acquisition_cost: formData.acquisition_cost === null ? 0 : formData.acquisition_cost,
-
       scrap_value: formData.scrap_value === null ? 0 : formData.scrap_value,
-
       depreciable_basis: formData.depreciable_basis === null ? 0 : formData.depreciable_basis,
     };
 
@@ -692,13 +749,6 @@ const AddCost = (props) => {
     matchFrom: "any",
   });
 
-  // console.log(vTagNumberData);
-  // console.log(sedarData);
-  // console.log(watch("accountable"));
-  // console.log(data);
-
-  console.log(errors);
-
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="addFixedAsset">
       <Box className="addFixedAsset__title">
@@ -720,6 +770,7 @@ const AddCost = (props) => {
               control={control}
               name="fixed_asset_id"
               options={vTagNumberData}
+              onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
               loading={isVTagNumberLoading}
               size="small"
               getOptionLabel={(option) => "(" + option.vladimir_tag_number + ")" + " - " + option.asset_description}
@@ -729,18 +780,27 @@ const AddCost = (props) => {
                   color="secondary"
                   {...params}
                   label="Tag Number"
-                  error={!!errors?.vladimir_tag_number}
-                  helperText={errors?.vladimir_tag_number?.message}
+                  error={!!errors?.fixed_asset_id}
+                  helperText={errors?.fixed_asset_id?.message}
                 />
               )}
               onChange={(_, value) => {
                 setValue("type_of_request_id", value.type_of_request);
                 setValue("sub_capex_id", value.sub_capex);
                 setValue("charging", value.charging);
-                setValue("major_category_id", value.major_category);
-                setValue("minor_category_id", value.minor_category);
+                setValue(
+                  "major_category_id",
+                  value.major_category.major_category_name === "-" ? null : value.major_category
+                );
+                setValue(
+                  "minor_category_id",
+                  value.minor_category.minor_category_name === "-" ? null : value.minor_category
+                );
                 setValue("company_id", value.company);
+                setValue("business_unit_id", value.business_unit);
                 setValue("department_id", value.department);
+                setValue("unit_id", value.unit);
+                setValue("subunit_id", value.subunit);
                 setValue("location_id", value.location);
                 setValue("account_title_id", value.account_title);
                 setValue("est_useful_life", value.est_useful_life);
@@ -762,6 +822,7 @@ const AddCost = (props) => {
               control={control}
               name="type_of_request_id"
               options={typeOfRequestData}
+              onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
               loading={isTypeOfRequestLoading}
               size="small"
               getOptionLabel={(option) => option.type_of_request_name}
@@ -787,6 +848,7 @@ const AddCost = (props) => {
                 control={control}
                 name="sub_capex_id"
                 options={subCapexData}
+                onOpen={() => (isSubCapexSuccess ? null : subCapexTrigger())}
                 loading={isSubCapexLoading}
                 size="small"
                 getOptionLabel={(option) => `${option.sub_capex}  (${option.sub_project})`}
@@ -800,140 +862,12 @@ const AddCost = (props) => {
                     helperText={errors?.sub_capex_id?.message}
                   />
                 )}
-                // onChange={(_, value) => {
-                //   setValue("project_name", value.project_name);
-                //   return value;
-                // }}
               />
             )}
-
-            {/* {watch("type_of_request_id")?.type_of_request_name === "Capex" ? (
-              <CustomTextField
-                control={control}
-                disabled
-                name="project_name"
-                label="Project Name"
-                type="text"
-                color="secondary"
-                size="small"
-                fullWidth
-              />
-            ) : null} */}
           </Box>
-          {/* 
-          <CustomAutoComplete
-            autoComplete
-            name="charging"
-            control={control}
-            options={departmentData}
-            loading={isDepartmentLoading}
-            size="small"
-            fullWidth
-            getOptionLabel={(option) => option.department_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Charged Department"
-                error={!!errors?.charging}
-                helperText={errors?.charging?.message}
-              />
-            )}
-          /> */}
         </Box>
 
         <Divider />
-
-        {/* <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-          }}
-        >
-          <Typography sx={sxSubtitle}>Asset Status</Typography>
-          <CustomRadioGroup control={control} name="is_old_asset">
-            <FormControlLabel
-              value={0}
-              label="New Asset"
-              control={<Radio size="small" />}
-              onChange={(_, value) => {
-                setValue("tag_number", "");
-                setValue("tag_number_old", "");
-                return value;
-              }}
-            />
-
-            {parseInt(watch("is_old_asset")) === 0 ? (
-              <Box className="addFixedAsset__status" sx={{ my: "5px" }}>
-                <CustomAutoComplete
-                  autoComplete
-                  name="charging"
-                  control={control}
-                  options={departmentData}
-                  loading={isDepartmentLoading}
-                  size="small"
-                  getOptionLabel={(option) => option.department_name}
-                  isOptionEqualToValue={(option, value) =>
-                    option.department_name === value.department_name
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      color="secondary"
-                      {...params}
-                      label="Charged Department"
-                      error={!!errors?.charging}
-                      helperText={errors?.charging?.message}
-                    />
-                  )}
-                  fullWidth
-                />
-              </Box>
-            ) : null}
-
-            <FormControlLabel
-              value={1}
-              label="Old Asset"
-              control={<Radio size="small" />}
-              onChange={(_, value) => {
-                if (data.status) {
-                  setValue("tag_number", data.tag_number);
-                  setValue("tag_number_old", data.tag_number_old);
-                  return value;
-                }
-              }}
-            />
-
-            {parseInt(watch("is_old_asset")) ? (
-              <Box className="addFixedAsset__status" sx={{ mt: "5px" }}>
-                <CustomNumberField
-                  control={control}
-                  name="tag_number"
-                  label="Tag Number"
-                  color="secondary"
-                  size="small"
-                  error={!!errors?.tag_number}
-                  helperText={errors?.tag_number?.message}
-                  fullWidth
-                />
-
-                <CustomNumberField
-                  control={control}
-                  name="tag_number_old"
-                  label="Old Tag Number"
-                  color="secondary"
-                  size="small"
-                  error={!!errors?.tag_number_old}
-                  helperText={errors?.tag_number_old?.message}
-                  fullWidth
-                />
-              </Box>
-            ) : null}
-          </CustomRadioGroup>
-        </Box>
-
-        <Divider /> */}
 
         <Box
           sx={{
@@ -952,6 +886,7 @@ const AddCost = (props) => {
             name="major_category_id"
             control={control}
             options={majorCategoryData}
+            onOpen={() => (isMajorCategorySuccess ? null : (majorCategoryTrigger(), minorCategoryTrigger()))}
             loading={isMajorCategoryLoading}
             size="small"
             getOptionLabel={(option) => option.major_category_name}
@@ -1030,6 +965,7 @@ const AddCost = (props) => {
             name="department_id"
             control={control}
             options={departmentData}
+            onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
             loading={isDepartmentLoading}
             size="small"
             getOptionLabel={(option) => option.department_code + " - " + option.department_name}
@@ -1061,6 +997,7 @@ const AddCost = (props) => {
             name="company_id"
             control={control}
             options={companyData}
+            onOpen={() => (isCompanySuccess ? null : companyTrigger())}
             loading={isCompanyLoading}
             size="small"
             getOptionLabel={(option) => option.company_code + " - " + option.company_name}
@@ -1075,6 +1012,82 @@ const AddCost = (props) => {
               />
             )}
             disabled
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="business_unit_id"
+            control={control}
+            options={businessUnitData}
+            onOpen={() => (isCompanySuccess ? null : businessUnitTrigger())}
+            loading={isBusinessUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+            isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Business Unit"
+                error={!!errors?.business_unit_id}
+                helperText={errors?.business_unit_id?.message}
+              />
+            )}
+            disabled
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="unit_id"
+            control={control}
+            options={
+              departmentData?.filter((obj) => {
+                return obj?.id === watch("department_id")?.id;
+              })[0]?.unit || []
+            }
+            onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+            loading={isUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Unit"
+                error={!!errors?.unit_id}
+                helperText={errors?.unit_id?.message}
+              />
+            )}
+            onChange={(_, value) => {
+              setValue("subunit_id", null);
+              setValue("location_id", null);
+              return value;
+            }}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="subunit_id"
+            control={control}
+            options={
+              unitData?.filter((obj) => {
+                return obj?.id === watch("unit_id")?.id;
+              })[0]?.subunit || []
+            }
+            loading={isSubUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Sub Unit"
+                error={!!errors?.subunit_id}
+                helperText={errors?.subunit_id?.message}
+              />
+            )}
           />
 
           <CustomAutoComplete
@@ -1106,6 +1119,7 @@ const AddCost = (props) => {
             disabled
             control={control}
             options={accountTitleData}
+            onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
             loading={isAccountTitleLoading}
             size="small"
             // disabled
@@ -1191,20 +1205,15 @@ const AddCost = (props) => {
                 helperText={errors?.accountability?.message}
               />
             )}
+            onChange={(_, value) => {
+              if (value === "Personal Issued") {
+                setValue("accountable", value.accountable);
+              } else {
+                setValue("accountable", null);
+              }
+              return value;
+            }}
           />
-
-          {/* {watch("type_of_request_id")?.type_of_request_name === "Capex" ? (
-              <CustomTextField
-                control={control}
-                disabled
-                name="project_name"
-                label="Project Name"
-                type="text"
-                color="secondary"
-                size="small"
-                fullWidth
-              />
-            ) : null} */}
 
           {watch("accountability") === "Personal Issued" && (
             <CustomAutoComplete
@@ -1215,6 +1224,7 @@ const AddCost = (props) => {
               disablePortal
               filterOptions={filterOptions}
               options={sedarData}
+              onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
               loading={isSedarLoading}
               getOptionLabel={
                 (option) => option.general_info?.full_id_number_full_name
@@ -1282,7 +1292,6 @@ const AddCost = (props) => {
               control={control}
               name="voucher"
               label="Voucher (optional)"
-              type="text"
               color="secondary"
               size="small"
               error={!!errors?.voucher}
@@ -1310,7 +1319,6 @@ const AddCost = (props) => {
             control={control}
             name="receipt"
             label="Receipt (optional)"
-            type="text"
             color="secondary"
             size="small"
             error={!!errors?.receipt}
@@ -1318,14 +1326,13 @@ const AddCost = (props) => {
             fullWidth
           />
 
-          <CustomTextField
+          <CustomNumberField
             autoComplete="off"
             control={control}
+            disabled
             name="po_number"
             label="Purchase Order #"
-            type="text"
             color="secondary"
-            size="small"
             error={!!errors?.po_number}
             helperText={errors?.po_number?.message}
             fullWidth
@@ -1340,10 +1347,6 @@ const AddCost = (props) => {
               type="number"
               color="secondary"
               size="small"
-              // isAllowed={(values) => {
-              //   const { floatValue } = values;
-              //   return floatValue >= 1;
-              // }}
               disabled
               error={!!errors?.quantity}
               helperText={errors?.quantity?.message}
@@ -1356,6 +1359,7 @@ const AddCost = (props) => {
               name="asset_status_id"
               control={control}
               options={assetStatusData}
+              onOpen={() => (isAssetStatusSuccess ? null : assetStatusTrigger())}
               loading={isAssetStatusLoading}
               getOptionLabel={(option) => option.asset_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1379,6 +1383,7 @@ const AddCost = (props) => {
               name="cycle_count_status_id"
               control={control}
               options={cycleCountStatusData}
+              onOpen={() => (isCycleCountStatusSuccess ? null : cycleCountTrigger())}
               loading={isCycleCountStatusLoading}
               getOptionLabel={(option) => option.cycle_count_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1400,6 +1405,7 @@ const AddCost = (props) => {
               name="movement_status_id"
               control={control}
               options={movementStatusData}
+              onOpen={() => (isMovementStatusStatusSuccess ? null : movementTrigger())}
               loading={isMovementStatusStatusLoading}
               getOptionLabel={(option) => option.movement_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1415,54 +1421,6 @@ const AddCost = (props) => {
               fullWidth
             />
           </Box>
-
-          {/* <Box className="addFixedAsset__status">
-            <CustomAutoComplete
-              autoComplete
-              name="cycle_count_status"
-              control={control}
-              options={cycleCountStatusData}
-              size="small"
-              isOptionEqualToValue={(option, value) => option === value}
-              renderInput={(params) => (
-                <TextField
-                  color="secondary"
-                  {...params}
-                  label="Cycle Count Status"
-                  error={!!errors?.faStatus}
-                  helperText={errors?.faStatus?.message}
-                />
-              )}
-              fullWidth
-            />
-
-            <CustomAutoComplete
-              autoComplete
-              name="faStatus"
-              control={control}
-              options={[
-                "Good",
-                "For Disposal",
-                // "Disposed",
-                "For Repair",
-                "Spare",
-                "Sold",
-                "Write Off",
-              ]}
-              size="small"
-              isOptionEqualToValue={(option, value) => option === value}
-              renderInput={(params) => (
-                <TextField
-                  color="secondary"
-                  {...params}
-                  label="Asset Status"
-                  error={!!errors?.faStatus}
-                  helperText={errors?.faStatus?.message}
-                />
-              )}
-              fullWidth
-            />fixedAssetLoading
-          </Box> */}
         </Box>
 
         <Divider />
@@ -1518,6 +1476,7 @@ const AddCost = (props) => {
               name="depreciation_status_id"
               control={control}
               options={depreciationStatusData}
+              onOpen={() => (isDepreciationStatusSuccess ? null : depreciationTrigger())}
               loading={isDepreciationStatusLoading}
               getOptionLabel={(option) => option.depreciation_status_name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1545,19 +1504,7 @@ const AddCost = (props) => {
                 helperText={errors?.release_date?.message}
                 fullWidth={isFullWidth ? true : false}
                 minDate={watch("acquisition_date")}
-                maxDate={
-                  new Date()
-                  // moment()
-                  //   .add(parseInt(watch("est_useful_life")) * 12, "months")
-                  //   .format("YYYY-MM-DD")
-                }
-                // onChange={(e) => {
-                //   setValue(
-                //     "months_depreciated",
-                //     moment().diff(moment(e).add(1, "months"), "months")
-                //   );
-                //   return e;
-                // }}
+                maxDate={new Date()}
                 onChange={(e) => {
                   const selectedDate = new Date(e);
                   const today = new Date();
@@ -1624,10 +1571,6 @@ const AddCost = (props) => {
                   size="small"
                   error={!!errors?.months_depreciated}
                   helperText={errors?.months_depreciated?.message}
-                  // isAllowed={(values) => {
-                  //   const { floatValue } = values;
-                  //   return floatValue >= 1;
-                  // }}
                   thousandSeparator
                   fullWidth={isFullWidth ? true : false}
                 />
@@ -1693,105 +1636,8 @@ const AddCost = (props) => {
                 fullWidth
                 error={!!errors?.depreciable_basis}
                 helperText={errors?.depreciable_basis?.message}
-                // isAllowed={(values) => {
-                //   const { floatValue } = values;
-                //   return floatValue >= 1;
-                // }}
               />
             )}
-
-            {/* <CustomNumberField
-                autoComplete="off"
-                control={control}
-                name="accumulated_cost"
-                label="Accumulated Cost"
-                color="secondary"
-                size="small"
-                error={!!errors?.accumulated_cost?.message}
-                helperText={errors?.accumulated_cost?.message}
-                prefix="₱"
-                isAllowed={(values) => {
-                  const { floatValue } = values;
-                  return floatValue >= 1;
-                }}
-                thousandSeparator
-                fullWidth
-              /> */}
-
-            {/* <Box className="addFixedAsset__status">
-              <CustomDatePicker
-                control={control}
-                name="start_depreciation"
-                label="Start Depreciation"
-                size="small"
-                views={["month", "year"]}
-                error={!!errors?.start_depreciation}
-                helperText={errors?.start_depreciation?.message}
-                fullWidth={isFullWidth ? true : false}
-              />
-
-              <CustomDatePicker
-                control={control}
-                name="end_depreciation"
-                label="End Depreciation"
-                views={["month", "year"]}
-                error={!!errors?.end_depreciation}
-                helperText={errors?.end_depreciation?.message}
-                fullWidth={isFullWidth ? true : false}
-              />
-            </Box> */}
-
-            {/* <CustomNumberField
-                control={control}
-                name="depreciation_per_year"
-                label="Depreciation per Year"
-                color="secondary"
-                size="small"
-                error={!!errors?.depreciation_per_year}
-                helperText={errors?.depreciation_per_year?.message}
-                prefix="₱"
-                isAllowed={(values) => {
-                  const { floatValue } = values;
-                  return floatValue >= 1;
-                }}
-                thousandSeparator
-                fullWidth
-              />
-
-              <CustomNumberField
-                control={control}
-                name="depreciation_per_month"
-                label="Depreciation per Month"
-                color="secondary"
-                size="small"
-                error={!!errors?.depreciation_per_month}
-                helperText={errors?.depreciation_per_month?.message}
-                prefix="₱"
-                isAllowed={(values) => {
-                  const { floatValue } = values;
-                  return floatValue >= 1;
-                }}
-                thousandSeparator
-                fullWidth
-              />
-
-              <CustomNumberField
-                autoComplete="off"
-                control={control}
-                name="remaining_book_value"
-                label="Remaining Book Value"
-                color="secondary"
-                size="small"
-                error={!!errors?.remaining_book_value}
-                helperText={errors?.remaining_book_value?.message}
-                prefix="₱"
-                isAllowed={(values) => {
-                  const { floatValue } = values;
-                  return floatValue >= 1;
-                }}
-                thousandSeparator
-                fullWidth
-              /> */}
           </Box>
         </Box>
       </Box>
