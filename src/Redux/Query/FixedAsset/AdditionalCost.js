@@ -54,7 +54,7 @@ export const additionalCostApi = createApi({
       invalidatesTags: ["AdditionalCost"],
     }),
 
-    postCalcDepreApi: builder.mutation({
+    postCalcDepreAddCostApi: builder.mutation({
       query: (params) => ({
         url: `/add-cost-depreciation/${params.id}`,
         method: "POST",
@@ -75,10 +75,11 @@ export const additionalCostApi = createApi({
 });
 
 export const {
+  useGetAdditionalCostAllApiQuery,
   useGetAdditionalCostIdApiQuery,
   usePostAdditionalCostApiMutation,
   useArchiveAdditionalCostApiMutation,
   useUpdateAdditionalCostApiMutation,
-  usePostCalcDepreApiMutation,
+  usePostCalcDepreAddCostApiMutation,
   usePostImportApiMutation,
 } = additionalCostApi;
