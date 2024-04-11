@@ -70,7 +70,10 @@ import ErrorFetchFA from "./ErrorFetchFA";
 import FixedAssetViewSkeleton from "./FixedAssetViewSkeleton";
 import { useForm } from "react-hook-form";
 import AddCost from "./AddEdit/AddCost";
-import { useArchiveAdditionalCostApiMutation } from "../../Redux/Query/FixedAsset/AdditionalCost";
+import {
+  useArchiveAdditionalCostApiMutation,
+  usePostCalcDepreAddCostApiMutation,
+} from "../../Redux/Query/FixedAsset/AdditionalCost";
 import useScanDetection from "use-scan-detection-react18";
 import { useGetIpApiQuery } from "../../Redux/Query/IpAddressSetup";
 
@@ -155,29 +158,15 @@ const FixedAssetView = (props) => {
     isSuccess: dataApiSuccess,
     isFetching: dataApiFetching,
     isError: dataApiError,
-
     refetch: dataApiRefetch,
   } = useGetFixedAssetIdApiQuery(data, {
     refetchOnMountOrArgChange: true,
   });
 
-  const [
-    postCalcDepreApi,
-    {
-      data: calcDepreApi,
-      isLoading: calcDepreApiLoading,
-      isSuccess: calcDepreApiSuccess,
-      isFetching: calcDepreApiFetching,
-      isError: calcDepreApiError,
-
-      refetch: calcDepreApiRefetch,
-    },
-  ] = usePostCalcDepreApiMutation();
-
-  // console.log("calc", calcDepreApi);
+  const [postCalcDepreApi, { data: calcDepreApi }] = usePostCalcDepreApiMutation();
+  const [postCalcDepreAddCostApi, { data: calcDepreAddCostApi }] = usePostCalcDepreAddCostApiMutation();
 
   const [patchFixedAssetStatusApi, { isLoading: isPatchLoading }] = useArchiveFixedAssetStatusApiMutation();
-
   const [patchAdditionalCostStatusApi, { isLoading: isAdditionalCostLoading }] = useArchiveAdditionalCostApiMutation();
 
   const { data: ip } = useGetIpApiQuery();
@@ -315,11 +304,16 @@ const FixedAssetView = (props) => {
       is_old_asset,
       tag_number,
       tag_number_old,
+
       division,
       major_category,
       minor_category,
+
       company,
+      business_unit,
       department,
+      unit,
+      subunit,
       location,
       account_title,
       asset_description,
@@ -366,27 +360,31 @@ const FixedAssetView = (props) => {
       capex,
       sub_capex,
 
-      is_old_asset: is_old_asset,
-      tag_number: tag_number,
-      tag_number_old: tag_number_old,
+      is_old_asset,
+      tag_number,
+      tag_number_old,
 
       division,
       major_category,
       minor_category,
+
       company,
+      business_unit,
       department,
+      unit,
+      subunit,
       location,
       account_title,
 
-      asset_description: asset_description,
-      asset_specification: asset_specification,
+      asset_description,
+      asset_specification,
       acquisition_date,
-      accountability: accountability,
-      accountable: accountable,
+      accountability,
+      accountable,
       cellphone_number,
       brand,
-      care_of: care_of,
-      voucher: voucher,
+      care_of,
+      voucher,
       voucher_date,
       receipt,
       po_number,
@@ -395,21 +393,21 @@ const FixedAssetView = (props) => {
       movement_status,
       cycle_count_status,
 
-      depreciation_method: depreciation_method,
-      est_useful_life: est_useful_life,
+      depreciation_method,
+      est_useful_life,
       release_date,
       depreciation_status,
 
       acquisition_cost,
       months_depreciated,
-      scrap_value: scrap_value,
-      depreciable_basis: depreciable_basis,
-      accumulated_cost: accumulated_cost,
-      start_depreciation: start_depreciation,
-      end_depreciation: end_depreciation,
-      depreciation_per_year: depreciation_per_year,
-      depreciation_per_month: depreciation_per_month,
-      remaining_book_value: remaining_book_value,
+      scrap_value,
+      depreciable_basis,
+      accumulated_cost,
+      start_depreciation,
+      end_depreciation,
+      depreciation_per_year,
+      depreciation_per_month,
+      remaining_book_value,
 
       print_count,
     });
@@ -496,8 +494,12 @@ const FixedAssetView = (props) => {
       major_category_name: "",
       minor_category_id: null,
       minor_category_name: "",
+
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
+      subunit_id: null,
       location_id: null,
       account_title_id: null,
 
@@ -539,7 +541,7 @@ const FixedAssetView = (props) => {
       ...data,
       date: moment(new Date(currentDate)).format("YYYY-MM"),
     };
-    postCalcDepreApi(newDate);
+    dataApi.data?.is_additional_cost === 1 ? postCalcDepreAddCostApi(newDate) : postCalcDepreApi(newDate);
     // console.log(newDate);
     setViewDepre(true);
   };
@@ -825,7 +827,17 @@ const FixedAssetView = (props) => {
                   <Box className="tableCard__properties">
                     Company:
                     <Typography className="tableCard__info" fontSize="14px">
+                      {dataApi?.data?.company.company_code}
+                    </Typography>
+                    <Typography className="tableCard__info" fontSize="14px">
                       {dataApi?.data?.company.company_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Business Unit:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {dataApi?.data?.business_unit.business_unit_name}
                     </Typography>
                   </Box>
 
@@ -833,6 +845,13 @@ const FixedAssetView = (props) => {
                     Department:
                     <Typography className="tableCard__info" fontSize="14px">
                       {dataApi?.data?.department.department_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Unit:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {dataApi?.data?.unit.unit_name}
                     </Typography>
                   </Box>
 
@@ -1280,7 +1299,7 @@ const FixedAssetView = (props) => {
           },
         }}
       >
-        <Depreciation calcDepreApi={calcDepreApi} setViewDepre={setViewDepre} />
+        <Depreciation calcDepreApi={calcDepreApi || calcDepreAddCostApi} setViewDepre={setViewDepre} />
       </Dialog>
 
       {/* <Dialog

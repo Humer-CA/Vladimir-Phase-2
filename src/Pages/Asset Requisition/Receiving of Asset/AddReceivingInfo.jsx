@@ -206,16 +206,16 @@ const ReceivingTable = (props) => {
               </Typography>
               <Stack>
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600}>
+                  <Typography fontSize={13} fontWeight={600}>
                     Transaction Number :
                   </Typography>
-                  <Typography fontSize={14}>{data?.transaction_number}</Typography>
+                  <Typography fontSize={13}>{data?.transaction_number}</Typography>
                 </Stack>
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600}>
+                  <Typography fontSize={13} fontWeight={600}>
                     Reference Number :
                   </Typography>
-                  <Typography fontSize={14}>{data?.reference_number}</Typography>
+                  <Typography fontSize={13}>{data?.reference_number}</Typography>
                 </Stack>
               </Stack>
             </Stack>
@@ -228,54 +228,54 @@ const ReceivingTable = (props) => {
               </Typography>
               <Stack>
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600}>
+                  <Typography fontSize={13} fontWeight={600}>
                     PR Number :
                   </Typography>
-                  <Typography fontSize={14}>{data?.pr_number}</Typography>
+                  <Typography fontSize={13}>{data?.pr_number}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Requisitioner :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
                     noWrap
                   >{`(${data?.requestor?.employee_id}) - ${data?.requestor?.firstname} ${data?.requestor?.lastname}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Item Description:
                   </Typography>
-                  <Typography fontSize={14} noWrap>
+                  <Typography fontSize={13} noWrap>
                     {data?.asset_description}
                   </Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Quantity Ordered:
                   </Typography>
-                  <Typography fontSize={14} noWrap>
+                  <Typography fontSize={13} noWrap>
                     {data?.quantity}
                   </Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Quantity Remaining:
                   </Typography>
-                  <Typography fontSize={14} noWrap>
+                  <Typography fontSize={13} noWrap>
                     {data?.remaining}
                   </Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     UOM:
                   </Typography>
-                  <Typography fontSize={14}>EACH</Typography>
+                  <Typography fontSize={13}>EACH</Typography>
                 </Stack>
               </Stack>
             </Stack>
@@ -288,59 +288,70 @@ const ReceivingTable = (props) => {
               </Typography>
               <Stack>
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Company :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
                     noWrap
                   >{`(${data?.company?.company_code}) - ${data?.company?.company_name}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
+                    Business Unit :
+                  </Typography>
+                  <Typography
+                    fontSize={13}
+                    noWrap
+                  >{`(${data?.business_unit?.business_unit_code}) - ${data?.business_unit?.business_unit_name}`}</Typography>
+                </Stack>
+
+                <Stack flexDirection="row" gap={1}>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Department :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
                     noWrap
                   >{`(${data?.department?.department_code}) - ${data?.department?.department_name}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Subunit :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
                     noWrap
                   >{`(${data?.subunit?.subunit_code}) - ${data?.subunit?.subunit_name}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Location :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
                     noWrap
                   >{`(${data?.location?.location_code}) - ${data?.location?.location_name}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600} noWrap>
+                  <Typography fontSize={13} fontWeight={600} noWrap>
                     Account Title :
                   </Typography>
                   <Typography
-                    fontSize={14}
+                    fontSize={13}
+                    noWrap
                   >{`(${data?.account_title?.account_title_code}) - ${data?.account_title?.account_title_name}`}</Typography>
                 </Stack>
 
                 <Stack flexDirection="row" gap={1}>
-                  <Typography fontSize={14} fontWeight={600}>
+                  <Typography fontSize={13} fontWeight={600}>
                     Organization :
                   </Typography>
-                  <Typography fontSize={14}>
+                  <Typography fontSize={13}>
                     {/* {`(${data?.account_title?.account_title_code}) - ${data?.account_title?.account_title_name}`} */}
                     Organization
                   </Typography>
@@ -365,6 +376,10 @@ const ReceivingTable = (props) => {
                 label="PO Number"
                 color="secondary"
                 size="small"
+                isAllowed={(values) => {
+                  const { floatValue } = values;
+                  return floatValue >= 0;
+                }}
                 error={!!errors?.po_number}
                 helperText={errors?.po_number?.message}
               />

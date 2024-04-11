@@ -103,9 +103,10 @@ const FixedAsset = (props) => {
     cellphone_number: "",
     brand: "",
     care_of: "",
+    po_number: null,
     voucher: "",
     receipt: "",
-    quantity: "",
+    quantity: null,
     // faStatus: "Good",
 
     depreciation_method: null,
@@ -217,9 +218,10 @@ const FixedAsset = (props) => {
       cellphone_number: "",
       brand: "",
       care_of: "",
+      po_number: null,
       voucher: "",
       receipt: "",
-      quantity: "",
+      quantity: null,
       // faStatus: "Good",
 
       depreciation_method: null,
@@ -445,9 +447,19 @@ const FixedAsset = (props) => {
                                   {" - "} {data.company.company_name}
                                 </Typography>
                                 <Typography fontSize="12px" color="gray">
+                                  {data.business_unit?.business_unit_code}
+                                  {" - "}
+                                  {data.business_unit?.business_unit_name}
+                                </Typography>
+                                <Typography fontSize="12px" color="gray">
                                   {data.department.department_code}
                                   {" - "}
                                   {data.department.department_name}
+                                </Typography>
+                                <Typography fontSize="12px" color="gray">
+                                  {data.unit?.unit_code}
+                                  {" - "}
+                                  {data.unit?.unit_name}
                                 </Typography>
                                 <Typography fontSize="12px" color="gray">
                                   {data.subunit?.subunit_code}
