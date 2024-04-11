@@ -68,6 +68,7 @@ export const minorCategoryApi = createApi({
 export const {
   useGetMinorCategoryApiQuery,
   useGetMinorCategoryAllApiQuery,
+  useLazyGetMinorCategoryAllApiQuery,
   useGetMinorCategoryIdApiQuery,
   usePutMinorCategoryStatusApiMutation,
   usePostMinorCategoryApiMutation,

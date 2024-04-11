@@ -67,6 +67,7 @@ export const assetStatusApi = createApi({
 
 export const {
   useGetAssetStatusApiQuery,
+  useLazyGetAssetStatusAllApiQuery,
   useGetAssetStatusAllApiQuery,
   useGetAssetStatusIdApiQuery,
   usePatchAssetStatusStatusApiMutation,

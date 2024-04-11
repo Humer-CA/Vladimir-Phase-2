@@ -38,5 +38,9 @@ export const businessUnitApi = createApi({
   }),
 });
 
-export const { useGetBusinessUnitApiQuery, useGetBusinessUnitAllApiQuery, usePostBusinessUnitApiMutation } =
-  businessUnitApi;
+export const {
+  useGetBusinessUnitApiQuery,
+  useGetBusinessUnitAllApiQuery,
+  useLazyGetBusinessUnitAllApiQuery,
+  usePostBusinessUnitApiMutation,
+} = businessUnitApi;

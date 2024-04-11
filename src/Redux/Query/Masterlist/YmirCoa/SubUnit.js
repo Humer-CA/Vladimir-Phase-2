@@ -65,6 +65,7 @@ export const subUnitApi = createApi({
 
 export const {
   useGetSubUnitApiQuery,
+  useLazyGetSubUnitAllApiQuery,
   useGetSubUnitAllApiQuery,
   useGetSubUnitIdApiQuery,
   usePostSubUnitApiMutation,

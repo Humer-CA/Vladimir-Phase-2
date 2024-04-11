@@ -38,4 +38,9 @@ export const companyApi = createApi({
   }),
 });
 
-export const { useGetCompanyApiQuery, useGetCompanyAllApiQuery, usePostCompanyApiMutation } = companyApi;
+export const {
+  useGetCompanyApiQuery,
+  useGetCompanyAllApiQuery,
+  useLazyGetCompanyAllApiQuery,
+  usePostCompanyApiMutation,
+} = companyApi;

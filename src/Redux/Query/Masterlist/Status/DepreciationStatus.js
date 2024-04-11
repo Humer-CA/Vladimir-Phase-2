@@ -67,6 +67,7 @@ export const depreciationStatusApi = createApi({
 
 export const {
   useGetDepreciationStatusApiQuery,
+  useLazyGetDepreciationStatusAllApiQuery,
   useGetDepreciationStatusAllApiQuery,
   useGetDepreciationStatusIdApiQuery,
   usePatchDepreciationStatusStatusApiMutation,

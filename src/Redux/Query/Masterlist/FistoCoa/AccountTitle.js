@@ -51,6 +51,7 @@ export const accountTitleApi = createApi({
 
 export const {
   useGetAccountTitleApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
   useGetAccountTitleAllApiQuery,
   usePostAccountTitleApiMutation,
   usePatchAccountTitleStatusApiMutation,

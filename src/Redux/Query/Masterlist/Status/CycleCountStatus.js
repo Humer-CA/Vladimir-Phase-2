@@ -67,6 +67,7 @@ export const cycleCountStatusApi = createApi({
 
 export const {
   useGetCycleCountStatusApiQuery,
+  useLazyGetCycleCountStatusAllApiQuery,
   useGetCycleCountStatusAllApiQuery,
   useGetCycleCountStatusIdApiQuery,
   usePatchCycleCountStatusStatusApiMutation,

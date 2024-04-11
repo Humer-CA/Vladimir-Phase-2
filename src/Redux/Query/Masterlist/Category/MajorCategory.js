@@ -69,6 +69,7 @@ export const majorCategoryApi = createApi({
 export const {
   useGetMajorCategoryApiQuery,
   useGetMajorCategoryAllApiQuery,
+  useLazyGetMajorCategoryAllApiQuery,
   useGetMajorCategoryIdApiQuery,
   usePutMajorCategoryStatusApiMutation,
   usePostMajorCategoryApiMutation,

@@ -38,4 +38,4 @@ export const unitApi = createApi({
   }),
 });
 
-export const { useGetUnitApiQuery, useGetUnitAllApiQuery, usePostUnitApiMutation } = unitApi;
+export const { useGetUnitApiQuery, useLazyGetUnitAllApiQuery, useGetUnitAllApiQuery, usePostUnitApiMutation } = unitApi;

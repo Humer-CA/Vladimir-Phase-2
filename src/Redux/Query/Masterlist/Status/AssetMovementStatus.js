@@ -67,6 +67,7 @@ export const assetMovementStatusApi = createApi({
 
 export const {
   useGetAssetMovementStatusApiQuery,
+  useLazyGetAssetMovementStatusAllApiQuery,
   useGetAssetMovementStatusAllApiQuery,
   useGetAssetMovementStatusIdApiQuery,
   usePatchAssetMovementStatusStatusApiMutation,

@@ -57,6 +57,7 @@ export const subCapexApi = createApi({
 export const {
   useGetSubCapexApiQuery,
   useGetSubCapexAllApiQuery,
+  useLazyGetSubCapexAllApiQuery,
   useGetSubCapexIdApiQuery,
   usePostSubCapexApiMutation,
   useUpdateSubCapexApiMutation,
