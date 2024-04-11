@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { openToast } from "../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
 import CustomDatePicker from "../../Components/Reusable/CustomDatePicker";
+import { usePostCalcDepreAddCostApiMutation } from "../../Redux/Query/FixedAsset/AdditionalCost";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -23,99 +24,24 @@ const schema = yup.object().shape({
 
 const Depreciation = (props) => {
   const { setViewDepre, calcDepreApi } = props;
-  // const { state: data } = useLocation();
-
   const isSmallScreen = useMediaQuery("(max-width: 730px)");
 
   const dispatch = useDispatch();
-
-  const {
-    formState: { errors },
-    control,
-    handleSubmit,
-    setError,
-    reset,
-    watch,
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      id: "",
-      endDate: null,
-    },
-  });
-
-  const [
-    postCalcDepreApi,
-    {
-      data: postData,
-      isLoading: calcDepreApiLoading,
-      isSuccess: isPostSuccess,
-      isFetching: calcDepreApiFetching,
-      isError: isPostError,
-      error: postError,
-
-      refetch: calcDepreApiRefetch,
-    },
-  ] = usePostCalcDepreApiMutation();
-
-  useEffect(() => {
-    if (isPostSuccess) {
-      reset();
-      dispatch(
-        openToast({
-          message: postData?.message,
-          duration: 5000,
-        })
-      );
-    }
-  }, [isPostSuccess]);
-
-  useEffect(() => {
-    if (isPostError && postError?.status === 422) {
-      setError("endDate", {
-        type: "validate",
-        message: postError?.data?.message,
-      });
-    }
-  }, [isPostError]);
-
-  const handleDepreciation = (formData) => {
-    const newDate = {
-      ...data,
-      date: moment(new Date(formData.endDate)).format("YYYY-MM"),
-    };
-    postCalcDepreApi(newDate);
-  };
 
   const handleClose = () => {
     setViewDepre(false);
   };
 
-  const sxProps = {
-    textField: {
-      size: "small",
-      sx: {
-        "& .Mui-focused.MuiFormLabel-root": {
-          color: "secondary.main",
-        },
-
-        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#344955!important",
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-          borderRadius: "10px",
-        },
-      },
-      error: !!errors?.endDate,
-      helperText: errors?.endDate?.message,
-    },
-  };
-
   const data = calcDepreApi?.data;
+
+  console.log(calcDepreApi);
 
   return (
     <>
-      <Box component="form" onSubmit={handleSubmit(handleDepreciation)}>
+      <Box
+        component="form"
+        // onSubmit={handleSubmit(handleDepreciation)}
+      >
         <Box
           sx={{
             display: "flex",
@@ -266,40 +192,28 @@ const Depreciation = (props) => {
                 <Box className="tableCard__properties">
                   Accumulated Cost:
                   <Typography className="tableCard__info" fontSize="14px">
-                    ₱
-                    {postData
-                      ? postData?.data?.accumulated_cost?.toLocaleString()
-                      : calcDepreApi?.data?.accumulated_cost?.toLocaleString()}
+                    ₱{calcDepreApi?.data?.accumulated_cost?.toLocaleString()}
                   </Typography>
                 </Box>
 
                 <Box className="tableCard__properties">
                   Depreciation per Year:
                   <Typography className="tableCard__info" fontSize="14px">
-                    ₱
-                    {postData
-                      ? postData?.data?.depreciation_per_year?.toLocaleString()
-                      : calcDepreApi?.data?.depreciation_per_year?.toLocaleString()}
+                    ₱{calcDepreApi?.data?.depreciation_per_year?.toLocaleString()}
                   </Typography>
                 </Box>
 
                 <Box className="tableCard__properties">
                   Depreciation per Month:
                   <Typography className="tableCard__info" fontSize="14px">
-                    ₱
-                    {postData
-                      ? postData?.data?.depreciation_per_month?.toLocaleString()
-                      : calcDepreApi?.data?.depreciation_per_month?.toLocaleString()}
+                    ₱{calcDepreApi?.data?.depreciation_per_month?.toLocaleString()}
                   </Typography>
                 </Box>
 
                 <Box className="tableCard__properties">
                   Remaining Book Value:
                   <Typography className="tableCard__info" fontSize="14px">
-                    ₱
-                    {postData
-                      ? postData?.data?.remaining_book_value?.toLocaleString()
-                      : calcDepreApi?.data?.remaining_book_value?.toLocaleString()}
+                    ₱{calcDepreApi?.data?.remaining_book_value?.toLocaleString()}
                   </Typography>
                 </Box>
               </Box>
