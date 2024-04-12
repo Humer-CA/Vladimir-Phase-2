@@ -794,11 +794,12 @@ const AdditionalCostRequest = (props) => {
                 );
                 navigate(-1);
                 deleteAllRequest();
+                return;
               } else if (transactionDataApi[0]?.can_resubmit === 1) {
                 const res = await resubmitRequest({
                   transaction_number: transactionData?.transaction_number,
                   ...transactionDataApi,
-                });
+                }).unwrap();
                 dispatch(
                   openToast({
                     message: "Successfully Resubmitted",
