@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import AssignedApprover from "./UnitApprovers";
+import AssetTransfer from "./AssetTransfer";
+import AssetPullout from "./AssetPullout";
+import AssetDisposal from "./AssetDisposal";
 
 const FaStatusCategory = () => {
   const [value, setValue] = useState("option1");
@@ -11,17 +14,14 @@ const FaStatusCategory = () => {
 
   const views = {
     option1: <AssignedApprover />,
-    // option2: <CycleCountStatus />,
-    // option3: <AssetMovementStatus />,
-    // option4: <DepreciationStatus />,
+    option2: <AssetTransfer />,
+    option3: <AssetPullout />,
+    option4: <AssetDisposal />,
   };
 
   return (
     <Box className="mcontainer">
-      <Typography
-        className="mcontainer__title"
-        sx={{ fontFamily: "Anton, Roboto, Helvetica", fontSize: "1.6rem" }}
-      >
+      <Typography className="mcontainer__title" sx={{ fontFamily: "Anton, Roboto, Helvetica", fontSize: "1.6rem" }}>
         Form Settings
       </Typography>
 
@@ -42,9 +42,9 @@ const FaStatusCategory = () => {
           }}
         >
           <MenuItem value="option1">Unit Approvers</MenuItem>
-          {/* <MenuItem value="option2">Cycle Count Status</MenuItem> */}
-          {/* <MenuItem value="option3">Asset Movement Status</MenuItem> */}
-          {/* <MenuItem value="option4">Depreciation Status</MenuItem> */}
+          <MenuItem value="option2">Asset Transfer</MenuItem>
+          <MenuItem value="option3">Asset Pullout</MenuItem>
+          <MenuItem value="option4">Asset Disposal</MenuItem>
         </Select>
         {views[value]}
       </Stack>

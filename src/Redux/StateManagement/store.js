@@ -70,6 +70,9 @@ import { depreciationStatusApi } from "../Query/Masterlist/Status/DepreciationSt
 
 import { approverSettingsApi } from "../Query/Settings/ApproverSettings";
 import { unitApproversApi } from "../Query/Settings/UnitApprovers";
+import { assetTransferApi } from "../Query/Settings/AssetTransfer";
+import { assetPulloutApi } from "../Query/Settings/AssetPullout";
+import { assetDisposalApi } from "../Query/Settings/AssetDisposal";
 
 import { requisitionApi } from "../Query/Request/Requisition";
 import { requestContainerApi } from "../Query/Request/RequestContainer";
@@ -155,6 +158,9 @@ export const store = configureStore({
     // Settings
     [approverSettingsApi.reducerPath]: approverSettingsApi.reducer,
     [unitApproversApi.reducerPath]: unitApproversApi.reducer,
+    [assetTransferApi.reducerPath]: assetTransferApi.reducer,
+    [assetPulloutApi.reducerPath]: assetPulloutApi.reducer,
+    [assetDisposalApi.reducerPath]: assetDisposalApi.reducer,
 
     // Request
     [requisitionApi.reducerPath]: requisitionApi.reducer,
@@ -225,6 +231,9 @@ export const store = configureStore({
       // Settings
       approverSettingsApi.middleware,
       unitApproversApi.middleware,
+      assetTransferApi.middleware,
+      assetPulloutApi.middleware,
+      assetDisposalApi.middleware,
 
       // Request
       requisitionApi.middleware,
