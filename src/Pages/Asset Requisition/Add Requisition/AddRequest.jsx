@@ -677,6 +677,7 @@ const AddRequisition = (props) => {
           dispatch(
             openToast({
               message:
+                Object.entries(err?.response?.data?.errors).at(0).at(1).at(0) ||
                 err?.response?.data?.errors?.detail ||
                 err?.response?.data?.errors[0]?.detail ||
                 err?.response?.data?.message,
@@ -754,18 +755,29 @@ const AddRequisition = (props) => {
             dispatch(onLoading());
             if (transactionData) {
               if (transactionDataApi[0]?.can_resubmit === 0) {
-                const res = await resubmitRequest(...transactionDataApi).unwrap();
-                console.log(res?.message);
-
+                await resubmitRequest(...transactionDataApi).unwrap();
+                // console.log(res?.message);
+                dispatch(
+                  openToast({
+                    message: "Successfully Resubmitted",
+                    duration: 5000,
+                  })
+                );
                 navigate(-1);
                 deleteAllRequest();
+                return;
               } else if (transactionDataApi[0]?.can_resubmit === 1) {
-                resubmitRequest({
+                await resubmitRequest({
                   transaction_number: transactionData?.transaction_number,
                   ...transactionDataApi,
-                });
+                }).unwrap();
+                dispatch(
+                  openToast({
+                    message: "Successfully Resubmitted",
+                    duration: 5000,
+                  })
+                );
                 navigate(-1);
-
                 return;
               }
             } else {
