@@ -29,8 +29,15 @@ import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import { useGetRoleAllApiQuery } from "../../../Redux/Query/UserManagement/RoleManagementApi";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
-import { useGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
-import { useGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import {
+  useGetSubUnitAllApiQuery,
+  useLazyGetSubUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import { useLazyGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
+import { useLazyGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
 
 const schema = yup.object().shape({
   id: yup.string().nullable(),
@@ -38,6 +45,27 @@ const schema = yup.object().shape({
   sedar_employee: yup.object().typeError("Employee ID is a required field").required(),
   firstname: yup.string().required(),
   lastname: yup.string().required(),
+  company_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Company"),
+  business_unit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Business Unit"),
+  department_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Department"),
   unit_id: yup
     .string()
     .transform((value) => {
@@ -51,7 +79,14 @@ const schema = yup.object().shape({
       return value?.id.toString();
     })
     .required()
-    .label("Subunit"),
+    .label("Sub Unit"),
+  location_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Location"),
   // position: yup.string().required(),
   username: yup.string().required().label("Username"),
   role_id: yup.object().required().label("User permission").typeError("User Permission is a required field"),
@@ -84,19 +119,71 @@ const AddUserAccount = (props) => {
     isError: isSedarError,
   } = useGetSedarUsersApiQuery();
 
-  const {
-    data: unitData = [],
-    isLoading: isUnitLoading,
-    isSuccess: isUnitSuccess,
-    isError: isUnitError,
-  } = useGetUnitAllApiQuery();
+  const [
+    companyTrigger,
+    {
+      data: companyData = [],
+      isLoading: isCompanyLoading,
+      isSuccess: isCompanySuccess,
+      isError: isCompanyError,
+      refetch: isCompanyRefetch,
+    },
+  ] = useLazyGetCompanyAllApiQuery();
 
-  const {
-    data: subUnitData = [],
-    isLoading: isSubUnitLoading,
-    isSuccess: isSubUnitSuccess,
-    isError: isSubUnitError,
-  } = useGetSubUnitAllApiQuery();
+  const [
+    businessUnitTrigger,
+    {
+      data: businessUnitData = [],
+      isLoading: isBusinessUnitLoading,
+      isSuccess: isBusinessUnitSuccess,
+      isError: isBusinessUnitError,
+      refetch: isBusinessUnitRefetch,
+    },
+  ] = useLazyGetBusinessUnitAllApiQuery();
+
+  const [
+    departmentTrigger,
+    {
+      data: departmentData = [],
+      isLoading: isDepartmentLoading,
+      isSuccess: isDepartmentSuccess,
+      isError: isDepartmentError,
+      refetch: isDepartmentRefetch,
+    },
+  ] = useLazyGetDepartmentAllApiQuery();
+
+  const [
+    unitTrigger,
+    {
+      data: unitData = [],
+      isLoading: isUnitLoading,
+      isSuccess: isUnitSuccess,
+      isError: isUnitError,
+      refetch: isUnitRefetch,
+    },
+  ] = useLazyGetUnitAllApiQuery();
+
+  const [
+    subunitTrigger,
+    {
+      data: subUnitData = [],
+      isLoading: isSubUnitLoading,
+      isSuccess: isSubUnitSuccess,
+      isError: isSubUnitError,
+      refetch: isSubUnitRefetch,
+    },
+  ] = useLazyGetSubUnitAllApiQuery();
+
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      refetch: isLocationRefetch,
+    },
+  ] = useLazyGetLocationAllApiQuery();
 
   const { data: roleData = [], isLoading: isRoleLoading, isError: isRoleError } = useGetRoleAllApiQuery();
 
@@ -117,8 +204,12 @@ const AddUserAccount = (props) => {
       employee_id: null || "",
       firstname: "",
       lastname: "",
+      company_id: null,
+      business_unit_id: null,
+      department_id: null,
       unit_id: null,
       subunit_id: null,
+      location_id: null,
       // position: "",
       username: "",
       role_id: null,
@@ -174,8 +265,12 @@ const AddUserAccount = (props) => {
       });
       setValue("firstname", data.firstname);
       setValue("lastname", data.lastname);
+      setValue("company_id", data.company);
+      setValue("business_unit_id", data.business_unit);
+      setValue("department_id", data.department);
       setValue("unit_id", data.unit);
       setValue("subunit_id", data.subunit);
+      setValue("location_id", data.location);
       // setValue("position", data.position);
       setValue("username", data.username);
       setValue("role_id", data.role);
@@ -328,46 +423,161 @@ const AddUserAccount = (props) => {
 
           <CustomAutoComplete
             autoComplete
+            name="department_id"
+            control={control}
+            options={departmentData}
+            onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
+            loading={isDepartmentLoading}
+            size="small"
+            getOptionLabel={(option) => option.department_code + " - " + option.department_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Department"
+                error={!!errors?.department_id}
+                helperText={errors?.department_id?.message}
+              />
+            )}
+            onChange={(_, value) => {
+              const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+              const businessUnitID = businessUnitData?.find(
+                (item) => item.sync_id === value.business_unit.business_unit_sync_id
+              );
+
+              if (value) {
+                setValue("company_id", companyID);
+                setValue("business_unit_id", businessUnitID);
+              } else {
+                setValue("company_id", null);
+                setValue("business_unit_id", null);
+              }
+              setValue("unit_id", null);
+              setValue("subunit_id", null);
+              setValue("location_id", null);
+              return value;
+            }}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="company_id"
+            control={control}
+            options={companyData}
+            onOpen={() => (isCompanySuccess ? null : companyTrigger())}
+            loading={isCompanyLoading}
+            size="small"
+            getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+            isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Company"
+                error={!!errors?.company_id}
+                helperText={errors?.company_id?.message}
+              />
+            )}
+            disabled
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="business_unit_id"
+            control={control}
+            options={businessUnitData}
+            onOpen={() => (isBusinessUnitSuccess ? null : businessUnitTrigger())}
+            loading={isBusinessUnitLoading}
+            size="small"
+            getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+            isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Business Unit"
+                error={!!errors?.business_unit_id}
+                helperText={errors?.business_unit_id?.message}
+              />
+            )}
+            disabled
+          />
+
+          <CustomAutoComplete
+            autoComplete
             name="unit_id"
             control={control}
-            options={unitData}
+            options={
+              departmentData?.filter((obj) => {
+                return obj?.id === watch("department_id")?.id;
+              })[0]?.unit || []
+            }
+            onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
             loading={isUnitLoading}
             size="small"
-            getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
+            getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField
                 color="secondary"
                 {...params}
                 label="Unit"
-                error={!!errors?.unit_id?.message}
+                error={!!errors?.unit_id}
                 helperText={errors?.unit_id?.message}
               />
             )}
             onChange={(_, value) => {
               setValue("subunit_id", null);
+              setValue("location_id", null);
               return value;
             }}
-            disablePortal
-            fullWidth
           />
 
           <CustomAutoComplete
             autoComplete
             name="subunit_id"
             control={control}
-            options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
+            options={
+              unitData?.filter((obj) => {
+                return obj?.id === watch("unit_id")?.id;
+              })[0]?.subunit || []
+            }
             loading={isSubUnitLoading}
             size="small"
-            getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
+            getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField
                 color="secondary"
                 {...params}
-                label="Subunit"
+                label="Sub Unit"
                 error={!!errors?.subunit_id}
                 helperText={errors?.subunit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="location_id"
+            control={control}
+            options={locationData?.filter((item) => {
+              return item.subunit.some((subunit) => {
+                return subunit?.id === watch("subunit_id")?.id;
+              });
+            })}
+            loading={isLocationLoading}
+            size="small"
+            getOptionLabel={(option) => option.location_code + " - " + option.location_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Location"
+                error={!!errors?.location_id}
+                helperText={errors?.location_id?.message}
               />
             )}
           />

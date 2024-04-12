@@ -51,8 +51,12 @@ const UserAccounts = () => {
     employee_id: "",
     firstname: "",
     lastname: "",
-    unit_id: "",
-    sub_unit_name: "",
+    company_id: null,
+    business_unit_id: null,
+    department_id: null,
+    unit_id: null,
+    subunit_id: null,
+    location_id: null,
     username: "",
     role_id: null,
   });
@@ -187,15 +191,33 @@ const UserAccounts = () => {
   };
 
   const onUpdateHandler = (props) => {
-    const { id, employee_id, firstname, lastname, unit, subunit, username, role, role_id } = props;
+    const {
+      id,
+      employee_id,
+      firstname,
+      lastname,
+      company,
+      business_unit,
+      department,
+      unit,
+      subunit,
+      location,
+      username,
+      role,
+      role_id,
+    } = props;
     setUpdateUser({
       status: true,
       id: id,
       employee_id,
       firstname,
       lastname,
+      company,
+      business_unit,
+      department,
       unit,
       subunit,
+      location,
       username,
       role,
       role_id,
@@ -209,8 +231,12 @@ const UserAccounts = () => {
       employee_id: null,
       firstname: "",
       lastname: "",
+      company: null,
+      business_unit: null,
+      department: null,
       unit: null,
-      sub_unit: "",
+      subunit: null,
+      location: null,
       username: "",
       role_id: null,
     });
@@ -372,11 +398,11 @@ const UserAccounts = () => {
                         direction={orderBy === `firstname` ? order : `asc`}
                         onClick={() => onSort(`firstname`)}
                       >
-                        Firstname
+                        Fullname
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell">
+                    {/* <TableCell className="tbl-cell">
                       <TableSortLabel
                         active={orderBy === `lastname`}
                         direction={orderBy === `lastname` ? order : `asc`}
@@ -384,19 +410,11 @@ const UserAccounts = () => {
                       >
                         Lastname
                       </TableSortLabel>
-                    </TableCell>
+                    </TableCell> */}
 
-                    <TableCell className="tbl-cell">
-                      <TableSortLabel
-                        active={orderBy === `unit`}
-                        direction={orderBy === `unit` ? order : `asc`}
-                        onClick={() => onSort(`unit`)}
-                      >
-                        Unit
-                      </TableSortLabel>
-                    </TableCell>
+                    <TableCell className="tbl-cell">Chart of Account</TableCell>
 
-                    <TableCell className="tbl-cell">
+                    {/* <TableCell className="tbl-cell">
                       <TableSortLabel
                         active={orderBy === `subunit`}
                         direction={orderBy === `subunit` ? order : `asc`}
@@ -404,7 +422,7 @@ const UserAccounts = () => {
                       >
                         Sub Unit
                       </TableSortLabel>
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell className="tbl-cell">Role</TableCell>
 
@@ -453,18 +471,36 @@ const UserAccounts = () => {
                             <TableCell className="tbl-cell tr-cen-pad45">{users.id}</TableCell>
 
                             <TableCell className="tbl-cell" sx={{ textTransform: "capitalize" }}>
-                              {users.firstname}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell">{users.lastname}</TableCell>
-
-                            <TableCell className="tbl-cell">
-                              {users.unit?.unit_code} - {users.unit?.unit_name}
+                              <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                {users.firstname}
+                              </Typography>
+                              <Typography fontSize={12}>{users.lastname}</Typography>
                             </TableCell>
 
                             <TableCell className="tbl-cell">
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.company?.company_code}) - ${users.company?.company_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.business_unit?.business_unit_code}) - ${users.business_unit?.business_unit_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.department?.department_code}) - ${users.department?.department_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.unit?.unit_code}) - ${users.unit?.unit_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.subunit?.subunit_code}) - ${users.subunit?.subunit_name}`}
+                              </Typography>
+                              <Typography fontSize={10} color="gray">
+                                {`(${users.location?.location_code}) - ${users.location?.location_name}`}
+                              </Typography>
+                            </TableCell>
+
+                            {/* <TableCell className="tbl-cell">
                               {users.subunit?.subunit_code} - {users.subunit?.subunit_name}
-                            </TableCell>
+                            </TableCell> */}
 
                             <TableCell className="tbl-cell capitalized" sx={{ whiteSpace: "nowrap" }}>
                               {users.role.role_name}
