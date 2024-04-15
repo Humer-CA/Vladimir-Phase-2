@@ -37,6 +37,10 @@ $pending: #f5cc2a2f;
   overscroll-behavior: none;
 }
 
+::-ms-reveal {
+  display: none;
+}
+
 // SCROLL BAR
 /* width */
 ::-webkit-scrollbar {
