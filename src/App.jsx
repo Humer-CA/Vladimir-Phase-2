@@ -70,6 +70,7 @@ import ViewApproveRequest from "./Pages/Approving/ViewApproveRequest";
 import ViewRequestReleasing from "./Pages/Asset Requisition/Releasing of Asset/ViewRequestReleasing";
 import ReleasingOfAsset from "./Pages/Asset Requisition/Releasing of Asset/ReleasingOfAsset";
 import AdditionalCostRequest from "./Pages/Asset Requisition/Add Requisition/AdditionalCostRequest";
+import Transfer from "./Pages/Asset Movement/Transfer/Transfer";
 
 const router = createBrowserRouter([
   {
@@ -294,7 +295,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "transfer",
-                // element: <UserAccounts />,
+                element: <Transfer />,
               },
               {
                 path: "pull-out",
