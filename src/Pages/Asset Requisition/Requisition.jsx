@@ -74,6 +74,12 @@ const Requisition = () => {
   const drawer = useSelector((state) => state.booleanState.drawer);
   const dialog = useSelector((state) => state.booleanState.dialog);
 
+  const dispatch = useDispatch();
+
+  const [postRequisitionStatusApi, { isLoading }] = usePatchRequisitionStatusApiMutation();
+  const [voidRequisitionApi, { isVoidLoading }] = useVoidRequisitionApiMutation();
+  const [deleteAllRequest, { data: deleteAllRequestData }] = useDeleteRequestContainerAllApiMutation();
+
   // Table Sorting --------------------------------
 
   const [order, setOrder] = useState("desc");
@@ -129,12 +135,6 @@ const Requisition = () => {
     },
     { refetchOnMountOrArgChange: true }
   );
-
-  const [postRequisitionStatusApi, { isLoading }] = usePatchRequisitionStatusApiMutation();
-  const [voidRequisitionApi, { isVoidLoading }] = useVoidRequisitionApiMutation();
-  const [deleteAllRequest, { data: deleteAllRequestData }] = useDeleteRequestContainerAllApiMutation();
-
-  const dispatch = useDispatch();
 
   const onVoidHandler = async (id) => {
     dispatch(
@@ -210,8 +210,6 @@ const Requisition = () => {
   const handleCloseTimelime = () => {
     dispatch(closeDialog);
   };
-
-  const additionalCost = true;
 
   // * Add Button Settings
   const [anchorElAdd, setAnchorElAdd] = useState(null);
