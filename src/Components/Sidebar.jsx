@@ -80,6 +80,8 @@ import {
   Output,
   BusinessCenter,
   Ballot,
+  NoteAddRounded,
+  Straighten,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../Redux/Query/Notification";
 
@@ -236,12 +238,13 @@ const Sidebar = () => {
           path: "/masterlist/status-category",
           permission: "status-category",
         },
-        // {
-        //   label: "Asset Registration",
-        //   icon: NoteAddRounded,
-        //   path: "masterlist/create-asset-registration",
-        //   permission: [],
-        // },
+
+        {
+          label: "Unit of Measurement",
+          icon: Straighten,
+          path: "masterlist/unit-of-measurement",
+          permission: "unit-of-measurement",
+        },
       ],
       open: masterListCollapse,
       setter: (e) => {

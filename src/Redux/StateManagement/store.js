@@ -48,6 +48,7 @@ import { locationApi } from "../Query/Masterlist/YmirCoa/Location";
 import { accountTitleApi } from "../Query/Masterlist/FistoCoa/AccountTitle";
 import { supplierApi } from "../Query/Masterlist/FistoCoa/Supplier";
 import { divisionApi } from "../Query/Masterlist/Division";
+import { unitOfMeasurementApi } from "../Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
 import { ymirApi } from "../Query/Masterlist/YmirCoa/YmirApi";
 
@@ -132,11 +133,12 @@ export const store = configureStore({
     [businessUnitApi.reducerPath]: businessUnitApi.reducer,
     [departmentApi.reducerPath]: departmentApi.reducer,
     [unitApi.reducerPath]: unitApi.reducer,
+    [subUnitApi.reducerPath]: subUnitApi.reducer,
     [locationApi.reducerPath]: locationApi.reducer,
     [accountTitleApi.reducerPath]: accountTitleApi.reducer,
     [supplierApi.reducerPath]: supplierApi.reducer,
+    [unitOfMeasurementApi.reducerPath]: unitOfMeasurementApi.reducer,
 
-    [subUnitApi.reducerPath]: subUnitApi.reducer,
     [divisionApi.reducerPath]: divisionApi.reducer,
     [ipAddressSetupApi.reducerPath]: ipAddressSetupApi.reducer,
     [ipAddressPretestSetupApi.reducerPath]: ipAddressPretestSetupApi.reducer,
@@ -205,10 +207,11 @@ export const store = configureStore({
       businessUnitApi.middleware,
       departmentApi.middleware,
       unitApi.middleware,
+      subUnitApi.middleware,
       locationApi.middleware,
       accountTitleApi.middleware,
       supplierApi.middleware,
-      subUnitApi.middleware,
+      unitOfMeasurementApi.middleware,
 
       divisionApi.middleware,
       printOfflineFaApi.middleware,

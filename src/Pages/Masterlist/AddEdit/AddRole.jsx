@@ -452,6 +452,18 @@ const AddRole = (props) => {
               />
             }
           />
+
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="Unit of Measurement"
+            value="unit-of-measurement"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("unit-of-measurement")}
+              />
+            }
+          />
         </FormGroup>
       </Stack>
     );
@@ -740,6 +752,7 @@ const AddRole = (props) => {
     "capex",
     "category",
     "status-category",
+    "unit-of-measurement",
 
     // UserManagement
     "user-accounts",
@@ -901,6 +914,7 @@ const AddRole = (props) => {
                                     "capex",
                                     "category",
                                     "status-category",
+                                    "unit-of-measurement",
                                   ]),
                                 ]);
                               } else {

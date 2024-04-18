@@ -71,6 +71,7 @@ import ViewRequestReleasing from "./Pages/Asset Requisition/Releasing of Asset/V
 import ReleasingOfAsset from "./Pages/Asset Requisition/Releasing of Asset/ReleasingOfAsset";
 import AdditionalCostRequest from "./Pages/Asset Requisition/Add Requisition/AdditionalCostRequest";
 import Transfer from "./Pages/Asset Movement/Transfer/Transfer";
+import UnitOfMeasurement from "./Pages/Masterlist/UnitOfMeasurement";
 
 const router = createBrowserRouter([
   {
@@ -162,6 +163,11 @@ const router = createBrowserRouter([
               {
                 path: "status-category",
                 element: <FaStatusCategory />,
+              },
+
+              {
+                path: "unit-of-measurement",
+                element: <UnitOfMeasurement />,
               },
 
               // {
