@@ -19,6 +19,7 @@ import {
   Segment,
   Ballot,
   BusinessCenter,
+  Straighten,
 } from "@mui/icons-material";
 import Cards from "../../Components/Reusable/Cards";
 
@@ -52,6 +53,13 @@ const MasterlistList = [
   },
 
   {
+    icon: <Segment />,
+    label: "Sub Unit",
+    description: "Adding, editing and archiving of Sub Unit masterlist",
+    path: "/masterlist/sub-unit",
+  },
+
+  {
     icon: <LocationOn />,
     label: "Location",
     description: "Synching of Location Masterlist from Fisto to Vladimir",
@@ -63,13 +71,6 @@ const MasterlistList = [
     label: "Account Title",
     description: "Synching of Account Title Masterlist from Fisto to Vladimir",
     path: "/masterlist/account-title",
-  },
-
-  {
-    icon: <Segment />,
-    label: "Sub Unit",
-    description: "Adding, editing and archiving of Sub Unit masterlist",
-    path: "/masterlist/sub-unit",
   },
 
   {
@@ -104,6 +105,13 @@ const MasterlistList = [
     label: "Status Category",
     description: "Setting up of Fixed Asset status masterlist",
     path: "/masterlist/status-category",
+  },
+
+  {
+    icon: <Straighten />,
+    label: "Unit of Measurement",
+    description: "Setting up of UOM masterlist",
+    path: "/masterlist/unit-of-measurement",
   },
 ];
 
