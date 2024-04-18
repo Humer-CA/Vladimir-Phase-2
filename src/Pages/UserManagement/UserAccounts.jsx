@@ -103,6 +103,7 @@ const UserAccounts = () => {
     // console.log(page + 1);
     setPage(page + 1);
   };
+
   const {
     data: users,
     isLoading: usersLoading,
@@ -306,15 +307,19 @@ const UserAccounts = () => {
   const handleExport = async () => {
     try {
       const res = await userDataTrigger().unwrap();
-      console.log(res);
+      // console.log(res);
       const newObj = res?.map((item) => {
         return {
           ID: item?.id,
           "Employee ID": item?.employee_id,
           Firstname: item?.firstname,
           Lastname: item?.lastname,
-          Unit: item?.unit,
-          "Sub Unit": item?.subunit,
+          Company: `(${item?.company?.company_code}) -  ${item?.company?.company_name}`,
+          "Business Unit": `(${item?.business_unit?.business_unit_code}) -  ${item?.business_unit?.business_unit_name}`,
+          Department: `(${item?.department?.department_code}) -  ${item?.department?.department_name}`,
+          Unit: `(${item?.unit?.unit_code}) -  ${item?.unit?.unit_name}`,
+          "Sub Unit": `(${item?.subunit?.subunit_code}) -  ${item?.subunit?.subunit_name}`,
+          Location: `(${item?.location?.location_code}) -  ${item?.location?.location_name}`,
           Username: item?.username,
           Role: item?.role?.role_name,
           Status: item?.is_active === true ? "Active" : "Inactive",
