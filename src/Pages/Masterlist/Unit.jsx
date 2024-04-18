@@ -259,6 +259,16 @@ const Unit = () => {
                         </TableSortLabel>
                       </TableCell>
 
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `unit_name`}
+                          direction={orderBy === `unit_name` ? order : `asc`}
+                          onClick={() => onSort(`unit_name`)}
+                        >
+                          Department
+                        </TableSortLabel>
+                      </TableCell>
+
                       <TableCell className="tbl-cell text-center">Status</TableCell>
 
                       <TableCell className="tbl-cell text-center">
@@ -292,7 +302,7 @@ const Unit = () => {
                               <TableCell className="tbl-cell tr-cen-pad45 tbl-coa">{data.id}</TableCell>
                               <TableCell className="tbl-cell">{data.unit_code}</TableCell>
                               <TableCell className="tbl-cell">{data.unit_name}</TableCell>
-
+                              <TableCell className="tbl-cell">{`${data.department?.department_code} - ${data.department?.department_name}`}</TableCell>
                               <TableCell className="tbl-cell text-center">
                                 {data.is_active ? (
                                   <Chip
@@ -320,7 +330,6 @@ const Unit = () => {
                                   />
                                 )}
                               </TableCell>
-
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {Moment(data.updated_at).format("MMM DD, YYYY")}
                               </TableCell>
