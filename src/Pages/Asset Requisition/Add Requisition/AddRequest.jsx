@@ -45,6 +45,7 @@ import {
   AddToPhotos,
   ArrowBackIosRounded,
   Create,
+  Folder,
   Info,
   Remove,
   Report,
@@ -112,6 +113,7 @@ import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
 import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -140,6 +142,7 @@ const schema = yup.object().shape({
   date_needed: yup.string().required().label("Date Needed").typeError("Date Needed is a required field"),
   brand: yup.string().required().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
+  uom_id: yup.object().required().label("UOM").typeError("UOM is a required field"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
   additional_info: yup.string().nullable().label("Additional Info"),
 
@@ -172,6 +175,7 @@ const AddRequisition = (props) => {
     accountable: null,
     cellphone_number: "",
     quantity: 1,
+    uom_id: null,
     additional_info: "",
 
     letter_of_request: null,
@@ -329,6 +333,17 @@ const AddRequisition = (props) => {
     { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
   ] = useLazyGetSedarUsersApiQuery();
 
+  const [
+    uomTrigger,
+    {
+      data: uomData = [],
+      isLoading: isUnitOfMeasurementLoading,
+      isSuccess: isUnitOfMeasurementSuccess,
+      isError: isUnitOfMeasurementError,
+      refetch: isUnitOfMeasurementRefetch,
+    },
+  ] = useLazyGetUnitOfMeasurementAllApiQuery();
+
   const {
     data: addRequestAllApi = [],
     isLoading: isRequestLoading,
@@ -390,6 +405,7 @@ const AddRequisition = (props) => {
       accountable: null,
       cellphone_number: "",
       quantity: 1,
+      uom_id: null,
       additional_info: "",
 
       letter_of_request: null,
@@ -399,6 +415,8 @@ const AddRequisition = (props) => {
       other_attachments: null,
     },
   });
+
+  console.log(errors);
 
   useEffect(() => {
     if (isPostError) {
@@ -432,7 +450,16 @@ const AddRequisition = (props) => {
 
   useEffect(() => {
     if (updateRequest.id) {
-      const dateNeededFormat = new Date(updateRequest.date_needed);
+      const accountable = {
+        general_info: {
+          full_id_number: updateRequest.accountable.split(" ")[0],
+          full_id_number_full_name: updateRequest.accountable,
+        },
+      };
+      const dateNeededFormat = updateRequest?.date_needed === "-" ? null : new Date(updateRequest?.date_needed);
+      const cellphoneNumber = updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2);
+      const attachmentFormat = (fields) => (updateRequest?.[fields] === "-" ? "" : updateRequest?.[fields]);
+
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("department_id", updateRequest?.department);
@@ -443,34 +470,25 @@ const AddRequisition = (props) => {
       setValue("location_id", updateRequest?.location);
       setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
-      setValue("accountable", {
-        general_info: {
-          full_id_number: updateRequest.accountable.split(" ")[0],
-          full_id_number_full_name: updateRequest.accountable,
-        },
-      });
+      setValue("accountable", accountable);
       setValue("acquisition_details", updateRequest?.acquisition_details);
+
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
       setValue("asset_specification", updateRequest?.asset_specification);
-      setValue("date_needed", updateRequest.date_needed === "-" ? null : dateNeededFormat);
-
+      setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
+      setValue("uom_id", updateRequest?.updateRequest?.uom);
       setValue("brand", updateRequest?.brand);
-      setValue(
-        "cellphone_number",
-        updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2)
-      );
+      setValue("cellphone_number", cellphoneNumber);
       setValue("additional_info", updateRequest?.additional_info);
+
       // ATTACHMENTS
-      setValue("letter_of_request", updateRequest?.letter_of_request === "-" ? "" : updateRequest?.letter_of_request);
-      setValue("quotation", updateRequest?.quotation === "-" ? "" : updateRequest?.quotation);
-      setValue(
-        "specification_form",
-        updateRequest?.specification_form === "-" ? "" : updateRequest?.specification_form
-      );
-      setValue("tool_of_trade", updateRequest?.tool_of_trade === "-" ? "" : updateRequest?.tool_of_trade);
-      setValue("other_attachments", updateRequest?.other_attachments === "-" ? "" : updateRequest?.other_attachments);
+      setValue("letter_of_request", attachmentFormat("letter_of_request"));
+      setValue("quotation", attachmentFormat("quotation"));
+      setValue("specification_form", attachmentFormat("specification_form"));
+      setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
+      setValue("other_attachments", attachmentFormat("other_attachments"));
     }
   }, [updateRequest]);
 
@@ -523,75 +541,68 @@ const AddRequisition = (props) => {
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
+    const updatingCoa = (fields, name) =>
+      updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
+    const accountableFormat =
+      formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString();
+    const dateNeededFormat = moment(new Date(formData.date_needed)).format("YYYY-MM-DD");
+    const cpFormat = formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number?.toString();
+
     const data = {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
-      company_id: updateRequest ? formData?.company_id.id : formData?.company_id?.company?.id.toString(),
-      business_unit_id: updateRequest
-        ? formData?.business_unit_id.id
-        : formData?.business_unit_id?.business_unit?.id.toString(),
+      company_id: updatingCoa("company_id", "company"),
+      business_unit_id: updatingCoa("business_unit_id", "business_unit"),
       unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
       account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
-      accountable:
-        formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
+      accountable: accountableFormat,
 
       acquisition_details: formData?.acquisition_details?.toString(),
       asset_description: formData?.asset_description?.toString(),
       asset_specification: formData?.asset_specification?.toString(),
-      date_needed: moment(new Date(formData.date_needed)).format("YYYY-MM-DD"),
-      cellphone_number: formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number?.toString(),
+      date_needed: dateNeededFormat,
+      cellphone_number: cpFormat,
 
       brand: formData?.brand?.toString(),
       quantity: formData?.quantity?.toString(),
+      uom_id: formData?.uom?.id?.toString(),
       additional_info: formData?.additional_info?.toString(),
 
-      letter_of_request:
-        // updateRequest && watch("letter_of_request") === null
-        //     ? ""
-        //     : updateRequest.letter_of_request !== null
-        //     ? transactionDataApi[0]?.attachments?.letter_of_request?.file_name === updateRequest?.letter_of_request?.file_name
-        //       ? "x"
-        //       : formData.letter_of_request
-        //     : formData.letter_of_request,
-        updateRequest && attachmentValidation("letter_of_request", formData),
-
+      letter_of_request: updateRequest && attachmentValidation("letter_of_request", formData),
       quotation: updateRequest && attachmentValidation("quotation", formData),
       specification_form: updateRequest && attachmentValidation("specification_form", formData),
       tool_of_trade: updateRequest && attachmentValidation("tool_of_trade", formData),
       other_attachments: updateRequest && attachmentValidation("other_attachments", formData),
     };
-
-    // console.log("data", data);
+    console.log(formData);
+    console.log("data", data);
 
     const payload = new FormData();
     Object.entries(data).forEach((item) => {
       const [name, value] = item;
-
       payload.append(name, value);
     });
 
     const token = localStorage.getItem("token");
 
     const validation = () => {
+      const coaValidation = (name, value) => {
+        transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+      };
       if (transactionData) {
-        if (transactionDataApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          return true;
-        }
-        return false;
+        return (
+          (transactionData &&
+            (coaValidation("department", "department_id") ||
+              coaValidation("unit", "unit_id") ||
+              coaValidation("subunit", "subunit_id") ||
+              coaValidation("location", "location_id"))) ||
+          false
+        );
       } else {
         if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
           return true;
@@ -1036,6 +1047,7 @@ const AddRequisition = (props) => {
       asset_specification,
       date_needed,
       quantity,
+      uom,
       brand,
       cellphone_number,
       additional_info,
@@ -1064,6 +1076,7 @@ const AddRequisition = (props) => {
       date_needed,
       brand,
       quantity,
+      uom,
       cellphone_number,
       additional_info,
 
@@ -1096,6 +1109,7 @@ const AddRequisition = (props) => {
       accountable: null,
       cellphone_number: "",
       quantity: 1,
+      uom_id: null,
       additional_info: "",
 
       letter_of_request: null,
@@ -1507,6 +1521,27 @@ const AddRequisition = (props) => {
                   return floatValue >= 1;
                 }}
               />
+
+              <CustomAutoComplete
+                control={control}
+                name="uom_id"
+                options={uomData}
+                onOpen={() => (isUnitOfMeasurementSuccess ? null : uomTrigger())}
+                loading={isUnitOfMeasurementLoading}
+                disabled={updateRequest && disable}
+                getOptionLabel={(option) => option.uom_name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="UOM"
+                    error={!!errors?.uom_id}
+                    helperText={errors?.uom_id?.message}
+                  />
+                )}
+              />
+
               <CustomPatternField
                 control={control}
                 name="cellphone_number"
@@ -1754,7 +1789,10 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Date Needed</TableCell>
 
                       {addRequestAllApi && !transactionDataApi[0]?.po_number && (
-                        <TableCell className="tbl-cell text-center">Quantity</TableCell>
+                        <>
+                          <TableCell className="tbl-cell text-center">Quantity</TableCell>
+                          <TableCell className="tbl-cell text-center">UOM</TableCell>
+                        </>
                       )}
                       {transactionData && transactionDataApi[0]?.po_number && (
                         <>
@@ -1871,6 +1909,12 @@ const AddRequisition = (props) => {
                             {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                 {data.quantity}
+                              </TableCell>
+                            )}
+
+                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                              <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
+                                {data.uom_name}
                               </TableCell>
                             )}
                             {transactionData && data.po_number && (
@@ -2002,6 +2046,7 @@ const AddRequisition = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
+
               {/* {(isTransactionSuccess || isRequestSuccess) && (
               <CustomTablePagination
                 total={(transactionDataApiPage || addRequestAllApi)?.total}
@@ -2012,6 +2057,7 @@ const AddRequisition = (props) => {
                 onRowsPerPageChange={perPageHandler}
               />
             )} */}
+
               {/* Buttons */}
               <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
                 <Typography

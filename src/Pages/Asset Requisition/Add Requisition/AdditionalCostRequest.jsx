@@ -455,7 +455,16 @@ const AdditionalCostRequest = (props) => {
 
   useEffect(() => {
     if (updateRequest.id) {
-      const dateNeededFormat = new Date(updateRequest.date_needed);
+      const accountable = {
+        general_info: {
+          full_id_number: updateRequest.accountable.split(" ")[0],
+          full_id_number_full_name: updateRequest.accountable,
+        },
+      };
+      const dateNeededFormat = updateRequest?.date_needed === "-" ? null : new Date(updateRequest?.date_needed);
+      const cellphoneNumber = updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2);
+      const attachmentFormat = (fields) => (updateRequest?.[fields] === "-" ? "" : updateRequest?.[fields]);
+
       setValue("fixed_asset_id", updateRequest?.fixed_asset_id);
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("acquisition_details", updateRequest?.acquisition_details);
@@ -468,32 +477,24 @@ const AdditionalCostRequest = (props) => {
       setValue("location_id", updateRequest?.location);
       setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
-      setValue("accountable", {
-        general_info: {
-          full_id_number: updateRequest.accountable.split(" ")[0],
-          full_id_number_full_name: updateRequest.accountable,
-        },
-      });
+      setValue("accountable", accountable);
+
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
       setValue("asset_specification", updateRequest?.asset_specification);
       setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
+      setValue("uom", updateRequest?.uom);
       setValue("brand", updateRequest?.brand);
-      setValue(
-        "cellphone_number",
-        updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2)
-      );
+      setValue("cellphone_number", cellphoneNumber);
       setValue("additional_info", updateRequest?.additional_info);
+
       // ATTACHMENTS
-      setValue("letter_of_request", updateRequest?.letter_of_request === "-" ? "" : updateRequest?.letter_of_request);
-      setValue("quotation", updateRequest?.quotation === "-" ? "" : updateRequest?.quotation);
-      setValue(
-        "specification_form",
-        updateRequest?.specification_form === "-" ? "" : updateRequest?.specification_form
-      );
-      setValue("tool_of_trade", updateRequest?.tool_of_trade === "-" ? "" : updateRequest?.tool_of_trade);
-      setValue("other_attachments", updateRequest?.other_attachments === "-" ? "" : updateRequest?.other_attachments);
+      setValue("letter_of_request", attachmentFormat("letter_of_request"));
+      setValue("quotation", attachmentFormat("quotation"));
+      setValue("specification_form", attachmentFormat("specification_form"));
+      setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
+      setValue("other_attachments", attachmentFormat("other_attachments"));
     }
   }, [updateRequest]);
 
@@ -531,7 +532,6 @@ const AdditionalCostRequest = (props) => {
 
   const attachmentValidation = (fieldName, formData) => {
     const validate = transactionDataApi.find((item) => item.id === updateRequest.id);
-
     if (watch(`${fieldName}`) === null) {
       return "";
     } else if (updateRequest[fieldName] !== null)
@@ -548,6 +548,13 @@ const AdditionalCostRequest = (props) => {
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
+    const updatingCoa = (fields, name) =>
+      updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
+    const accountableFormat =
+      formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString();
+    const dateNeededFormat = moment(new Date(formData.date_needed)).format("YYYY-MM-DD");
+    const cpFormat = formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number?.toString();
+
     const data = {
       is_addcost: 1,
       fixed_asset_id: formData?.fixed_asset_id?.id?.toString(),
@@ -555,17 +562,14 @@ const AdditionalCostRequest = (props) => {
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
-      company_id: updateRequest ? formData?.company_id.id : formData?.company_id?.company?.id.toString(),
-      business_unit_id: updateRequest
-        ? formData?.business_unit_id.id
-        : formData?.business_unit_id?.business_unit?.id.toString(),
+      company_id: updatingCoa("company_id", "company"),
+      business_unit_id: updatingCoa("business_unit_id", "business_unit"),
       unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
       account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
-      accountable:
-        formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
+      accountable: accountableFormat,
 
       acquisition_details: formData?.acquisition_details?.toString(),
       asset_description: formData?.asset_description?.toString(),
