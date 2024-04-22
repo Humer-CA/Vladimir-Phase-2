@@ -416,7 +416,7 @@ const AddRequisition = (props) => {
     },
   });
 
-  console.log(errors);
+  // console.log(errors);
 
   useEffect(() => {
     if (isPostError) {
@@ -478,7 +478,7 @@ const AddRequisition = (props) => {
       setValue("asset_specification", updateRequest?.asset_specification);
       setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
-      setValue("uom_id", updateRequest?.updateRequest?.uom);
+      setValue("uom_id", updateRequest?.unit_of_measure);
       setValue("brand", updateRequest?.brand);
       setValue("cellphone_number", cellphoneNumber);
       setValue("additional_info", updateRequest?.additional_info);
@@ -491,6 +491,8 @@ const AddRequisition = (props) => {
       setValue("other_attachments", attachmentFormat("other_attachments"));
     }
   }, [updateRequest]);
+
+  // console.log(updateRequest);
 
   // Table Sorting --------------------------------
   const [order, setOrder] = useState("desc");
@@ -570,7 +572,7 @@ const AddRequisition = (props) => {
 
       brand: formData?.brand?.toString(),
       quantity: formData?.quantity?.toString(),
-      uom_id: formData?.uom?.id?.toString(),
+      uom_id: formData?.uom_id?.id?.toString(),
       additional_info: formData?.additional_info?.toString(),
 
       letter_of_request: updateRequest && attachmentValidation("letter_of_request", formData),
@@ -1047,7 +1049,7 @@ const AddRequisition = (props) => {
       asset_specification,
       date_needed,
       quantity,
-      uom,
+      unit_of_measure,
       brand,
       cellphone_number,
       additional_info,
@@ -1076,7 +1078,7 @@ const AddRequisition = (props) => {
       date_needed,
       brand,
       quantity,
-      uom,
+      unit_of_measure,
       cellphone_number,
       additional_info,
 
@@ -1836,6 +1838,7 @@ const AddRequisition = (props) => {
                               },
                               bgcolor: data?.is_removed === 1 ? "#ff00002f" : null,
                               "*": { color: data?.is_removed === 1 ? "black!important" : null },
+                              cursor: transactionDataApi[0]?.po_number ? "pointer" : null,
                             }}
                           >
                             <TableCell
@@ -1914,7 +1917,7 @@ const AddRequisition = (props) => {
 
                             {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                {data.uom_name}
+                                {data.unit_of_measure?.uom_name}
                               </TableCell>
                             )}
                             {transactionData && data.po_number && (
