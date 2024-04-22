@@ -579,6 +579,7 @@ const AdditionalCostRequest = (props) => {
 
       brand: formData?.brand?.toString(),
       quantity: formData?.quantity?.toString(),
+      uom_id: formData?.uom_id?.id?.toString(),
       additional_info: formData?.additional_info?.toString(),
 
       letter_of_request: updateRequest && attachmentValidation("letter_of_request", formData),
@@ -1770,7 +1771,7 @@ const AdditionalCostRequest = (props) => {
   };
 
   const handleDispatchDetails = () => {
-    if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
+    if (updateRequest && updateRequest?.acquisition_details !== watch("acquisition_details")) {
       return dispatch(
         openConfirm({
           icon: Warning,
