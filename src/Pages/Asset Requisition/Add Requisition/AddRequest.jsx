@@ -669,6 +669,7 @@ const AddRequisition = (props) => {
                 accountable: null,
                 cellphone_number: "",
                 quantity: 1,
+                uom_id: null,
                 additional_info: "",
 
                 letter_of_request: null,
