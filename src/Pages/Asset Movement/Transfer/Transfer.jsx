@@ -33,7 +33,8 @@ import { useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
-import { useGetAssetTransferApiQuery } from "../../../Redux/Query/Settings/AssetTransfer";
+import { useGetTransferApiQuery } from "../../../Redux/Query/Movement/Transfer";
+import ActionMenu from "../../../Components/Reusable/ActionMenu";
 
 const Transfer = () => {
   const [search, setSearch] = useState("");
@@ -87,7 +88,6 @@ const Transfer = () => {
     setPage(page + 1);
   };
 
-  // const [transferDataTrigger] = useGetTransferApiQuery();
   // const [transferDataTrigger] = useLazyGetTransferAllApiQuery();
 
   const {
@@ -97,7 +97,7 @@ const Transfer = () => {
     isError: transferError,
     error: errorData,
     refetch,
-  } = useGetAssetTransferApiQuery(
+  } = useGetTransferApiQuery(
     {
       page: page,
       per_page: perPage,
@@ -227,16 +227,6 @@ const Transfer = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `status`}
-                          direction={orderBy === `status` ? order : `asc`}
-                          onClick={() => onSort(`status`)}
-                        >
-                          Status
-                        </TableSortLabel>
-                      </TableCell>
-
                       <TableCell className="tbl-cell text-center">View Information</TableCell>
 
                       <TableCell className="tbl-cell" align="center">
@@ -258,6 +248,16 @@ const Transfer = () => {
                           Date Created
                         </TableSortLabel>
                       </TableCell>
+
+                      <TableCell className="tbl-cell text-center">
+                        <TableSortLabel
+                          active={orderBy === `created_at`}
+                          direction={orderBy === `created_at` ? order : `asc`}
+                          onClick={() => onSort(`created_at`)}
+                        >
+                          Action
+                        </TableSortLabel>
+                      </TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -267,19 +267,17 @@ const Transfer = () => {
                     ) : (
                       <>
                         {transferSuccess &&
-                          [...transferData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
+                          [...transferData]?.sort(comparator(order, orderBy))?.map((data) => (
                             <TableRow
-                              key={data.id}
+                              key={data.transfer_number}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   borderBottom: 0,
                                 },
                               }}
                             >
-                              <TableCell className="tbl-cell text-weight">{data.transaction_number}</TableCell>
-                              <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
-                              <TableCell className="tbl-cell">{data.pr_number}</TableCell>
-                              <TableCell className="tbl-cell text-weight tr-cen-pad45">{data.item_count}</TableCell>
+                              <TableCell className="tbl-cell text-weight">{data.transfer_number}</TableCell>
+                              <TableCell className="tbl-cell">{`(${data.requester?.employee_id}) - ${data.requester?.first_name} ${data.requester?.last_name}`}</TableCell>
                               <TableCell className="tbl-cell text-weight text-center">
                                 <Tooltip placement="top" title="View Transfer Information" arrow>
                                   <IconButton onClick={() => handleEditTransfer(data)}>
@@ -357,6 +355,9 @@ const Transfer = () => {
                               </TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
+                              </TableCell>
+                              <TableCell>
+                                <ActionMenu />
                               </TableCell>
                             </TableRow>
                           ))}

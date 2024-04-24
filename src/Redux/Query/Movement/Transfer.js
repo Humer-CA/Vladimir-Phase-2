@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const transferApi = createApi({
   reducerPath: "transferApi",
@@ -10,18 +10,18 @@ export const transferApi = createApi({
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
 
-      headers.set(`Authentication`, `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
       headers.set("Accept", `application/json`);
       return headers;
     },
   }),
 
   endpoints: (builder) => ({
-    getApprovalApi: builder.query({
+    getTransferApi: builder.query({
       query: (params) => `asset-transfer`,
       providesTags: ["Transfer"],
     }),
   }),
 });
 
-export const { useGetApprovalApi } = transferApi;
+export const { useGetTransferApiQuery } = transferApi;
