@@ -114,6 +114,7 @@ import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
 import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -148,6 +149,7 @@ const schema = yup.object().shape({
   date_needed: yup.date().typeError("Date Needed is a required field"),
   brand: yup.string().required().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
+  uom_id: yup.object().required().label("UOM").typeError("UOM is a required field"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
   additional_info: yup.string().nullable().label("Additional Info"),
 
@@ -181,6 +183,7 @@ const AdditionalCostRequest = (props) => {
     accountable: null,
     cellphone_number: "",
     quantity: 1,
+    uom_id: null,
     additional_info: "",
 
     letter_of_request: null,
@@ -338,6 +341,17 @@ const AdditionalCostRequest = (props) => {
     { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
   ] = useLazyGetSedarUsersApiQuery();
 
+  const [
+    uomTrigger,
+    {
+      data: uomData = [],
+      isLoading: isUnitOfMeasurementLoading,
+      isSuccess: isUnitOfMeasurementSuccess,
+      isError: isUnitOfMeasurementError,
+      refetch: isUnitOfMeasurementRefetch,
+    },
+  ] = useLazyGetUnitOfMeasurementAllApiQuery();
+
   const {
     data: addRequestAllApi = [],
     isLoading: isRequestLoading,
@@ -411,6 +425,7 @@ const AdditionalCostRequest = (props) => {
       accountable: null,
       cellphone_number: "",
       quantity: 1,
+      uom_id: null,
       additional_info: "",
 
       letter_of_request: null,
@@ -484,7 +499,7 @@ const AdditionalCostRequest = (props) => {
       setValue("asset_specification", updateRequest?.asset_specification);
       setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
-      setValue("uom", updateRequest?.uom);
+      setValue("uom_id", updateRequest?.unit_of_measure);
       setValue("brand", updateRequest?.brand);
       setValue("cellphone_number", cellphoneNumber);
       setValue("additional_info", updateRequest?.additional_info);
@@ -647,6 +662,7 @@ const AdditionalCostRequest = (props) => {
                 accountable: null,
                 cellphone_number: "",
                 quantity: 1,
+                uom_id: null,
                 additional_info: "",
 
                 letter_of_request: null,
@@ -1109,6 +1125,7 @@ const AdditionalCostRequest = (props) => {
       asset_specification,
       date_needed,
       quantity,
+      unit_of_measure,
       brand,
       cellphone_number,
       additional_info,
@@ -1138,6 +1155,7 @@ const AdditionalCostRequest = (props) => {
       date_needed,
       brand,
       quantity,
+      unit_of_measure,
       cellphone_number,
       additional_info,
 
@@ -1173,6 +1191,7 @@ const AdditionalCostRequest = (props) => {
       accountable: null,
       cellphone_number: "",
       quantity: 1,
+      uom_id: null,
       additional_info: "",
 
       letter_of_request: null,
@@ -1618,6 +1637,27 @@ const AdditionalCostRequest = (props) => {
                   return floatValue >= 1;
                 }}
               />
+
+              <CustomAutoComplete
+                control={control}
+                name="uom_id"
+                options={uomData}
+                onOpen={() => (isUnitOfMeasurementSuccess ? null : uomTrigger())}
+                loading={isUnitOfMeasurementLoading}
+                disabled={updateRequest && disable}
+                getOptionLabel={(option) => option.uom_name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="UOM"
+                    error={!!errors?.uom_id}
+                    helperText={errors?.uom_id?.message}
+                  />
+                )}
+              />
+
               <CustomPatternField
                 control={control}
                 name="cellphone_number"
@@ -1885,7 +1925,10 @@ const AdditionalCostRequest = (props) => {
                       <TableCell className="tbl-cell">Date Needed</TableCell>
 
                       {addRequestAllApi && !transactionDataApi[0]?.po_number && (
-                        <TableCell className="tbl-cell text-center">Quantity</TableCell>
+                        <>
+                          <TableCell className="tbl-cell text-center">Quantity</TableCell>
+                          <TableCell className="tbl-cell text-center">UOM</TableCell>
+                        </>
                       )}
                       {transactionData && transactionDataApi[0]?.po_number && (
                         <>
@@ -2008,6 +2051,13 @@ const AdditionalCostRequest = (props) => {
                                 {data.quantity}
                               </TableCell>
                             )}
+
+                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                              <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
+                                {data.unit_of_measure?.uom_name}
+                              </TableCell>
+                            )}
+
                             {transactionData && data.po_number && (
                               <>
                                 <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
