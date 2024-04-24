@@ -244,6 +244,7 @@ const ViewRequestPr = () => {
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
                       <TableCell className="tbl-cell text-center">Quantity</TableCell>
+                      <TableCell className="tbl-cell text-center">UOM</TableCell>
                       <TableCell className="tbl-cell">Cellphone #</TableCell>
                       <TableCell className="tbl-cell">Remarks</TableCell>
                       <TableCell className="tbl-cell">Attachments</TableCell>
@@ -315,7 +316,7 @@ const ViewRequestPr = () => {
                             </TableCell>
 
                             <TableCell className="tbl-cell text-center">{data.quantity}</TableCell>
-
+                            <TableCell className="tbl-cell text-center">{data.unit_of_measure?.uom_name}</TableCell>
                             <TableCell className="tbl-cell">
                               {data.cellphone_number === null ? "-" : data.cellphone_number}
                             </TableCell>
