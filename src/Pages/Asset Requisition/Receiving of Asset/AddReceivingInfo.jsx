@@ -275,7 +275,7 @@ const ReceivingTable = (props) => {
                   <Typography fontSize={13} fontWeight={600} noWrap>
                     UOM:
                   </Typography>
-                  <Typography fontSize={13}>EACH</Typography>
+                  <Typography fontSize={13}>{data?.unit_of_measure?.uom_name}</Typography>
                 </Stack>
               </Stack>
             </Stack>
