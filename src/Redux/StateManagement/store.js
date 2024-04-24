@@ -21,6 +21,7 @@ import booleanStateReducer from "./booleanStateSlice";
 
 // Query
 import { changePasswordApi } from "../Query/ChangePasswordApi";
+import { notificationApi } from "../Query/Notification";
 // import { modulesApi } from '../Query/ModulesApi'
 
 // Masterlist
@@ -82,10 +83,10 @@ import { purchaseRequestApi } from "../Query/Request/PurchaseRequest";
 import { approvalApi } from "../Query/Approving/Approval";
 import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
 
+import { transferApi } from "../Query/Movement/Transfer";
+
 import { assetReceivingApi } from "../Query/Request/AssetReceiving";
 import { assetReleasingApi } from "../Query/Request/AssetReleasing";
-
-import { notificationApi } from "../Query/Notification";
 
 export const store = configureStore({
   reducer: {
@@ -170,6 +171,8 @@ export const store = configureStore({
     [requestContainerApi.reducerPath]: requestContainerApi.reducer,
     [purchaseRequestApi.reducerPath]: purchaseRequestApi.reducer,
 
+    [transferApi.reducerPath]: transferApi.reducer,
+
     // Approval
     [approvalApi.reducerPath]: approvalApi.reducer,
 
@@ -243,6 +246,9 @@ export const store = configureStore({
       requisitionSmsApi.middleware,
       requestContainerApi.middleware,
       purchaseRequestApi.middleware,
+
+      // Transfer
+      transferApi.middleware,
 
       // Approval
       approvalApi.middleware,

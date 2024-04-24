@@ -33,6 +33,7 @@ import { useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
+import { useGetAssetTransferApiQuery } from "../../../Redux/Query/Settings/AssetTransfer";
 
 const Transfer = () => {
   const [search, setSearch] = useState("");
@@ -86,17 +87,17 @@ const Transfer = () => {
     setPage(page + 1);
   };
 
-  const [transferDataTrigger] = useLazyGetRequisitionMonitoringApiQuery();
-  // const [transferDataTrigger] = useLazyGetRequisitionAllApiQuery();
+  // const [transferDataTrigger] = useGetTransferApiQuery();
+  // const [transferDataTrigger] = useLazyGetTransferAllApiQuery();
 
   const {
-    data: requisitionData,
-    isLoading: requisitionLoading,
-    isSuccess: requisitionSuccess,
-    isError: requisitionError,
+    data: transferData,
+    isLoading: transferLoading,
+    isSuccess: transferSuccess,
+    isError: transferError,
     error: errorData,
     refetch,
-  } = useGetRequisitionMonitoringApiQuery(
+  } = useGetAssetTransferApiQuery(
     {
       page: page,
       per_page: perPage,
@@ -107,7 +108,7 @@ const Transfer = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(requisitionData);
+  console.log(transferData);
 
   const dispatch = useDispatch();
 
@@ -169,8 +170,8 @@ const Transfer = () => {
     }
   };
 
-  const handleEditRequisition = (data) => {
-    navigate(`/transfer-monitoring/${data.transaction_number}`, {
+  const handleEditTransfer = (data) => {
+    navigate(`/transfer/${data.transaction_number}`, {
       state: { ...data },
     });
   };
@@ -178,11 +179,11 @@ const Transfer = () => {
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
-        Transfer Monitoring
+        Transfer
       </Typography>
-      {requisitionLoading && <MasterlistSkeleton onAdd={true} />}
-      {requisitionError && <ErrorFetching refetch={refetch} error={errorData} />}
-      {requisitionData && !requisitionError && (
+      {transferLoading && <MasterlistSkeleton onAdd={true} />}
+      {transferError && <ErrorFetching refetch={refetch} error={errorData} />}
+      {transferData && !transferError && (
         <>
           <Box className="mcontainer__wrapper">
             <MasterlistToolbar
@@ -208,43 +209,31 @@ const Transfer = () => {
                     >
                       <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `transaction_number`}
-                          direction={orderBy === `transaction_number` ? order : `asc`}
-                          onClick={() => onSort(`transaction_number`)}
+                          active={orderBy === `transfer_number`}
+                          direction={orderBy === `transfer_number` ? order : `asc`}
+                          onClick={() => onSort(`transfer_number`)}
                         >
-                          Transaction No.
+                          Transfer No.
                         </TableSortLabel>
                       </TableCell>
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `acquisition_details`}
-                          direction={orderBy === `acquisition_details` ? order : `asc`}
-                          onClick={() => onSort(`acquisition_details`)}
+                          active={orderBy === `requester`}
+                          direction={orderBy === `requester` ? order : `asc`}
+                          onClick={() => onSort(`requester`)}
                         >
-                          Acquisition Details
+                          Requester
                         </TableSortLabel>
                       </TableCell>
 
-                      {requisitionData?.pr_number !== "-" && (
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `pr_number`}
-                            direction={orderBy === `pr_number` ? order : `asc`}
-                            onClick={() => onSort(`pr_number`)}
-                          >
-                            PR Number
-                          </TableSortLabel>
-                        </TableCell>
-                      )}
-
-                      <TableCell className="tbl-cell text-center">
+                      <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `item_count`}
-                          direction={orderBy === `item_count` ? order : `asc`}
-                          onClick={() => onSort(`item_count`)}
+                          active={orderBy === `status`}
+                          direction={orderBy === `status` ? order : `asc`}
+                          onClick={() => onSort(`status`)}
                         >
-                          Quantity
+                          Status
                         </TableSortLabel>
                       </TableCell>
 
@@ -273,12 +262,12 @@ const Transfer = () => {
                   </TableHead>
 
                   <TableBody>
-                    {requisitionData?.data?.length === 0 ? (
+                    {transferData?.data?.length === 0 ? (
                       <NoRecordsFound />
                     ) : (
                       <>
-                        {requisitionSuccess &&
-                          [...requisitionData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
+                        {transferSuccess &&
+                          [...transferData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
                             <TableRow
                               key={data.id}
                               sx={{
@@ -293,7 +282,7 @@ const Transfer = () => {
                               <TableCell className="tbl-cell text-weight tr-cen-pad45">{data.item_count}</TableCell>
                               <TableCell className="tbl-cell text-weight text-center">
                                 <Tooltip placement="top" title="View Transfer Information" arrow>
-                                  <IconButton onClick={() => handleEditRequisition(data)}>
+                                  <IconButton onClick={() => handleEditTransfer(data)}>
                                     <Visibility />
                                   </IconButton>
                                 </Tooltip>
@@ -395,10 +384,10 @@ const Transfer = () => {
                 EXPORT
               </Button>
               <CustomTablePagination
-                total={requisitionData?.total}
-                success={requisitionSuccess}
-                current_page={requisitionData?.current_page}
-                per_page={requisitionData?.per_page}
+                total={transferData?.total}
+                success={transferSuccess}
+                current_page={transferData?.current_page}
+                per_page={transferData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />
