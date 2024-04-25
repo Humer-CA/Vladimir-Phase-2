@@ -42,6 +42,7 @@ const Transfer = () => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState([]);
+  const [onTransfer, setOnTransfer] = useState(true);
   const [transactionIdData, setTransactionIdData] = useState();
 
   const navigate = useNavigate();
@@ -190,7 +191,7 @@ const Transfer = () => {
               onStatusChange={setStatus}
               onSearchChange={setSearch}
               onSetPage={setPage}
-              transferFilter
+              onTransfer={onTransfer}
               setFilter={setFilter}
               filter={filter}
             />
