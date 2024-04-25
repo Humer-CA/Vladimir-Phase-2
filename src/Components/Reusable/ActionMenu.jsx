@@ -45,12 +45,14 @@ const ActionMenu = (props) => {
     showVoid,
     showApprover,
     editRequest,
+    setEditRequest,
     onDeleteReferenceHandler,
     // setShowEdit
     setUpdateToggle,
     setDisable,
     disableVoid,
     disableDelete,
+    updateRequest,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -126,6 +128,7 @@ const ActionMenu = (props) => {
     setUpdateToggle(false);
     handleClose();
     setDisable(false);
+    updateRequest ? setEditRequest(false) : setEditRequest(true);
   };
 
   const handleEditNav = () => {
@@ -180,7 +183,7 @@ const ActionMenu = (props) => {
             </MenuItem>
           )}
 
-          {editRequest && (
+          {setEditRequest && (
             <MenuItem onClick={handleEditRequest} dense>
               <ListItemIcon>
                 <BorderColor />

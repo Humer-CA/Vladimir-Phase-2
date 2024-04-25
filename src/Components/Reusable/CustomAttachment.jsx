@@ -2,9 +2,10 @@ import { InputAdornment, TextField as MuiTextField, Typography } from "@mui/mate
 import { Controller } from "react-hook-form";
 import AttachmentIcon from "../../Img/SVG/SVG/Attachment.svg";
 import AttachmentActive from "../../Img/SVG/SVG/AttachmentActive.svg";
+import AttachmentError from "../../Img/SVG/SVG/AttachmentError.svg";
 
 const CustomAttachment = (props) => {
-  const { name, control, onChange, errors, label, inputRef, disabled } = props;
+  const { name, control, errors, inputRef, ...textfield } = props;
 
   return (
     <Controller
@@ -12,38 +13,39 @@ const CustomAttachment = (props) => {
       control={control}
       render={({ field }) => {
         const { ref, value, onChange: setValue } = field;
-        // console.log(ref.current);
+        console.log(value);
         return (
           <>
             <MuiTextField
               type="file"
-              disabled={disabled}
+              // disabled={disabled}
               inputRef={inputRef}
               onChange={(e) => {
-                console.log(e.target.files[0]);
+                // console.log(e.target.files[0]);
 
                 setValue(e.target.files[0]);
                 e.target.value = null;
               }}
               sx={{ display: "none" }}
             />
-
             <MuiTextField
+              {...textfield}
               readOnly
               type="text"
               size="small"
-              label={label}
               autoComplete="off"
               color="secondary"
               value={value?.name || "No file chosen"}
-              disabled={disabled}
               onClick={() => {
                 inputRef.current.click();
               }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <img src={value ? AttachmentActive : AttachmentIcon} width="20px" />
+                    <img
+                      src={textfield.error ? AttachmentError : value ? AttachmentActive : AttachmentIcon}
+                      width="20px"
+                    />
                   </InputAdornment>
                 ),
               }}
@@ -53,7 +55,7 @@ const CustomAttachment = (props) => {
               sx={{
                 ".MuiInputBase-root": {
                   borderRadius: "12px",
-                  color: "#636363",
+                  color: textfield.error ? "red" : "#636363",
                 },
                 ".MuiInputLabel-root.Mui-disabled": {
                   backgroundColor: "transparent",

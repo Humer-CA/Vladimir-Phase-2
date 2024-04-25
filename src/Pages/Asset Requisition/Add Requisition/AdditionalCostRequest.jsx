@@ -147,7 +147,7 @@ const schema = yup.object().shape({
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
   date_needed: yup.date().typeError("Date Needed is a required field"),
-  brand: yup.string().required().label("Brand"),
+  brand: yup.string().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
   uom_id: yup.object().required().label("UOM").typeError("UOM is a required field"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
@@ -2153,11 +2153,11 @@ const AdditionalCostRequest = (props) => {
                                   setDisable={setDisable}
                                   status={data?.status}
                                   data={data}
-                                  editRequest={
-                                    transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
-                                      ? true
-                                      : false
-                                  }
+                                  // editRequest={
+                                  //   transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
+                                  //     ? true
+                                  //     : false
+                                  // }
                                   onDeleteHandler={!transactionData && onDeleteHandler}
                                   onDeleteReferenceHandler={
                                     transactionData &&

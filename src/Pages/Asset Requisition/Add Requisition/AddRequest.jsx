@@ -117,13 +117,18 @@ import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Mas
 
 const schema = yup.object().shape({
   id: yup.string(),
-
   type_of_request_id: yup.object().required().label("Type of Request").typeError("Type of Request is a required field"),
+  // .when("type_of_request", {
+  //   is: (value) => value === "Personal Issued",
+  //   then: (yup) => yup.label("CIP Number").required().typeError("CIP Number is a required field"),
+  // })
+  cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
 
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
   company_id: yup.object().required().label("Company").typeError("Company is a required field"),
   business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
+  unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
   account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
@@ -140,13 +145,19 @@ const schema = yup.object().shape({
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
   date_needed: yup.string().required().label("Date Needed").typeError("Date Needed is a required field"),
-  brand: yup.string().required().label("Brand"),
+  brand: yup.string().label("Brand"),
   quantity: yup.number().required().label("Quantity"),
   uom_id: yup.object().required().label("UOM").typeError("UOM is a required field"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
   additional_info: yup.string().nullable().label("Additional Info"),
 
-  letter_of_request: yup.mixed().label("Letter of Request"),
+  letter_of_request: yup
+    .mixed()
+    .label("Letter of Request")
+    .when("attachment_type", {
+      is: (value) => value === "Unbudgeted",
+      then: (yup) => yup.label("Letter of Request").required().typeError("Letter of Request is a required field"),
+    }),
   quotation: yup.mixed().label("Quotation"),
   specification_form: yup.mixed().label("Specification"),
   tool_of_trade: yup.mixed().label("Tool of Trade"),
@@ -157,6 +168,7 @@ const AddRequisition = (props) => {
   const [updateRequest, setUpdateRequest] = useState({
     id: null,
     type_of_request_id: null,
+    cip_number: null,
     attachment_type: null,
 
     department_id: null,
@@ -190,6 +202,7 @@ const AddRequisition = (props) => {
   const [updateToggle, setUpdateToggle] = useState(true);
   const [disable, setDisable] = useState(true);
   const [itemData, setItemData] = useState(null);
+  const [editRequest, setEditRequest] = useState(false);
 
   const { state: transactionData } = useLocation();
   const dialog = useSelector((state) => state.booleanState.dialog);
@@ -386,6 +399,7 @@ const AddRequisition = (props) => {
     defaultValues: {
       id: "",
       type_of_request_id: null,
+      cip_number: null,
       attachment_type: null,
 
       company_id: null,
@@ -461,6 +475,7 @@ const AddRequisition = (props) => {
       const attachmentFormat = (fields) => (updateRequest?.[fields] === "-" ? "" : updateRequest?.[fields]);
 
       setValue("type_of_request_id", updateRequest?.type_of_request);
+      setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("department_id", updateRequest?.department);
       setValue("company_id", updateRequest?.company);
@@ -489,6 +504,8 @@ const AddRequisition = (props) => {
       setValue("specification_form", attachmentFormat("specification_form"));
       setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
       setValue("other_attachments", attachmentFormat("other_attachments"));
+
+      console.log(attachmentFormat("letter_of_request"));
     }
   }, [updateRequest]);
 
@@ -526,7 +543,6 @@ const AddRequisition = (props) => {
 
   const attachmentValidation = (fieldName, formData) => {
     const validate = transactionDataApi.find((item) => item.id === updateRequest.id);
-
     if (watch(`${fieldName}`) === null) {
       return "";
     } else if (updateRequest[fieldName] !== null)
@@ -540,9 +556,12 @@ const AddRequisition = (props) => {
     }
   };
 
+  console.log(errors);
+
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
+    const cipNumberFormat = formData?.cip_number === "" ? "" : formData?.cip_number?.toString();
     const updatingCoa = (fields, name) =>
       updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
     const accountableFormat =
@@ -552,6 +571,7 @@ const AddRequisition = (props) => {
 
     const data = {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
+      cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
@@ -581,8 +601,8 @@ const AddRequisition = (props) => {
       tool_of_trade: updateRequest && attachmentValidation("tool_of_trade", formData),
       other_attachments: updateRequest && attachmentValidation("other_attachments", formData),
     };
-    console.log(formData);
-    console.log("data", data);
+    // console.log(formData);
+    // console.log("data", data);
 
     const payload = new FormData();
     Object.entries(data).forEach((item) => {
@@ -627,7 +647,11 @@ const AddRequisition = (props) => {
       axios
         .post(
           `${process.env.VLADIMIR_BASE_URL}/${
-            transactionData ? `update-request/${updateRequest?.reference_number}` : "request-container"
+            editRequest
+              ? `update-container/${updateRequest?.id}`
+              : transactionData
+              ? `update-request/${updateRequest?.reference_number}`
+              : "request-container"
           }`,
           payload,
           {
@@ -650,6 +674,7 @@ const AddRequisition = (props) => {
             ? reset()
             : reset({
                 type_of_request_id: formData?.type_of_request_id,
+                cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
 
                 company_id: formData?.company_id,
@@ -681,20 +706,22 @@ const AddRequisition = (props) => {
         })
         .then(() => {
           transactionData ? setDisable(true) : setDisable(false);
+          transactionData ? setEditRequest(false) : setEditRequest(true);
           setUpdateToggle(true);
           isTransactionRefetch();
           dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
         })
         .catch((err) => {
-          // console.log(err);
+          console.log(err);
           setIsLoading(false);
           dispatch(
             openToast({
-              message:
-                Object.entries(err?.response?.data?.errors).at(0).at(1).at(0) ||
-                err?.response?.data?.errors?.detail ||
-                err?.response?.data?.errors[0]?.detail ||
-                err?.response?.data?.message,
+              message: err?.response?.data?.errors?.detail
+                ? err?.response?.data?.errors?.detail
+                : Object.entries(err?.response?.data?.errors).at(0).at(1).at(0),
+              // err?.response?.data?.errors?.detail ||
+              // err?.response?.data?.errors[0]?.detail ||
+              // err?.response?.data?.message,
               duration: 5000,
               variant: "error",
             })
@@ -1095,6 +1122,7 @@ const AddRequisition = (props) => {
     setUpdateRequest({
       can_resubmit: null,
       type_of_request_id: null,
+      cip_number: null,
       attachment_type: null,
 
       company_id: null,
@@ -1124,37 +1152,6 @@ const AddRequisition = (props) => {
   };
 
   // console.log(updateEntries.map((item) => item[1]?.attachments?.letter_of_request?.file_name));
-  // * Page / Limit
-  const perPageHandler = (e) => {
-    setPage(1);
-    setPerPage(parseInt(e.target.value));
-  };
-
-  const pageHandler = (_, page) => {
-    // console.log(page + 1);
-    setPage(page + 1);
-  };
-
-  const filterOptions = createFilterOptions({
-    limit: 100,
-    matchFrom: "any",
-  });
-
-  const sxSubtitle = {
-    fontWeight: "bold",
-    color: "secondary.main",
-    fontFamily: "Anton",
-    fontSize: "16px",
-  };
-
-  const BoxStyle = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-    width: "100%",
-    pb: "10px",
-  };
-
   // console.log(transactionData);
 
   const formInputs = () => {
@@ -1190,7 +1187,48 @@ const AddRequisition = (props) => {
                     helperText={errors?.type_of_request_id?.message}
                   />
                 )}
+                onChange={(_, value) => {
+                  setValue("cip_number", null);
+                  return value;
+                }}
               />
+
+              {watch("type_of_request_id")?.type_of_request_name === "Capex" && (
+                // <CustomAutoComplete
+                //   name="cip_number"
+                //   control={control}
+                //   includeInputInList
+                //   disablePortal
+                //   disabled={updateRequest && disable}
+                //   filterOptions={filterOptions}
+                //   options={sedarData}
+                //   onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
+                //   loading={isSedarLoading}
+                //   getOptionLabel={(option) => option}
+                //   isOptionEqualToValue={(option, value) => option === value}
+                //   renderInput={(params) => (
+                //     <TextField
+                //       {...params}
+                //       color="secondary"
+                //       label="CIP Number"
+                //       error={!!errors?.cip_number?.message}
+                //       helperText={errors?.cip_number?.message}
+                //     />
+                //   )}
+                // />
+
+                <CustomTextField
+                  control={control}
+                  name="cip_number"
+                  label="CIP Number (Optional)"
+                  type="text"
+                  disabled={updateRequest && disable}
+                  error={!!errors?.cip_number}
+                  helperText={errors?.cip_number?.message}
+                  fullWidth
+                  multiline
+                />
+              )}
 
               <CustomTextField
                 control={control}
@@ -1198,7 +1236,7 @@ const AddRequisition = (props) => {
                 label="Acquisition Details"
                 type="text"
                 disabled={updateRequest && disable}
-                onBlur={() => handleDispatchDetails()}
+                onBlur={() => handleAcquisitionDetails()}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
                 error={!!errors?.acquisition_details}
                 helperText={errors?.acquisition_details?.message}
@@ -1490,7 +1528,7 @@ const AddRequisition = (props) => {
               <CustomTextField
                 control={control}
                 name="brand"
-                label="Brand"
+                label="Brand (optional)"
                 type="text"
                 disabled={updateRequest && disable}
                 error={!!errors?.brand}
@@ -1590,6 +1628,8 @@ const AddRequisition = (props) => {
                     label="Letter of Request"
                     disabled={updateRequest && disable}
                     inputRef={LetterOfRequestRef}
+                    error={!!errors?.letter_of_request?.message}
+                    helperText={errors?.letter_of_request?.message}
                   />
                 )}
 
@@ -1690,15 +1730,20 @@ const AddRequisition = (props) => {
           fullWidth
           sx={{ gap: 1 }}
         >
-          {transactionData ? <Update /> : <AddToPhotos />} <Typography>{transactionData ? "UPDATE" : "ADD"}</Typography>
+          {editRequest || updateRequest ? <Update /> : <AddToPhotos />}{" "}
+          <Typography>{editRequest || updateRequest ? "UPDATE" : "ADD"}</Typography>
         </LoadingButton>
         <Divider orientation="vertical" />
       </Box>
     );
   };
+  console.log("editRequest", editRequest);
+  console.log("updateRequest", updateRequest);
 
-  const handleDispatchDetails = () => {
-    if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
+  const handleAcquisitionDetails = () => {
+    if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
+      return null;
+    } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
       return dispatch(
         openConfirm({
           icon: Warning,
@@ -1732,6 +1777,37 @@ const AddRequisition = (props) => {
 
   const handleShowItems = (data) => {
     transactionData && data?.po_number && data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
+  };
+
+  // * Page / Limit
+  const perPageHandler = (e) => {
+    setPage(1);
+    setPerPage(parseInt(e.target.value));
+  };
+
+  const pageHandler = (_, page) => {
+    // console.log(page + 1);
+    setPage(page + 1);
+  };
+
+  const filterOptions = createFilterOptions({
+    limit: 100,
+    matchFrom: "any",
+  });
+
+  const sxSubtitle = {
+    fontWeight: "bold",
+    color: "secondary.main",
+    fontFamily: "Anton",
+    fontSize: "16px",
+  };
+
+  const BoxStyle = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+    width: "100%",
+    pb: "10px",
   };
 
   return (
@@ -2016,30 +2092,24 @@ const AddRequisition = (props) => {
                                   setDisable={setDisable}
                                   status={data?.status}
                                   data={data}
-                                  editRequest={
-                                    transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
-                                      ? true
-                                      : false
-                                  }
+                                  // editRequest={
+                                  //   transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
+                                  //     ? true
+                                  //     : false
+                                  // }
+                                  editRequest={editRequest}
+                                  setEditRequest={setEditRequest}
+                                  // updateRequest={updateRequest}
                                   onDeleteHandler={!transactionData && onDeleteHandler}
                                   onDeleteReferenceHandler={
                                     transactionData &&
                                     transactionData.item_count !== 1 &&
                                     transactionDataApi.length !== 1 &&
                                     onVoidReferenceHandler
-
-                                    // // transactionData
-                                    // //   ? transactionData?.item_count !== 1
-                                    // //     ? transactionDataApi.length !== 1
-                                    // //       ? onVoidReferenceHandler
-                                    // //       : false
-                                    // //     : false
-                                    // //   : false
                                   }
                                   onUpdateHandler={onUpdateHandler}
                                   onUpdateResetHandler={onUpdateResetHandler}
                                   setUpdateToggle={setUpdateToggle}
-                                  // setShowEdit={setShowEdit}
                                 />
                               )}
                             </TableCell>

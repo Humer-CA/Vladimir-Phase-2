@@ -47,7 +47,7 @@ export const requestContainerApi = createApi({
 
     updateRequestContainerApi: builder.mutation({
       query: (data) => ({
-        url: `/request-container`,
+        url: `/update-container`,
         method: "POST",
         body: data,
       }),
