@@ -61,6 +61,7 @@ import {
   QrCodeScannerRounded,
   Sync,
   SystemUpdateAltRounded,
+  TransferWithinAStation,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../../Redux/Query/Notification";
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
@@ -78,6 +79,7 @@ const MasterlistToolbar = (props) => {
     onPrint,
     onImport,
     onSync,
+    onTransfer,
     hideArchive,
     faStatus,
     handleAddRequest,
@@ -293,8 +295,9 @@ const MasterlistToolbar = (props) => {
           </Button>
         )}
 
+        {/* Printing */}
         <Box className="masterlist-toolbar__addBtn">
-          {Boolean(onPrint) && permissions?.split(", ").includes("print-fa") && (
+          {onPrint && permissions?.split(", ").includes("print-fa") && (
             <Badge color="error" badgeContent={notifData?.toTagCount} variant="dot">
               {" "}
               <Button
@@ -311,6 +314,7 @@ const MasterlistToolbar = (props) => {
               </Button>
             </Badge>
           )}
+
           {onPrint && (
             <Menu
               anchorEl={anchorElPrintFa}
@@ -341,7 +345,8 @@ const MasterlistToolbar = (props) => {
             </Menu>
           )}
 
-          {Boolean(onImport) && (
+          {/* Import */}
+          {onImport && (
             <LoadingButton
               component={Link}
               to={path}
@@ -355,6 +360,7 @@ const MasterlistToolbar = (props) => {
               {isSmallScreen ? <SystemUpdateAltRounded color="primary" sx={{ fontSize: "20px" }} /> : "Import"}
             </LoadingButton>
           )}
+
           {faStatus && (
             <Menu
               anchorEl={anchorElImportFa}
@@ -383,7 +389,8 @@ const MasterlistToolbar = (props) => {
             </Menu>
           )}
 
-          {Boolean(onAdd) && (
+          {/* Add */}
+          {onAdd && (
             <Button
               component={Link}
               to={path}
@@ -396,6 +403,7 @@ const MasterlistToolbar = (props) => {
               {isSmallScreen ? <LibraryAdd color="black" sx={{ fontSize: "20px" }} /> : "Add"}
             </Button>
           )}
+
           {faStatus && (
             <Menu
               anchorEl={anchorEl}
@@ -423,7 +431,9 @@ const MasterlistToolbar = (props) => {
               </MenuItem>
             </Menu>
           )}
-          {Boolean(onSync) && (
+
+          {/* Synching */}
+          {onSync && (
             <LoadingButton
               component={Link}
               to={path}
@@ -449,6 +459,21 @@ const MasterlistToolbar = (props) => {
               sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
             >
               {isSmallScreen ? <LibraryAdd color="black" sx={{ fontSize: "20px" }} /> : "Add"}
+            </Button>
+          )}
+
+          {/* Asset Movement */}
+          {onTransfer && (
+            <Button
+              component={Link}
+              to={path}
+              onClick={handleOpenDrawer || handleOpenDialog}
+              variant="contained"
+              startIcon={isSmallScreen ? null : <TransferWithinAStation />}
+              size="small"
+              sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
+            >
+              {isSmallScreen ? <TransferWithinAStation color="black" sx={{ fontSize: "20px" }} /> : "Transfer"}
             </Button>
           )}
         </Box>
