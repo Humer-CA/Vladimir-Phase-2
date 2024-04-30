@@ -28,8 +28,8 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { IosShareRounded, Visibility } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { IosShareRounded, TransferWithinAStation, Visibility } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
@@ -109,8 +109,6 @@ const Transfer = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(transferData);
-
   const dispatch = useDispatch();
 
   const onSetPage = () => {
@@ -171,8 +169,12 @@ const Transfer = () => {
     }
   };
 
+  const handleTransfer = () => {
+    navigate(`add-transfer`);
+  };
+
   const handleEditTransfer = (data) => {
-    navigate(`/transfer/${data.transaction_number}`, {
+    navigate(`add-transfer/${data.transaction_number}`, {
       state: { ...data },
     });
   };
@@ -195,6 +197,18 @@ const Transfer = () => {
               setFilter={setFilter}
               filter={filter}
             />
+            {/* Asset Movement */}
+            <Box className="masterlist-toolbar__addBtn" sx={{ mt: 0.8 }}>
+              <Button
+                onClick={handleTransfer}
+                variant="contained"
+                startIcon={isSmallScreen ? null : <TransferWithinAStation />}
+                size="small"
+                sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
+              >
+                {isSmallScreen ? <TransferWithinAStation color="black" sx={{ fontSize: "20px" }} /> : "Transfer"}
+              </Button>
+            </Box>
 
             <Box>
               <TableContainer className="mcontainer__th-body">
@@ -268,7 +282,7 @@ const Transfer = () => {
                     ) : (
                       <>
                         {transferSuccess &&
-                          [...transferData]?.sort(comparator(order, orderBy))?.map((data) => (
+                          [...transferData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
                             <TableRow
                               key={data.transfer_number}
                               sx={{
@@ -385,6 +399,7 @@ const Transfer = () => {
               >
                 EXPORT
               </Button>
+
               <CustomTablePagination
                 total={transferData?.total}
                 success={transferSuccess}

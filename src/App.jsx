@@ -72,6 +72,7 @@ import ReleasingOfAsset from "./Pages/Asset Requisition/Releasing of Asset/Relea
 import AdditionalCostRequest from "./Pages/Asset Requisition/Add Requisition/AdditionalCostRequest";
 import Transfer from "./Pages/Asset Movement/Transfer/Transfer";
 import UnitOfMeasurement from "./Pages/Masterlist/UnitOfMeasurement";
+import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
 
 const router = createBrowserRouter([
   {
@@ -302,6 +303,14 @@ const router = createBrowserRouter([
               {
                 path: "transfer",
                 element: <Transfer />,
+              },
+              {
+                path: "transfer/add-transfer",
+                element: <AddTransfer />,
+              },
+              {
+                path: "transfer/add-transfer/:transfer_number",
+                element: <AddTransfer />,
               },
               {
                 path: "pull-out",
