@@ -18,10 +18,15 @@ export const transferApi = createApi({
 
   endpoints: (builder) => ({
     getTransferApi: builder.query({
-      query: (params) => `asset-transfer`,
+      query: (params) => `asset-transfer?per_page=${params.per_page}&page=${params.page}&search=${params.search}`,
+      providesTags: ["Transfer"],
+    }),
+
+    getTransferAllApi: builder.query({
+      query: () => `asset-transfer?pagination=none`,
       providesTags: ["Transfer"],
     }),
   }),
 });
 
-export const { useGetTransferApiQuery } = transferApi;
+export const { useGetTransferApiQuery, useLazyGetTransferAllApiQuery, useGetTransferAllApiQuery } = transferApi;
