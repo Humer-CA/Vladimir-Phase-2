@@ -13,7 +13,7 @@ const CustomAttachment = (props) => {
       control={control}
       render={({ field }) => {
         const { ref, value, onChange: setValue } = field;
-        console.log(value);
+        // console.log(value);
         return (
           <>
             <MuiTextField
