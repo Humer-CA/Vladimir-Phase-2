@@ -492,6 +492,13 @@ const ViewRequestReleasing = (props) => {
                   </Box>
 
                   <Box className="tableCard__properties">
+                    UOM:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {releasingData?.unit_of_measure?.uom_name}
+                    </Typography>
+                  </Box>
+
+                  <Box className="tableCard__properties">
                     Asset Status:
                     <Typography className="tableCard__info" fontSize="14px">
                       {releasingData?.asset_status?.asset_status_name}

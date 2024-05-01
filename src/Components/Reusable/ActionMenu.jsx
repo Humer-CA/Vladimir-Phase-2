@@ -44,8 +44,7 @@ const ActionMenu = (props) => {
     showDelete,
     showVoid,
     showApprover,
-    editRequest,
-    setEditRequest,
+    editRequestData,
     onDeleteReferenceHandler,
     // setShowEdit
     setUpdateToggle,
@@ -53,6 +52,10 @@ const ActionMenu = (props) => {
     disableVoid,
     disableDelete,
     updateRequest,
+    addRequestAllApi,
+    editRequest,
+    setEditRequest,
+    transactionData,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -124,11 +127,11 @@ const ActionMenu = (props) => {
 
   const handleEditRequest = () => {
     // console.log(data);
+    addRequestAllApi ? setEditRequest(true) : setEditRequest(false);
     onUpdateHandler(data);
     setUpdateToggle(false);
     handleClose();
     setDisable(false);
-    updateRequest ? setEditRequest(false) : setEditRequest(true);
   };
 
   const handleEditNav = () => {
@@ -183,7 +186,7 @@ const ActionMenu = (props) => {
             </MenuItem>
           )}
 
-          {setEditRequest && (
+          {editRequestData && (
             <MenuItem onClick={handleEditRequest} dense>
               <ListItemIcon>
                 <BorderColor />

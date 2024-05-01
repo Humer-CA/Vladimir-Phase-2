@@ -66,6 +66,7 @@ import AddCost from "./AddEdit/AddCost";
 import { useGetAdditionalCostIdApiQuery } from "../../Redux/Query/FixedAsset/AdditionalCost";
 import ImportCost from "./ImportCost";
 import useScanDetection from "use-scan-detection-react18";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const FixedAsset = (props) => {
   const navigate = useNavigate();
@@ -516,12 +517,21 @@ const FixedAsset = (props) => {
               EXPORT
             </Button>
 
-            <TablePagination
+            {/* <TablePagination
               rowsPerPageOptions={[5, 10, 15, 50]}
               component="div"
               count={fixedAssetSuccess ? fixedAssetData?.total : 0}
               page={fixedAssetSuccess ? fixedAssetData?.current_page - 1 : 0}
               rowsPerPage={fixedAssetSuccess ? parseInt(fixedAssetData?.per_page) : 5}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            /> */}
+
+            <CustomTablePagination
+              total={fixedAssetData?.total}
+              success={fixedAssetSuccess}
+              current_page={fixedAssetData?.current_page}
+              per_page={fixedAssetData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

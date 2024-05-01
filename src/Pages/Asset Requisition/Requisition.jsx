@@ -65,13 +65,14 @@ const Requisition = () => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState([]);
-  const enableForm = true;
+
+  // const enableForm = true;
 
   const [transactionIdData, setTransactionIdData] = useState();
 
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
-  const drawer = useSelector((state) => state.booleanState.drawer);
+  // const drawer = useSelector((state) => state.booleanState.drawer);
   const dialog = useSelector((state) => state.booleanState.dialog);
 
   const dispatch = useDispatch();
