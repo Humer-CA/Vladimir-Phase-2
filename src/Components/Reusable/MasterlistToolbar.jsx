@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../Style/Masterlist/masterlistToolbar.scss";
 import ScanFixedAsset from "../../Pages/FixedAssets/ScanFixedAsset";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 // import { openDrawer } from "../../Redux/StateManagement/drawerSlice";
@@ -95,19 +95,16 @@ const MasterlistToolbar = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openAddFa = Boolean(anchorEl);
-
   const [anchorElImportFa, setAnchorElImportFa] = useState(null);
   const openImportFa = Boolean(anchorElImportFa);
-
   const [anchorElPrintFa, setAnchorElPrintFa] = useState(null);
   const openPrintFa = Boolean(anchorElPrintFa);
-
   const [anchorElRequestFilter, setAnchorElRequestFilter] = useState(null);
   const openRequestFilter = Boolean(anchorElRequestFilter);
-
   const [anchorElFaFilter, setAnchorElFaFilter] = useState(null);
   const openFaFilter = Boolean(anchorElFaFilter);
 
@@ -120,11 +117,8 @@ const MasterlistToolbar = (props) => {
   };
 
   // const scanFile = useSelector((state) => state.scanFile);
-
   const { data: notifData, refetch } = useGetNotificationApiQuery(null, { refetchOnMountOrArgChange: true });
-
   const permissions = useSelector((state) => state.userLogin?.user.role.access_permission);
-
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
 
   const searchHandler = (e) => {
@@ -459,21 +453,6 @@ const MasterlistToolbar = (props) => {
               sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
             >
               {isSmallScreen ? <LibraryAdd color="black" sx={{ fontSize: "20px" }} /> : "Add"}
-            </Button>
-          )}
-
-          {/* Asset Movement */}
-          {onTransfer && (
-            <Button
-              component={Link}
-              to={path}
-              onClick={handleOpenDrawer || handleOpenDialog}
-              variant="contained"
-              startIcon={isSmallScreen ? null : <TransferWithinAStation />}
-              size="small"
-              sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
-            >
-              {isSmallScreen ? <TransferWithinAStation color="black" sx={{ fontSize: "20px" }} /> : "Transfer"}
             </Button>
           )}
         </Box>
