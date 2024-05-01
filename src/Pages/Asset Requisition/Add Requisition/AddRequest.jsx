@@ -59,18 +59,23 @@ import { LoadingButton } from "@mui/lab";
 // RTK
 import { useDispatch, useSelector } from "react-redux";
 import { closeDialog, closeDrawer, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import {
-  useGetCompanyAllApiQuery,
-  useLazyGetCompanyAllApiQuery,
-} from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import { useLazyGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
+import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
 import {
   useGetDepartmentAllApiQuery,
   useLazyGetDepartmentAllApiQuery,
 } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
+import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
+
 import {
   useGetLocationAllApiQuery,
   useLazyGetLocationAllApiQuery,
 } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import {
+  useGetSubUnitAllApiQuery,
+  useLazyGetSubUnitAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import {
   useGetAccountTitleAllApiQuery,
   useLazyGetAccountTitleAllApiQuery,
@@ -90,10 +95,7 @@ import {
 } from "../../../Redux/Query/Masterlist/TypeOfRequest";
 import { useLocation, useNavigate } from "react-router-dom";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
-import {
-  useGetSubUnitAllApiQuery,
-  useLazyGetSubUnitAllApiQuery,
-} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import {
   // useGetRequestContainerAllApiQuery,
@@ -111,9 +113,6 @@ import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
-import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
-import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
-import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -161,14 +160,20 @@ const schema = yup.object().shape({
   quotation: yup.mixed().label("Quotation"),
   specification_form: yup.mixed().label("Specification"),
   tool_of_trade: yup.mixed().label("Tool of Trade"),
-  other_attachments: yup.mixed().label("Other Attachment"),
+  other_attachments: yup
+    .mixed()
+    .label("Other Attachment")
+    .when("type_of_request", {
+      is: (value) => value === "Capex",
+      then: (yup) => yup.label("Other Attachments").required().typeError("Other Attachments is a required field"),
+    }),
 });
 
 const AddRequisition = (props) => {
   const [updateRequest, setUpdateRequest] = useState({
     id: null,
     type_of_request_id: null,
-    cip_number: null,
+    cip_number: "",
     attachment_type: null,
 
     department_id: null,
@@ -399,7 +404,7 @@ const AddRequisition = (props) => {
     defaultValues: {
       id: "",
       type_of_request_id: null,
-      cip_number: null,
+      cip_number: "",
       attachment_type: null,
 
       company_id: null,
@@ -537,16 +542,28 @@ const AddRequisition = (props) => {
     setOrderBy(property);
   };
 
+  const handleEditRequestData = () => {
+    if (transactionData && updateRequest) {
+      transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return";
+    } else if (editRequest) {
+      setEditRequest(true) && false;
+    } else {
+      setEditRequest(false) && true;
+    }
+  };
+
   const handleCloseDrawer = () => {
     dispatch(closeDrawer());
   };
 
   const attachmentValidation = (fieldName, formData) => {
+    const validateAdd = addRequestAllApi?.data.find((item) => item.id === updateRequest.id);
     const validate = transactionDataApi.find((item) => item.id === updateRequest.id);
+
     if (watch(`${fieldName}`) === null) {
       return "";
     } else if (updateRequest[fieldName] !== null)
-      if (validate?.attachments?.[fieldName]?.file_name === updateRequest?.[fieldName]?.file_name) {
+      if ((validateAdd || validate)?.attachments?.[fieldName]?.file_name === updateRequest?.[fieldName]?.file_name) {
         return "x";
       } else {
         return formData?.[fieldName];
@@ -555,8 +572,6 @@ const AddRequisition = (props) => {
       return formData?.[fieldName];
     }
   };
-
-  console.log(errors);
 
   //  * CONTAINER
   // Adding of Request
@@ -647,10 +662,10 @@ const AddRequisition = (props) => {
       axios
         .post(
           `${process.env.VLADIMIR_BASE_URL}/${
-            editRequest
-              ? `update-container/${updateRequest?.id}`
-              : transactionData
+            transactionData
               ? `update-request/${updateRequest?.reference_number}`
+              : editRequest
+              ? `update-container/${updateRequest?.id}`
               : "request-container"
           }`,
           payload,
@@ -670,6 +685,7 @@ const AddRequisition = (props) => {
             })
           );
           setIsLoading(false);
+          // reset();
           transactionData
             ? reset()
             : reset({
@@ -706,7 +722,7 @@ const AddRequisition = (props) => {
         })
         .then(() => {
           transactionData ? setDisable(true) : setDisable(false);
-          transactionData ? setEditRequest(false) : setEditRequest(true);
+          setEditRequest(false);
           setUpdateToggle(true);
           isTransactionRefetch();
           dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
@@ -823,7 +839,6 @@ const AddRequisition = (props) => {
               }
             } else {
               const res = await postRequisition(addRequestAllApi).unwrap();
-              console.log(res?.message);
               deleteAllRequest();
               reset({
                 letter_of_request: null,
@@ -1122,7 +1137,7 @@ const AddRequisition = (props) => {
     setUpdateRequest({
       can_resubmit: null,
       type_of_request_id: null,
-      cip_number: null,
+      cip_number: "",
       attachment_type: null,
 
       company_id: null,
@@ -1188,7 +1203,7 @@ const AddRequisition = (props) => {
                   />
                 )}
                 onChange={(_, value) => {
-                  setValue("cip_number", null);
+                  setValue("cip_number", "");
                   return value;
                 }}
               />
@@ -1262,9 +1277,7 @@ const AddRequisition = (props) => {
                 )}
               />
             </Box>
-
             <Divider />
-
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Charging Information</Typography>
               <CustomAutoComplete
@@ -1384,11 +1397,7 @@ const AddRequisition = (props) => {
                 name="subunit_id"
                 control={control}
                 disabled={updateRequest && disable}
-                options={
-                  unitData?.filter((obj) => {
-                    return obj?.id === watch("unit_id")?.id;
-                  })[0]?.subunit || []
-                }
+                options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
                 loading={isSubUnitLoading}
                 size="small"
                 getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
@@ -1497,9 +1506,7 @@ const AddRequisition = (props) => {
                 />
               )}
             </Box>
-
             <Divider />
-
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Asset Information</Typography>
               <CustomTextField
@@ -1606,20 +1613,19 @@ const AddRequisition = (props) => {
                 multiline
               />
             </Box>
-
             <Divider />
-
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Attachments</Typography>
               <Stack flexDirection="row" gap={1} alignItems="center">
                 {watch("letter_of_request") !== null ? (
                   <UpdateField
                     label={"Letter of Request"}
-                    value={
-                      transactionDataApi.length
-                        ? watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name
-                        : watch("letter_of_request")?.name
-                    }
+                    // value={
+                    //   transactionDataApi.length === 0
+                    //     ? watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name
+                    //     : watch("letter_of_request")?.name
+                    // }
+                    value={watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name}
                   />
                 ) : (
                   <CustomAttachment
@@ -1669,7 +1675,7 @@ const AddRequisition = (props) => {
                     label="Specification (Form)"
                     disabled={updateRequest && disable}
                     inputRef={SpecificationRef}
-                    updateData={updateRequest}
+                    // updateData={updateRequest}
                   />
                 )}
                 {watch("specification_form") !== null && (
@@ -1708,6 +1714,8 @@ const AddRequisition = (props) => {
                     label="Other Attachments"
                     disabled={updateRequest && disable}
                     inputRef={OthersRef}
+                    error={!!errors?.other_attachments?.message}
+                    helperText={errors?.other_attachments?.message}
                   />
                 )}
                 {watch("other_attachments") !== null && (
@@ -1730,15 +1738,15 @@ const AddRequisition = (props) => {
           fullWidth
           sx={{ gap: 1 }}
         >
-          {editRequest || updateRequest ? <Update /> : <AddToPhotos />}{" "}
-          <Typography>{editRequest || updateRequest ? "UPDATE" : "ADD"}</Typography>
+          {transactionData ? <Update /> : editRequest ? <Update /> : <AddToPhotos />}{" "}
+          <Typography>{transactionData ? "UPDATE" : editRequest ? "UPDATE" : "ADD"}</Typography>
         </LoadingButton>
         <Divider orientation="vertical" />
       </Box>
     );
   };
-  console.log("editRequest", editRequest);
-  console.log("updateRequest", updateRequest);
+  // console.log("editRequest", editRequest);
+  // console.log("updateRequest", updateRequest);
 
   const handleAcquisitionDetails = () => {
     if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
@@ -1760,7 +1768,9 @@ const AddRequisition = (props) => {
               >
                 ACQUISITION DETAILS?
               </Typography>
-              <Typography>it will apply to all Items after clicking {transactionData ? "Update" : "Add"}</Typography>
+              <Typography>
+                it will apply to all Items after clicking {transactionData ? "Update" : editRequest ? "Update" : "Add"}
+              </Typography>
             </Box>
           ),
 
@@ -1836,7 +1846,6 @@ const AddRequisition = (props) => {
             {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()}
 
             {/* TABLE */}
-
             <Box className="request__table">
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
                 {`${transactionData ? "TRANSACTION NO." : "CURRENT ASSET"}`}{" "}
@@ -2087,29 +2096,26 @@ const AddRequisition = (props) => {
                             <TableCell className="tbl-cell">
                               {data?.is_removed === 0 && (
                                 <ActionMenu
+                                  data={data}
+                                  status={data?.status}
                                   hideArchive
                                   disableDelete={data.status !== "For Approval of Approver 1" ? true : false}
+                                  addRequestAllApi
                                   setDisable={setDisable}
-                                  status={data?.status}
-                                  data={data}
-                                  // editRequest={
-                                  //   transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
-                                  //     ? true
-                                  //     : false
-                                  // }
+                                  onUpdateHandler={onUpdateHandler}
+                                  onUpdateResetHandler={onUpdateResetHandler}
+                                  setUpdateToggle={setUpdateToggle}
+                                  onDeleteHandler={!transactionData && onDeleteHandler}
+                                  transactionData={transactionData}
                                   editRequest={editRequest}
                                   setEditRequest={setEditRequest}
-                                  // updateRequest={updateRequest}
-                                  onDeleteHandler={!transactionData && onDeleteHandler}
+                                  editRequestData={() => handleEditRequestData()}
                                   onDeleteReferenceHandler={
                                     transactionData &&
                                     transactionData.item_count !== 1 &&
                                     transactionDataApi.length !== 1 &&
                                     onVoidReferenceHandler
                                   }
-                                  onUpdateHandler={onUpdateHandler}
-                                  onUpdateResetHandler={onUpdateResetHandler}
-                                  setUpdateToggle={setUpdateToggle}
                                 />
                               )}
                             </TableCell>
