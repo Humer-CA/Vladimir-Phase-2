@@ -973,6 +973,13 @@ const FixedAssetView = (props) => {
                   </Box>
 
                   <Box className="tableCard__properties">
+                    UOM:
+                    <Typography className="tableCard__info" fontSize="14px">
+                      {dataApi?.data?.unit_of_measure?.uom_name}
+                    </Typography>
+                  </Box>
+                  {console.log(dataApi)}
+                  <Box className="tableCard__properties">
                     Asset Status:
                     <Typography className="tableCard__info" fontSize="14px">
                       {dataApi?.data?.asset_status?.asset_status_name}
