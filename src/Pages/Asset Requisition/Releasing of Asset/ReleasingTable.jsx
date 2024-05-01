@@ -414,9 +414,10 @@ const ReleasingTable = (props) => {
             borderRadius: "10px",
             margin: "0",
             maxWidth: "90%",
-            padding: "20px",
+            py: "20px",
+            px: "10px",
             overflow: "hidden",
-            width: "400px",
+            width: "50%",
           },
         }}
       >
