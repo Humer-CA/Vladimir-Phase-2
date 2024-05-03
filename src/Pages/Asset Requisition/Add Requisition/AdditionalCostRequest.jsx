@@ -125,6 +125,11 @@ const schema = yup.object().shape({
     .label("Vladimir Tag Number")
     .typeError("Vladimir Tag Number is a required field"),
   type_of_request_id: yup.object().required().label("Type of Request").typeError("Type of Request is a required field"),
+  // .when("type_of_request", {
+  //   is: (value) => value === "Personal Issued",
+  //   then: (yup) => yup.label("CIP Number").required().typeError("CIP Number is a required field"),
+  // })
+  cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
 
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
@@ -153,11 +158,23 @@ const schema = yup.object().shape({
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
   additional_info: yup.string().nullable().label("Additional Info"),
 
-  letter_of_request: yup.mixed().label("Letter of Request"),
+  letter_of_request: yup
+    .mixed()
+    .label("Letter of Request")
+    .when("attachment_type", {
+      is: (value) => value === "Unbudgeted",
+      then: (yup) => yup.label("Letter of Request").required().typeError("Letter of Request is a required field"),
+    }),
   quotation: yup.mixed().label("Quotation"),
   specification_form: yup.mixed().label("Specification"),
   tool_of_trade: yup.mixed().label("Tool of Trade"),
-  other_attachments: yup.mixed().label("Other Attachment"),
+  other_attachments: yup
+    .mixed()
+    .label("Other Attachment")
+    .when("type_of_request", {
+      is: (value) => value === "Capex",
+      then: (yup) => yup.label("Other Attachments").required().typeError("Other Attachments is a required field"),
+    }),
 });
 
 const AdditionalCostRequest = (props) => {
@@ -165,6 +182,7 @@ const AdditionalCostRequest = (props) => {
     id: null,
     fixed_asset_id: null,
     type_of_request_id: null,
+    cip_number: "",
     attachment_type: null,
 
     department_id: null,
@@ -198,9 +216,9 @@ const AdditionalCostRequest = (props) => {
   const [updateToggle, setUpdateToggle] = useState(true);
   const [disable, setDisable] = useState(true);
   const [itemData, setItemData] = useState(null);
+  const [editRequest, setEditRequest] = useState(false);
 
   const { state: transactionData } = useLocation();
-
   const dialog = useSelector((state) => state.booleanState.dialog);
 
   const isFullWidth = useMediaQuery("(max-width: 600px)");
@@ -406,6 +424,7 @@ const AdditionalCostRequest = (props) => {
       id: "",
       fixed_asset_id: null,
       type_of_request_id: null,
+      cip_number: "",
       attachment_type: null,
 
       department_id: null,
@@ -482,6 +501,7 @@ const AdditionalCostRequest = (props) => {
 
       setValue("fixed_asset_id", updateRequest?.fixed_asset_id);
       setValue("type_of_request_id", updateRequest?.type_of_request);
+      setValue("cip_number", updateRequest?.cip_number);
       setValue("acquisition_details", updateRequest?.acquisition_details);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("department_id", updateRequest?.department);
@@ -541,6 +561,16 @@ const AdditionalCostRequest = (props) => {
     setOrderBy(property);
   };
 
+  const handleEditRequestData = () => {
+    if (transactionData && updateRequest) {
+      transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return";
+    } else if (editRequest) {
+      setEditRequest(true) && false;
+    } else {
+      setEditRequest(false) && true;
+    }
+  };
+
   const handleCloseDrawer = () => {
     dispatch(closeDrawer());
   };
@@ -563,6 +593,7 @@ const AdditionalCostRequest = (props) => {
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
+    const cipNumberFormat = formData?.cip_number === "" ? "" : formData?.cip_number?.toString();
     const updatingCoa = (fields, name) =>
       updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
     const accountableFormat =
@@ -574,6 +605,7 @@ const AdditionalCostRequest = (props) => {
       is_addcost: 1,
       fixed_asset_id: formData?.fixed_asset_id?.id?.toString(),
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
+      cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
@@ -620,7 +652,11 @@ const AdditionalCostRequest = (props) => {
       axios
         .post(
           `${process.env.VLADIMIR_BASE_URL}/${
-            transactionData ? `update-request/${updateRequest?.reference_number}` : "request-container"
+            transactionData
+              ? `update-request/${updateRequest?.reference_number}`
+              : editRequest
+              ? `update-container/${updateRequest?.id}`
+              : "request-container"
           }`,
           payload,
           {
@@ -696,20 +732,18 @@ const AdditionalCostRequest = (props) => {
     };
 
     const validation = () => {
+      const coaValidation = (name, value) => {
+        transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+      };
       if (transactionData) {
-        if (transactionDataApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          return true;
-        }
-        if (transactionDataApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          return true;
-        }
-        return false;
+        return (
+          (transactionData &&
+            (coaValidation("department", "department_id") ||
+              coaValidation("unit", "unit_id") ||
+              coaValidation("subunit", "subunit_id") ||
+              coaValidation("location", "location_id"))) ||
+          false
+        );
       } else {
         if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
           return true;
@@ -759,12 +793,12 @@ const AdditionalCostRequest = (props) => {
 
     transactionData
       ? validation()
-        ? addCoaConfirmation()
+        ? addConfirmation()
         : submitData()
       : addRequestAllApi?.data.length === 0
       ? submitData()
       : validation()
-      ? addCoaConfirmation()
+      ? addConfirmation()
       : submitData();
     // : console.log("submit add") && submitData();
 
@@ -1108,6 +1142,7 @@ const AdditionalCostRequest = (props) => {
       reference_number,
       fixed_asset,
       type_of_request,
+      cip_number,
       attachment_type,
 
       department,
@@ -1137,6 +1172,7 @@ const AdditionalCostRequest = (props) => {
       fixed_asset_id: fixed_asset,
       reference_number,
       type_of_request,
+      cip_number,
       attachment_type,
 
       department,
@@ -1172,6 +1208,7 @@ const AdditionalCostRequest = (props) => {
       can_resubmit: null,
       fixed_asset_id: null,
       type_of_request_id: null,
+      cip_number: "",
       attachment_type: null,
 
       company_id: null,
@@ -1303,6 +1340,38 @@ const AdditionalCostRequest = (props) => {
                     helperText={errors?.type_of_request_id?.message}
                   />
                 )}
+                onChange={(_, value) => {
+                  setValue("cip_number", "");
+                  return value;
+                }}
+              />
+
+              {watch("type_of_request_id")?.type_of_request_name === "Capex" && (
+                <CustomTextField
+                  control={control}
+                  name="cip_number"
+                  label="CIP Number (Optional)"
+                  type="text"
+                  disabled={updateRequest && disable}
+                  error={!!errors?.cip_number}
+                  helperText={errors?.cip_number?.message}
+                  fullWidth
+                  multiline
+                />
+              )}
+
+              <CustomTextField
+                control={control}
+                name="acquisition_details"
+                label="Acquisition Details"
+                type="text"
+                disabled={updateRequest && disable}
+                onBlur={() => handleAcquisitionDetails()}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                error={!!errors?.acquisition_details}
+                helperText={errors?.acquisition_details?.message}
+                fullWidth
+                multiline
               />
 
               <CustomAutoComplete
@@ -1321,20 +1390,6 @@ const AdditionalCostRequest = (props) => {
                     helperText={errors?.attachment_type?.message}
                   />
                 )}
-              />
-
-              <CustomTextField
-                control={control}
-                name="acquisition_details"
-                label="Acquisition Details"
-                type="text"
-                disabled={updateRequest && disable}
-                onBlur={() => handleDispatchDetails()}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                error={!!errors?.acquisition_details}
-                helperText={errors?.acquisition_details?.message}
-                fullWidth
-                multiline
               />
             </Box>
 
@@ -1690,11 +1745,12 @@ const AdditionalCostRequest = (props) => {
                 {watch("letter_of_request") !== null ? (
                   <UpdateField
                     label={"Letter of Request"}
-                    value={
-                      transactionDataApi.length
-                        ? watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name
-                        : watch("letter_of_request")?.name
-                    }
+                    // value={
+                    //   transactionDataApi.length
+                    //     ? watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name
+                    //     : watch("letter_of_request")?.name
+                    // }
+                    value={watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name}
                   />
                 ) : (
                   <CustomAttachment
@@ -1703,6 +1759,8 @@ const AdditionalCostRequest = (props) => {
                     label="Letter of Request"
                     disabled={updateRequest && disable}
                     inputRef={LetterOfRequestRef}
+                    error={!!errors?.letter_of_request?.message}
+                    helperText={errors?.letter_of_request?.message}
                   />
                 )}
 
@@ -1781,6 +1839,8 @@ const AdditionalCostRequest = (props) => {
                     label="Other Attachments"
                     disabled={updateRequest && disable}
                     inputRef={OthersRef}
+                    error={!!errors?.other_attachments?.message}
+                    helperText={errors?.other_attachments?.message}
                   />
                 )}
                 {watch("other_attachments") !== null && (
@@ -1810,8 +1870,10 @@ const AdditionalCostRequest = (props) => {
     );
   };
 
-  const handleDispatchDetails = () => {
-    if (updateRequest && updateRequest?.acquisition_details !== watch("acquisition_details")) {
+  const handleAcquisitionDetails = () => {
+    if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
+      return null;
+    } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
       return dispatch(
         openConfirm({
           icon: Warning,
@@ -1828,7 +1890,9 @@ const AdditionalCostRequest = (props) => {
               >
                 ACQUISITION DETAILS?
               </Typography>
-              <Typography>it will apply to all Items after clicking {transactionData ? "Update" : "Add"}</Typography>
+              <Typography>
+                it will apply to all Items after clicking {transactionData ? "Update" : editRequest ? "Update" : "Add"}
+              </Typography>
             </Box>
           ),
 
@@ -2148,26 +2212,26 @@ const AdditionalCostRequest = (props) => {
                             <TableCell className="tbl-cell">
                               {data?.is_removed === 0 && (
                                 <ActionMenu
+                                  data={data}
+                                  status={data?.status}
                                   hideArchive
                                   disableDelete={data.status !== "For Approval of Approver 1" ? true : false}
+                                  addRequestAllApi
                                   setDisable={setDisable}
-                                  status={data?.status}
-                                  data={data}
-                                  // editRequest={
-                                  //   transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return"
-                                  //     ? true
-                                  //     : false
-                                  // }
+                                  onUpdateHandler={onUpdateHandler}
+                                  onUpdateResetHandler={onUpdateResetHandler}
+                                  setUpdateToggle={setUpdateToggle}
                                   onDeleteHandler={!transactionData && onDeleteHandler}
+                                  transactionData={transactionData}
+                                  editRequest={editRequest}
+                                  setEditRequest={setEditRequest}
+                                  editRequestData={() => handleEditRequestData()}
                                   onDeleteReferenceHandler={
                                     transactionData &&
                                     transactionData.item_count !== 1 &&
                                     transactionDataApi.length !== 1 &&
                                     onVoidReferenceHandler
                                   }
-                                  onUpdateHandler={onUpdateHandler}
-                                  onUpdateResetHandler={onUpdateResetHandler}
-                                  setUpdateToggle={setUpdateToggle}
                                 />
                               )}
                             </TableCell>
