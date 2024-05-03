@@ -802,14 +802,14 @@ const ViewRequestReleasing = (props) => {
           sx: {
             borderRadius: "10px",
             margin: "0",
-            maxWidth: "90%",
+            // maxWidth: "90%",
             padding: "20px",
             overflow: "hidden",
-            width: "400px",
+            // width: "400px",
           },
         }}
       >
-        <AddReleasingInfo data={releasingData} refetch={releasingDataRefetch} />
+        <AddReleasingInfo data={releasingData} hideWN refetch={releasingDataRefetch} />
       </Dialog>
     </>
   );
