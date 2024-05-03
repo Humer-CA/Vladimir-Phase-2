@@ -139,6 +139,7 @@ const ReleasingTable = (props) => {
     });
     dispatch(openDialog());
   };
+
   const handleViewData = (data) => {
     navigate(`/asset-requisition/requisition-releasing/${data.warehouse_number?.warehouse_number}`, {
       state: { ...data },
@@ -413,11 +414,11 @@ const ReleasingTable = (props) => {
           sx: {
             borderRadius: "10px",
             margin: "0",
-            maxWidth: "90%",
+            maxWidth: "700px",
             py: "20px",
             px: "10px",
             overflow: "hidden",
-            width: "50%",
+            // width: "2000px",
           },
         }}
       >
