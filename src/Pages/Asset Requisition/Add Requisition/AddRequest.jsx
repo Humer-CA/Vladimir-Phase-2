@@ -1077,6 +1077,7 @@ const AddRequisition = (props) => {
       can_resubmit,
       reference_number,
       type_of_request,
+      cip_number,
       attachment_type,
       company,
       business_unit,
@@ -1103,6 +1104,7 @@ const AddRequisition = (props) => {
       can_resubmit,
       reference_number,
       type_of_request,
+      cip_number,
       attachment_type,
 
       company,
