@@ -56,7 +56,7 @@ const schema = yup.object().shape({
 });
 
 const AddReleasingInfo = (props) => {
-  const { data, refetch, warehouseNumber } = props;
+  const { data, refetch, warehouseNumber, hideWN } = props;
   const [signature, setSignature] = useState();
   const [trimmedDataURL, setTrimmedDataURL] = useState(null);
 
@@ -234,7 +234,7 @@ const AddReleasingInfo = (props) => {
     display: "flex",
     flexDirection: "column",
     gap: "15px",
-    width: "100%",
+    // width: "100%",
     pb: "10px",
   };
 
@@ -346,17 +346,21 @@ const AddReleasingInfo = (props) => {
   };
 
   return (
-    <Box className="mcontainer" component="form" onSubmit={handleSubmit(onSubmitHandler)} gap={1}>
-      <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "1.6rem", textAlign: "center" }}>
+    <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} gap={1} px={3} overflow="auto">
+      <Typography
+        className="mcontainer__title"
+        color="secondary.main"
+        sx={{ fontFamily: "Anton", fontSize: "1.6rem", textAlign: "center", mb: "5px" }}
+      >
         Releasing
       </Typography>
 
       <Divider sx={{ mb: "20px" }} />
 
-      <Stack flexDirection="row" gap={3} overflow="auto">
-        <Stack width="50%">
-          <Stack gap={2}>
-            <Typography sx={sxSubtitle}>Warehouse Number</Typography>
+      <Stack flexDirection="row" gap={4} overflow="auto" sx={{ justifyContent: "center" }}>
+        <Stack>
+          <Stack gap={2} width="220px">
+            {!hideWN && <Typography sx={sxSubtitle}>Warehouse Number</Typography>}
             {warehouseNumber && (
               <Autocomplete
                 {...register}
@@ -449,21 +453,23 @@ const AddReleasingInfo = (props) => {
                   />
                 )}
               />
+
+              {trimmedDataURL ? (
+                <Box
+                  sx={{ display: "grid", placeContent: "center", border: "1px solid gray", borderRadius: "10px", p: 2 }}
+                >
+                  <img src={trimmedDataURL} alt="Trimmed Signature" height="100px" width="200px" />
+                </Box>
+              ) : null}
+              {/* {signature ? <></>} */}
+              <Button onClick={() => dispatch(openDialog1())}>{signature ? "Change Sign" : "Add Signature"}</Button>
             </Box>
           </Stack>
 
-          <Stack py={1}>
-            {trimmedDataURL ? (
-              <Box sx={{ border: "1px solid gray", borderRadius: "10px", p: 2 }}>
-                <img src={trimmedDataURL} alt="Trimmed Signature" height="100px" width="100%" />
-              </Box>
-            ) : null}
-            {/* {signature ? <></>} */}
-            <Button onClick={() => dispatch(openDialog1())}>{signature ? "Change Sign" : "Add Signature"}</Button>
-          </Stack>
+          <Stack py={1}></Stack>
         </Stack>
 
-        <Box sx={BoxStyle} maxWidth="50%" height="100%">
+        <Stack sx={BoxStyle} width="220px!important" maxWidth="220px" height="100%">
           <Typography sx={sxSubtitle}>Charging Information</Typography>
           <CustomAutoComplete
             autoComplete
@@ -636,10 +642,12 @@ const AddReleasingInfo = (props) => {
               />
             )}
           />
-        </Box>
+        </Stack>
       </Stack>
 
-      <Stack flexDirection="row" alignSelf="flex-end" gap={2} p={1}>
+      <Divider sx={{ mb: "10px" }} />
+
+      <Stack flexDirection="row" justifyContent="flex-end" gap={2} p={1}>
         <LoadingButton variant="contained" loading={isPostLoading} size="small" type="submit" disabled={!isDirty}>
           Release
         </LoadingButton>
@@ -660,7 +668,7 @@ const AddReleasingInfo = (props) => {
               canvasProps={{ width: 400, height: 200, className: "signCanvas" }}
               willreadfrequently="true"
             />
-            <Stack flexDirection="row" alignSelf="flex-end" gap={2}>
+            <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
               <IconButton onClick={() => handleClearSignature()} sx={{ position: "absolute", top: 10, left: 10 }}>
                 <Tooltip title="Clear" placement="right" arrow>
                   <Refresh />
