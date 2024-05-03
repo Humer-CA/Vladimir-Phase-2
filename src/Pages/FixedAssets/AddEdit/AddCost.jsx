@@ -184,6 +184,14 @@ const schema = yup.object().shape({
     .required()
     .label("Company"),
 
+  business_unit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Business Unit"),
+
   department_id: yup
     .string()
     .transform((value) => {
@@ -191,6 +199,22 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Department"),
+
+  unit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Unit"),
+
+  subunit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("SubUnit"),
 
   location_id: yup
     .string()
@@ -540,7 +564,10 @@ const AddCost = (props) => {
       major_category_id: null,
       minor_category_id: null,
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
+      subunit_id: null,
       location_id: null,
       account_title_id: null,
 
@@ -981,13 +1008,20 @@ const AddCost = (props) => {
             )}
             onChange={(_, value) => {
               const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+              const businessUnitID = businessUnitData?.find(
+                (item) => item.sync_id === value.business_unit.business_unit_sync_id
+              );
 
               if (value) {
                 setValue("company_id", companyID);
+                setValue("business_unit_id", businessUnitID);
               } else {
                 setValue("company_id", null);
+                setValue("business_unit_id", null);
               }
-
+              setValue("unit_id", null);
+              setValue("subunit_id", null);
+              setValue("location_id", null);
               return value;
             }}
           />

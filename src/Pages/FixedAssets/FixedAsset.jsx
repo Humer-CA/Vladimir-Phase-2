@@ -93,7 +93,10 @@ const FixedAsset = (props) => {
     major_category_id: null,
     minor_category_id: null,
     company_id: null,
+    business_unit_id: null,
     department_id: null,
+    unit_id: null,
+    subunit_id: null,
     location_id: null,
     account_title_id: null,
 
@@ -208,7 +211,10 @@ const FixedAsset = (props) => {
       major_category_id: null,
       minor_category_id: null,
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
+      subunit_id: null,
       location_id: null,
       account_title_id: null,
 
@@ -412,7 +418,7 @@ const FixedAsset = (props) => {
                                 <Typography
                                   fontSize="12px"
                                   fontWeight="bold"
-                                  color={data.is_additional_cost === 0 ? "secondary.main" : "success.light"}
+                                  color={data.is_additional_cost === 0 ? "secondary.main" : "success.dark"}
                                 >
                                   {data.is_additional_cost === 0
                                     ? `Additional Cost Count - ${data.additional_cost_count}`
