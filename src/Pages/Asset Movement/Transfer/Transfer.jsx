@@ -234,11 +234,31 @@ const Transfer = () => {
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel
+                          active={orderBy === `description`}
+                          direction={orderBy === `description` ? order : `asc`}
+                          onClick={() => onSort(`description`)}
+                        >
+                          Description
+                        </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
                           active={orderBy === `requester`}
                           direction={orderBy === `requester` ? order : `asc`}
                           onClick={() => onSort(`requester`)}
                         >
                           Requester
+                        </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `quantity`}
+                          direction={orderBy === `quantity` ? order : `asc`}
+                          onClick={() => onSort(`quantity`)}
+                        >
+                          Quantity
                         </TableSortLabel>
                       </TableCell>
 
@@ -292,7 +312,9 @@ const Transfer = () => {
                               }}
                             >
                               <TableCell className="tbl-cell text-weight">{data.transfer_number}</TableCell>
+                              <TableCell className="tbl-cell">{data.description}</TableCell>
                               <TableCell className="tbl-cell">{`(${data.requester?.employee_id}) - ${data.requester?.first_name} ${data.requester?.last_name}`}</TableCell>
+                              <TableCell className="tbl-cell">{data.quantity}</TableCell>
                               <TableCell className="tbl-cell text-weight text-center">
                                 <Tooltip placement="top" title="View Transfer Information" arrow>
                                   <IconButton onClick={() => handleEditTransfer(data)}>
