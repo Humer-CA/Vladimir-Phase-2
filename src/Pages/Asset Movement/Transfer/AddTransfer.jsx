@@ -112,7 +112,7 @@ import ErrorFetching from "../../ErrorFetching";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
-import CustomMultipleAttachment from "../../../Components/CustomMulitpleAttachment";
+import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachment";
 // import ViewItemRequest from "../ViewItemRequest";
 
 const schema = yup.object().shape({
@@ -500,7 +500,7 @@ const AddTransfer = (props) => {
       setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
       setValue("attachments", attachmentFormat("attachments"));
 
-      console.log(attachmentFormat("letter_of_request"));
+      console.log(attachmentFormat("attachments"));
     }
   }, [updateRequest]);
 
@@ -1418,7 +1418,7 @@ const AddTransfer = (props) => {
           </Stack>
         </Box>
 
-        <LoadingButton
+        {/* <LoadingButton
           loading={isLoading}
           form="requestForm"
           variant="contained"
@@ -1430,8 +1430,8 @@ const AddTransfer = (props) => {
         >
           {transactionData ? <Update /> : editRequest ? <Update /> : <AddToPhotos />}{" "}
           <Typography>{transactionData ? "UPDATE" : editRequest ? "UPDATE" : "ADD"}</Typography>
-        </LoadingButton>
-        <Divider orientation="vertical" />
+        </LoadingButton> */}
+        {/* <Divider orientation="vertical" /> */}
       </Box>
     );
   };
@@ -1552,43 +1552,9 @@ const AddTransfer = (props) => {
                       }}
                     >
                       <TableCell className="tbl-cell">{transactionData ? "Ref No." : "Index"}</TableCell>
-                      <TableCell className="tbl-cell">Type of Request</TableCell>
-                      <TableCell className="tbl-cell">Acquisition Details</TableCell>
-                      <TableCell className="tbl-cell">Attachment Type</TableCell>
-                      <TableCell className="tbl-cell">Chart of Accounts</TableCell>
+                      <TableCell className="tbl-cell">Asset</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
-                      <TableCell className="tbl-cell">Asset Information</TableCell>
-                      <TableCell className="tbl-cell">Brand</TableCell>
-                      <TableCell className="tbl-cell">Date Needed</TableCell>
-
-                      {addRequestAllApi && !transactionDataApi[0]?.po_number && (
-                        <>
-                          <TableCell className="tbl-cell text-center">Quantity</TableCell>
-                          <TableCell className="tbl-cell text-center">UOM</TableCell>
-                        </>
-                      )}
-                      {transactionData && transactionDataApi[0]?.po_number && (
-                        <>
-                          <TableCell className="tbl-cell text-center">Ordered</TableCell>
-                          <TableCell className="tbl-cell text-center">Delivered</TableCell>
-                          <TableCell className="tbl-cell text-center">Remaining</TableCell>
-                          <TableCell className="tbl-cell text-center">Cancelled</TableCell>
-                        </>
-                      )}
-                      {transactionData &&
-                        // transactionDataApi[0]?.po_number &&
-                        transactionDataApi[0]?.is_removed === 1 && (
-                          <>
-                            <TableCell className="tbl-cell text-center">Ordered</TableCell>
-                            <TableCell className="tbl-cell text-center">Delivered</TableCell>
-                            <TableCell className="tbl-cell text-center">Remaining</TableCell>
-                            <TableCell className="tbl-cell text-center">Cancelled</TableCell>
-                          </>
-                        )}
-
-                      <TableCell className="tbl-cell">Cellphone #</TableCell>
-                      <TableCell className="tbl-cell">Additional Info.</TableCell>
-                      <TableCell className="tbl-cell">Attachments</TableCell>
+                      <TableCell className="tbl-cell">Date Created</TableCell>
                       <TableCell className="tbl-cell">Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -1612,23 +1578,14 @@ const AddTransfer = (props) => {
                               cursor: transactionDataApi[0]?.po_number ? "pointer" : null,
                             }}
                           >
-                            <TableCell
-                              onClick={() => handleShowItems(data)}
-                              className="tbl-cell tr-cen-pad45 text-weight"
-                            >
+                            <TableCell className="tbl-cell tr-cen-pad45 text-weight">
                               {transactionData ? data?.reference_number : index + 1}
                             </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.type_of_request?.type_of_request_name}
-                            </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.acquisition_details}
-                            </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.attachment_type}
-                            </TableCell>
+                            <TableCell className="tbl-cell">{data.type_of_request?.type_of_request_name}</TableCell>
+                            <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
+                            <TableCell className="tbl-cell">{data.attachment_type}</TableCell>
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            <TableCell className="tbl-cell">
                               <Typography fontSize={10} color="gray">
                                 {`(${data.company?.company_code}) - ${data.company?.company_name}`}
                               </Typography>
@@ -1652,7 +1609,7 @@ const AddTransfer = (props) => {
                               </Typography>
                             </TableCell>
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            <TableCell className="tbl-cell">
                               {data.accountability === "Personal Issued" ? (
                                 <>
                                   <Typography fontSize={12}>
@@ -1665,7 +1622,7 @@ const AddTransfer = (props) => {
                               )}
                             </TableCell>
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            <TableCell className="tbl-cell">
                               <Typography fontWeight={600} fontSize="14px" color="secondary.main">
                                 {data.asset_description}
                               </Typography>
@@ -1673,66 +1630,40 @@ const AddTransfer = (props) => {
                                 {data.asset_specification}
                               </Typography>
                             </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.brand}
-                            </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.date_needed}
-                            </TableCell>
+                            <TableCell className="tbl-cell">{data.brand}</TableCell>
+                            <TableCell className="tbl-cell">{data.date_needed}</TableCell>
 
                             {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
-                              <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                {data.quantity}
-                              </TableCell>
+                              <TableCell className="tbl-cell text-center">{data.quantity}</TableCell>
                             )}
 
                             {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
-                              <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                {data.unit_of_measure?.uom_name}
-                              </TableCell>
+                              <TableCell className="tbl-cell text-center">{data.unit_of_measure?.uom_name}</TableCell>
                             )}
                             {transactionData && data.po_number && (
                               <>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.ordered}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.delivered}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.remaining}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.cancelled}
-                                </TableCell>
+                                <TableCell className="tbl-cell text-center">{data.ordered}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.delivered}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.remaining}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.cancelled}</TableCell>
                               </>
                             )}
 
                             {transactionData && !data.po_number && data?.is_removed === 1 && (
                               <>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.ordered}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.delivered}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.remaining}
-                                </TableCell>
-                                <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
-                                  {data.cancelled}
-                                </TableCell>
+                                <TableCell className="tbl-cell text-center">{data.ordered}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.delivered}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.remaining}</TableCell>
+                                <TableCell className="tbl-cell text-center">{data.cancelled}</TableCell>
                               </>
                             )}
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            <TableCell className="tbl-cell">
                               {data.cellphone_number === null ? "-" : data.cellphone_number}
                             </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.additional_info}
-                            </TableCell>
+                            <TableCell className="tbl-cell">{data.additional_info}</TableCell>
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            <TableCell className="tbl-cell">
                               {data?.attachments?.letter_of_request && (
                                 <Stack flexDirection="row" gap={1}>
                                   <Typography fontSize={12} fontWeight={600}>
