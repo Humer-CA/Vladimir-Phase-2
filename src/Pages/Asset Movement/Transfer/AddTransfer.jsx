@@ -14,13 +14,14 @@ import {
 import AttachmentIcon from "../../../Img/SVG/SVG/Attachment.svg";
 import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 
 import {
+  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -48,6 +49,7 @@ import {
   Folder,
   Info,
   Remove,
+  RemoveCircle,
   Report,
   Save,
   SaveAlt,
@@ -110,7 +112,10 @@ import CustomPatternField from "../../../Components/Reusable/CustomPatternField"
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 import ErrorFetching from "../../ErrorFetching";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
-import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
+import {
+  useGetFixedAssetAllApiQuery,
+  useLazyGetFixedAssetAllApiQuery,
+} from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachment";
 // import ViewItemRequest from "../ViewItemRequest";
@@ -140,7 +145,7 @@ const schema = yup.object().shape({
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
 
-  acquisition_details: yup.string().required().label("Acquisition Details"),
+  description: yup.string().required().label("Acquisition Details"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
   date_needed: yup.string().required().label("Date Needed").typeError("Date Needed is a required field"),
@@ -373,6 +378,17 @@ const AddTransfer = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
+  const [
+    fixedAssetTrigger,
+    {
+      data: vTagNumberData = [],
+      isLoading: isVTagNumberLoading,
+      isSuccess: isVTagNumberSuccess,
+      isError: isVTagNumberError,
+      error: vTagNumberError,
+    },
+  ] = useLazyGetFixedAssetAllApiQuery();
+
   const [postRequest, { data: postRequestData }] = usePostRequestContainerApiMutation();
   const [upDateRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
   const [deleteRequest, { data: deleteRequestData }] = useDeleteRequestContainerApiMutation();
@@ -393,10 +409,8 @@ const AddTransfer = (props) => {
     resolver: yupResolver(schema),
     defaultValues: {
       id: "",
-      type_of_request_id: null,
-      cip_number: "" || null,
-      attachment_type: null,
-
+      description: "",
+      accountability: null,
       company_id: null,
       business_unit_id: null,
       department_id: null,
@@ -404,25 +418,15 @@ const AddTransfer = (props) => {
       subunit_id: null,
       location_id: null,
       account_title_id: null,
-      acquisition_details: "",
-
-      asset_description: "",
-      asset_specification: "",
-      date_needed: null,
-      brand: "",
-      accountability: null,
-      accountable: null,
-      cellphone_number: "",
-      quantity: 1,
-      uom_id: null,
-      additional_info: "",
-
-      letter_of_request: null,
-      quotation: null,
-      specification_form: null,
-      tool_of_trade: null,
+      remarks: "",
       attachments: null,
+      asset: [{ id: null, fixed_asset_id: null, care_of: null, date_created: null }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "asset",
   });
 
   // console.log(errors);
@@ -481,7 +485,7 @@ const AddTransfer = (props) => {
       setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
       setValue("accountable", accountable);
-      setValue("acquisition_details", updateRequest?.acquisition_details);
+      setValue("description", updateRequest?.description);
 
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
@@ -589,7 +593,7 @@ const AddTransfer = (props) => {
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
 
-      acquisition_details: formData?.acquisition_details?.toString(),
+      description: formData?.description?.toString(),
       asset_description: formData?.asset_description?.toString(),
       asset_specification: formData?.asset_specification?.toString(),
       date_needed: dateNeededFormat,
@@ -679,35 +683,18 @@ const AddTransfer = (props) => {
           transactionData
             ? reset()
             : reset({
-                type_of_request_id: formData?.type_of_request_id,
-                cip_number: formData?.cip_number,
-                attachment_type: formData?.attachment_type,
-
-                company_id: formData?.company_id,
-                business_unit_id: formData?.business_unit_id,
-                department_id: formData?.department_id,
-                unit_id: formData?.unit_id,
-                subunit_id: formData?.subunit_id,
-                location_id: formData?.location_id,
-                account_title_id: formData?.account_title_id,
-                acquisition_details: formData?.acquisition_details,
-
-                asset_description: "",
-                asset_specification: "",
-                date_needed: null,
-                brand: "",
-                accountability: null,
-                accountable: null,
-                cellphone_number: "",
-                quantity: 1,
-                uom_id: null,
-                additional_info: "",
-
-                letter_of_request: null,
-                quotation: null,
-                specification_form: null,
-                tool_of_trade: null,
+                id: "",
+                description: "",
+                company_id: null,
+                business_unit_id: null,
+                department_id: null,
+                unit_id: null,
+                subunit_id: null,
+                location_id: null,
+                account_title_id: null,
+                remarks: "",
                 attachments: null,
+                asset: [{ fixed_asset_id: null }],
               });
         })
         .then(() => {
@@ -1067,7 +1054,7 @@ const AddTransfer = (props) => {
       id,
       can_resubmit,
       reference_number,
-      acquisition_details,
+      description,
       company,
       business_unit,
       department,
@@ -1082,9 +1069,7 @@ const AddTransfer = (props) => {
     } = props;
     setUpdateRequest({
       id,
-      can_resubmit,
-      reference_number,
-
+      description,
       company,
       business_unit,
       department,
@@ -1092,40 +1077,26 @@ const AddTransfer = (props) => {
       subunit,
       location,
       account_title,
-      accountability,
-      accountable,
-      acquisition_details,
-
-      attachments: attachments?.attachments,
+      remarks,
+      attachments,
+      asset: [{ id, fixed_asset_id, care_of, date_created }],
     });
   };
 
   const onUpdateResetHandler = () => {
     setUpdateRequest({
-      can_resubmit: null,
-      type_of_request_id: null,
-      cip_number: "" || null,
-      attachment_type: null,
-
+      id: "",
+      description: "",
       company_id: null,
+      business_unit_id: null,
       department_id: null,
+      unit_id: null,
       subunit_id: null,
       location_id: null,
       account_title_id: null,
-      acquisition_details: "",
-
-      asset_description: "",
-      asset_specification: "",
-      date_needed: null,
-      brand: "",
-      accountability: null,
-      accountable: null,
-      cellphone_number: "",
-      quantity: 1,
-      uom_id: null,
-      additional_info: "",
-
+      remarks: "",
       attachments: null,
+      asset: [{ asset_id: null, fixed_asset_id: null, care_of: null, date_created: null }],
     });
   };
 
@@ -1134,7 +1105,7 @@ const AddTransfer = (props) => {
   const formInputs = () => {
     return (
       <Box>
-        <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", py: 1 }}>
+        <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
           ASSET TRANSFER
         </Typography>
 
@@ -1146,14 +1117,14 @@ const AddTransfer = (props) => {
               {/* <Typography sx={sxSubtitle}>Request Information</Typography> */}
               <CustomTextField
                 control={control}
-                name="acquisition_details"
-                label="Acquisition Details"
+                name="description"
+                label="Description"
                 type="text"
                 disabled={updateRequest && disable}
                 onBlur={() => handleAcquisitionDetails()}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
-                error={!!errors?.acquisition_details}
-                helperText={errors?.acquisition_details?.message}
+                error={!!errors?.description}
+                helperText={errors?.description?.message}
                 fullWidth
                 multiline
               />
@@ -1438,10 +1409,12 @@ const AddTransfer = (props) => {
   // console.log("editRequest", editRequest);
   // console.log("updateRequest", updateRequest);
 
+  const handleAppendItem = () => append({ id: null, fixed_asset_id: null, care_of: null, date_created: null });
+
   const handleAcquisitionDetails = () => {
-    if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
+    if (watch("description") === "" || addRequestAllApi?.data.length === 0) {
       return null;
-    } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
+    } else if (updateRequest?.description !== watch("description")) {
       return dispatch(
         openConfirm({
           icon: Warning,
@@ -1468,7 +1441,7 @@ const AddTransfer = (props) => {
             dispatch(closeConfirm());
           },
           onDismiss: () => {
-            setValue("acquisition_details", updateRequest?.acquisition_details);
+            setValue("description", updateRequest?.description);
           },
         })
       );
@@ -1555,190 +1528,80 @@ const AddTransfer = (props) => {
                       <TableCell className="tbl-cell">Asset</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Date Created</TableCell>
-                      <TableCell className="tbl-cell">Action</TableCell>
+                      <TableCell className="tbl-cell" align="center">
+                        Action
+                      </TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
-                    {(updateRequest && isTransactionLoading) || isRequestLoading ? (
-                      <LoadingData />
-                    ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.data?.length === 0) ? (
-                      <NoRecordsFound request />
-                    ) : (
-                      <>
-                        {(transactionData ? transactionDataApi : addRequestAllApi?.data)?.map((data, index) => (
-                          <TableRow
-                            key={index}
+                    {fields.map((item, index) => (
+                      <TableRow key={item.id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>
+                          <Autocomplete
+                            {...register}
+                            name="fixed_asset_id"
+                            options={vTagNumberData}
+                            onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
+                            loading={isVTagNumberLoading}
+                            disabled={updateRequest || addRequestAllApi?.data === 0 ? disable : false}
+                            size="small"
+                            filterOptions={filterOptions}
+                            getOptionLabel={(option) =>
+                              "(" + option.vladimir_tag_number + ")" + " - " + option.asset_description
+                            }
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            renderInput={(params) => (
+                              <TextField
+                                color="secondary"
+                                {...params}
+                                label="Tag Number"
+                                error={!!errors?.fixed_asset_id}
+                                helperText={errors?.fixed_asset_id?.message}
+                              />
+                            )}
                             sx={{
-                              "&:last-child td, &:last-child th": {
-                                borderBottom: 0,
+                              ".MuiInputBase-root": {
+                                borderRadius: "12px",
+                                // backgroundColor: "white",
                               },
-                              bgcolor: data?.is_removed === 1 ? "#ff00002f" : null,
-                              "*": { color: data?.is_removed === 1 ? "black!important" : null },
-                              cursor: transactionDataApi[0]?.po_number ? "pointer" : null,
+
+                              ".MuiInputLabel-root.Mui-disabled": {
+                                backgroundColor: "transparent",
+                              },
+
+                              ".Mui-disabled": {
+                                backgroundColor: "background.light",
+                              },
+                              minWidth: "150px",
+                              maxWidth: "550px",
                             }}
-                          >
-                            <TableCell className="tbl-cell tr-cen-pad45 text-weight">
-                              {transactionData ? data?.reference_number : index + 1}
-                            </TableCell>
-                            <TableCell className="tbl-cell">{data.type_of_request?.type_of_request_name}</TableCell>
-                            <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
-                            <TableCell className="tbl-cell">{data.attachment_type}</TableCell>
+                          />
 
-                            <TableCell className="tbl-cell">
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.company?.company_code}) - ${data.company?.company_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.business_unit?.business_unit_code}) - ${data.business_unit?.business_unit_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.department?.department_code}) - ${data.department?.department_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.unit?.unit_code}) - ${data.unit?.unit_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.subunit?.subunit_code}) - ${data.subunit?.subunit_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.location?.location_code}) - ${data.location?.location_name}`}
-                              </Typography>
-                              <Typography fontSize={10} color="gray">
-                                {`(${data.account_title?.account_title_code}) - ${data.account_title?.account_title_name}`}
-                              </Typography>
-                            </TableCell>
-
-                            <TableCell className="tbl-cell">
-                              {data.accountability === "Personal Issued" ? (
-                                <>
-                                  <Typography fontSize={12}>
-                                    {data?.accountable?.general_info?.full_id_number || data?.accountable}
-                                  </Typography>
-                                  <Typography fontSize={12}>{data?.accountable?.general_info?.full_name}</Typography>
-                                </>
-                              ) : (
-                                "Common"
-                              )}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell">
-                              <Typography fontWeight={600} fontSize="14px" color="secondary.main">
-                                {data.asset_description}
-                              </Typography>
-                              <Typography fontSize="12px" color="text.light">
-                                {data.asset_specification}
-                              </Typography>
-                            </TableCell>
-                            <TableCell className="tbl-cell">{data.brand}</TableCell>
-                            <TableCell className="tbl-cell">{data.date_needed}</TableCell>
-
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
-                              <TableCell className="tbl-cell text-center">{data.quantity}</TableCell>
-                            )}
-
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
-                              <TableCell className="tbl-cell text-center">{data.unit_of_measure?.uom_name}</TableCell>
-                            )}
-                            {transactionData && data.po_number && (
-                              <>
-                                <TableCell className="tbl-cell text-center">{data.ordered}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.delivered}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.remaining}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.cancelled}</TableCell>
-                              </>
-                            )}
-
-                            {transactionData && !data.po_number && data?.is_removed === 1 && (
-                              <>
-                                <TableCell className="tbl-cell text-center">{data.ordered}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.delivered}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.remaining}</TableCell>
-                                <TableCell className="tbl-cell text-center">{data.cancelled}</TableCell>
-                              </>
-                            )}
-
-                            <TableCell className="tbl-cell">
-                              {data.cellphone_number === null ? "-" : data.cellphone_number}
-                            </TableCell>
-                            <TableCell className="tbl-cell">{data.additional_info}</TableCell>
-
-                            <TableCell className="tbl-cell">
-                              {data?.attachments?.letter_of_request && (
-                                <Stack flexDirection="row" gap={1}>
-                                  <Typography fontSize={12} fontWeight={600}>
-                                    Letter of Request:
-                                  </Typography>
-                                  {data?.attachments?.letter_of_request?.file_name}
-                                </Stack>
-                              )}
-
-                              {data?.attachments?.quotation && (
-                                <Stack flexDirection="row" gap={1}>
-                                  <Typography fontSize={12} fontWeight={600}>
-                                    Quotation:
-                                  </Typography>
-                                  {data?.attachments?.quotation?.file_name}
-                                </Stack>
-                              )}
-
-                              {data?.attachments?.specification_form && (
-                                <Stack flexDirection="row" gap={1}>
-                                  <Typography fontSize={12} fontWeight={600}>
-                                    Specification:
-                                  </Typography>
-                                  {data?.attachments?.specification_form?.file_name}
-                                </Stack>
-                              )}
-
-                              {data?.attachments?.tool_of_trade && (
-                                <Stack flexDirection="row" gap={1}>
-                                  <Typography fontSize={12} fontWeight={600}>
-                                    Tool of Trade:
-                                  </Typography>
-                                  {data?.attachments?.tool_of_trade?.file_name}
-                                </Stack>
-                              )}
-
-                              {data?.attachments?.attachments && (
-                                <Stack flexDirection="row" gap={1}>
-                                  <Typography fontSize={12} fontWeight={600}>
-                                    Attachment:
-                                  </Typography>
-                                  {data?.attachments?.attachments?.file_name}
-                                </Stack>
-                              )}
-                            </TableCell>
-                            <TableCell className="tbl-cell">
-                              {data?.is_removed === 0 && (
-                                <ActionMenu
-                                  data={data}
-                                  status={data?.status}
-                                  hideArchive
-                                  disableDelete={data.status !== "For Approval of Approver 1" ? true : false}
-                                  addRequestAllApi
-                                  setDisable={setDisable}
-                                  onUpdateHandler={onUpdateHandler}
-                                  onUpdateResetHandler={onUpdateResetHandler}
-                                  setUpdateToggle={setUpdateToggle}
-                                  onDeleteHandler={!transactionData && onDeleteHandler}
-                                  transactionData={transactionData}
-                                  editRequest={editRequest}
-                                  setEditRequest={setEditRequest}
-                                  editRequestData={() => handleEditRequestData()}
-                                  onDeleteReferenceHandler={
-                                    transactionData &&
-                                    transactionData.item_count !== 1 &&
-                                    transactionDataApi.length !== 1 &&
-                                    onVoidReferenceHandler
-                                  }
-                                />
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </>
-                    )}
+                          {console.log(watch("fixed_asset_id"))}
+                        </TableCell>
+                        <TableCell>{item.care_of}</TableCell>
+                        <TableCell>{item.date_created}</TableCell>
+                        <TableCell align="center">
+                          <IconButton onClick={() => remove(index)} disabled={fields.length === 1}>
+                            <RemoveCircle color={fields.length === 1 ? "gray" : "warning"} />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow>
+                      <TableCell colSpan={99}>
+                        <Stack flexDirection="row" gap={2}>
+                          <Button variant="contained" size="small" onClick={() => handleAppendItem()}>
+                            Add Item
+                          </Button>
+                          <Button variant="contained" size="small" color="warning" onClick={() => reset()}>
+                            Reset All
+                          </Button>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
