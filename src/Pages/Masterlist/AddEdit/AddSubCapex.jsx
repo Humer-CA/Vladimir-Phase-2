@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { usePostSubCapexApiMutation, useUpdateSubCapexApiMutation } from "../../../Redux/Query/Masterlist/Capex";
@@ -17,7 +17,7 @@ import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 const schema = yup.object().shape({
   id: yup.string(),
   capex_id: yup.number(),
-  sub_capex: yup.string().required(),
+  sub_capex: yup.string().required().label("Sub Capex"),
   sub_project: yup.string().required().label("Project Name"),
 });
 
@@ -44,10 +44,11 @@ const AddSubCapex = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     setError,
     reset,
     watch,
+    register,
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
@@ -108,11 +109,13 @@ const AddSubCapex = (props) => {
   }, [data]);
 
   // console.log(data);
+  console.log(watch("sub_capex"));
 
   const onSubmitHandler = (formData) => {
     const newFormData = {
       ...formData,
       capex_id: capexId,
+      sub_capex: formData.sub_capex,
     };
     if (data.status) {
       updateSubCapex(newFormData);
@@ -153,8 +156,9 @@ const AddSubCapex = (props) => {
             disabled
           />
 
-          <CustomTextField
-            control={control}
+          <TextField
+            {...register("sub_capex")}
+            // control={control}
             name="sub_capex"
             label="Sub Capex"
             type="text"
@@ -165,6 +169,21 @@ const AddSubCapex = (props) => {
             disabled={data.status}
             inputProps={{
               maxLength: 3,
+            }}
+            sx={{
+              width: "120px",
+              ".MuiInputBase-root": {
+                borderRadius: "12px",
+                // backgroundColor: "white",
+              },
+
+              ".MuiInputLabel-root.Mui-disabled": {
+                backgroundColor: "transparent",
+              },
+
+              ".Mui-disabled": {
+                backgroundColor: "background.light",
+              },
             }}
           />
         </Stack>
@@ -187,7 +206,8 @@ const AddSubCapex = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("sub_capex") === "" || watch("sub_project") === ""}
+            // disabled={watch("sub_capex") === "" || watch("sub_project") === ""}
+            disabled={!isDirty}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>
