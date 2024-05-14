@@ -25,7 +25,7 @@ const CustomMultipleAttachment = (props) => {
       render={({ field }) => {
         const { value, onChange: setValue } = field;
 
-        console.log("Value before:", value);
+        // console.log("Value before:", value);
 
         return (
           <>
