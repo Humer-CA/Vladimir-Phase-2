@@ -42,10 +42,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import {
+  Add,
   AddAlert,
   AddToPhotos,
   ArrowBackIosRounded,
   Create,
+  Delete,
   Folder,
   Info,
   Remove,
@@ -96,29 +98,22 @@ import {
   useLazyGetTypeOfRequestAllApiQuery,
 } from "../../../Redux/Query/Masterlist/TypeOfRequest";
 import { useLocation, useNavigate } from "react-router-dom";
-import NoRecordsFound from "../../../Layout/NoRecordsFound";
 
-import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import {
   // useGetRequestContainerAllApiQuery,
   useGetRequestContainerAllApiQuery,
   usePostRequestContainerApiMutation,
   useUpdateRequestContainerApiMutation,
 } from "../../../Redux/Query/Request/RequestContainer";
-import axios from "axios";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import { usePostRequisitionSmsApiMutation } from "../../../Redux/Query/Request/RequisitionSms";
-import CustomPatternField from "../../../Components/Reusable/CustomPatternField";
-import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 import ErrorFetching from "../../ErrorFetching";
-import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import {
   useGetFixedAssetAllApiQuery,
   useLazyGetFixedAssetAllApiQuery,
 } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachment";
-// import ViewItemRequest from "../ViewItemRequest";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -203,22 +198,16 @@ const AddTransfer = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [updateToggle, setUpdateToggle] = useState(true);
   const [disable, setDisable] = useState(true);
-  const [itemData, setItemData] = useState(null);
   const [editRequest, setEditRequest] = useState(false);
 
   const { state: transactionData } = useLocation();
   const dialog = useSelector((state) => state.booleanState.dialog);
 
-  const isFullWidth = useMediaQuery("(max-width: 600px)");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const AttachmentRef = useRef(null);
-
-  const attachmentType = ["Budgeted", "Unbudgeted"];
 
   const [
     postRequisition,
@@ -389,12 +378,6 @@ const AddTransfer = (props) => {
     },
   ] = useLazyGetFixedAssetAllApiQuery();
 
-  const [postRequest, { data: postRequestData }] = usePostRequestContainerApiMutation();
-  const [upDateRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
-  const [deleteRequest, { data: deleteRequestData }] = useDeleteRequestContainerApiMutation();
-  const [deleteAllRequest, { data: deleteAllRequestData }] = useDeleteRequestContainerAllApiMutation();
-  const [deleteRequestContainer, { data: deleteRequestContainerData }] = useDeleteRequisitionReferenceApiMutation();
-
   const {
     handleSubmit,
     control,
@@ -428,8 +411,9 @@ const AddTransfer = (props) => {
     control,
     name: "asset",
   });
+  const [rowData, setRowData] = useState(fields.map(() => ({ account: null, date_created: null })));
 
-  // console.log(errors);
+  // console.log("rowData", rowData);
 
   useEffect(() => {
     if (isPostError) {
@@ -452,14 +436,6 @@ const AddTransfer = (props) => {
       }
     }
   }, [isPostError]);
-
-  useEffect(() => {
-    if (transactionData?.additionalCost) {
-      setDisable(false);
-    }
-    !transactionData && setDisable(false);
-    // deleteAllRequest();
-  }, []);
 
   useEffect(() => {
     if (updateRequest.id) {
@@ -504,11 +480,9 @@ const AddTransfer = (props) => {
       setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
       setValue("attachments", attachmentFormat("attachments"));
 
-      console.log(attachmentFormat("attachments"));
+      // console.log(attachmentFormat("attachments"));
     }
   }, [updateRequest]);
-
-  // console.log(updateRequest);
 
   // Table Sorting --------------------------------
   const [order, setOrder] = useState("desc");
@@ -536,16 +510,6 @@ const AddTransfer = (props) => {
     setOrderBy(property);
   };
 
-  const handleEditRequestData = () => {
-    if (transactionData && updateRequest) {
-      transactionDataApi[0]?.can_edit === 1 || transactionData?.status === "Return";
-    } else if (editRequest) {
-      setEditRequest(true) && false;
-    } else {
-      setEditRequest(false) && true;
-    }
-  };
-
   const handleCloseDrawer = () => {
     dispatch(closeDrawer());
   };
@@ -565,202 +529,6 @@ const AddTransfer = (props) => {
     else {
       return formData?.[fieldName];
     }
-  };
-
-  //  * CONTAINER
-  // Adding of Request
-  const addRequestHandler = (formData) => {
-    const cipNumberFormat = formData?.cip_number === "" ? "" : formData?.cip_number?.toString();
-    const updatingCoa = (fields, name) =>
-      updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
-    const accountableFormat =
-      formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString();
-    const dateNeededFormat = moment(new Date(formData.date_needed)).format("YYYY-MM-DD");
-    const cpFormat = formData?.cellphone_number === "" ? "" : "09" + formData?.cellphone_number?.toString();
-
-    const data = {
-      type_of_request_id: formData?.type_of_request_id?.id?.toString(),
-      cip_number: cipNumberFormat,
-      attachment_type: formData?.attachment_type?.toString(),
-
-      department_id: formData?.department_id.id?.toString(),
-      company_id: updatingCoa("company_id", "company"),
-      business_unit_id: updatingCoa("business_unit_id", "business_unit"),
-      unit_id: formData.unit_id.id?.toString(),
-      subunit_id: formData.subunit_id.id?.toString(),
-      location_id: formData?.location_id.id?.toString(),
-      account_title_id: formData?.account_title_id.id?.toString(),
-      accountability: formData?.accountability?.toString(),
-      accountable: accountableFormat,
-
-      description: formData?.description?.toString(),
-      asset_description: formData?.asset_description?.toString(),
-      asset_specification: formData?.asset_specification?.toString(),
-      date_needed: dateNeededFormat,
-      cellphone_number: cpFormat,
-
-      brand: formData?.brand?.toString(),
-      quantity: formData?.quantity?.toString(),
-      uom_id: formData?.uom_id?.id?.toString(),
-      additional_info: formData?.additional_info?.toString(),
-
-      letter_of_request: updateRequest && attachmentValidation("letter_of_request", formData),
-      quotation: updateRequest && attachmentValidation("quotation", formData),
-      specification_form: updateRequest && attachmentValidation("specification_form", formData),
-      tool_of_trade: updateRequest && attachmentValidation("tool_of_trade", formData),
-      attachments: updateRequest && attachmentValidation("attachments", formData),
-    };
-    // console.log(formData);
-    // console.log("data", data);
-
-    const payload = new FormData();
-    Object.entries(data).forEach((item) => {
-      const [name, value] = item;
-      payload.append(name, value);
-    });
-
-    const token = localStorage.getItem("token");
-
-    const validation = () => {
-      const coaValidation = (name, value) => {
-        transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
-      };
-      if (transactionData) {
-        return (
-          (transactionData &&
-            (coaValidation("department", "department_id") ||
-              coaValidation("unit", "unit_id") ||
-              coaValidation("subunit", "subunit_id") ||
-              coaValidation("location", "location_id"))) ||
-          false
-        );
-      } else {
-        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          return true;
-        }
-        return false;
-      }
-    };
-
-    const submitData = () => {
-      setIsLoading(true);
-      axios
-        .post(
-          `${process.env.VLADIMIR_BASE_URL}/${
-            transactionData
-              ? `update-request/${updateRequest?.reference_number}`
-              : editRequest
-              ? `update-container/${updateRequest?.id}`
-              : "request-container"
-          }`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              // Authorization: `Bearer 583|KavZ7vEXyUY7FiHQGIMcTImftzyRnZorxbtn4S9a`,
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((result) => {
-          dispatch(
-            openToast({
-              message: result?.data?.message || result?.data?.message,
-              duration: 5000,
-            })
-          );
-          setIsLoading(false);
-          // reset();
-          transactionData
-            ? reset()
-            : reset({
-                id: "",
-                description: "",
-                company_id: null,
-                business_unit_id: null,
-                department_id: null,
-                unit_id: null,
-                subunit_id: null,
-                location_id: null,
-                account_title_id: null,
-                remarks: "",
-                attachments: null,
-                asset: [{ fixed_asset_id: null }],
-              });
-        })
-        .then(() => {
-          transactionData ? setDisable(true) : setDisable(false);
-          setEditRequest(false);
-          setUpdateToggle(true);
-          isTransactionRefetch();
-          dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-          dispatch(
-            openToast({
-              message: err?.response?.data?.errors?.detail
-                ? err?.response?.data?.errors?.detail
-                : Object.entries(err?.response?.data?.errors).at(0).at(1).at(0),
-              // err?.response?.data?.errors?.detail ||
-              // err?.response?.data?.errors[0]?.detail ||
-              // err?.response?.data?.message,
-              duration: 5000,
-              variant: "error",
-            })
-          );
-        });
-    };
-
-    const addConfirmation = () => {
-      dispatch(
-        openConfirm({
-          icon: Warning,
-          iconColor: "alert",
-          message: (
-            <Box>
-              <Typography> Are you sure you want to</Typography>
-              <Typography
-                sx={{
-                  display: "inline-block",
-                  color: "secondary.main",
-                  fontWeight: "bold",
-                }}
-              >
-                CHANGE THE COA?
-              </Typography>
-              <Typography>it will apply to all Items</Typography>
-            </Box>
-          ),
-
-          onConfirm: () => {
-            dispatch(onLoading());
-            submitData();
-            dispatch(closeConfirm());
-          },
-        })
-      );
-    };
-
-    transactionData
-      ? validation()
-        ? addConfirmation()
-        : submitData()
-      : addRequestAllApi?.data.length === 0
-      ? submitData()
-      : validation()
-      ? addConfirmation()
-      : submitData();
   };
 
   const onSubmitHandler = () => {
@@ -853,122 +621,6 @@ const AddTransfer = (props) => {
             } else if (err?.status !== 422) {
               console.error(err);
 
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
-
-  const onDeleteHandler = async (id) => {
-    dispatch(
-      openConfirm({
-        icon: Report,
-        iconColor: "warning",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              DELETE
-            </Typography>{" "}
-            this Item?
-          </Box>
-        ),
-
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            let result = await deleteRequest(id).unwrap();
-
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            dispatch(closeConfirm());
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
-
-  const onVoidReferenceHandler = async (id) => {
-    dispatch(
-      openConfirm({
-        icon: Report,
-        iconColor: "warning",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              DELETE
-            </Typography>{" "}
-            this Item?
-          </Box>
-        ),
-
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            let result = await deleteRequestContainer(id).unwrap();
-            // console.log(result);
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            dispatch(closeConfirm());
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
               dispatch(
                 openToast({
                   message: "Something went wrong. Please try again.",
@@ -1106,12 +758,12 @@ const AddTransfer = (props) => {
     return (
       <Box>
         <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
-          ASSET TRANSFER
+          ADD TRANSFER REQUEST
         </Typography>
 
         {/* <Divider /> */}
 
-        <Box id="requestForm" className="request__form" component="form" onSubmit={handleSubmit(addRequestHandler)}>
+        <Box id="requestForm" className="request__form" component="form" onSubmit={handleSubmit()}>
           <Stack gap={2} py={2}>
             <Box sx={BoxStyle}>
               {/* <Typography sx={sxSubtitle}>Request Information</Typography> */}
@@ -1120,7 +772,6 @@ const AddTransfer = (props) => {
                 name="description"
                 label="Description"
                 type="text"
-                disabled={updateRequest && disable}
                 onBlur={() => handleAcquisitionDetails()}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
                 error={!!errors?.description}
@@ -1133,7 +784,6 @@ const AddTransfer = (props) => {
                 name="accountability"
                 control={control}
                 options={["Personal Issued", "Common"]}
-                disabled={updateRequest && disable}
                 isOptionEqualToValue={(option, value) => option === value}
                 renderInput={(params) => (
                   <TextField
@@ -1156,7 +806,6 @@ const AddTransfer = (props) => {
                   control={control}
                   includeInputInList
                   disablePortal
-                  disabled={updateRequest && disable}
                   filterOptions={filterOptions}
                   options={sedarData}
                   onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
@@ -1181,7 +830,6 @@ const AddTransfer = (props) => {
                 autoComplete
                 control={control}
                 name="department_id"
-                disabled={updateRequest && disable}
                 options={departmentData}
                 onOpen={() =>
                   isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
@@ -1266,7 +914,6 @@ const AddTransfer = (props) => {
                 autoComplete
                 name="unit_id"
                 control={control}
-                disabled={updateRequest && disable}
                 options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
                 onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
                 loading={isUnitLoading}
@@ -1293,7 +940,6 @@ const AddTransfer = (props) => {
                 autoComplete
                 name="subunit_id"
                 control={control}
-                disabled={updateRequest && disable}
                 options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
                 loading={isSubUnitLoading}
                 size="small"
@@ -1314,7 +960,6 @@ const AddTransfer = (props) => {
                 autoComplete
                 name="location_id"
                 control={control}
-                disabled={updateRequest && disable}
                 options={locationData?.filter((item) => {
                   return item.subunit.some((subunit) => {
                     return subunit?.sync_id === watch("subunit_id")?.sync_id;
@@ -1342,7 +987,6 @@ const AddTransfer = (props) => {
                 options={accountTitleData}
                 onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
                 loading={isAccountTitleLoading}
-                disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
                 isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
                 renderInput={(params) => (
@@ -1361,7 +1005,6 @@ const AddTransfer = (props) => {
                 name="remarks"
                 label="Remarks"
                 type="text"
-                disabled={updateRequest && disable}
                 error={!!errors?.remarks}
                 helperText={errors?.remarks?.message}
                 fullWidth
@@ -1377,7 +1020,6 @@ const AddTransfer = (props) => {
                   control={control}
                   name="attachments"
                   label="Attachments"
-                  disabled={updateRequest && disable}
                   inputRef={AttachmentRef}
                   error={!!errors?.attachments?.message}
                   helperText={errors?.attachments?.message}
@@ -1545,7 +1187,6 @@ const AddTransfer = (props) => {
                             options={vTagNumberData}
                             onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
                             loading={isVTagNumberLoading}
-                            disabled={updateRequest || addRequestAllApi?.data === 0 ? disable : false}
                             size="small"
                             filterOptions={filterOptions}
                             getOptionLabel={(option) =>
@@ -1561,6 +1202,23 @@ const AddTransfer = (props) => {
                                 helperText={errors?.fixed_asset_id?.message}
                               />
                             )}
+                            onChange={(_, value) => {
+                              const account = vTagNumberData.find((data) => data?.id === value?.id);
+
+                              console.log("value", value);
+                              console.log("account", account);
+
+                              if (value) {
+                                setValue(
+                                  "accountableAccount",
+                                  account.accountable === "-" ? "Common" : account.accountable
+                                );
+                                setValue("dateCreated", account.created_at);
+                              } else {
+                                setValue("accountableAccount", null);
+                                setValue("dateCreated", null);
+                              }
+                            }}
                             sx={{
                               ".MuiInputBase-root": {
                                 borderRadius: "12px",
@@ -1574,18 +1232,68 @@ const AddTransfer = (props) => {
                               ".Mui-disabled": {
                                 backgroundColor: "background.light",
                               },
-                              minWidth: "150px",
+                              minWidth: "200px",
                               maxWidth: "550px",
                             }}
                           />
-
-                          {console.log(watch("fixed_asset_id"))}
                         </TableCell>
-                        <TableCell>{item.care_of}</TableCell>
-                        <TableCell>{item.date_created}</TableCell>
+
+                        <TableCell>
+                          <TextField
+                            {...register("accountableAccount")}
+                            variant="outlined"
+                            name="accountableAccount"
+                            // label="accountableAccount"
+                            disabled
+                            type="text"
+                            error={!!errors?.accountableAccount}
+                            helperText={errors?.accountableAccount?.message}
+                            sx={{
+                              backgroundColor: "transparent",
+
+                              border: "none",
+                              "& .MuiOutlinedInput-root": {
+                                "& fieldset": {
+                                  border: "none",
+                                },
+                              },
+                              "& .MuiInputBase-input": {
+                                backgroundColor: "transparent",
+                              },
+                              ml: "-10px",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            {...register("dateCreated")}
+                            variant="outlined"
+                            name="dateCreated"
+                            // label="createdAt"
+                            disabled
+                            type="text"
+                            error={!!errors?.dateCreated}
+                            helperText={errors?.dateCreated?.message}
+                            sx={{
+                              backgroundColor: "transparent",
+                              border: "none",
+                              "& .MuiOutlinedInput-root": {
+                                "& fieldset": {
+                                  border: "none",
+                                },
+                              },
+                              "& .MuiInputBase-input": {
+                                backgroundColor: "transparent",
+                              },
+                              ml: "-10px",
+                            }}
+                          />
+                        </TableCell>
                         <TableCell align="center">
                           <IconButton onClick={() => remove(index)} disabled={fields.length === 1}>
-                            <RemoveCircle color={fields.length === 1 ? "gray" : "warning"} />
+                            <Tooltip title="Delete Row" placement="top" arrow>
+                              <RemoveCircle color={fields.length === 1 ? "gray" : "warning"} />
+                            </Tooltip>
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -1593,12 +1301,23 @@ const AddTransfer = (props) => {
                     <TableRow>
                       <TableCell colSpan={99}>
                         <Stack flexDirection="row" gap={2}>
-                          <Button variant="contained" size="small" onClick={() => handleAppendItem()}>
-                            Add Item
+                          <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<Add />}
+                            onClick={() => handleAppendItem()}
+                          >
+                            Add Row
                           </Button>
-                          <Button variant="contained" size="small" color="warning" onClick={() => reset()}>
-                            Reset All
-                          </Button>
+                          {/* <Button
+                            variant="contained"
+                            size="small"
+                            color="warning"
+                            startIcon={<Delete />}
+                            onClick={() => reset()}
+                          >
+                            Remove All
+                          </Button> */}
                         </Stack>
                       </TableCell>
                     </TableRow>
@@ -1637,15 +1356,6 @@ const AddTransfer = (props) => {
                       size="small"
                       color="secondary"
                       startIcon={<SaveAlt color={"primary"} />}
-                      disabled={
-                        updateRequest
-                          ? isTransactionLoading
-                            ? disable
-                            : null
-                          : transactionDataApi.length === 0
-                          ? true
-                          : false
-                      }
                       loading={isPostLoading || isUpdateLoading}
                     >
                       Resubmit
@@ -1657,7 +1367,6 @@ const AddTransfer = (props) => {
                       size="small"
                       color="secondary"
                       startIcon={<Create color={"primary"} />}
-                      disabled={isRequestLoading || addRequestAllApi?.data?.length === 0}
                       loading={isPostLoading || isUpdateLoading}
                     >
                       Create
