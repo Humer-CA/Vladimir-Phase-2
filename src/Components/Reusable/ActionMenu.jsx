@@ -85,8 +85,8 @@ const ActionMenu = (props) => {
   };
 
   const handleDelete = () => {
-    // console.log(data)
-    onDeleteHandler(data?.id || data?.subunit?.id);
+    console.log(data);
+    onDeleteHandler(data?.id || data?.subunit?.id || data);
     handleClose();
   };
 
@@ -175,7 +175,7 @@ const ActionMenu = (props) => {
           TransitionComponent={Fade}
           disablePortal
         >
-          {status === "active" && !hideEdit && (
+          {status === "active" && (
             <MenuItem onClick={!showEditNav ? handleEdit : handleEditNav} dense>
               <ListItemIcon>
                 <BorderColor />
@@ -213,17 +213,6 @@ const ActionMenu = (props) => {
               <ListItemIcon>{status === "active" ? <MoveToInbox /> : <Reply />}</ListItemIcon>
               <ListItemText disableTypography align="left">
                 {status === "active" ? "Archive" : "Restore"}
-              </ListItemText>
-            </MenuItem>
-          )}
-
-          {(showDelete || onDeleteHandler) && (
-            <MenuItem onClick={handleDelete} dense>
-              <ListItemIcon>
-                <Delete />
-              </ListItemIcon>
-              <ListItemText disableTypography align="left">
-                Delete
               </ListItemText>
             </MenuItem>
           )}
@@ -278,7 +267,7 @@ const ActionMenu = (props) => {
           TransitionComponent={Fade}
           disablePortal
         >
-          {faStatus !== "Disposed" && (
+          {faStatus && faStatus !== "Disposed" && (
             <MenuItem onClick={handleEdit} dense>
               <ListItemIcon>
                 <BorderColor />
@@ -303,6 +292,17 @@ const ActionMenu = (props) => {
               </ListItemText>
             </MenuItem>
           )} */}
+
+          {(showDelete || onDeleteHandler) && (
+            <MenuItem onClick={handleDelete} dense>
+              <ListItemIcon>
+                <Delete />
+              </ListItemIcon>
+              <ListItemText disableTypography align="left">
+                Delete
+              </ListItemText>
+            </MenuItem>
+          )}
         </Menu>
       )}
 
