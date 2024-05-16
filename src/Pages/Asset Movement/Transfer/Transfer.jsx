@@ -28,13 +28,14 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { IosShareRounded, TransferWithinAStation, Visibility } from "@mui/icons-material";
+import { IosShareRounded, Report, TransferWithinAStation, Visibility } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
-import { useGetTransferApiQuery } from "../../../Redux/Query/Movement/Transfer";
+import { useDeleteTransferApiMutation, useGetTransferApiQuery } from "../../../Redux/Query/Movement/Transfer";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
+import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 
 const Transfer = () => {
   const [search, setSearch] = useState("");
@@ -109,6 +110,8 @@ const Transfer = () => {
     { refetchOnMountOrArgChange: true }
   );
 
+  const [deleteTransfer, { data: deleteTransferData }] = useDeleteTransferApiMutation();
+
   const dispatch = useDispatch();
 
   const onSetPage = () => {
@@ -177,6 +180,65 @@ const Transfer = () => {
     navigate(`add-transfer/${data.transaction_number}`, {
       state: { ...data },
     });
+  };
+
+  const onDeleteHandler = async (id) => {
+    dispatch(
+      openConfirm({
+        icon: Report,
+        iconColor: "warning",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              DELETE
+            </Typography>{" "}
+            this Item?
+          </Box>
+        ),
+
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            let result = await deleteTransfer(id).unwrap();
+
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+            refetch();
+            dispatch(closeConfirm());
+          } catch (err) {
+            console.log(err);
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err.data.message,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
   };
 
   return (
@@ -252,7 +314,7 @@ const Transfer = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell">
+                      <TableCell className="tbl-cell" align="center">
                         <TableSortLabel
                           active={orderBy === `quantity`}
                           direction={orderBy === `quantity` ? order : `asc`}
@@ -284,15 +346,7 @@ const Transfer = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell text-center">
-                        <TableSortLabel
-                          active={orderBy === `created_at`}
-                          direction={orderBy === `created_at` ? order : `asc`}
-                          onClick={() => onSort(`created_at`)}
-                        >
-                          Action
-                        </TableSortLabel>
-                      </TableCell>
+                      <TableCell className="tbl-cell text-center">Action</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -314,7 +368,7 @@ const Transfer = () => {
                               <TableCell className="tbl-cell text-weight">{data.transfer_number}</TableCell>
                               <TableCell className="tbl-cell">{data.description}</TableCell>
                               <TableCell className="tbl-cell">{`(${data.requester?.employee_id}) - ${data.requester?.first_name} ${data.requester?.last_name}`}</TableCell>
-                              <TableCell className="tbl-cell">{data.quantity}</TableCell>
+                              <TableCell className="tbl-cell tr-cen-pad45">{data.quantity}</TableCell>
                               <TableCell className="tbl-cell text-weight text-center">
                                 <Tooltip placement="top" title="View Transfer Information" arrow>
                                   <IconButton onClick={() => handleEditTransfer(data)}>
@@ -393,8 +447,8 @@ const Transfer = () => {
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
-                              <TableCell>
-                                <ActionMenu />
+                              <TableCell align="center">
+                                <ActionMenu data={data?.transfer_number} onDeleteHandler={onDeleteHandler} />
                               </TableCell>
                             </TableRow>
                           ))}
