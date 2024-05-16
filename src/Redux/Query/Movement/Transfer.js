@@ -26,7 +26,30 @@ export const transferApi = createApi({
       query: () => `asset-transfer?pagination=none`,
       providesTags: ["Transfer"],
     }),
+
+    postTransferApi: builder.mutation({
+      query: (data) => ({
+        url: `asset-transfer`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["FixedAsset"],
+    }),
+
+    deleteTransferApi: builder.mutation({
+      query: (id) => ({
+        url: `remove-transfer-item/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["FixedAsset"],
+    }),
   }),
 });
 
-export const { useGetTransferApiQuery, useLazyGetTransferAllApiQuery, useGetTransferAllApiQuery } = transferApi;
+export const {
+  useGetTransferApiQuery,
+  useLazyGetTransferAllApiQuery,
+  useGetTransferAllApiQuery,
+  usePostTransferApiMutation,
+  useDeleteTransferApiMutation,
+} = transferApi;
