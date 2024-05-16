@@ -85,7 +85,7 @@ const ActionMenu = (props) => {
   };
 
   const handleDelete = () => {
-    console.log(data);
+    // console.log(data);
     onDeleteHandler(data?.id || data?.subunit?.id || data);
     handleClose();
   };
@@ -267,7 +267,7 @@ const ActionMenu = (props) => {
           TransitionComponent={Fade}
           disablePortal
         >
-          {faStatus && faStatus !== "Disposed" && (
+          {faStatus !== "Disposed" && (
             <MenuItem onClick={handleEdit} dense>
               <ListItemIcon>
                 <BorderColor />
