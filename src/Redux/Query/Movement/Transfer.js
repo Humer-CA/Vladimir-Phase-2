@@ -37,11 +37,17 @@ export const transferApi = createApi({
     }),
 
     deleteTransferApi: builder.mutation({
-      query: (id) => ({
-        url: `remove-transfer-item/${id}`,
+      query: (transfer_number) => ({
+        url: `remove-transfer-item/${transfer_number}`,
         method: "DELETE",
       }),
       invalidatesTags: ["FixedAsset"],
+    }),
+
+    downloadAttachmentApi: builder.mutation({
+      query: (transfer_number) => ({
+        url: `transfer-attachment/${transfer_number}`,
+      }),
     }),
   }),
 });
@@ -52,4 +58,5 @@ export const {
   useGetTransferAllApiQuery,
   usePostTransferApiMutation,
   useDeleteTransferApiMutation,
+  useDownloadAttachmentApiMutation,
 } = transferApi;
