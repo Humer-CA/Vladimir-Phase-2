@@ -233,18 +233,6 @@ const AddTransfer = (props) => {
     { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
   ] = useLazyGetSedarUsersApiQuery();
 
-  const {
-    data: transactionDataApi = [],
-    isLoading: isTransactionLoading,
-    isLoading: isTransactionSuccess,
-    isError: isTransactionError,
-    error: errorTransaction,
-    refetch: isTransactionRefetch,
-  } = useGetByTransactionApiQuery(
-    { transaction_number: transactionData?.transaction_number },
-    { refetchOnMountOrArgChange: true }
-  );
-
   const [
     fixedAssetTrigger,
     {
@@ -375,8 +363,6 @@ const AddTransfer = (props) => {
   };
 
   //* Form functions ----------------------------------------------------------------
-  console.log(watch("attachments"));
-
   const onSubmitHandler = (formData) => {
     const createdAtFormat = {
       formattedAssets: formData.assets.map((item) => ({
@@ -390,17 +376,18 @@ const AddTransfer = (props) => {
       formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString();
 
     const attachmentValidation = (fieldName, formData) => {
-      if (watch(`${fieldName}`) === null) {
-        return "";
-      } else if (updateRequest)
-        if (formData?.[fieldName]?.file_name === updateRequest?.[fieldName][0]?.file_name) {
-          return "x";
-        } else {
-          return formData?.[fieldName];
-        }
-      else {
-        return formData?.[fieldName];
-      }
+      return formData?.[fieldName];
+      // if (watch(`${fieldName}`) === null) {
+      //   return "";
+      // } else if (updateRequest)
+      //   if (formData?.[fieldName]?.file_name === updateRequest?.[fieldName][0]?.file_name) {
+      //     return "x";
+      //   } else {
+      //     return formData?.[fieldName];
+      //   }
+      // else {
+      //   return formData?.[fieldName];
+      // }
     };
 
     const newFormData = {
@@ -433,7 +420,7 @@ const AddTransfer = (props) => {
                 fontWeight: "bold",
               }}
             >
-              {transactionDataApi.length === 0 ? "CREATE" : "RESUBMIT"}
+              {updateRequest ? "CREATE" : "RESUBMIT"}
             </Typography>{" "}
             this Data?
           </Box>
@@ -670,6 +657,8 @@ const AddTransfer = (props) => {
     limit: 100,
     matchFrom: "any",
   });
+
+  // console.log(watch("attachments"));
 
   //* Styles ----------------------------------------------------------------
   const BoxStyle = {
@@ -997,7 +986,7 @@ const AddTransfer = (props) => {
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
-                      <TableCell>{index + 1}</TableCell>
+                      <TableCell align="center">{index + 1}</TableCell>
                       <TableCell>
                         <Autocomplete
                           {...register(`assets.${index}.fixed_asset_id`)}
@@ -1021,13 +1010,7 @@ const AddTransfer = (props) => {
                               // helperText={`${errors}?.assets.${index}.fixed_asset_id?.message`}
                             />
                           )}
-                          // getOptionDisabled={(option) => {
-                          //   // return console.log(option);
-                          //   const items = !!watch("assets")
-                          //     .map((item) => item)
-                          //     .find((data) => data);
-                          //   return console.log(items);
-                          // }}
+                          getOptionDisabled={(option) => !!fields.find((item) => item.fixed_asset_id === option.id)}
                           onChange={(_, value) => {
                             if (value) {
                               setValue(`assets.${index}.fixed_asset_id`, value.id);
@@ -1146,8 +1129,8 @@ const AddTransfer = (props) => {
 
             {/* Buttons */}
             <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-              <Typography fontFamily="Anton, Impact, Roboto" fontSize="18px" color="secondary.main" sx={{ pt: "10px" }}>
-                Added:
+              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" sx={{ pt: "10px" }}>
+                Added: {fields.length} Asset(s)
               </Typography>
               <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
                 <LoadingButton
