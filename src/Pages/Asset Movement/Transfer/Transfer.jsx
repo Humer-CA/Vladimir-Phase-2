@@ -28,14 +28,19 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { IosShareRounded, Report, TransferWithinAStation, Visibility } from "@mui/icons-material";
+import { Attachment, IosShareRounded, Report, TransferWithinAStation, Visibility } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
-import { useDeleteTransferApiMutation, useGetTransferApiQuery } from "../../../Redux/Query/Movement/Transfer";
+import {
+  useDeleteTransferApiMutation,
+  useDownloadAttachmentApiMutation,
+  useGetTransferApiQuery,
+} from "../../../Redux/Query/Movement/Transfer";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
+import { useDownloadAttachment, useDownloadTransferAttachment } from "../../../Hooks/useDownloadAttachment";
 
 const Transfer = () => {
   const [search, setSearch] = useState("");
@@ -110,6 +115,7 @@ const Transfer = () => {
     { refetchOnMountOrArgChange: true }
   );
 
+  const [downloadAttachment, { isLoading: isLoading }] = useDownloadAttachmentApiMutation();
   const [deleteTransfer, { data: deleteTransferData }] = useDeleteTransferApiMutation();
 
   const dispatch = useDispatch();
@@ -171,6 +177,28 @@ const Transfer = () => {
       }
     }
   };
+
+  const DlAttachment = (transfer_number) => (
+    <Tooltip title="Download Attachment" placement="top" arrow>
+      <Box
+        sx={{
+          textDecoration: "underline",
+          cursor: "pointer",
+          color: "primary.main",
+          fontSize: "12px",
+        }}
+        onClick={() => handleDownloadAttachment({ value: "attachments", transfer_number: transfer_number })}
+      >
+        <Attachment />
+      </Box>
+    </Tooltip>
+  );
+
+  const handleDownloadAttachment = (value) =>
+    useDownloadTransferAttachment({
+      attachments: "attachments",
+      transfer_number: value?.transfer_number?.transfer_number,
+    });
 
   const handleTransfer = () => {
     navigate(`add-transfer`);
@@ -336,7 +364,9 @@ const Transfer = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell text-center">
+                      <TableCell className="tbl-cell text-center">Attachments</TableCell>
+
+                      <TableCell className="tbl-cell" align="center">
                         <TableSortLabel
                           active={orderBy === `created_at`}
                           direction={orderBy === `created_at` ? order : `asc`}
@@ -345,7 +375,6 @@ const Transfer = () => {
                           Date Created
                         </TableSortLabel>
                       </TableCell>
-
                       <TableCell className="tbl-cell text-center">Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -444,11 +473,16 @@ const Transfer = () => {
                                   </Tooltip>
                                 )}
                               </TableCell>
+                              <TableCell className="tbl-cell" align="center">
+                                <Tooltip placement="top" title="Download Attachment" arrow>
+                                  <DlAttachment transfer_number={data?.transfer_number} />
+                                </Tooltip>
+                              </TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
                               <TableCell align="center">
-                                <ActionMenu data={data?.transfer_number} onDeleteHandler={onDeleteHandler} />
+                                <ActionMenu data={data?.transfer_number} onDeleteHandler={onDeleteHandler} hideEdit />
                               </TableCell>
                             </TableRow>
                           ))}
