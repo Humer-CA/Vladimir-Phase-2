@@ -435,8 +435,6 @@ const AddRequisition = (props) => {
     },
   });
 
-  // console.log(errors);
-
   useEffect(() => {
     if (isPostError) {
       if (postError?.status === 422) {
@@ -629,7 +627,7 @@ const AddRequisition = (props) => {
 
     const validation = () => {
       const coaValidation = (name, value) => {
-        transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+        transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
       };
       if (transactionData) {
         return (
@@ -801,7 +799,7 @@ const AddRequisition = (props) => {
                 fontWeight: "bold",
               }}
             >
-              {transactionDataApi.length === 0 ? "CREATE" : "RESUBMIT"}
+              {transactionData && transactionDataApi.length === 0 ? "CREATE" : "RESUBMIT"}
             </Typography>{" "}
             this Data?
           </Box>
@@ -1926,7 +1924,7 @@ const AddRequisition = (props) => {
                               },
                               bgcolor: data?.is_removed === 1 ? "#ff00002f" : null,
                               "*": { color: data?.is_removed === 1 ? "black!important" : null },
-                              cursor: transactionDataApi[0]?.po_number ? "pointer" : null,
+                              cursor: transactionData && transactionDataApi[0]?.po_number ? "pointer" : null,
                             }}
                           >
                             <TableCell
