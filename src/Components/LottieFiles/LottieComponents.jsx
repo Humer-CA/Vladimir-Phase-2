@@ -2,7 +2,8 @@ import React from "react";
 import Lottie from "lottie-react";
 import LoadingAnimation from "../../assets/Lottie/LoadingAnimation";
 import ImportLoading from "../../assets/Lottie/ImportLoading";
-import ImportLoadingCircle from "../../assets/Lottie/ImportLoadingCircle";
+import DashboardAnimation from "../../assets/Lottie/DashboardAnimation";
+import Ramen from "../../assets/Lottie/Ramen";
 import { Box, TableCell, TableRow, Typography } from "@mui/material";
 
 export const ImportingData = ({ text }) => {
@@ -44,6 +45,14 @@ export const LoadingData = ({ category }) => {
           </Box>
         </TableCell>
       </TableRow>
+    </>
+  );
+};
+
+export const DashboardAnimate = () => {
+  return (
+    <>
+      <Lottie animationData={Ramen} />
     </>
   );
 };
