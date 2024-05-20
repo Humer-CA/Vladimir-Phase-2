@@ -144,13 +144,17 @@ const Navbar = () => {
         <Box className="navbar">
           <Box>
             {collapse ? (
-              <IconButton onClick={handleMenuCollapse}>
-                <KeyboardDoubleArrowLeftRounded />
-              </IconButton>
+              <Tooltip title="Hide Menu" placement="right" arrow>
+                <IconButton onClick={handleMenuCollapse}>
+                  <KeyboardDoubleArrowLeftRounded />
+                </IconButton>
+              </Tooltip>
             ) : (
-              <IconButton onClick={handleMenuCollapse}>
-                <MenuRounded />
-              </IconButton>
+              <Tooltip title="Show Menu" placement="right" arrow>
+                <IconButton onClick={handleMenuCollapse}>
+                  <MenuRounded />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
 
