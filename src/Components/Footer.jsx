@@ -15,18 +15,12 @@ const Footer = () => {
     <Box className="footer">
       <p className="footer__label">Status:</p>
       {online ? (
-        <Typography
-          className="footer__status"
-          color="primary"
-          sx={{ fontSize: "14px" }}>
-          <SignalWifiStatusbar4Bar sx={{ fontSize: "18px" }} color="primary" />
+        <Typography className="footer__status" color="primary" sx={{ fontSize: "14px" }}>
+          <SignalWifiStatusbar4Bar sx={{ fontSize: "18px" }} color="primary.dark" />
           ONLINE
         </Typography>
       ) : (
-        <Typography
-          className="footer__status"
-          color="secondary"
-          sx={{ fontSize: "14px" }}>
+        <Typography className="footer__status" color="secondary" sx={{ fontSize: "14px" }}>
           <SignalWifiOff sx={{ fontSize: "18px" }} color="secondary" /> OFFLINE
         </Typography>
       )}
