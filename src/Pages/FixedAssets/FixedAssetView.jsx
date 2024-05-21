@@ -413,72 +413,6 @@ const FixedAssetView = (props) => {
     });
   };
 
-  // const onArchiveRestoreHandler = async (id) => {
-  //   dispatch(
-  //     openConfirm({
-  //       icon: status === "active" ? ReportProblem : Help,
-  //       iconColor: status === "active" ? "alert" : "info",
-  //       message: (
-  //         <Box>
-  //           <Typography>Are you sure you want to</Typography>
-  //           <Typography
-  //             sx={{
-  //               display: "inline-block",
-  //               color: "secondary.main",
-  //               fontWeight: "bold",
-  //               fontFamily: "Raleway",
-  //             }}
-  //           >
-  //             {status === "active" ? "ARCHIVE" : "ACTIVATE"}
-  //           </Typography>
-  //           this data?
-  //         </Box>
-  //       ),
-  //       remarks: true,
-  //       onConfirm: async (formData) => {
-  //         try {
-  //           dispatch(onLoading());
-  //           const result = await (
-  //             patchFixedAssetStatusApi || patchAdditionalCostStatusApi
-  //           )({
-  //             id: id,
-  //             status: status === "active" ? false : true,
-  //             remarks: formData.remarks,
-  //           }).unwrap();
-  //           // console.log(result);
-
-  //           dispatch(
-  //             openToast({
-  //               message: result.message,
-  //               duration: 5000,
-  //             })
-  //           );
-  //           dispatch(closeConfirm());
-  //         } catch (err) {
-  //           console.log(err);
-  //           if (err?.status === 422) {
-  //             dispatch(
-  //               openToast({
-  //                 message: err.data?.errors,
-  //                 duration: 5000,
-  //                 variant: "error",
-  //               })
-  //             );
-  //           } else if (err?.status !== 422) {
-  //             dispatch(
-  //               openToast({
-  //                 message: "Something went wrong. Please try again.",
-  //                 duration: 5000,
-  //                 variant: "error",
-  //               })
-  //             );
-  //           }
-  //         }
-  //       },
-  //     })
-  //   );
-  // };
-
   const onUpdateResetHandler = () => {
     setUpdateFixedAsset({
       status: false,
@@ -565,11 +499,9 @@ const FixedAssetView = (props) => {
   });
 
   const onBackHandler = () => {
-    // navigate("/fixed-assets");
     dataApi.data?.is_additional_cost === 0 ? navigate("/fixed-assets") : navigate(-1);
   };
 
-  // console.log(dataApi.data?.depreciation_status?.depreciation_status_name);
   return (
     <>
       {dataApiLoading && <FixedAssetViewSkeleton onAdd={true} onImport={true} onPrint={true} />}
@@ -686,14 +618,7 @@ const FixedAssetView = (props) => {
                   </LoadingButton>
                 )}
 
-              <ActionMenu
-                // faStatus={dataApi?.data?.asset_status?.asset_status_name}
-                data={dataApi?.data}
-                // status={status}
-                // onArchiveRestoreHandler={onArchiveRestoreHandler}
-                setStatusChange={setStatusChange}
-                onUpdateHandler={onUpdateHandler}
-              />
+              <ActionMenu data={dataApi?.data} setStatusChange={setStatusChange} onUpdateHandler={onUpdateHandler} />
             </Box>
           </Box>
 
@@ -1308,22 +1233,6 @@ const FixedAssetView = (props) => {
       >
         <Depreciation calcDepreApi={calcDepreApi || calcDepreAddCostApi} setViewDepre={setViewDepre} />
       </Dialog>
-
-      {/* <Dialog
-        open={statusChange}
-        PaperProps={{
-          sx: {
-            borderRadius: "10px",
-            margin: "0",
-            maxWidth: "90%",
-            padding: "20px",
-            // overflow: "hidden",
-            bgcolor: "background.light",
-          },
-        }}
-      >
-        <Box>Restore</Box>
-      </Dialog> */}
 
       <Drawer
         open={drawer}

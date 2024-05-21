@@ -125,34 +125,6 @@ const AddRole = (props) => {
     }
   }, [data]);
 
-  // useEffect(() => {
-  //   if (!getValues("access_permission")?.includes("masterlist")) {
-  //     // const includeMasterlist = watch("access_permission").some((perm) =>
-  //     //   masterlistValue.includes(perm)
-  //     // );
-  //     // if (includeMasterlist) {
-  //     //   setValue("access_permission", [
-  //     //     ...watch("access_permission"),
-  //     //     "masterlist",
-  //     //   ]);d
-  //     // }
-  //     console.log("aaaaaaaaaaaaaa");
-  //   }
-  // }, [getValues("access_permission")]);
-
-  // useEffect(() => {
-  //   const isMasterlistChecked =
-  //     watch("access_permission").includes("masterlist");
-  //   if (!isMasterlistChecked && watch("access_permission").length) {
-  //     const masterlistEmptyValue = watch("access_permission").filter(
-  //       (perm) => !masterlistValue.includes(perm)
-  //     );
-
-  //     setValue("access_permission", masterlistEmptyValue);
-  //   }
-  //   console.log("askjdhajskhdjsa");
-  // }, [watch("access_permission")]);
-
   const onSubmitHandler = (formData) => {
     if (data.status) {
       updateRole(formData);
@@ -185,94 +157,6 @@ const AddRole = (props) => {
       ))}
     </Box>
   );
-
-  // const Children = () => {
-  //   return (
-  //     <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-  //       <Box
-  //         sx={{
-  //           display: "flex",
-  //           flexDirection: "column",
-  //           ml: 3,
-  //         }}
-  //       >
-  //         <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-  //           <CheckboxItem label="Dashboard" value="dashboard" />
-  //           <CheckboxItem label="Masterlist" value="masterlist" />
-  //           <CheckboxItem label="User Management" value="user-management" />
-  //           <CheckboxItem label="Fixed Assets" value="fixed-assets" />
-  //           <CheckboxItem label="Printing of Tag" value="print-fa" />
-  //           <CheckboxItem label="Settings" value="settings" />
-  //           <CheckboxItem label="Request" value="request" />
-  //         </Box>
-  //       </Box>
-
-  //       <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Asset for Tagging"
-  //           value="asset-for-tagging"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes(
-  //                 "asset-for-tagging"
-  //               )}
-  //             />
-  //           }
-  //         />
-
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Asset List"
-  //           value="asset-list"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("asset-list")}
-  //             />
-  //           }
-  //         />
-
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="On Hand"
-  //           value="on-hand"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("on-hand")}
-  //             />
-  //           }
-  //         />
-
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Disposal"
-  //           value="disposal"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("disposal")}
-  //             />
-  //           }
-  //         />
-
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Reports"
-  //           value="reports"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("reports")}
-  //             />
-  //           }
-  //         />
-  //       </Box>
-  //     </Box>
-  //   );
-  // };
 
   const Children = () => {
     const firstGroup = [
@@ -470,53 +354,20 @@ const AddRole = (props) => {
   };
 
   const UserManagement = () => {
-    const userManagerment1 = [
+    const userManagement1 = [
       { label: "User Accounts", value: "user-accounts" },
       { label: "Role Management", value: "role-management" },
     ];
 
-    const userManagerment2 = [
+    const userManagement2 = [
       { label: "User (Requestor)", value: "user-requestor" },
       { label: "User (Approver)", value: "user-approver" },
     ];
 
     return (
       <Stack flexDirection="row" flexWrap="wrap">
-        <CheckboxGroup items={userManagerment1} ml={3} />
-        <CheckboxGroup items={userManagerment2} ml={3} />
-        {/* <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            mx: 2,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="User Accounts"
-            value="user-accounts"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("user-accounts")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Role Management"
-            value="role-management"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes(
-                  "role-management"
-                )}
-              />
-            }
-          />
-        </FormGroup> */}
+        <CheckboxGroup items={userManagement1} ml={3} />
+        <CheckboxGroup items={userManagement2} ml={3} />
       </Stack>
     );
   };
@@ -1152,75 +1003,6 @@ const AddRole = (props) => {
                   </FormControl>
                 </Box>
               )}
-
-              {/* 
-              {watch("access_permission").includes("approving") && (
-                <Box>
-                  <Divider sx={{ mx: "30px" }} />
-                  <FormControl
-                    fullWidth
-                    component="fieldset"
-                    sx={{
-                      border: "1px solid #a6a6a6af ",
-                      borderRadius: "10px",
-                      px: "10px",
-                      mt: "10px",
-                      mb: "15px",
-                    }}
-                  >
-                    <FormLabel component="legend" sx={{ ml: "1px", pl: "5px" }}>
-                      <FormControlLabel
-                        label="Approving"
-                        value="approving"
-                        sx={{ color: "text.main", fontWeight: "bold" }}
-                        disabled={data.action === "view"}
-                        control={
-                          <Checkbox
-                            checked={watch("access_permission").includes(
-                              "approving"
-                            )}
-                            // checked={masterlistValue.every((perm) =>
-                            //   watch("access_permission").includes(perm)
-                            // )}
-                            indeterminate={
-                              approving.some((perm) =>
-                                watch("access_permission").includes(perm)
-                              ) &&
-                              !approving.every((perm) =>
-                                watch("access_permission").includes(perm)
-                              )
-                            }
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setValue("access_permission", [
-                                  ...new Set([
-                                    ...watch("access_permission"),
-                                    "pending-request",
-                                    "approved-request",
-                                  ]),
-                                ]);
-                              } else {
-                                const approvingEmptyValue = watch(
-                                  "access_permission"
-                                ).filter(
-                                  (perm) =>
-                                    ![...approving, "approving"].includes(perm)
-                                );
-
-                                setValue(
-                                  "access_permission",
-                                  approvingEmptyValue
-                                );
-                              }
-                            }}
-                          />
-                        }
-                      />
-                    </FormLabel>
-                    <Approving />
-                  </FormControl>
-                </Box>
-              )} */}
             </FormControl>
           </Stack>
         </Box>
