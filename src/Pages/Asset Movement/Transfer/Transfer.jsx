@@ -29,8 +29,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Attachment, IosShareRounded, Report, TransferWithinAStation, Visibility } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
-import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
+import { useNavigate } from "react-router-dom";
+import { openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
 import {
@@ -50,6 +50,7 @@ const Transfer = () => {
   const [filter, setFilter] = useState([]);
   const [onTransfer, setOnTransfer] = useState(true);
   const [transactionIdData, setTransactionIdData] = useState();
+  const view = true;
 
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
@@ -204,9 +205,9 @@ const Transfer = () => {
     navigate(`add-transfer`);
   };
 
-  const handleEditTransfer = (data) => {
-    navigate(`add-transfer/${data.transaction_number}`, {
-      state: { ...data },
+  const handleViewTransfer = (data) => {
+    navigate(`add-transfer/${data.transfer_number}`, {
+      state: { ...data, view },
     });
   };
 
@@ -394,13 +395,14 @@ const Transfer = () => {
                                 },
                               }}
                             >
+                              {console.log(data)}
                               <TableCell className="tbl-cell text-weight">{data.transfer_number}</TableCell>
                               <TableCell className="tbl-cell">{data.description}</TableCell>
                               <TableCell className="tbl-cell">{`(${data.requester?.employee_id}) - ${data.requester?.first_name} ${data.requester?.last_name}`}</TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">{data.quantity}</TableCell>
                               <TableCell className="tbl-cell text-weight text-center">
                                 <Tooltip placement="top" title="View Transfer Information" arrow>
-                                  <IconButton onClick={() => handleEditTransfer(data)}>
+                                  <IconButton onClick={() => handleViewTransfer(data)}>
                                     <Visibility />
                                   </IconButton>
                                 </Tooltip>
@@ -474,9 +476,7 @@ const Transfer = () => {
                                 )}
                               </TableCell>
                               <TableCell className="tbl-cell" align="center">
-                                <Tooltip placement="top" title="Download Attachment" arrow>
-                                  <DlAttachment transfer_number={data?.transfer_number} />
-                                </Tooltip>
+                                <DlAttachment transfer_number={data?.transfer_number} />
                               </TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
