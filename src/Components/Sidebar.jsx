@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../Style/sidebar.scss";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { openSidebar } from "../Redux/StateManagement/sidebar";
 import { toggleSidebar } from "../Redux/StateManagement/sidebar";
@@ -108,6 +108,8 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const collapse = useSelector((state) => state.sidebar.open);
   const permissions = useSelector((state) => state.userLogin?.user.role.access_permission);
+
+  const navigate = useNavigate();
 
   const drawer = useSelector((state) => state.booleanState.drawer);
 
@@ -569,12 +571,13 @@ const Sidebar = () => {
             <KeyboardDoubleArrowLeftRounded />
           </IconButton>
         ) : null}
-        <Box className="sidebar__logo-container">
+        <Box className="sidebar__logo-container" onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
           <img
             src={VladimirLogoSmally}
             alt="Vladimir Logo"
             style={{
               width: "40px",
+              height: "36px",
             }}
           />
 
@@ -693,6 +696,7 @@ const Sidebar = () => {
           alt="MIS-Logo"
           style={{
             width: "50px",
+            height: "50px",
           }}
         />
         {collapse && (

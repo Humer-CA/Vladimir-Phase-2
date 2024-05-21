@@ -69,6 +69,7 @@ import moment from "moment";
 import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachment";
 import { usePostTransferApiMutation } from "../../../Redux/Query/Movement/Transfer";
 import { onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
+import axios from "axios";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -104,6 +105,7 @@ const schema = yup.object().shape({
 
 const AddTransfer = (props) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { state: transactionData } = useLocation();
   const AttachmentRef = useRef(null);
@@ -308,33 +310,34 @@ const AddTransfer = (props) => {
     }
   }, [isPostError]);
 
+  console.log(transactionData);
   useEffect(() => {
-    if (updateRequest.id) {
+    if (transactionData) {
       const accountable = {
         general_info: {
-          full_id_number: updateRequest.accountable.split(" ")[0],
-          full_id_number_full_name: updateRequest.accountable,
+          full_id_number: transactionData.accountable?.split(" ")[0],
+          full_id_number_full_name: transactionData.accountable,
         },
       };
-      const attachmentFormat = (fields) => (updateRequest?.[fields] === "-" ? "" : updateRequest?.[fields]);
+      const attachmentFormat = (fields) => (transactionData?.[fields] === "-" ? "" : transactionData?.[fields]);
 
-      setValue("description", updateRequest.description);
-      setValue("department_id", updateRequest?.department);
-      setValue("company_id", updateRequest?.company);
-      setValue("business_unit_id", updateRequest?.business_unit);
-      setValue("unit_id", updateRequest?.unit);
-      setValue("subunit_id", updateRequest?.subunit);
-      setValue("location_id", updateRequest?.location);
-      setValue("account_title_id", updateRequest?.account_title);
-      setValue("accountability", updateRequest?.accountability);
-      setValue("accountable", accountable);
+      setValue("description", transactionData.description);
+      setValue("department_id", transactionData?.department);
+      setValue("company_id", transactionData?.company);
+      setValue("business_unit_id", transactionData?.business_unit);
+      setValue("unit_id", transactionData?.unit);
+      setValue("subunit_id", transactionData?.subunit);
+      setValue("location_id", transactionData?.location);
+      setValue("account_title_id", transactionData?.account_title);
+      setValue("accountability", transactionData?.accountability);
+      setValue("accountable", transactionData?.accountable === null ? null : accountable);
 
-      setValue("remarks", updateRequest?.remarks);
+      setValue("remarks", transactionData?.remarks);
       setValue("attachments", attachmentFormat("attachments"));
 
-      setValue("assets", attachmentFormat("assets"));
+      setValue("assets", transactionData.assets);
     }
-  }, [updateRequest]);
+  }, [transactionData]);
 
   //* Table Sorting ----------------------------------------------------------------
   const [order, setOrder] = useState("desc");
@@ -364,33 +367,33 @@ const AddTransfer = (props) => {
 
   //* Form functions ----------------------------------------------------------------
   const onSubmitHandler = (formData) => {
-    const createdAtFormat = {
-      formattedAssets: formData.assets.map((item) => ({
-        created_at: moment(item.created_at).format("MMM DD, YYYY"),
-      })),
-    };
+    // const createdAtFormat = {
+    //   formattedAssets: formData.assets.map((item) => ({
+    //     created_at: moment(item.created_at).format("MMM DD, YYYY"),
+    //   })),
+    // };
     const updatingCoa = (fields, name) =>
       updateRequest ? formData?.[fields]?.id : formData?.[fields]?.[name]?.id.toString();
 
     const accountableFormat =
       formData?.accountable === null ? "" : formData?.accountable?.general_info?.full_id_number_full_name?.toString();
 
-    const attachmentValidation = (fieldName, formData) => {
-      return formData?.[fieldName];
-      // if (watch(`${fieldName}`) === null) {
-      //   return "";
-      // } else if (updateRequest)
-      //   if (formData?.[fieldName]?.file_name === updateRequest?.[fieldName][0]?.file_name) {
-      //     return "x";
-      //   } else {
-      //     return formData?.[fieldName];
-      //   }
-      // else {
-      //   return formData?.[fieldName];
-      // }
-    };
+    // const attachmentValidation = (fieldName, formData) => {
+    //   return formData?.[fieldName];
+    //   // if (watch(`${fieldName}`) === null) {
+    //   //   return "";
+    //   // } else if (updateRequest)
+    //   //   if (formData?.[fieldName]?.file_name === updateRequest?.[fieldName][0]?.file_name) {
+    //   //     return "x";
+    //   //   } else {
+    //   //     return formData?.[fieldName];
+    //   //   }
+    //   // else {
+    //   //   return formData?.[fieldName];
+    //   // }
+    // };
 
-    const newFormData = {
+    const data = {
       ...formData,
       department_id: formData?.department_id.id?.toString(),
       company_id: updatingCoa("company_id", "company"),
@@ -401,75 +404,103 @@ const AddTransfer = (props) => {
       account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
-      created_at: createdAtFormat,
+      // created_at: createdAtFormat,
 
-      attachments: attachmentValidation("attachments", formData),
+      attachments: formData?.attachments,
     };
 
-    dispatch(
-      openConfirm({
-        icon: Info,
-        iconColor: "info",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              {updateRequest ? "CREATE" : "RESUBMIT"}
-            </Typography>{" "}
-            this Data?
-          </Box>
-        ),
+    // dispatch(
+    //   openConfirm({
+    //     icon: Info,
+    //     iconColor: "info",
+    //     message: (
+    //       <Box>
+    //         <Typography> Are you sure you want to</Typography>
+    //         <Typography
+    //           sx={{
+    //             display: "inline-block",
+    //             color: "secondary.main",
+    //             fontWeight: "bold",
+    //           }}
+    //         >
+    //           {updateRequest ? "CREATE" : "RESUBMIT"}
+    //         </Typography>{" "}
+    //         this Data?
+    //       </Box>
+    //     ),
 
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            const res = await postTransfer(newFormData).unwrap();
-            reset();
-            dispatch(
-              openToast({
-                message: res?.message,
-                duration: 5000,
-              })
-            );
+    //     onConfirm: async () => {
+    //       try {
+    //         dispatch(onLoading());
+    //         const res = await postTransfer(data).unwrap();
+    //         reset();
+    //         dispatch(
+    //           openToast({
+    //             message: res?.message,
+    //             duration: 5000,
+    //           })
+    //         );
 
-            // const smsData = {
-            //   system_name: "Vladimir",
-            //   message: "You have a pending approval",
-            //   mobile_number: "+639913117181",
-            // };
+    //         // const smsData = {
+    //         //   system_name: "Vladimir",
+    //         //   message: "You have a pending approval",
+    //         //   mobile_number: "+639913117181",
+    //         // };
 
-            // postRequestSms(smsData);
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err?.data?.errors?.detail || err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              console.error(err);
+    //         // postRequestSms(smsData);
+    //       } catch (err) {
+    //         console.log(err);
+    //         if (err?.status === 422) {
+    //           dispatch(
+    //             openToast({
+    //               message: err?.data?.errors?.detail || err.data.message,
+    //               duration: 5000,
+    //               variant: "error",
+    //             })
+    //           );
+    //         } else if (err?.status !== 422) {
+    //           console.error(err);
 
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
+    //           dispatch(
+    //             openToast({
+    //               message: "Something went wrong. Please try again.",
+    //               duration: 5000,
+    //               variant: "error",
+    //             })
+    //           );
+    //         }
+    //       }
+    //     },
+    //   })
+    // );
+
+    // const payload = new FormData();
+
+    // Object.entries(data).forEach((item) => {
+    //   const [name, value] = item;
+    //   payload.append(name, value);
+    // });
+
+    const token = localStorage.getItem("token");
+
+    const submitData = () => setIsLoading(true);
+    axios
+      .post(`${process.env.VLADIMIR_BASE_URL}/asset-transfer`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          // Authorization: `Bearer 583|KavZ7vEXyUY7FiHQGIMcTImftzyRnZorxbtn4S9a`,
+          Authorization: `Bearer ${token}`,
         },
       })
-    );
+      .then((res) => {
+        console.log(res);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log("Error submitting form!");
+      });
+
+    submitData();
   };
 
   const onDeleteHandler = async (id) => {
@@ -532,7 +563,7 @@ const AddTransfer = (props) => {
 
   const RemoveFile = ({ title, value }) => {
     return (
-      <Tooltip title={`Remove ${title}`} arrow>
+      <Tooltip title="attachment" arrow>
         <IconButton
           onClick={() => {
             setValue(value, null);
@@ -685,11 +716,10 @@ const AddTransfer = (props) => {
         >
           <Typography color="secondary.main">Back</Typography>
         </Button>
-
         <Box className="request mcontainer__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
           <Box>
             <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
-              ADD TRANSFER REQUEST
+              {`${transactionData?.view ? "VIEW INFORMATION" : "ADD TRANSFER REQUEST"} `}
             </Typography>
 
             <Box id="requestForm" className="request__form">
@@ -698,6 +728,7 @@ const AddTransfer = (props) => {
                   <CustomTextField
                     control={control}
                     name="description"
+                    disabled={transactionData?.view}
                     label="Description"
                     type="text"
                     error={!!errors?.description}
@@ -708,6 +739,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="accountability"
+                    disabled={transactionData?.view}
                     control={control}
                     options={["Personal Issued", "Common"]}
                     isOptionEqualToValue={(option, value) => option === value}
@@ -729,6 +761,7 @@ const AddTransfer = (props) => {
                   {watch("accountability") === "Personal Issued" && (
                     <CustomAutoComplete
                       name="accountable"
+                      disabled={transactionData?.view}
                       control={control}
                       includeInputInList
                       disablePortal
@@ -756,6 +789,7 @@ const AddTransfer = (props) => {
                     autoComplete
                     control={control}
                     name="department_id"
+                    disabled={transactionData?.view}
                     options={departmentData}
                     onOpen={() =>
                       isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
@@ -839,6 +873,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="unit_id"
+                    disabled={transactionData?.view}
                     control={control}
                     options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
                     onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
@@ -865,6 +900,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="subunit_id"
+                    disabled={transactionData?.view}
                     control={control}
                     options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
                     loading={isSubUnitLoading}
@@ -885,6 +921,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="location_id"
+                    disabled={transactionData?.view}
                     control={control}
                     options={locationData?.filter((item) => {
                       return item.subunit.some((subunit) => {
@@ -908,6 +945,7 @@ const AddTransfer = (props) => {
 
                   <CustomAutoComplete
                     name="account_title_id"
+                    disabled={transactionData?.view}
                     control={control}
                     options={accountTitleData}
                     onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
@@ -928,6 +966,7 @@ const AddTransfer = (props) => {
                   <CustomTextField
                     control={control}
                     name="remarks"
+                    disabled={transactionData?.view}
                     label="Remarks"
                     type="text"
                     error={!!errors?.remarks}
@@ -944,6 +983,7 @@ const AddTransfer = (props) => {
                     <CustomMultipleAttachment
                       control={control}
                       name="attachments"
+                      disabled={transactionData?.view}
                       label="Attachments"
                       inputRef={AttachmentRef}
                       error={!!errors?.attachments?.message}
@@ -956,7 +996,6 @@ const AddTransfer = (props) => {
               </Stack>
             </Box>
           </Box>
-
           {/* TABLE */}
           <Box className="request__table">
             <TableContainer
@@ -976,13 +1015,12 @@ const AddTransfer = (props) => {
                     <TableCell className="tbl-cell">{transactionData ? "Ref No." : "Index"}</TableCell>
                     <TableCell className="tbl-cell">Asset</TableCell>
                     <TableCell className="tbl-cell">Accountability</TableCell>
-                    <TableCell className="tbl-cell">Date Created</TableCell>
+                    <TableCell className="tbl-cell">Acquisition Date</TableCell>
                     <TableCell className="tbl-cell" align="center">
                       Action
                     </TableCell>
                   </TableRow>
                 </TableHead>
-
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
@@ -1126,7 +1164,6 @@ const AddTransfer = (props) => {
                 </TableBody>
               </Table>
             </TableContainer>
-
             {/* Buttons */}
             <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
               <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" sx={{ pt: "10px" }}>
