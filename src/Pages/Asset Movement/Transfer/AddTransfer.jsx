@@ -67,7 +67,11 @@ import ErrorFetching from "../../ErrorFetching";
 import { useLazyGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachment";
-import { usePostTransferApiMutation } from "../../../Redux/Query/Movement/Transfer";
+import {
+  useGetTransferNumberApiQuery,
+  useLazyGetFixedAssetTransferAllApiQuery,
+  usePostTransferApiMutation,
+} from "../../../Redux/Query/Movement/Transfer";
 import { onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import axios from "axios";
 
@@ -91,7 +95,7 @@ const schema = yup.object().shape({
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
   account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
 
-  remarks: yup.string().nullable().label("Remarks"),
+  remarks: yup.string().label("Remarks"),
   attachments: yup.mixed().label("Attachments"),
   assets: yup.array().of(
     yup.object().shape({
@@ -124,7 +128,7 @@ const AddTransfer = (props) => {
     location_id: null,
     account_title_id: null,
 
-    remarks: null,
+    remarks: "",
     attachments: null,
 
     assets: [{ fixed_asset_id: null, asset_accountable: "", created_at: null }],
@@ -152,6 +156,16 @@ const AddTransfer = (props) => {
   ] = usePostRequisitionSmsApiMutation();
 
   //* QUERY ------------------------------------------------------------------
+  const {
+    data: transferData,
+    isLoading: isTransferLoading,
+    isSuccess: isTransferSuccess,
+    isError: isTransferError,
+    refetch: isTransferRefetch,
+  } = useGetTransferNumberApiQuery(
+    { transfer_number: transactionData?.transfer_number },
+    { refetchOnMountOrArgChange: true }
+  );
 
   const [
     companyTrigger,
@@ -244,7 +258,7 @@ const AddTransfer = (props) => {
       isError: isVTagNumberError,
       error: vTagNumberError,
     },
-  ] = useLazyGetFixedAssetAllApiQuery();
+  ] = useLazyGetFixedAssetTransferAllApiQuery({}, { refetchOnMountOrArgChange: true });
 
   //* useForm --------------------------------------------------------------------
   const {
@@ -285,7 +299,7 @@ const AddTransfer = (props) => {
     control,
     name: "assets",
   });
-  const handleAppendItem = () => append({ fixed_asset_id: null, asset_accountable: null, created_at: null });
+  const handleAppendItem = () => append({ fixed_asset_id: null, asset_accountable: "", created_at: null });
 
   //* useEffects() ----------------------------------------------------------------
   useEffect(() => {
@@ -310,7 +324,9 @@ const AddTransfer = (props) => {
     }
   }, [isPostError]);
 
-  console.log(transactionData);
+  console.log(transferData);
+  console.log(transactionData?.transfer_number);
+
   useEffect(() => {
     if (transactionData) {
       const accountable = {
@@ -321,7 +337,10 @@ const AddTransfer = (props) => {
       };
       const attachmentFormat = (fields) => (transactionData?.[fields] === "-" ? "" : transactionData?.[fields]);
 
-      setValue("description", transactionData.description);
+      setValue("description", transactionData?.description);
+      setValue("accountability", transactionData?.accountability);
+      setValue("accountable", transactionData?.accountable);
+
       setValue("department_id", transactionData?.department);
       setValue("company_id", transactionData?.company);
       setValue("business_unit_id", transactionData?.business_unit);
@@ -329,13 +348,11 @@ const AddTransfer = (props) => {
       setValue("subunit_id", transactionData?.subunit);
       setValue("location_id", transactionData?.location);
       setValue("account_title_id", transactionData?.account_title);
-      setValue("accountability", transactionData?.accountability);
-      setValue("accountable", transactionData?.accountable === null ? null : accountable);
 
       setValue("remarks", transactionData?.remarks);
       setValue("attachments", attachmentFormat("attachments"));
 
-      setValue("assets", transactionData.assets);
+      setValue("assets", transactionData?.assets);
     }
   }, [transactionData]);
 
@@ -483,24 +500,81 @@ const AddTransfer = (props) => {
 
     const token = localStorage.getItem("token");
 
-    const submitData = () => setIsLoading(true);
-    axios
-      .post(`${process.env.VLADIMIR_BASE_URL}/asset-transfer`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          // Authorization: `Bearer 583|KavZ7vEXyUY7FiHQGIMcTImftzyRnZorxbtn4S9a`,
-          Authorization: `Bearer ${token}`,
+    const submitData = async () => {
+      setIsLoading(true);
+      await axios
+        .post(`${process.env.VLADIMIR_BASE_URL}/asset-transfer`, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Authorization: `Bearer 583|KavZ7vEXyUY7FiHQGIMcTImftzyRnZorxbtn4S9a`,
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log("Error submitting form!");
+        });
+    };
+
+    dispatch(
+      openConfirm({
+        icon: Info,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              {updateRequest ? "CREATE" : "RESUBMIT"}
+            </Typography>{" "}
+            this Data?
+          </Box>
+        ),
+
+        onConfirm: () => {
+          try {
+            dispatch(onLoading());
+            submitData();
+            reset();
+            dispatch(
+              openToast({
+                message: "Transfer Request Successfully Added",
+                duration: 5000,
+              })
+            );
+          } catch (err) {
+            console.log(err);
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err?.data?.errors?.detail || err.data.message,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              console.error(err);
+
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
         },
       })
-      .then((res) => {
-        console.log(res);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log("Error submitting form!");
-      });
-
-    submitData();
+    );
   };
 
   const onDeleteHandler = async (id) => {
@@ -680,6 +754,7 @@ const AddTransfer = (props) => {
       account_title_id: null,
       remarks: "",
       attachments: null,
+
       assets: [{ fixed_asset_id: null, asset_accountable: "", created_at: null }],
     });
   };
@@ -967,7 +1042,7 @@ const AddTransfer = (props) => {
                     control={control}
                     name="remarks"
                     disabled={transactionData?.view}
-                    label="Remarks"
+                    label="Remarks (Optional)"
                     type="text"
                     error={!!errors?.remarks}
                     helperText={errors?.remarks?.message}
