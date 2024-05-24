@@ -81,6 +81,8 @@ import { requestContainerApi } from "../Query/Request/RequestContainer";
 import { purchaseRequestApi } from "../Query/Request/PurchaseRequest";
 
 import { approvalApi } from "../Query/Approving/Approval";
+import { transferApprovalApi } from "../Query/Approving/TransferApproval";
+
 import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
 
 import { transferApi } from "../Query/Movement/Transfer";
@@ -175,6 +177,7 @@ export const store = configureStore({
 
     // Approval
     [approvalApi.reducerPath]: approvalApi.reducer,
+    [transferApprovalApi.reducerPath]: transferApprovalApi.reducer,
 
     [assetReceivingApi.reducerPath]: assetReceivingApi.reducer,
     [assetReleasingApi.reducerPath]: assetReleasingApi.reducer,
@@ -252,6 +255,7 @@ export const store = configureStore({
 
       // Approval
       approvalApi.middleware,
+      transferApprovalApi.middleware,
 
       assetReceivingApi.middleware,
       assetReleasingApi.middleware,
