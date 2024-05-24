@@ -58,7 +58,6 @@ import RequestMonitoring from "./Pages/Asset Requisition/RequestMonitoring";
 
 import AssetRequisition from "./Pages/Asset Requisition";
 
-import Approving from "./Pages/Approving/Approving";
 import ReceivingOfAsset from "./Pages/Asset Requisition/Receiving of Asset/ReceivingOfAsset";
 import ViewRequestReceiving from "./Pages/Asset Requisition/Receiving of Asset/ViewRequestReceiving";
 
@@ -66,13 +65,19 @@ import PageNotFound from "./Pages/PageNotFound";
 import Confirmation from "./Components/Reusable/Confirmation";
 import AssetMovement from "./Pages/Asset Movement";
 import ViewRequestPr from "./Pages/Asset Requisition/Purchase Request/ViewRequestPr";
-import ViewApproveRequest from "./Pages/Approving/ViewApproveRequest";
+import ViewApproveRequest from "./Pages/Approving/Request/ViewApproveRequest";
 import ViewRequestReleasing from "./Pages/Asset Requisition/Releasing of Asset/ViewRequestReleasing";
 import ReleasingOfAsset from "./Pages/Asset Requisition/Releasing of Asset/ReleasingOfAsset";
 import AdditionalCostRequest from "./Pages/Asset Requisition/Add Requisition/AdditionalCostRequest";
 import Transfer from "./Pages/Asset Movement/Transfer/Transfer";
 import UnitOfMeasurement from "./Pages/Masterlist/UnitOfMeasurement";
 import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
+
+import RequestApproving from "./Pages/Approving/Request/RequestApproving";
+import TransferApproving from "./Pages/Approving/Transfer/TransferApproving";
+import PullOutApproving from "./Pages/Approving/Pullout/PullOutApproving";
+import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
+import Approving from "./Pages/Approving";
 
 const router = createBrowserRouter([
   {
@@ -330,6 +335,24 @@ const router = createBrowserRouter([
           {
             path: "approving",
             element: <Approving />,
+            children: [
+              {
+                path: "request",
+                element: <RequestApproving />,
+              },
+              {
+                path: "transfer",
+                element: <TransferApproving />,
+              },
+              {
+                path: "pull-out",
+                element: <PullOutApproving />,
+              },
+              {
+                path: "disposal",
+                element: <DisposalApproving />,
+              },
+            ],
           },
 
           {
