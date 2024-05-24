@@ -82,6 +82,10 @@ import {
   Ballot,
   NoteAddRounded,
   Straighten,
+  ApprovalRounded,
+  MoveDown,
+  HomeRepairService,
+  PlaylistRemove,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../Redux/Query/Notification";
 
@@ -93,6 +97,7 @@ const Sidebar = () => {
   const [settingsCollapse, setSettingsCollapse] = useState(false);
   const [assetRequisitionCollapse, setAssetRequisitionCollapse] = useState(false);
   const [assetMovementCollapse, setAssetMovementCollapse] = useState(false);
+  const [approvingCollapse, setApprovingCollapse] = useState(false);
   const [reportCollapse, setReportCollapse] = useState(false);
   // const collapseArray = [
   //   masterListCollapse,
@@ -289,6 +294,7 @@ const Sidebar = () => {
         setSettingsCollapse(false);
         setAssetRequisitionCollapse(false);
         setAssetMovementCollapse(false);
+        setApprovingCollapse(false);
         setReportCollapse(false);
         closeCollapse;
         dispatch(openSidebar());
@@ -331,6 +337,7 @@ const Sidebar = () => {
         setMasterListCollapse(false);
         setAssetRequisitionCollapse(false);
         setAssetMovementCollapse(false);
+        setApprovingCollapse(false);
         setReportCollapse(false);
         closeCollapse;
         dispatch(openSidebar());
@@ -383,6 +390,7 @@ const Sidebar = () => {
         setUserManagementCollapse(false);
         setSettingsCollapse(false);
         setAssetMovementCollapse(false);
+        setApprovingCollapse(false);
         setReportCollapse(false);
         closeCollapse;
         dispatch(openSidebar());
@@ -409,13 +417,13 @@ const Sidebar = () => {
           permission: "pull-out",
           setter: closeCollapse,
         },
-        {
-          label: "Evaluation",
-          icon: RuleFolder,
-          path: "/asset-movement/evaluation",
-          permission: "evaluation",
-          setter: closeCollapse,
-        },
+        // {
+        //   label: "Evaluation",
+        //   icon: RuleFolder,
+        //   path: "/asset-movement/evaluation",
+        //   permission: "evaluation",
+        //   setter: closeCollapse,
+        // },
         {
           label: "Disposal",
           icon: PlaylistRemoveRounded,
@@ -431,6 +439,7 @@ const Sidebar = () => {
         setUserManagementCollapse(false);
         setSettingsCollapse(false);
         setAssetRequisitionCollapse(false);
+        setApprovingCollapse(false);
         setReportCollapse(false);
         closeCollapse;
         dispatch(openSidebar());
@@ -443,7 +452,49 @@ const Sidebar = () => {
       path: "/approving",
       permission: "approving",
       notification: notifData?.toApproveCount,
-      setter: closeCollapse,
+      children: [
+        {
+          label: "Request",
+          icon: ApprovalRounded,
+          path: "/approving/request",
+          permission: "approving-request",
+          notification: notifData?.toApproveCount,
+          setter: closeCollapse,
+        },
+        {
+          label: "Transfer",
+          icon: MoveDown,
+          path: "/approving/transfer",
+          permission: "approving-transfer",
+          setter: closeCollapse,
+        },
+        {
+          label: "Pull-Out",
+          icon: HomeRepairService,
+          path: "/approving/pull-out",
+          permission: "approving-pull-out",
+          setter: closeCollapse,
+        },
+        {
+          label: "Disposal",
+          icon: PlaylistRemove,
+          path: "/approving/disposal",
+          permission: "approving-disposal",
+          setter: closeCollapse,
+        },
+      ],
+      open: approvingCollapse,
+      setter: () => {
+        setApprovingCollapse(!approvingCollapse);
+        setMasterListCollapse(false);
+        setUserManagementCollapse(false);
+        setSettingsCollapse(false);
+        setAssetRequisitionCollapse(false);
+        setAssetMovementCollapse(false);
+        setReportCollapse(false);
+        closeCollapse;
+        dispatch(openSidebar());
+      },
     },
 
     {
