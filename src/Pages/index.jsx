@@ -262,7 +262,6 @@ const Dashboard = () => {
               // flexGrow: 1,
               flexDirection: "row",
               gap: isSmallScreen ? 2 : 4,
-              alignItems: "center",
               p: "20px",
               overflow: "auto",
             }}
