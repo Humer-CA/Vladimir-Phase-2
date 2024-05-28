@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../../Style/Request/request.scss";
-import { LoadingData } from "../../Components/LottieFiles/LottieComponents";
+import "../../../Style/Request/request.scss";
+import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
 
 import {
   Box,
@@ -31,25 +31,25 @@ import {
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { useGetByTransactionApiQuery } from "../../Redux/Query/Request/Requisition";
+import { useGetByTransactionApiQuery } from "../../../Redux/Query/Request/Requisition";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import NoRecordsFound from "../../Layout/NoRecordsFound";
-import { useGetRequestContainerAllApiQuery } from "../../Redux/Query/Request/RequestContainer";
-import { closeConfirm, onLoading, openConfirm } from "../../Redux/StateManagement/confirmSlice";
+import NoRecordsFound from "../../../Layout/NoRecordsFound";
+import { useGetRequestContainerAllApiQuery } from "../../../Redux/Query/Request/RequestContainer";
+import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import {
   useGetApprovalIdApiQuery,
   useGetNextRequestQuery,
   useLazyDlAttachmentQuery,
   useLazyGetNextRequestQuery,
   usePatchApprovalStatusApiMutation,
-} from "../../Redux/Query/Approving/Approval";
-import { openToast } from "../../Redux/StateManagement/toastSlice";
-import MasterlistToolbar from "../../Components/Reusable/MasterlistToolbar";
-import { closeDialog, openDialog, closeDialog1, openDialog1 } from "../../Redux/StateManagement/booleanStateSlice";
-import { useRemovePurchaseRequestApiMutation } from "../../Redux/Query/Request/PurchaseRequest";
-import ErrorFetching from "../ErrorFetching";
-import { useDownloadAttachment } from "../../Hooks/useDownloadAttachment";
+} from "../../../Redux/Query/Approving/Approval";
+import { openToast } from "../../../Redux/StateManagement/toastSlice";
+import MasterlistToolbar from "../../../Components/Reusable/MasterlistToolbar";
+import { closeDialog, openDialog, closeDialog1, openDialog1 } from "../../../Redux/StateManagement/booleanStateSlice";
+import { useRemovePurchaseRequestApiMutation } from "../../../Redux/Query/Request/PurchaseRequest";
+import ErrorFetching from "../../ErrorFetching";
+import { useDownloadAttachment } from "../../../Hooks/useDownloadAttachment";
 
 const ViewApproveRequest = (props) => {
   const { approving } = props;
@@ -80,7 +80,7 @@ const ViewApproveRequest = (props) => {
     { page: page, per_page: perPage, id: transactionData?.asset_approval_id },
     { refetchOnMountOrArgChange: true }
   );
-
+  console.log(approveRequestData);
   const {
     data: nextDataApi,
     isLoading: isNextDataLoading,

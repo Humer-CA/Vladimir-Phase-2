@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Moment from "moment";
-import MasterlistToolbar from "../../Components/Reusable/MasterlistToolbar";
-import ActionMenu from "../../Components/Reusable/ActionMenu";
+import MasterlistToolbar from "../../../Components/Reusable/MasterlistToolbar";
+import ActionMenu from "../../../Components/Reusable/ActionMenu";
 // import AddMajorCategory from "../AddEdit/AddMajorCategory";
-import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
-import ErrorFetching from "../../Pages/ErrorFetching";
-import NoRecordsFound from "../../Layout/NoRecordsFound";
+import MasterlistSkeleton from "../../Skeleton/MasterlistSkeleton";
+import ErrorFetching from "../../ErrorFetching";
+import NoRecordsFound from "../../../Layout/NoRecordsFound";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { openToast } from "../../Redux/StateManagement/toastSlice";
-import { closeConfirm, openConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
+import { openToast } from "../../../Redux/StateManagement/toastSlice";
+import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
 
 // MUI
 import {
@@ -27,17 +27,27 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
+  TextField,
   Typography,
 } from "@mui/material";
-import { Help, ReportProblem, Visibility } from "@mui/icons-material";
-import { useGetApprovalApiQuery, usePatchApprovalStatusApiMutation } from "../../Redux/Query/Approving/Approval";
+import { Help, Report, ReportProblem, Visibility } from "@mui/icons-material";
+import {
+  useGetApprovalApiQuery,
+  useLazyGetNextRequestQuery,
+  usePatchApprovalStatusApiMutation,
+} from "../../../Redux/Query/Approving/Approval";
+import { openDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useNavigate } from "react-router-dom";
 
-const ApprovedRequest = (props) => {
+import { notificationApi } from "../../../Redux/Query/Notification";
+
+const PendingRequest = (props) => {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("Approved");
+  const [status, setStatus] = useState("For Approval");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
+
+  const drawer = useSelector((state) => state.booleanState.drawer);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,6 +56,8 @@ const ApprovedRequest = (props) => {
 
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  // const [remarks, setRemarks] = useState("");
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) {
@@ -70,8 +82,6 @@ const ApprovedRequest = (props) => {
   };
 
   // Table Properties --------------------------------
-
-  const drawer = useSelector((state) => state.booleanState.drawer);
 
   const perPageHandler = (e) => {
     setPage(1);
@@ -106,7 +116,146 @@ const ApprovedRequest = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  // console.log(approvalData);
+  // console.log(approvalData)
+
+  const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
+
+  // CONFIRMATION
+  const onApprovalApproveHandler = (id) => {
+    // return console.log(id);
+    dispatch(
+      openConfirm({
+        icon: Help,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+                fontFamily: "Raleway",
+              }}
+            >
+              APPROVE
+            </Typography>{" "}
+            this request?
+          </Box>
+        ),
+
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            const result = await patchApprovalStatus({
+              action: "Approve",
+              asset_approval_id: id,
+            }).unwrap();
+
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+
+            dispatch(closeConfirm());
+            // notifRefetch();
+            // dispatch(notificationApi.util.resetApiState());
+            dispatch(notificationApi.util.invalidateTags(["Notif"]));
+          } catch (err) {
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  // message: err.data.message,
+                  message: err.data.errors?.detail,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+
+  const onApprovalReturnHandler = (id) => {
+    dispatch(
+      openConfirm({
+        icon: Report,
+        iconColor: "warning",
+        message: (
+          <Stack gap={2}>
+            <Box>
+              <Typography> Are you sure you want to</Typography>
+              <Typography
+                sx={{
+                  display: "inline-block",
+                  color: "secondary.main",
+                  fontWeight: "bold",
+                  fontFamily: "Raleway",
+                }}
+              >
+                RETURN
+              </Typography>{" "}
+              this request?
+            </Box>
+          </Stack>
+        ),
+        remarks: true,
+
+        onConfirm: async (data) => {
+          try {
+            dispatch(onLoading());
+            const result = await patchApprovalStatus({
+              action: "Return",
+              asset_approval_id: id,
+              remarks: data,
+            }).unwrap();
+
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+
+            dispatch(closeConfirm());
+          } catch (err) {
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  // message: err.data.message,
+                  message: err?.data?.errors?.detail,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              console.log(err);
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+
   const handleViewRequisition = (data) => {
     navigate(`/approving/${data.transaction_number}`, {
       state: { ...data },
@@ -124,6 +273,7 @@ const ApprovedRequest = (props) => {
             onStatusChange={setStatus}
             onSearchChange={setSearch}
             onSetPage={setPage}
+            // onAdd={() => {}}
             hideArchive
           />
 
@@ -149,17 +299,7 @@ const ApprovedRequest = (props) => {
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category">
-                      {/* <TableSortLabel
-                        active={orderBy === `major_category_name`}
-                        direction={
-                          orderBy === `major_category_name` ? order : `asc`
-                        }
-                        onClick={() => onSort(`major_category_name`)}
-                      >
-                    </TableSortLabel> */}
-                      Transaction No.
-                    </TableCell>
+                    <TableCell className="tbl-cell-category">Transaction No.</TableCell>
 
                     <TableCell className="tbl-cell-category">Acquisition Details</TableCell>
 
@@ -172,8 +312,8 @@ const ApprovedRequest = (props) => {
                         Requestor
                       </TableSortLabel>
                     </TableCell>
-
-                    {/* <TableCell className="tbl-cell-category">
+                    {/* 
+                    <TableCell className="tbl-cell-category">
                       <TableSortLabel
                         active={orderBy === `requestor`}
                         direction={orderBy === `requestor` ? order : `asc`}
@@ -185,11 +325,11 @@ const ApprovedRequest = (props) => {
 
                     <TableCell className="tbl-cell-category">
                       <TableSortLabel
-                        active={orderBy === `division_id`}
-                        direction={orderBy === `division_id` ? order : `asc`}
-                        onClick={() => onSort(`division_id`)}
+                        active={orderBy === `quantity`}
+                        direction={orderBy === `quantity` ? order : `asc`}
+                        onClick={() => onSort(`quantity`)}
                       >
-                        Quantity of PO
+                        Quantity
                       </TableSortLabel>
                     </TableCell>
 
@@ -211,20 +351,12 @@ const ApprovedRequest = (props) => {
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category text-center">
-                      <TableSortLabel
-                        active={orderBy === `created_at`}
-                        direction={orderBy === `created_at` ? order : `asc`}
-                        onClick={() => onSort(`created_at`)}
-                      >
-                        Date Approved
-                      </TableSortLabel>
-                    </TableCell>
+                    <TableCell className="tbl-cell-category  text-center">Action</TableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
-                  {approvalData.data.length === 0 ? (
+                  {approvalData?.data.length === 0 ? (
                     <NoRecordsFound approvalData={approvalData} category />
                   ) : (
                     <>
@@ -274,32 +406,41 @@ const ApprovedRequest = (props) => {
 
                             <TableCell className="tbl-cell-category ">{data.number_of_item}</TableCell>
 
-                            <TableCell className="tbl-cell-category" align="center">
+                            <TableCell className="tbl-cell-category text-center">
                               <IconButton onClick={() => handleViewRequisition(data)}>
                                 <Visibility color="secondary" />
                               </IconButton>
                             </TableCell>
 
                             <TableCell className="tbl-cell-category text-center capitalized">
-                              <Chip
-                                size="small"
-                                variant="contained"
-                                sx={{
-                                  background: "#27ff811f",
-                                  color: "active.dark",
-                                  fontSize: "0.7rem",
-                                  px: 1,
-                                }}
-                                label="APPROVED"
+                              {data.status === "For Approval" && (
+                                <Chip
+                                  size="small"
+                                  variant="contained"
+                                  sx={{
+                                    background: "#f5cc2a2f",
+                                    color: "#c59e00",
+                                    fontSize: "0.7rem",
+                                    px: 1,
+                                  }}
+                                  label="PENDING"
+                                />
+                              )}
+                            </TableCell>
+
+                            <TableCell className="tbl-cell-category tr-cen-pad45">
+                              {Moment(data.asset_request?.date_requested).format("MMM DD, YYYY")}
+                            </TableCell>
+
+                            <TableCell className="tbl-cell-category text-center">
+                              <ActionMenu
+                                status={status}
+                                data={data}
+                                showApprover
+                                onApprovalApproveHandler={onApprovalApproveHandler}
+                                onApprovalReturnHandler={onApprovalReturnHandler}
+                                hideArchive
                               />
-                            </TableCell>
-
-                            <TableCell className="tbl-cell-category tr-cen-pad45">
-                              {Moment(data.created_at).format("MMM DD, YYYY")}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell-category tr-cen-pad45">
-                              {Moment(data.created_at).format("MMM DD, YYYY")}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -333,4 +474,4 @@ const ApprovedRequest = (props) => {
   );
 };
 
-export default ApprovedRequest;
+export default PendingRequest;
