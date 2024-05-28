@@ -18,23 +18,17 @@ export const transferApi = createApi({
 
   endpoints: (builder) => ({
     getTransferApi: builder.query({
-      query: (params) => `asset-transfer?per_page=${params.per_page}&page=${params.page}&search=${params.search}`,
+      query: (params) =>
+        `asset-transfer?per_page=${params.per_page}&page=${params.page}&search=${params.search}&status=${params.status}`,
       providesTags: ["Transfer"],
     }),
 
     getTransferAllApi: builder.query({
       query: () => `asset-transfer?pagination=none`,
-      providesTags: ["Transfer"],
     }),
 
-    // getTransferNumberApi: builder.query({
-    //   query: (transfer_number) => `asset-transfer/${transfer_number}`,
-    //   providesTags: ["Transfer"],
-    // }),
-
     getTransferNumberApi: builder.query({
-      query: (transfer_number) => `asset-transfer/${transfer_number}`,
-      providesTags: ["Transfer"],
+      query: (params) => `asset-transfer/${params.transfer_number}`,
     }),
 
     getFixedAssetTransferAllApi: builder.query({
