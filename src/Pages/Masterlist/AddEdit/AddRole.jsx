@@ -533,43 +533,75 @@ const AddRole = (props) => {
     );
   };
 
-  // const Approving = () => {
-  //   return (
-  //     <Stack flexDirection="row" flexWrap="wrap">
-  //       <FormGroup
-  //         sx={{
-  //           display: "flex",
-  //           flexDirection: "column",
-  //           ml: 3,
-  //         }}
-  //       >
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Pending Request"
-  //           value="pending-request"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("pending-request")}
-  //             />
-  //           }
-  //         />
+  const Approving = () => {
+    return (
+      <Stack flexDirection="row" flexWrap="wrap">
+        <FormGroup
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            ml: 3,
+          }}
+        >
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="Approving Request"
+            value="approving-request"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("approving-request")}
+              />
+            }
+          />
 
-  //         <FormControlLabel
-  //           disabled={data.action === "view"}
-  //           label="Approved Request"
-  //           value="approved=request"
-  //           control={
-  //             <Checkbox
-  //               {...register("access_permission")}
-  //               checked={watch("access_permission")?.includes("approved=request")}
-  //             />
-  //           }
-  //         />
-  //       </FormGroup>
-  //     </Stack>
-  //   );
-  // };
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="Approving Transfer"
+            value="approving-transfer"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("approving-transfer")}
+              />
+            }
+          />
+        </FormGroup>
+
+        <FormGroup
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            ml: 3,
+          }}
+        >
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="Approving Pull Out"
+            value="approving-pull-out"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("approving-pull-out")}
+              />
+            }
+          />
+
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="Approving Disposal"
+            value="approving-disposal"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("approving-disposal")}
+              />
+            }
+          />
+        </FormGroup>
+      </Stack>
+    );
+  };
 
   const permissions = [
     // List of permissions
@@ -628,6 +660,10 @@ const AddRole = (props) => {
     // Approving
     "pending-request",
     "approved-request",
+    "approving-request",
+    "approving-transfer",
+    "approving-pull-out",
+    "approving-disposal",
 
     // Monitoring
     "request-monitoring",
@@ -650,6 +686,7 @@ const AddRole = (props) => {
   const settings = ["approver-settings", "form-settings"];
   const assetRequisition = ["requisition", "purchase-request", "requisition-receiving"];
   const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
+  const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
 
   // console.log(watch("access_permission"));
 
@@ -1000,6 +1037,64 @@ const AddRole = (props) => {
                       />
                     </FormLabel>
                     <AssetMovement />
+                  </FormControl>
+                </Box>
+              )}
+
+              {watch("access_permission").includes("approving") && (
+                <Box>
+                  <Divider sx={{ mx: "30px" }} />
+                  <FormControl
+                    fullWidth
+                    component="fieldset"
+                    sx={{
+                      border: "1px solid #a6a6a6af ",
+                      borderRadius: "10px",
+                      px: "10px",
+                      mt: "10px",
+                      mb: "15px",
+                    }}
+                  >
+                    <FormLabel component="legend" sx={{ ml: "1px", pl: "5px" }}>
+                      <FormControlLabel
+                        label="Approving"
+                        value="approving"
+                        sx={{ color: "text.main", fontWeight: "bold" }}
+                        disabled={data.action === "view"}
+                        control={
+                          <Checkbox
+                            checked={watch("access_permission").includes("approving")}
+                            // checked={masterlistValue.every((perm) =>
+                            //   watch("access_permission").includes(perm)
+                            // )}
+                            indeterminate={
+                              assetMovement.some((perm) => watch("access_permission").includes(perm)) &&
+                              !assetMovement.every((perm) => watch("access_permission").includes(perm))
+                            }
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setValue("access_permission", [
+                                  ...new Set([
+                                    ...watch("access_permission"),
+                                    "transfer",
+                                    "evaluation",
+                                    "pull-out",
+                                    "disposal",
+                                  ]),
+                                ]);
+                              } else {
+                                const assetMovementEmptyValue = watch("access_permission").filter(
+                                  (perm) => ![...assetMovement, "asset-movement"].includes(perm)
+                                );
+
+                                setValue("access_permission", assetMovementEmptyValue);
+                              }
+                            }}
+                          />
+                        }
+                      />
+                    </FormLabel>
+                    <Approving />
                   </FormControl>
                 </Box>
               )}
