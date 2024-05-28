@@ -301,9 +301,7 @@ const Role = () => {
                             }}
                           >
                             <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
-
                             <TableCell className="tbl-cell text-weight capitalized">{data.role_name}</TableCell>
-
                             <TableCell className="tbl-cell text-center">
                               <Button
                                 sx={{
@@ -318,7 +316,6 @@ const Role = () => {
                                 View
                               </Button>
                             </TableCell>
-
                             <TableCell className="tbl-cell text-center">
                               {data.is_active ? (
                                 <Chip
@@ -346,11 +343,9 @@ const Role = () => {
                                 />
                               )}
                             </TableCell>
-
                             <TableCell className="tbl-cell tr-cen-pad45">
                               {Moment(data.created_at).format("MMM DD, YYYY")}
                             </TableCell>
-
                             <TableCell className="tbl-cell text-center">
                               <ActionMenu
                                 status={status}
