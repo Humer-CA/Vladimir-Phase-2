@@ -74,7 +74,7 @@ import UnitOfMeasurement from "./Pages/Masterlist/UnitOfMeasurement";
 import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
 
 import RequestApproving from "./Pages/Approving/Request/RequestApproving";
-import TransferApproving from "./Pages/Approving/Transfer/TransferApproving";
+import TransferApproving from "./Pages/Approving/Transfer/TransferApproval";
 import PullOutApproving from "./Pages/Approving/Pullout/PullOutApproving";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import Approving from "./Pages/Approving";
@@ -250,7 +250,11 @@ const router = createBrowserRouter([
                 element: <AddRequisition />,
               },
               {
-                path: "requisition/add-requisition/:transaction_number",
+                path: "requisition/view-requisition/:transaction_number",
+                element: <AddRequisition />,
+              },
+              {
+                path: "requisition/edit-requisition/:transaction_number",
                 element: <AddRequisition />,
               },
 
@@ -322,10 +326,6 @@ const router = createBrowserRouter([
                 // element: <ServiceProvider />,
               },
               {
-                path: "evaluation",
-                // element: <Category />,
-              },
-              {
                 path: "disposal",
                 // element: <Category />,
               },
@@ -341,23 +341,34 @@ const router = createBrowserRouter([
                 element: <RequestApproving />,
               },
               {
+                path: "request/:transaction_number",
+                element: <ViewApproveRequest />,
+              },
+              {
                 path: "transfer",
                 element: <TransferApproving />,
+              },
+              {
+                path: "transfer/:transaction_number",
+                element: <ViewApproveRequest />,
               },
               {
                 path: "pull-out",
                 element: <PullOutApproving />,
               },
               {
+                path: "pullout/:transaction_number",
+                element: <ViewApproveRequest />,
+              },
+              {
                 path: "disposal",
                 element: <DisposalApproving />,
               },
+              {
+                path: "disposal/:transaction_number",
+                element: <ViewApproveRequest />,
+              },
             ],
-          },
-
-          {
-            path: "approving/:transaction_number",
-            element: <ViewApproveRequest />,
           },
 
           {
