@@ -45,6 +45,7 @@ const ActionMenu = (props) => {
     showVoid,
     showApprover,
     editRequestData,
+    editTransferData,
     onDeleteReferenceHandler,
     // setShowEdit
     setUpdateToggle,
@@ -56,6 +57,9 @@ const ActionMenu = (props) => {
     editRequest,
     setEditRequest,
     transactionData,
+
+    // Transfer Request
+    onArchiveHandler,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -71,6 +75,11 @@ const ActionMenu = (props) => {
 
   const handleArchiveRestore = () => {
     onArchiveRestoreHandler(data?.id, status);
+    handleClose();
+  };
+
+  const handleArchiveTransfer = () => {
+    onArchiveRestoreHandler(data);
     handleClose();
   };
 
@@ -132,6 +141,13 @@ const ActionMenu = (props) => {
     setUpdateToggle(false);
     handleClose();
     setDisable(false);
+  };
+
+  const handleEditTransfer = () => {
+    // console.log(data);
+    onUpdateHandler(data);
+    dispatch(openDrawer() || openDialog());
+    handleClose();
   };
 
   const handleEditNav = () => {
@@ -197,6 +213,17 @@ const ActionMenu = (props) => {
             </MenuItem>
           )}
 
+          {editTransferData && (
+            <MenuItem onClick={handleEditTransfer} dense>
+              <ListItemIcon>
+                <BorderColor />
+              </ListItemIcon>
+              <ListItemText disableTypography align="left">
+                Edit
+              </ListItemText>
+            </MenuItem>
+          )}
+
           {setSubCapexDialog && status === "active" && (
             <MenuItem onClick={handleSubCapexEdit} dense>
               <ListItemIcon>
@@ -213,6 +240,15 @@ const ActionMenu = (props) => {
               <ListItemIcon>{status === "active" ? <MoveToInbox /> : <Reply />}</ListItemIcon>
               <ListItemText disableTypography align="left">
                 {status === "active" ? "Archive" : "Restore"}
+              </ListItemText>
+            </MenuItem>
+          )}
+
+          {data?.transfer_number && (
+            <MenuItem onClick={handleArchiveTransfer} dense>
+              <ListItemIcon>{status !== "Cancelled" ? <MoveToInbox /> : <Reply />}</ListItemIcon>
+              <ListItemText disableTypography align="left">
+                {status !== "Cancelled" ? "Archive" : "Restore"}
               </ListItemText>
             </MenuItem>
           )}
@@ -294,6 +330,17 @@ const ActionMenu = (props) => {
           )} */}
 
           {(showDelete || onDeleteHandler) && (
+            <MenuItem onClick={handleDelete} dense>
+              <ListItemIcon>
+                <Delete />
+              </ListItemIcon>
+              <ListItemText disableTypography align="left">
+                Delete
+              </ListItemText>
+            </MenuItem>
+          )}
+
+          {onArchiveHandler && (
             <MenuItem onClick={handleDelete} dense>
               <ListItemIcon>
                 <Delete />
