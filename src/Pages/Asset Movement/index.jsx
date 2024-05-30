@@ -1,25 +1,14 @@
 import React from "react";
 import "../../Style/parentSidebar.scss";
-import bgImage from "../../Img/CardBG.svg";
 
 import { Outlet } from "react-router";
 import { useLocation } from "react-router-dom";
 
 import { Box, Typography, useMediaQuery } from "@mui/material";
-import {
-  HowToReg,
-  ManageAccountsSharp,
-  PlaylistRemoveRounded,
-  RemoveFromQueue,
-  RequestQuote,
-  RuleFolder,
-  SettingsApplications,
-  ShoppingBag,
-  TransferWithinAStation,
-} from "@mui/icons-material";
+import { PlaylistRemoveRounded, RemoveFromQueue, RuleFolder, TransferWithinAStation } from "@mui/icons-material";
 import Cards from "../../Components/Reusable/Cards";
 
-const RequestList = [
+const MovementList = [
   {
     icon: <TransferWithinAStation />,
     label: "Transfer",
@@ -34,12 +23,12 @@ const RequestList = [
     path: "/asset-movement/pull-out",
   },
 
-  {
-    icon: <RuleFolder />,
-    label: "Evaluation",
-    description: "Requesting for Asset Evaluation",
-    path: "/asset-movement/evaluation",
-  },
+  // {
+  //   icon: <RuleFolder />,
+  //   label: "Evaluation",
+  //   description: "Requesting for Asset Evaluation",
+  //   path: "/asset-movement/evaluation",
+  // },
 
   {
     icon: <PlaylistRemoveRounded />,
