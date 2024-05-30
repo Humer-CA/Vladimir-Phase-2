@@ -37,6 +37,11 @@ export const transferApi = createApi({
       providesTags: ["Transfer"],
     }),
 
+    getTransferApprovalApi: builder.query({
+      query: (params) => `transfer-approver?page=${params.page}&per_page=${params.per_page}&search=${params.search}`,
+      providesTags: ["Transfer"],
+    }),
+
     postTransferApi: builder.mutation({
       query: (data) => ({
         url: `asset-transfer`,
@@ -46,7 +51,7 @@ export const transferApi = createApi({
       invalidatesTags: ["Transfer"],
     }),
 
-    deleteTransferApi: builder.mutation({
+    archiveTransferApi: builder.mutation({
       query: (transfer_number) => ({
         url: `remove-transfer-item/${transfer_number}`,
         method: "DELETE",
@@ -69,7 +74,8 @@ export const {
   useGetTransferNumberApiQuery,
   useLazyGetFixedAssetTransferAllApiQuery,
   useGetTransferAllApiQuery,
+  useGetTransferApprovalApiQuery,
   usePostTransferApiMutation,
-  useDeleteTransferApiMutation,
+  useArchiveTransferApiMutation,
   useDownloadAttachmentApiMutation,
 } = transferApi;

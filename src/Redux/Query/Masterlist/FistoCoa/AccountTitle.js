@@ -40,9 +40,7 @@ export const accountTitleApi = createApi({
       query: ({ id, status }) => ({
         url: `/account-title/archived-account-title/${id}`,
         method: "PATCH",
-        body: {
-          status: status,
-        },
+        body: { status: status },
       }),
       invalidatesTags: ["AccountTitle"],
     }),
