@@ -28,19 +28,28 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Attachment, IosShareRounded, Report, TransferWithinAStation, Visibility } from "@mui/icons-material";
+import {
+  Attachment,
+  Help,
+  IosShareRounded,
+  Report,
+  ReportProblem,
+  TransferWithinAStation,
+  Visibility,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
+import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import useExcel from "../../../Hooks/Xlsx";
 import moment from "moment";
 import {
-  useDeleteTransferApiMutation,
+  useArchiveTransferApiMutation,
   useDownloadAttachmentApiMutation,
   useGetTransferApiQuery,
 } from "../../../Redux/Query/Movement/Transfer";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import { useDownloadAttachment, useDownloadTransferAttachment } from "../../../Hooks/useDownloadAttachment";
+import TransferTimeline from "../TransferTimeline";
 
 const Transfer = () => {
   const [search, setSearch] = useState("");
@@ -49,7 +58,7 @@ const Transfer = () => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState([]);
   const [onTransfer, setOnTransfer] = useState(true);
-  const [transactionIdData, setTransactionIdData] = useState();
+  const [transactionIdData, setTransactionIdData] = useState("");
   const view = true;
 
   const navigate = useNavigate();
@@ -117,7 +126,7 @@ const Transfer = () => {
   );
 
   const [downloadAttachment, { isLoading: isLoading }] = useDownloadAttachmentApiMutation();
-  const [deleteTransfer, { data: deleteTransferData }] = useDeleteTransferApiMutation();
+  const [archiveTransfer, { data: archiveTransferData }] = useArchiveTransferApiMutation();
 
   const dispatch = useDispatch();
 
@@ -125,7 +134,64 @@ const Transfer = () => {
     setPage(1);
   };
 
+  const onArchiveRestoreHandler = async (data) => {
+    dispatch(
+      openConfirm({
+        icon: status !== "Cancelled" ? ReportProblem : Help,
+        iconColor: status !== "Cancelled" ? "alert" : "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+                fontFamily: "Raleway",
+              }}
+            >
+              {status !== "Cancelled" ? "ARCHIVE" : "ACTIVATE"}
+            </Typography>{" "}
+            this data?
+          </Box>
+        ),
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            const result = await archiveTransfer(data?.transfer_number).unwrap();
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+            dispatch(closeConfirm());
+          } catch (err) {
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err.data.errors?.detail,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+
   const handleViewTimeline = (data) => {
+    console.log(data);
     dispatch(openDialog());
     setTransactionIdData(data);
   };
@@ -141,7 +207,7 @@ const Transfer = () => {
       };
 
       const res = await transferDataTrigger(apiParams).unwrap();
-      console.log(res);
+      // console.log(res);
       const newObj = res?.data?.map((item) => {
         return {
           // ID: item?.id,
@@ -209,65 +275,6 @@ const Transfer = () => {
     navigate(`add-transfer/${data.transfer_number}`, {
       state: { ...data, view },
     });
-  };
-
-  const onDeleteHandler = async (id) => {
-    dispatch(
-      openConfirm({
-        icon: Report,
-        iconColor: "warning",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              DELETE
-            </Typography>{" "}
-            this Item?
-          </Box>
-        ),
-
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            let result = await deleteTransfer(id).unwrap();
-
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            refetch();
-            dispatch(closeConfirm());
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
   };
 
   return (
@@ -395,7 +402,6 @@ const Transfer = () => {
                                 },
                               }}
                             >
-                              {console.log(data)}
                               <TableCell className="tbl-cell text-weight">{data.transfer_number}</TableCell>
                               <TableCell className="tbl-cell">{data.description}</TableCell>
                               <TableCell className="tbl-cell">{`(${data.requester?.employee_id}) - ${data.requester?.first_name} ${data.requester?.last_name}`}</TableCell>
@@ -482,7 +488,13 @@ const Transfer = () => {
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
                               <TableCell align="center">
-                                <ActionMenu data={data?.transfer_number} onDeleteHandler={onDeleteHandler} hideEdit />
+                                <ActionMenu
+                                  data={data}
+                                  status={data?.status}
+                                  hideArchive
+                                  editTransferData={() => handleEditRequestData()}
+                                  onArchiveRestoreHandler={onArchiveRestoreHandler}
+                                />
                               </TableCell>
                             </TableRow>
                           ))}
@@ -522,6 +534,14 @@ const Transfer = () => {
           </Box>
         </>
       )}
+
+      <Dialog
+        open={dialog}
+        onClose={() => dispatch(closeDialog())}
+        PaperProps={{ sx: { borderRadius: "10px", maxWidth: "700px" } }}
+      >
+        <TransferTimeline data={transactionIdData} />
+      </Dialog>
     </Box>
   );
 };
