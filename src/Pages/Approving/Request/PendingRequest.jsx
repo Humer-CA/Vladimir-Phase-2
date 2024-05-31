@@ -40,6 +40,7 @@ import { openDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useNavigate } from "react-router-dom";
 
 import { notificationApi } from "../../../Redux/Query/Notification";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const PendingRequest = (props) => {
   const [search, setSearch] = useState("");
@@ -116,8 +117,6 @@ const PendingRequest = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  // console.log(approvalData)
-
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
 
   // CONFIRMATION
@@ -167,8 +166,8 @@ const PendingRequest = (props) => {
             if (err?.status === 422) {
               dispatch(
                 openToast({
-                  // message: err.data.message,
-                  message: err.data.errors?.detail,
+                  // message: err.message,
+                  message: err.errors?.detail,
                   duration: 5000,
                   variant: "error",
                 })
@@ -234,8 +233,8 @@ const PendingRequest = (props) => {
             if (err?.status === 422) {
               dispatch(
                 openToast({
-                  // message: err.data.message,
-                  message: err?.data?.errors?.detail,
+                  // message: err.message,
+                  message: err?.errors?.detail,
                   duration: 5000,
                   variant: "error",
                 })
@@ -257,7 +256,7 @@ const PendingRequest = (props) => {
   };
 
   const handleViewRequisition = (data) => {
-    navigate(`/approving/${data.transaction_number}`, {
+    navigate(`/approving/request/${data.transaction_number}`, {
       state: { ...data },
     });
   };
@@ -356,12 +355,12 @@ const PendingRequest = (props) => {
                 </TableHead>
 
                 <TableBody>
-                  {approvalData?.data.length === 0 ? (
+                  {approvalData?.data?.length === 0 ? (
                     <NoRecordsFound approvalData={approvalData} category />
                   ) : (
                     <>
                       {approvalSuccess &&
-                        [...approvalData.data].sort(comparator(order, orderBy))?.map((data) => (
+                        [...approvalData?.data].sort(comparator(order, orderBy))?.map((data) => (
                           <TableRow
                             key={data.id}
                             hover={true}
@@ -413,19 +412,17 @@ const PendingRequest = (props) => {
                             </TableCell>
 
                             <TableCell className="tbl-cell-category text-center capitalized">
-                              {data.status === "For Approval" && (
-                                <Chip
-                                  size="small"
-                                  variant="contained"
-                                  sx={{
-                                    background: "#f5cc2a2f",
-                                    color: "#c59e00",
-                                    fontSize: "0.7rem",
-                                    px: 1,
-                                  }}
-                                  label="PENDING"
-                                />
-                              )}
+                              <Chip
+                                size="small"
+                                variant="contained"
+                                sx={{
+                                  background: "#f5cc2a2f",
+                                  color: "#c59e00",
+                                  fontSize: "0.7rem",
+                                  px: 1,
+                                }}
+                                label="PENDING"
+                              />
                             </TableCell>
 
                             <TableCell className="tbl-cell-category tr-cen-pad45">
@@ -452,18 +449,11 @@ const PendingRequest = (props) => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 50,
-                // {
-                //   label: "All",
-                //   value: parseInt(majorCategoryData?.total),
-                // },
-              ]}
-              component="div"
-              count={approvalSuccess ? approvalData.total : 0}
-              page={approvalSuccess ? approvalData.current_page - 1 : 0}
-              rowsPerPage={approvalSuccess ? parseInt(approvalData?.per_page) : 5}
+            <CustomTablePagination
+              total={approvalData?.data?.total}
+              success={approvalSuccess}
+              current_page={approvalData?.data?.current_page}
+              per_page={approvalData?.data?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

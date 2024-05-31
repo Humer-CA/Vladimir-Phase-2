@@ -224,12 +224,12 @@ const ApprovedRequest = (props) => {
                 </TableHead>
 
                 <TableBody>
-                  {approvalData.data.length === 0 ? (
+                  {approvalData?.data.length === 0 ? (
                     <NoRecordsFound approvalData={approvalData} category />
                   ) : (
                     <>
                       {approvalSuccess &&
-                        [...approvalData.data].sort(comparator(order, orderBy))?.map((data) => (
+                        [...approvalData?.data].sort(comparator(order, orderBy))?.map((data) => (
                           <TableRow
                             key={data.id}
                             hover={true}
