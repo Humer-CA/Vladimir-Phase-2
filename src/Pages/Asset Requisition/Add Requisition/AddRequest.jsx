@@ -124,13 +124,13 @@ const schema = yup.object().shape({
   cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
 
-  department_id: yup.object().required().label("Department").typeError("Department is a required field"),
-  company_id: yup.object().required().label("Company").typeError("Company is a required field"),
-  business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
-  unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
-  subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
-  location_id: yup.object().required().label("Location").typeError("Location is a required field"),
-  account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
+  // department_id: yup.object().required().label("Department").typeError("Department is a required field"),
+  // company_id: yup.object().required().label("Company").typeError("Company is a required field"),
+  // business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
+  // unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
+  // subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
+  // location_id: yup.object().required().label("Location").typeError("Location is a required field"),
+  // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
   accountable: yup
     .object()
@@ -176,13 +176,13 @@ const AddRequisition = (props) => {
     cip_number: "",
     attachment_type: null,
 
-    department_id: null,
-    company_id: null,
-    business_unit_id: null,
-    unit_id: null,
-    subunit_id: null,
-    location_id: null,
-    account_title_id: null,
+    // department_id: null,
+    // company_id: null,
+    // business_unit_id: null,
+    // unit_id: null,
+    // subunit_id: null,
+    // location_id: null,
+    // account_title_id: null,
 
     asset_description: "",
     asset_specification: "",
@@ -406,14 +406,15 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
+      warehouse: null,
 
-      company_id: null,
-      business_unit_id: null,
-      department_id: null,
-      unit_id: null,
-      subunit_id: null,
-      location_id: null,
-      account_title_id: null,
+      // company_id: null,
+      // business_unit_id: null,
+      // department_id: null,
+      // unit_id: null,
+      // subunit_id: null,
+      // location_id: null,
+      // account_title_id: null,
       acquisition_details: "",
 
       asset_description: "",
@@ -480,13 +481,14 @@ const AddRequisition = (props) => {
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
-      setValue("department_id", updateRequest?.department);
-      setValue("company_id", updateRequest?.company);
-      setValue("business_unit_id", updateRequest?.business_unit);
-      setValue("unit_id", updateRequest?.unit);
-      setValue("subunit_id", updateRequest?.subunit);
-      setValue("location_id", updateRequest?.location);
-      setValue("account_title_id", updateRequest?.account_title);
+      setValue("warehouse", updateRequest?.warehouse);
+      // setValue("department_id", updateRequest?.department);
+      // setValue("company_id", updateRequest?.company);
+      // setValue("business_unit_id", updateRequest?.business_unit);
+      // setValue("unit_id", updateRequest?.unit);
+      // setValue("subunit_id", updateRequest?.subunit);
+      // setValue("location_id", updateRequest?.location);
+      // setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
       setValue("accountable", accountable);
       setValue("acquisition_details", updateRequest?.acquisition_details);
@@ -586,14 +588,15 @@ const AddRequisition = (props) => {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
       cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
+      warehouse: formData?.warehouse?.toString(),
 
-      department_id: formData?.department_id.id?.toString(),
-      company_id: updatingCoa("company_id", "company"),
-      business_unit_id: updatingCoa("business_unit_id", "business_unit"),
-      unit_id: formData.unit_id.id?.toString(),
-      subunit_id: formData.subunit_id.id?.toString(),
-      location_id: formData?.location_id.id?.toString(),
-      account_title_id: formData?.account_title_id.id?.toString(),
+      // department_id: formData?.department_id.id?.toString(),
+      // company_id: updatingCoa("company_id", "company"),
+      // business_unit_id: updatingCoa("business_unit_id", "business_unit"),
+      // unit_id: formData.unit_id.id?.toString(),
+      // subunit_id: formData.subunit_id.id?.toString(),
+      // location_id: formData?.location_id.id?.toString(),
+      // account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
 
@@ -625,35 +628,35 @@ const AddRequisition = (props) => {
 
     const token = localStorage.getItem("token");
 
-    const validation = () => {
-      const coaValidation = (name, value) => {
-        transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
-      };
-      if (transactionData) {
-        return (
-          (transactionData &&
-            (coaValidation("department", "department_id") ||
-              coaValidation("unit", "unit_id") ||
-              coaValidation("subunit", "subunit_id") ||
-              coaValidation("location", "location_id"))) ||
-          false
-        );
-      } else {
-        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-          return true;
-        }
-        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-          return true;
-        }
-        return false;
-      }
-    };
+    // const validation = () => {
+    //   const coaValidation = (name, value) => {
+    //     transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+    //   };
+    //   if (transactionData) {
+    //     return (
+    //       (transactionData &&
+    //         (coaValidation("department", "department_id") ||
+    //           coaValidation("unit", "unit_id") ||
+    //           coaValidation("subunit", "subunit_id") ||
+    //           coaValidation("location", "location_id"))) ||
+    //       false
+    //     );
+    //   } else {
+    //     if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+    //       return true;
+    //     }
+    //     if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+    //       return true;
+    //     }
+    //     if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+    //       return true;
+    //     }
+    //     if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+    //       return true;
+    //     }
+    //     return false;
+    //   }
+    // };
 
     const submitData = () => {
       setIsLoading(true);
@@ -690,14 +693,15 @@ const AddRequisition = (props) => {
                 type_of_request_id: formData?.type_of_request_id,
                 cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
+                warehouse: formData?.warehouse,
 
-                company_id: formData?.company_id,
-                business_unit_id: formData?.business_unit_id,
-                department_id: formData?.department_id,
-                unit_id: formData?.unit_id,
-                subunit_id: formData?.subunit_id,
-                location_id: formData?.location_id,
-                account_title_id: formData?.account_title_id,
+                // company_id: formData?.company_id,
+                // business_unit_id: formData?.business_unit_id,
+                // department_id: formData?.department_id,
+                // unit_id: formData?.unit_id,
+                // subunit_id: formData?.subunit_id,
+                // location_id: formData?.location_id,
+                // account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
 
                 asset_description: "",
@@ -1077,6 +1081,7 @@ const AddRequisition = (props) => {
       type_of_request,
       cip_number,
       attachment_type,
+      warehouse,
       company,
       business_unit,
       department,
@@ -1104,6 +1109,7 @@ const AddRequisition = (props) => {
       type_of_request,
       cip_number,
       attachment_type,
+      warehouse,
 
       company,
       business_unit,
@@ -1139,12 +1145,13 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
+      warehouse: null,
 
-      company_id: null,
-      department_id: null,
-      subunit_id: null,
-      location_id: null,
-      account_title_id: null,
+      // company_id: null,
+      // department_id: null,
+      // subunit_id: null,
+      // location_id: null,
+      // account_title_id: null,
       acquisition_details: "",
 
       asset_description: "",
@@ -1276,9 +1283,32 @@ const AddRequisition = (props) => {
                   />
                 )}
               />
+
+              <CustomAutoComplete
+                control={control}
+                name="warehouse"
+                options={["Depot", "Feedmill", "Service Group"]}
+                // onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
+                // loading={isTypeOfRequestLoading}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                disabled={updateRequest && disable}
+                // getOptionLabel={(option) => option.type_of_request_name}
+                // isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="Warehouse"
+                    // error={!!errors?.type_of_request_id}
+                    // helperText={errors?.type_of_request_id?.message}
+                  />
+                )}
+              />
             </Box>
+
             <Divider />
-            <Box sx={BoxStyle}>
+
+            {/* <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Charging Information</Typography>
               <CustomAutoComplete
                 autoComplete
@@ -1506,7 +1536,10 @@ const AddRequisition = (props) => {
                 />
               )}
             </Box>
-            <Divider />
+
+            <Divider /> */}
+
+            {/* Asset Information */}
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Asset Information</Typography>
               <CustomTextField
@@ -1613,7 +1646,10 @@ const AddRequisition = (props) => {
                 multiline
               />
             </Box>
+
             <Divider />
+
+            {/* Attachments */}
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Attachments</Typography>
               <Stack flexDirection="row" gap={1} alignItems="center">
@@ -1848,7 +1884,7 @@ const AddRequisition = (props) => {
             {/* TABLE */}
             <Box className="request__table">
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-                {`${transactionData ? "TRANSACTION NO." : "CURRENT ASSET"}`}{" "}
+                {`${transactionData ? "TRANSACTION NO." : "FIXED ASSET"}`}{" "}
                 {transactionData && transactionData?.transaction_number}
               </Typography>
 
