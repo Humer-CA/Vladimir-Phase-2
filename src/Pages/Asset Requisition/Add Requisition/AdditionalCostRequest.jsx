@@ -1959,7 +1959,7 @@ const AdditionalCostRequest = (props) => {
             {/* TABLE */}
             <Box className="request__table">
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-                {`${transactionData ? "TRANSACTION NO." : "CURRENT ASSET"}`}{" "}
+                {`${transactionData ? "TRANSACTION NO." : "FIXED ASSET"}`}{" "}
                 {transactionData && transactionData?.transaction_number}
               </Typography>
 
