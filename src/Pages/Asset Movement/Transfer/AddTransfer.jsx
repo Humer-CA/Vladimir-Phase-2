@@ -170,6 +170,7 @@ const AddTransfer = (props) => {
   );
 
   const data = transferData?.at(0);
+  // console.log(data);
 
   const [
     companyTrigger,
@@ -356,11 +357,12 @@ const AddTransfer = (props) => {
         "assets",
         data?.assets.map((asset) => ({
           id: asset.id,
-          fixed_asset_id: {
-            id: asset?.vladimir_tag_number.id,
-            vladimir_tag_number: asset?.vladimir_tag_number?.vladimir_tag_number,
-            asset_description: asset?.vladimir_tag_number?.asset_description,
-          },
+          // fixed_asset_id: {
+          //   id: asset?.vladimir_tag_number.id,
+          //   vladimir_tag_number: asset?.vladimir_tag_number?.vladimir_tag_number,
+          //   asset_description: asset?.vladimir_tag_number?.asset_description,
+          // },
+          fixed_asset_id: asset,
           asset_accountable: asset.accountable === "-" ? "Common" : asset.accountable,
           created_at: asset.created_at || asset.acquisition_date,
         }))
@@ -427,12 +429,18 @@ const AddTransfer = (props) => {
     const submitData = async () => {
       setIsLoading(true);
       await axios
-        .post(`${process.env.VLADIMIR_BASE_URL}/asset-transfer`, data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        .post(
+          `${process.env.VLADIMIR_BASE_URL}/${
+            edit ? `update-transfer-request/${transactionData?.transfer_number}` : "asset-transfer"
+          }`,
+          data,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         .then((res) => {
           // console.log(res);
           setIsLoading(false);
@@ -455,16 +463,17 @@ const AddTransfer = (props) => {
                 fontWeight: "bold",
               }}
             >
-              {updateRequest ? "CREATE" : "RESUBMIT"}
+              {!edit ? "CREATE" : "UPDATE"}
             </Typography>{" "}
             this Data?
           </Box>
         ),
-        onConfirm: () => {
+        onConfirm: async () => {
           try {
             dispatch(onLoading());
-            submitData();
+            await submitData();
             reset();
+            navigate(-1);
             dispatch(
               openToast({
                 message: "Transfer Request Successfully Added",
@@ -1001,7 +1010,9 @@ const AddTransfer = (props) => {
                     />
                   )}
 
-                  {watch("attachments") !== null && <RemoveFile title="Attachments" value="attachments" />}
+                  {watch("attachments") !== null && (!transactionData?.view || edit) && (
+                    <RemoveFile title="Attachments" value="attachments" />
+                  )}
                 </Stack>
               </Stack>
             </Box>
@@ -1051,11 +1062,14 @@ const AddTransfer = (props) => {
                               getOptionLabel={(option) =>
                                 `(${option.vladimir_tag_number}) - ${option.asset_description}`
                               }
-                              isOptionEqualToValue={(option, value) => option.id === value.id}
+                              isOptionEqualToValue={(option, value) => option?.id === value?.id}
                               renderInput={(params) => (
                                 <TextField required color="secondary" {...params} label="Tag Number" />
                               )}
-                              getOptionDisabled={(option) => !!fields.find((item) => item.fixed_asset_id === option.id)}
+                              getOptionDisabled={(option) =>
+                                !!fields.find((item) => item.fixed_asset_id?.id === option.id) && option?.transfer === 1
+                              }
+                              // getOptionDisabled={(option) => !!fields.find((item) => console.log(item))}
                               onChange={(_, newValue) => {
                                 if (newValue) {
                                   // onChange(newValue.id);
