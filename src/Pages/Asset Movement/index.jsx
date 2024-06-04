@@ -61,7 +61,7 @@ const AssetMovement = () => {
           <Box className="parentSidebar">
             <Box className="parentSidebar__container">
               <Box className="parentSidebar__wrapper">
-                {RequestList?.map((data, index) => {
+                {MovementList?.map((data, index) => {
                   return <Cards data={data} key={index} />;
                 })}
               </Box>
