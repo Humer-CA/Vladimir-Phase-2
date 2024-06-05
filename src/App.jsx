@@ -349,7 +349,7 @@ const router = createBrowserRouter([
                 element: <TransferApproving />,
               },
               {
-                path: "transfer/:transaction_number",
+                path: "transfer/:transfer_number",
                 element: <ViewApproveRequest />,
               },
               {
