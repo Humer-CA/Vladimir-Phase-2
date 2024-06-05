@@ -1610,7 +1610,9 @@ const AddRequisition = (props) => {
                 onOpen={() => (isUnitOfMeasurementSuccess ? null : uomTrigger())}
                 loading={isUnitOfMeasurementLoading}
                 disabled={updateRequest && disable}
-                getOptionLabel={(option) => option.uom_name}
+                getOptionLabel={(option) => {
+                  return `${option.uom_code} - ${option.uom_name}`;
+                }}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
