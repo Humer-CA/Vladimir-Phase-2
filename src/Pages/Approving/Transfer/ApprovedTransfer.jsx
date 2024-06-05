@@ -90,7 +90,7 @@ const ApprovedTransfer = (props) => {
   // CRUD -------------------------------------------
 
   const {
-    data: approvalData,
+    data: approvedTransferData,
     isLoading: approvalLoading,
     isSuccess: approvalSuccess,
     isError: approvalError,
@@ -106,7 +106,7 @@ const ApprovedTransfer = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  // console.log(approvalData);
+  // console.log(approvedTransferData);
   const handleViewRequisition = (data) => {
     navigate(`/approving/${data.transaction_number}`, {
       state: { ...data },
@@ -116,8 +116,8 @@ const ApprovedTransfer = (props) => {
   return (
     <Stack sx={{ height: "calc(100vh - 255px)" }}>
       {approvalLoading && <MasterlistSkeleton category={true} onAdd={true} />}
-      {approvalError && <ErrorFetching refetch={refetch} category={approvalData} error={errorData} />}
-      {approvalData && !approvalError && (
+      {approvalError && <ErrorFetching refetch={refetch} category={approvedTransferData} error={errorData} />}
+      {approvedTransferData && !approvalError && (
         <Box className="mcontainer__wrapper">
           <MasterlistToolbar
             path="#"
@@ -139,16 +139,6 @@ const ApprovedTransfer = (props) => {
                       },
                     }}
                   >
-                    <TableCell className="tbl-cell-category text-center">
-                      <TableSortLabel
-                        active={orderBy === `id`}
-                        direction={orderBy === `id` ? order : `asc`}
-                        onClick={() => onSort(`id`)}
-                      >
-                        ID No.
-                      </TableSortLabel>
-                    </TableCell>
-
                     <TableCell className="tbl-cell-category">
                       {/* <TableSortLabel
                         active={orderBy === `major_category_name`}
@@ -183,13 +173,13 @@ const ApprovedTransfer = (props) => {
                       </TableSortLabel>
                     </TableCell> */}
 
-                    <TableCell className="tbl-cell-category">
+                    <TableCell className="tbl-cell-category" align="center">
                       <TableSortLabel
-                        active={orderBy === `division_id`}
-                        direction={orderBy === `division_id` ? order : `asc`}
-                        onClick={() => onSort(`division_id`)}
+                        active={orderBy === `quantity`}
+                        direction={orderBy === `quantity` ? order : `asc`}
+                        onClick={() => onSort(`quantity`)}
                       >
-                        Quantity of PO
+                        Quantity
                       </TableSortLabel>
                     </TableCell>
 
@@ -213,9 +203,9 @@ const ApprovedTransfer = (props) => {
 
                     <TableCell className="tbl-cell-category text-center">
                       <TableSortLabel
-                        active={orderBy === `created_at`}
-                        direction={orderBy === `created_at` ? order : `asc`}
-                        onClick={() => onSort(`created_at`)}
+                        active={orderBy === `date_approved`}
+                        direction={orderBy === `date_approved` ? order : `asc`}
+                        onClick={() => onSort(`date_approved`)}
                       >
                         Date Approved
                       </TableSortLabel>
@@ -224,12 +214,12 @@ const ApprovedTransfer = (props) => {
                 </TableHead>
 
                 <TableBody>
-                  {approvalData.data.length === 0 ? (
-                    <NoRecordsFound approvalData={approvalData} category />
+                  {approvedTransferData.data.length === 0 ? (
+                    <NoRecordsFound approvedTransferData={approvedTransferData} category />
                   ) : (
                     <>
                       {approvalSuccess &&
-                        [...approvalData.data].sort(comparator(order, orderBy))?.map((data) => (
+                        [...approvedTransferData.data].sort(comparator(order, orderBy))?.map((data) => (
                           <TableRow
                             key={data.id}
                             hover={true}
@@ -239,8 +229,6 @@ const ApprovedTransfer = (props) => {
                               },
                             }}
                           >
-                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.id}</TableCell>
-
                             <TableCell className="tbl-cell-category ">
                               {data.asset_request?.transaction_number}
                             </TableCell>
@@ -258,21 +246,7 @@ const ApprovedTransfer = (props) => {
                               </Typography>
                             </TableCell>
 
-                            {/* <TableCell className="tbl-cell-category">
-                                <Typography
-                                  fontSize={14}
-                                  fontWeight={600}
-                                  color={"secondary"}
-                                  noWrap
-                                >
-                                  {data.approver?.employee_id}
-                                </Typography>
-                                <Typography fontSize={12} color={"gray"}>
-                                  {data.approver?.firstname}
-                                </Typography>
-                              </TableCell> */}
-
-                            <TableCell className="tbl-cell-category ">{data.number_of_item}</TableCell>
+                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.number_of_item}</TableCell>
 
                             <TableCell className="tbl-cell-category" align="center">
                               <IconButton onClick={() => handleViewRequisition(data)}>
@@ -320,9 +294,9 @@ const ApprovedTransfer = (props) => {
                 // },
               ]}
               component="div"
-              count={approvalSuccess ? approvalData.total : 0}
-              page={approvalSuccess ? approvalData.current_page - 1 : 0}
-              rowsPerPage={approvalSuccess ? parseInt(approvalData?.per_page) : 5}
+              count={approvalSuccess ? approvedTransferData.total : 0}
+              page={approvalSuccess ? approvedTransferData.current_page - 1 : 0}
+              rowsPerPage={approvalSuccess ? parseInt(approvedTransferData?.per_page) : 5}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />
