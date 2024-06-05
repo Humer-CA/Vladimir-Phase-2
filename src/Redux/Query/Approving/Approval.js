@@ -30,7 +30,7 @@ export const approvalApi = createApi({
     }),
 
     getApprovalIdApi: builder.query({
-      query: (params) => `asset-approval/${params.id}?page=${params.page}&per_page=${params.per_page}`,
+      query: (params) => `asset-approval/${params.transaction_number}?page=${params.page}&per_page=${params.per_page}`,
     }),
 
     patchApprovalStatusApi: builder.mutation({
