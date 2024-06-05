@@ -76,7 +76,7 @@ const ViewApproveRequest = (props) => {
     error: errorData,
     refetch: isApproveRefetch,
   } = useGetApprovalIdApiQuery(
-    { page: page, per_page: perPage, id: transactionData?.asset_approval_id },
+    { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
     { refetchOnMountOrArgChange: true }
   );
   console.log(approveRequestData);
