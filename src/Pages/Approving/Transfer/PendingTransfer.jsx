@@ -101,7 +101,7 @@ const PendingTransfer = (props) => {
   // CRUD -------------------------------------------
 
   const {
-    data: approvalData,
+    data: pendingTransferData,
     isLoading: approvalLoading,
     isSuccess: approvalSuccess,
     isError: approvalError,
@@ -116,7 +116,7 @@ const PendingTransfer = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(approvalData);
+  console.log(pendingTransferData);
 
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
 
@@ -265,8 +265,8 @@ const PendingTransfer = (props) => {
   return (
     <Stack sx={{ height: "calc(100vh - 255px)" }}>
       {approvalLoading && <MasterlistSkeleton category={true} onAdd={true} />}
-      {approvalError && <ErrorFetching refetch={refetch} category={approvalData} error={errorData} />}
-      {approvalData && !approvalError && (
+      {approvalError && <ErrorFetching refetch={refetch} category={pendingTransferData} error={errorData} />}
+      {pendingTransferData && !approvalError && (
         <Box className="mcontainer__wrapper">
           <MasterlistToolbar
             path="#"
@@ -289,19 +289,17 @@ const PendingTransfer = (props) => {
                       },
                     }}
                   >
-                    <TableCell className="tbl-cell-category text-center">
+                    <TableCell className="tbl-cell-category">
                       <TableSortLabel
                         active={orderBy === `id`}
                         direction={orderBy === `id` ? order : `asc`}
                         onClick={() => onSort(`id`)}
                       >
-                        ID No.
+                        Transfer No.
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category">Transaction No.</TableCell>
-
-                    <TableCell className="tbl-cell-category">Acquisition Details</TableCell>
+                    <TableCell className="tbl-cell-category">Description</TableCell>
 
                     <TableCell className="tbl-cell-category">
                       <TableSortLabel
@@ -323,7 +321,7 @@ const PendingTransfer = (props) => {
                       </TableSortLabel>
                     </TableCell> */}
 
-                    <TableCell className="tbl-cell-category">
+                    <TableCell className="tbl-cell-category" align="center">
                       <TableSortLabel
                         active={orderBy === `quantity`}
                         direction={orderBy === `quantity` ? order : `asc`}
@@ -343,9 +341,9 @@ const PendingTransfer = (props) => {
 
                     <TableCell className="tbl-cell-category text-center">
                       <TableSortLabel
-                        active={orderBy === `created_at`}
-                        direction={orderBy === `created_at` ? order : `asc`}
-                        onClick={() => onSort(`created_at`)}
+                        active={orderBy === `date_requested`}
+                        direction={orderBy === `date_requested` ? order : `asc`}
+                        onClick={() => onSort(`date_requested`)}
                       >
                         Date Requested
                       </TableSortLabel>
@@ -356,14 +354,14 @@ const PendingTransfer = (props) => {
                 </TableHead>
 
                 <TableBody>
-                  {approvalData?.data.length === 0 ? (
-                    <NoRecordsFound approvalData={approvalData} category />
+                  {pendingTransferData?.data.length === 0 ? (
+                    <NoRecordsFound pendingTransferData={pendingTransferData} category />
                   ) : (
                     <>
                       {approvalSuccess &&
-                        [...approvalData.data].sort(comparator(order, orderBy))?.map((data) => (
+                        [...pendingTransferData.data].sort(comparator(order, orderBy))?.map((data) => (
                           <TableRow
-                            key={data.id}
+                            key={data?.transfer_number}
                             hover={true}
                             sx={{
                               "&:last-child td, &:last-child th": {
@@ -371,15 +369,9 @@ const PendingTransfer = (props) => {
                               },
                             }}
                           >
-                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.id}</TableCell>
+                            <TableCell className="tbl-cell-category ">{data?.transfer_number}</TableCell>
 
-                            <TableCell className="tbl-cell-category ">
-                              {data.asset_request?.transaction_number}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell-category ">
-                              {data.asset_request?.acquisition_details}
-                            </TableCell>
+                            <TableCell className="tbl-cell-category ">{data?.description}</TableCell>
 
                             <TableCell className="tbl-cell-category">
                               <Typography fontSize={14} fontWeight={600} color={"secondary"} noWrap>
@@ -390,21 +382,7 @@ const PendingTransfer = (props) => {
                               </Typography>
                             </TableCell>
 
-                            {/* <TableCell className="tbl-cell-category">
-                                <Typography
-                                  fontSize={14}
-                                  fontWeight={600}
-                                  color={"secondary"}
-                                  noWrap
-                                >
-                                  {data.approver?.employee_id}
-                                </Typography>
-                                <Typography fontSize={12} color={"gray"}>
-                                  {data.approver?.firstname}
-                                </Typography>
-                              </TableCell> */}
-
-                            <TableCell className="tbl-cell-category ">{data.number_of_item}</TableCell>
+                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.quantity}</TableCell>
 
                             <TableCell className="tbl-cell-category text-center">
                               <IconButton onClick={() => handleViewRequisition(data)}>
@@ -413,19 +391,17 @@ const PendingTransfer = (props) => {
                             </TableCell>
 
                             <TableCell className="tbl-cell-category text-center capitalized">
-                              {data.status === "For Approval" && (
-                                <Chip
-                                  size="small"
-                                  variant="contained"
-                                  sx={{
-                                    background: "#f5cc2a2f",
-                                    color: "#c59e00",
-                                    fontSize: "0.7rem",
-                                    px: 1,
-                                  }}
-                                  label="PENDING"
-                                />
-                              )}
+                              <Chip
+                                size="small"
+                                variant="contained"
+                                sx={{
+                                  background: "#f5cc2a2f",
+                                  color: "#c59e00",
+                                  fontSize: "0.7rem",
+                                  px: 1,
+                                }}
+                                label="PENDING"
+                              />
                             </TableCell>
 
                             <TableCell className="tbl-cell-category tr-cen-pad45">
@@ -453,10 +429,10 @@ const PendingTransfer = (props) => {
 
           <Box className="mcontainer__pagination">
             <CustomTablePagination
-              total={approvalData?.total}
+              total={pendingTransferData?.total}
               success={approvalSuccess}
-              current_page={approvalData?.current_page}
-              per_page={approvalData?.per_page}
+              current_page={pendingTransferData?.current_page}
+              per_page={pendingTransferData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />
