@@ -78,6 +78,7 @@ import TransferApproving from "./Pages/Approving/Transfer/TransferApproval";
 import PullOutApproving from "./Pages/Approving/Pullout/PullOutApproving";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import Approving from "./Pages/Approving";
+import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
 
 const router = createBrowserRouter([
   {
@@ -350,7 +351,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "transfer/:transfer_number",
-                element: <ViewApproveRequest />,
+                element: <ViewTransfer />,
               },
               {
                 path: "pull-out",
