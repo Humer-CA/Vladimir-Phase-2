@@ -30,7 +30,7 @@ const TransferApproving = () => {
           <Tabs onChange={handleChange} value={value}>
             <Tab
               label={
-                <Badge color="error" badgeContent={notifData?.toApproveCount}>
+                <Badge color="error" badgeContent={null}>
                   Pending Transfer
                 </Badge>
               }

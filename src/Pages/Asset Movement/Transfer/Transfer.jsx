@@ -59,7 +59,6 @@ const Transfer = () => {
   const [filter, setFilter] = useState([]);
   const [onTransfer, setOnTransfer] = useState(true);
   const [transactionIdData, setTransactionIdData] = useState("");
-  const view = true;
 
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
@@ -272,6 +271,7 @@ const Transfer = () => {
   };
 
   const handleViewTransfer = (data) => {
+    const view = true;
     navigate(`add-transfer/${data.transfer_number}`, {
       state: { ...data, view },
     });
