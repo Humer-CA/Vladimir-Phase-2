@@ -16,7 +16,6 @@ import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManage
 import {
   Box,
   Chip,
-  Dialog,
   IconButton,
   Stack,
   Table,
@@ -24,23 +23,18 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
-  TextField,
   Typography,
 } from "@mui/material";
-import { Help, Report, ReportProblem, Visibility } from "@mui/icons-material";
-import {
-  useGetApprovalApiQuery,
-  useLazyGetNextRequestQuery,
-  usePatchApprovalStatusApiMutation,
-} from "../../../Redux/Query/Approving/Approval";
+import { Help, Report, Visibility } from "@mui/icons-material";
+import { usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
 import { useNavigate } from "react-router-dom";
 
 import { notificationApi } from "../../../Redux/Query/Notification";
 import { useGetTransferApprovalApiQuery } from "../../../Redux/Query/Movement/Transfer";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
+import { usePatchTransferApprovalStatusApiMutation } from "../../../Redux/Query/Approving/TransferApproval";
 
 const PendingTransfer = (props) => {
   const [search, setSearch] = useState("");
@@ -116,13 +110,10 @@ const PendingTransfer = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(pendingTransferData);
-
-  const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
+  const [patchApprovalStatus, { isLoading }] = usePatchTransferApprovalStatusApiMutation();
 
   // CONFIRMATION
-  const onApprovalApproveHandler = (id) => {
-    // return console.log(id);
+  const onApprovalApproveHandler = (transfer_number) => {
     dispatch(
       openConfirm({
         icon: Help,
@@ -149,7 +140,7 @@ const PendingTransfer = (props) => {
             dispatch(onLoading());
             const result = await patchApprovalStatus({
               action: "Approve",
-              asset_approval_id: id,
+              transfer_number: transfer_number,
             }).unwrap();
 
             dispatch(
@@ -188,7 +179,7 @@ const PendingTransfer = (props) => {
     );
   };
 
-  const onApprovalReturnHandler = (id) => {
+  const onApprovalReturnHandler = (transfer_number) => {
     dispatch(
       openConfirm({
         icon: Report,
@@ -218,7 +209,7 @@ const PendingTransfer = (props) => {
             dispatch(onLoading());
             const result = await patchApprovalStatus({
               action: "Return",
-              asset_approval_id: id,
+              transfer_number: transfer_number,
               remarks: data,
             }).unwrap();
 
@@ -256,9 +247,10 @@ const PendingTransfer = (props) => {
     );
   };
 
-  const handleViewRequisition = (data) => {
-    navigate(`/approving/${data.transaction_number}`, {
-      state: { ...data },
+  const handleViewTransfer = (data) => {
+    const view = true;
+    navigate(`/approving/transfer/${data?.transfer_number}`, {
+      state: { ...data, view },
     });
   };
 
@@ -385,7 +377,7 @@ const PendingTransfer = (props) => {
                             <TableCell className="tbl-cell-category tr-cen-pad45">{data.quantity}</TableCell>
 
                             <TableCell className="tbl-cell-category text-center">
-                              <IconButton onClick={() => handleViewRequisition(data)}>
+                              <IconButton onClick={() => handleViewTransfer(data)}>
                                 <Visibility color="secondary" />
                               </IconButton>
                             </TableCell>
