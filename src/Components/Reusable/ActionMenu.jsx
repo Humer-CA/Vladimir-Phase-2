@@ -84,7 +84,12 @@ const ActionMenu = (props) => {
   };
 
   const handleApprovalStatus = () => {
-    onApprovalApproveHandler(data?.id, status);
+    if (data?.transaction_number) {
+      onApprovalApproveHandler(data?.transaction_number, status);
+    }
+    if (data?.transfer_number) {
+      onApprovalApproveHandler(data?.transfer_number, status);
+    }
     handleClose();
   };
 
