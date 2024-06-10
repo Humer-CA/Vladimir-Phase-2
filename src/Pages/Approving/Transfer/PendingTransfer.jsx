@@ -149,7 +149,7 @@ const PendingTransfer = (props) => {
                 duration: 5000,
               })
             );
-
+            refetch();
             dispatch(closeConfirm());
             // notifRefetch();
             // dispatch(notificationApi.util.resetApiState());
@@ -219,7 +219,7 @@ const PendingTransfer = (props) => {
                 duration: 5000,
               })
             );
-
+            refetch();
             dispatch(closeConfirm());
           } catch (err) {
             if (err?.status === 422) {
