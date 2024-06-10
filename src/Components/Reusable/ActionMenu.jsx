@@ -94,7 +94,12 @@ const ActionMenu = (props) => {
   };
 
   const handleReturnStatus = () => {
-    onApprovalReturnHandler(data?.id, status);
+    if (data?.transaction_number) {
+      onApprovalReturnHandler(data?.transaction_number, status);
+    }
+    if (data?.transfer_number) {
+      onApprovalReturnHandler(data?.transfer_number, status);
+    }
     handleClose();
   };
 
