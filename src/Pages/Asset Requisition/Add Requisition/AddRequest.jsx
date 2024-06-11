@@ -113,6 +113,7 @@ import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
+import { useLazyGetWarehouseAllApiQuery } from "../../../Redux/Query/Masterlist/Warehouse";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -123,13 +124,14 @@ const schema = yup.object().shape({
   // })
   cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
+  warehouse_id: yup.object().required().label("Warehouse").typeError("Warehouse is a required field"),
 
-  // department_id: yup.object().required().label("Department").typeError("Department is a required field"),
-  // company_id: yup.object().required().label("Company").typeError("Company is a required field"),
-  // business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
-  // unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
-  // subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
-  // location_id: yup.object().required().label("Location").typeError("Location is a required field"),
+  department_id: yup.object().required().label("Department").typeError("Department is a required field"),
+  company_id: yup.object().required().label("Company").typeError("Company is a required field"),
+  business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
+  unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
+  subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
+  location_id: yup.object().required().label("Location").typeError("Location is a required field"),
   // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
   accountable: yup
@@ -175,13 +177,14 @@ const AddRequisition = (props) => {
     type_of_request_id: null,
     cip_number: "",
     attachment_type: null,
+    warehouse_id: null,
 
-    // department_id: null,
-    // company_id: null,
-    // business_unit_id: null,
-    // unit_id: null,
-    // subunit_id: null,
-    // location_id: null,
+    department_id: null,
+    company_id: null,
+    business_unit_id: null,
+    unit_id: null,
+    subunit_id: null,
+    location_id: null,
     // account_title_id: null,
 
     asset_description: "",
@@ -268,6 +271,17 @@ const AddRequisition = (props) => {
       refetch: isTypeOfRequestRefetch,
     },
   ] = useLazyGetTypeOfRequestAllApiQuery();
+
+  const [
+    warehouseTrigger,
+    {
+      data: warehouseData = [],
+      isLoading: isWarehouseLoading,
+      isSuccess: isWarehouseSuccess,
+      isError: isWarehouseError,
+      refetch: isWarehouseRefetch,
+    },
+  ] = useLazyGetWarehouseAllApiQuery();
 
   const [
     companyTrigger,
@@ -406,14 +420,14 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
-      warehouse: null,
+      warehouse_id: null,
 
-      // company_id: null,
-      // business_unit_id: null,
-      // department_id: null,
-      // unit_id: null,
-      // subunit_id: null,
-      // location_id: null,
+      company_id: null,
+      business_unit_id: null,
+      department_id: null,
+      unit_id: null,
+      subunit_id: null,
+      location_id: null,
       // account_title_id: null,
       acquisition_details: "",
 
@@ -482,12 +496,12 @@ const AddRequisition = (props) => {
       setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("warehouse", updateRequest?.warehouse);
-      // setValue("department_id", updateRequest?.department);
-      // setValue("company_id", updateRequest?.company);
-      // setValue("business_unit_id", updateRequest?.business_unit);
-      // setValue("unit_id", updateRequest?.unit);
-      // setValue("subunit_id", updateRequest?.subunit);
-      // setValue("location_id", updateRequest?.location);
+      setValue("department_id", updateRequest?.department);
+      setValue("company_id", updateRequest?.company);
+      setValue("business_unit_id", updateRequest?.business_unit);
+      setValue("unit_id", updateRequest?.unit);
+      setValue("subunit_id", updateRequest?.subunit);
+      setValue("location_id", updateRequest?.location);
       // setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
       setValue("accountable", accountable);
@@ -588,14 +602,14 @@ const AddRequisition = (props) => {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
       cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
-      warehouse: formData?.warehouse?.toString(),
+      warehouse_id: formData?.warehouse_id?.id?.toString(),
 
-      // department_id: formData?.department_id.id?.toString(),
-      // company_id: updatingCoa("company_id", "company"),
-      // business_unit_id: updatingCoa("business_unit_id", "business_unit"),
-      // unit_id: formData.unit_id.id?.toString(),
-      // subunit_id: formData.subunit_id.id?.toString(),
-      // location_id: formData?.location_id.id?.toString(),
+      department_id: formData?.department_id.id?.toString(),
+      company_id: updatingCoa("company_id", "company"),
+      business_unit_id: updatingCoa("business_unit_id", "business_unit"),
+      unit_id: formData.unit_id.id?.toString(),
+      subunit_id: formData.subunit_id.id?.toString(),
+      location_id: formData?.location_id.id?.toString(),
       // account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
@@ -628,35 +642,35 @@ const AddRequisition = (props) => {
 
     const token = localStorage.getItem("token");
 
-    // const validation = () => {
-    //   const coaValidation = (name, value) => {
-    //     transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
-    //   };
-    //   if (transactionData) {
-    //     return (
-    //       (transactionData &&
-    //         (coaValidation("department", "department_id") ||
-    //           coaValidation("unit", "unit_id") ||
-    //           coaValidation("subunit", "subunit_id") ||
-    //           coaValidation("location", "location_id"))) ||
-    //       false
-    //     );
-    //   } else {
-    //     if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
-    //       return true;
-    //     }
-    //     if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
-    //       return true;
-    //     }
-    //     if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
-    //       return true;
-    //     }
-    //     if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    // };
+    const validation = () => {
+      const coaValidation = (name, value) => {
+        transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+      };
+      if (transactionData) {
+        return (
+          (transactionData &&
+            (coaValidation("department", "department_id") ||
+              coaValidation("unit", "unit_id") ||
+              coaValidation("subunit", "subunit_id") ||
+              coaValidation("location", "location_id"))) ||
+          false
+        );
+      } else {
+        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+          return true;
+        }
+        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+          return true;
+        }
+        return false;
+      }
+    };
 
     const submitData = () => {
       setIsLoading(true);
@@ -693,14 +707,14 @@ const AddRequisition = (props) => {
                 type_of_request_id: formData?.type_of_request_id,
                 cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
-                warehouse: formData?.warehouse,
+                warehouse_id: formData?.warehouse,
 
-                // company_id: formData?.company_id,
-                // business_unit_id: formData?.business_unit_id,
-                // department_id: formData?.department_id,
-                // unit_id: formData?.unit_id,
-                // subunit_id: formData?.subunit_id,
-                // location_id: formData?.location_id,
+                company_id: formData?.company_id,
+                business_unit_id: formData?.business_unit_id,
+                department_id: formData?.department_id,
+                unit_id: formData?.unit_id,
+                subunit_id: formData?.subunit_id,
+                location_id: formData?.location_id,
                 // account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
 
@@ -1145,12 +1159,12 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
-      warehouse: null,
+      warehouse_id: null,
 
-      // company_id: null,
-      // department_id: null,
-      // subunit_id: null,
-      // location_id: null,
+      company_id: null,
+      department_id: null,
+      subunit_id: null,
+      location_id: null,
       // account_title_id: null,
       acquisition_details: "",
 
@@ -1271,7 +1285,6 @@ const AddRequisition = (props) => {
                 name="attachment_type"
                 options={attachmentType}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
-
                 disabled={updateRequest && disable}
                 renderInput={(params) => (
                   <TextField
@@ -1286,21 +1299,21 @@ const AddRequisition = (props) => {
 
               <CustomAutoComplete
                 control={control}
-                name="warehouse"
-                options={["Depot", "Feedmill", "Service Group"]}
-                // onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
-                // loading={isTypeOfRequestLoading}
+                name="warehouse_id"
+                options={warehouseData}
+                onOpen={() => (isWarehouseSuccess ? null : warehouseTrigger())}
+                loading={isWarehouseLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
                 disabled={updateRequest && disable}
-                // getOptionLabel={(option) => option.type_of_request_name}
-                // isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.warehouse_name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     color="secondary"
                     label="Warehouse"
-                    // error={!!errors?.type_of_request_id}
-                    // helperText={errors?.type_of_request_id?.message}
+                    error={!!errors?.warehouse_id}
+                    helperText={errors?.warehouse_id?.message}
                   />
                 )}
               />
@@ -1308,7 +1321,7 @@ const AddRequisition = (props) => {
 
             <Divider />
 
-            {/* <Box sx={BoxStyle}>
+            <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Charging Information</Typography>
               <CustomAutoComplete
                 autoComplete
@@ -1468,7 +1481,7 @@ const AddRequisition = (props) => {
                 )}
               />
 
-              <CustomAutoComplete
+              {/* <CustomAutoComplete
                 name="account_title_id"
                 control={control}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
@@ -1487,7 +1500,8 @@ const AddRequisition = (props) => {
                     helperText={errors?.account_title_id?.message}
                   />
                 )}
-              />
+              /> */}
+
               <CustomAutoComplete
                 autoComplete
                 name="accountability"
@@ -1537,7 +1551,7 @@ const AddRequisition = (props) => {
               )}
             </Box>
 
-            <Divider /> */}
+            <Divider />
 
             {/* Asset Information */}
             <Box sx={BoxStyle}>
