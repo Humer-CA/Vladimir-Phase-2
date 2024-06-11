@@ -29,6 +29,7 @@ import { sedarUsersApi } from "../Query/SedarUserApi";
 import { typeOfRequestApi } from "../Query/Masterlist/TypeOfRequest";
 import { capexApi } from "../Query/Masterlist/Capex";
 import { subCapexApi } from "../Query/Masterlist/SubCapex";
+import { warehouseApi } from "../Query/Masterlist/Warehouse";
 import { majorCategoryApi } from "../Query/Masterlist/Category/MajorCategory";
 import { minorCategoryApi } from "../Query/Masterlist/Category/MinorCategory";
 // import { categoryListApi } from '../Query/Masterlist/Category/CategoryList'
@@ -116,6 +117,7 @@ export const store = configureStore({
     [typeOfRequestApi.reducerPath]: typeOfRequestApi.reducer,
     [capexApi.reducerPath]: capexApi.reducer,
     [subCapexApi.reducerPath]: subCapexApi.reducer,
+    [warehouseApi.reducerPath]: warehouseApi.reducer,
     // [serviceProviderApi.reducerPath]: serviceProviderApi.reducer,
 
     [majorCategoryApi.reducerPath]: majorCategoryApi.reducer,
@@ -194,6 +196,7 @@ export const store = configureStore({
       typeOfRequestApi.middleware,
       capexApi.middleware,
       subCapexApi.middleware,
+      warehouseApi.middleware,
 
       // serviceProviderApi.middleware,
       majorCategoryApi.middleware,
