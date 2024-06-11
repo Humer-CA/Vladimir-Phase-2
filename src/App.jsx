@@ -79,6 +79,7 @@ import PullOutApproving from "./Pages/Approving/Pullout/PullOutApproving";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import Approving from "./Pages/Approving";
 import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
+import Warehouse from "./Pages/Masterlist/Warehouse";
 
 const router = createBrowserRouter([
   {
@@ -159,6 +160,10 @@ const router = createBrowserRouter([
                 element: <Capex />,
               },
               {
+                path: "warehouse",
+                element: <Warehouse />,
+              },
+              {
                 path: "service-provider",
                 element: <ServiceProvider />,
               },
@@ -166,12 +171,10 @@ const router = createBrowserRouter([
                 path: "category",
                 element: <Category />,
               },
-
               {
                 path: "status-category",
                 element: <FaStatusCategory />,
               },
-
               {
                 path: "unit-of-measurement",
                 element: <UnitOfMeasurement />,
