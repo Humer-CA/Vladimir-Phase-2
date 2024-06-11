@@ -318,6 +318,18 @@ const AddRole = (props) => {
 
           <FormControlLabel
             disabled={data.action === "view"}
+            label="Warehouse"
+            value="warehouse"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("warehouse")}
+              />
+            }
+          />
+
+          <FormControlLabel
+            disabled={data.action === "view"}
             label="Category"
             value="category"
             control={
@@ -633,6 +645,7 @@ const AddRole = (props) => {
     "division",
     "type-of-request",
     "capex",
+    "warehouse",
     "category",
     "status-category",
     "unit-of-measurement",
@@ -679,6 +692,7 @@ const AddRole = (props) => {
     "division",
     "type-of-request",
     "capex",
+    "warehouse",
     "category",
     "status-category",
   ];
