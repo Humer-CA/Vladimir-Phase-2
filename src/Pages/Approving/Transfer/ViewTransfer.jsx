@@ -45,6 +45,7 @@ import {
   Info,
   Remove,
   RemoveCircle,
+  Report,
   Undo,
 } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
@@ -628,8 +629,9 @@ const AddTransfer = (props) => {
             );
 
             dispatch(closeConfirm());
-            const next = await getNextRequest().unwrap();
-            navigate(`/approving/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
+            navigate(-1);
+            // const next = await getNextRequest().unwrap();
+            // navigate(`/approving/${next?.[0].transfer_number}`, { state: next?.[0], replace: true });
           } catch (err) {
             if (err?.status === 422) {
               dispatch(
@@ -691,13 +693,14 @@ const AddTransfer = (props) => {
 
             dispatch(
               openToast({
-                message: result.message,
+                message: result?.message,
                 duration: 5000,
               })
             );
-
             dispatch(closeConfirm());
+            navigate(-1);
           } catch (err) {
+            console.log(err);
             if (err?.status === 422) {
               dispatch(
                 openToast({
@@ -708,7 +711,6 @@ const AddTransfer = (props) => {
                 })
               );
             } else if (err?.status !== 422) {
-              console.log(err);
               dispatch(
                 openToast({
                   message: "Something went wrong. Please try again.",
@@ -1092,7 +1094,8 @@ const AddTransfer = (props) => {
                       Action
                     </TableCell>
                   </TableRow>
-                </TableHead>
+                </TableHead>{" "}
+                |
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
