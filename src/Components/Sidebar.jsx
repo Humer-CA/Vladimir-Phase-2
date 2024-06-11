@@ -86,6 +86,7 @@ import {
   MoveDown,
   HomeRepairService,
   PlaylistRemove,
+  Warehouse,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../Redux/Query/Notification";
 
@@ -227,11 +228,17 @@ const Sidebar = () => {
           path: "/masterlist/capex",
           permission: "capex",
         },
+        {
+          label: "Warehouse",
+          icon: Warehouse,
+          path: "/masterlist/warehouse",
+          permission: "warehouse",
+        },
         // {
         //   label: "Service Provider",
         //   icon: Construction,
         //   path: "/masterlist/service-provider",
-        //   permission: [],
+        //   permission: "service-provider",
         // },
         {
           label: "Category",
