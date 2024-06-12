@@ -1102,7 +1102,7 @@ const AddRequisition = (props) => {
       unit,
       subunit,
       location,
-      account_title,
+      // account_title,
       accountability,
       accountable,
       acquisition_details,
@@ -1131,7 +1131,7 @@ const AddRequisition = (props) => {
       unit,
       subunit,
       location,
-      account_title,
+      // account_title,
       accountability,
       accountable,
       acquisition_details,
@@ -2014,9 +2014,9 @@ const AddRequisition = (props) => {
                               <Typography fontSize={10} color="gray">
                                 {`(${data.location?.location_code}) - ${data.location?.location_name}`}
                               </Typography>
-                              <Typography fontSize={10} color="gray">
+                              {/* <Typography fontSize={10} color="gray">
                                 {`(${data.account_title?.account_title_code}) - ${data.account_title?.account_title_name}`}
-                              </Typography>
+                              </Typography> */}
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
