@@ -230,7 +230,7 @@ const Requisition = () => {
       ? navigate(`/asset-requisition/requisition/additional-cost/${data.transaction_number}`, {
           state: { ...data },
         })
-      : navigate(`/asset-requisition/requisition/add-requisition/${data.transaction_number}`, {
+      : navigate(`/asset-requisition/requisition/view-requisition/${data.transaction_number}`, {
           state: { ...data },
         });
   };
