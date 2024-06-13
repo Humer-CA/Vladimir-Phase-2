@@ -27,7 +27,7 @@ const schema = yup.object().shape({
 
 const LoginPage = () => {
   const [loginErr, setLoginErr] = useState(null);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   // console.log(loading);
@@ -54,10 +54,10 @@ const LoginPage = () => {
 
   const onSubmitHandler = async (data) => {
     try {
-      setloading(true);
+      setLoading(true);
 
       const res = await vladimirAPI.post("/auth/login", data);
-      // console.log(res);
+      console.log(res);
 
       localStorage.setItem("token", res.data.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.data.user));
@@ -115,9 +115,9 @@ const LoginPage = () => {
         reset();
       }
 
-      setloading(false);
+      setLoading(false);
     } catch (err) {
-      setloading(false);
+      setLoading(false);
       if (err.request.status === 0) {
         dispatch(
           openToast({
