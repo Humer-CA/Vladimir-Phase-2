@@ -26,7 +26,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -35,6 +34,7 @@ import { Help, ReportProblem } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ActionMenu from "../../Components/Reusable/ActionMenu";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const AccountTitle = () => {
   const [search, setSearch] = useState("");
@@ -407,15 +407,11 @@ const AccountTitle = () => {
             </Box>
 
             <Box className="mcontainer__pagination">
-              <TablePagination
-                rowsPerPageOptions={[
-                  5, 10, 15, 100,
-                  // { label: "All", value: parseInt(accountTitleApiData?.total) },
-                ]}
-                component="div"
-                count={accountTitleApiSuccess ? accountTitleApiData.total : 0}
-                page={accountTitleApiSuccess ? accountTitleApiData.current_page - 1 : 0}
-                rowsPerPage={accountTitleApiSuccess ? parseInt(accountTitleApiData?.per_page) : 5}
+              <CustomTablePagination
+                total={accountTitleApiData?.total}
+                success={accountTitleApiSuccess}
+                current_page={accountTitleApiData?.current_page}
+                per_page={accountTitleApiData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />

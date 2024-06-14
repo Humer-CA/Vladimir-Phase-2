@@ -29,7 +29,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -39,6 +38,7 @@ import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../ErrorFetching";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import moment from "moment";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const UserAccounts = () => {
   const [search, setSearch] = useState("");
@@ -580,16 +580,13 @@ const UserAccounts = () => {
             >
               EXPORT
             </Button>
-
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(users?.total) }]}
-              component="div"
-              count={usersSuccess ? users.total : 0}
-              page={usersSuccess ? users.current_page - 1 : 0}
-              rowsPerPage={usersSuccess ? parseInt(users?.per_page) : 5}
+            <CustomTablePagination
+              total={users?.total}
+              success={usersSuccess}
+              current_page={users?.current_page}
+              per_page={users?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
-              sx={{ flexWrap: "wrap" }}
             />
           </Box>
 

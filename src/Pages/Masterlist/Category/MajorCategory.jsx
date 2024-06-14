@@ -27,12 +27,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
 import { Help, ReportProblem } from "@mui/icons-material";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const MajorCategory = () => {
   const [search, setSearch] = useState("");
@@ -360,18 +360,11 @@ const MajorCategory = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 50,
-                // {
-                //   label: "All",
-                //   value: parseInt(majorCategoryData?.total),
-                // },
-              ]}
-              component="div"
-              count={majorCategorySuccess ? majorCategoryData.total : 0}
-              page={majorCategorySuccess ? majorCategoryData.current_page - 1 : 0}
-              rowsPerPage={majorCategorySuccess ? parseInt(majorCategoryData?.per_page) : 5}
+            <CustomTablePagination
+              total={majorCategoryData?.total}
+              success={majorCategorySuccess}
+              current_page={majorCategoryData?.current_page}
+              per_page={majorCategoryData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

@@ -23,7 +23,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -34,6 +33,7 @@ import ErrorFetching from "../ErrorFetching";
 import AddDivision from "./AddEdit/AddDivision";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import { openDrawer } from "../../Redux/StateManagement/booleanStateSlice";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Division = () => {
   const [search, setSearch] = useState("");
@@ -366,12 +366,11 @@ const Division = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(divisionData?.total) }]}
-              component="div"
-              count={divisionSuccess ? divisionData.total : 0}
-              page={divisionSuccess ? divisionData.current_page - 1 : 0}
-              rowsPerPage={divisionSuccess ? parseInt(divisionData?.per_page) : 5}
+            <CustomTablePagination
+              total={divisionData?.total}
+              success={divisionSuccess}
+              current_page={divisionData?.current_page}
+              per_page={divisionData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

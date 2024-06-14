@@ -27,12 +27,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
 import { Help, ReportProblem } from "@mui/icons-material";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const AssetStatus = () => {
   const [search, setSearch] = useState("");
@@ -328,12 +328,11 @@ const AssetStatus = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(assetStatusData?.total) }]}
-              component="div"
-              count={assetStatusSuccess ? assetStatusData.total : 0}
-              page={assetStatusSuccess ? assetStatusData.current_page - 1 : 0}
-              rowsPerPage={assetStatusSuccess ? parseInt(assetStatusData?.per_page) : 5}
+            <CustomTablePagination
+              total={assetStatusData?.total}
+              success={assetStatusSuccess}
+              current_page={assetStatusData?.current_page}
+              per_page={assetStatusData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

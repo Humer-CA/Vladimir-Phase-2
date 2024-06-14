@@ -24,7 +24,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -33,6 +32,7 @@ import { Help, ReportProblem } from "@mui/icons-material";
 import MasterlistSkeleton from "../../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../../ErrorFetching";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const MinorCategory = () => {
   const [search, setSearch] = useState("");
@@ -408,18 +408,11 @@ const MinorCategory = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 50,
-                // {
-                //   label: "All",
-                //   value: parseInt(minorCategoryData?.total),
-                // },
-              ]}
-              component="div"
-              count={minorCategorySuccess ? minorCategoryData.total : 0}
-              page={minorCategorySuccess ? minorCategoryData.current_page - 1 : 0}
-              rowsPerPage={minorCategorySuccess ? parseInt(minorCategoryData?.per_page) : 5}
+            <CustomTablePagination
+              total={minorCategoryData?.total}
+              success={minorCategorySuccess}
+              current_page={minorCategoryData?.current_page}
+              per_page={minorCategoryData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

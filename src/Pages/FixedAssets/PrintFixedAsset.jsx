@@ -20,7 +20,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   TextField,
@@ -723,21 +722,6 @@ const PrintFixedAsset = (props) => {
           </TableContainer>
 
           <Box className="mcontainer__pagination">
-            {/* <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(fixedAssetData?.total) }]}
-              component="div"
-              count={fixedAssetSuccess ? fixedAssetData?.total : 0}
-              page={fixedAssetSuccess ? fixedAssetData?.current_page - 1 : 0}
-              rowsPerPage={fixedAssetSuccess ? parseInt(fixedAssetData?.per_page) : 5}
-              onPageChange={(_, page) => {
-                pageHandler(_, page);
-                setValue("tagNumber", []);
-              }}
-              onRowsPerPageChange={(e) => {
-                limitHandler(e);
-                setValue("tagNumber", []);
-              }}
-            /> */}
             <CustomTablePagination
               total={fixedAssetData?.total}
               success={fixedAssetSuccess}

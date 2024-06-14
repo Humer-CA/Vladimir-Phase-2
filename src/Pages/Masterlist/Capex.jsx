@@ -33,7 +33,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -43,6 +42,7 @@ import { ExpandCircleDown, ExpandCircleDownOutlined, Help, IosShareRounded, Repo
 import useExcel from "../../Hooks/Xlsx";
 
 import { openExport, closeImport } from "../../Redux/StateManagement/booleanStateSlice";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Capex = () => {
   const [search, setSearch] = useState("");
@@ -399,15 +399,11 @@ const Capex = () => {
                 EXPORT
               </Button>
 
-              <TablePagination
-                rowsPerPageOptions={[
-                  5, 10, 15, 100,
-                  // { label: "All", value: parseInt(capexData?.total) }
-                ]}
-                component="div"
-                count={capexSuccess ? capexData?.total : 0}
-                page={capexSuccess ? capexData?.current_page - 1 : 0}
-                rowsPerPage={capexSuccess ? parseInt(capexData?.per_page) : 5}
+              <CustomTablePagination
+                total={capexData?.total}
+                success={capexSuccess}
+                current_page={capexData?.current_page}
+                per_page={capexData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />

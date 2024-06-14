@@ -28,12 +28,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
 import { Help, ReportProblem } from "@mui/icons-material";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const CycleCountStatus = () => {
   const [search, setSearch] = useState("");
@@ -329,12 +329,11 @@ const CycleCountStatus = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(cycleCountStatusData?.total) }]}
-              component="div"
-              count={cycleCountStatusSuccess ? cycleCountStatusData.total : 0}
-              page={cycleCountStatusSuccess ? cycleCountStatusData.current_page - 1 : 0}
-              rowsPerPage={cycleCountStatusSuccess ? parseInt(cycleCountStatusData?.per_page) : 5}
+            <CustomTablePagination
+              total={cycleCountStatusData?.total}
+              success={cycleCountStatusSuccess}
+              current_page={cycleCountStatusData?.current_page}
+              per_page={cycleCountStatusData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

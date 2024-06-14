@@ -23,13 +23,13 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
 import { ExpandCircleDownOutlined, Help, ReportProblem } from "@mui/icons-material";
 import MasterlistSkeleton from "../../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../../ErrorFetching";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const CategoryList = () => {
   const category = true;
@@ -220,20 +220,11 @@ const CategoryList = () => {
           </TableContainer>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5,
-                10,
-                15,
-                {
-                  label: "All",
-                  value: parseInt(categoryListData?.total),
-                },
-              ]}
-              component="div"
-              count={categoryListSuccess ? categoryListData.total : 0}
-              page={categoryListSuccess ? categoryListData.current_page - 1 : 0}
-              rowsPerPage={categoryListSuccess ? parseInt(categoryListData?.per_page) : 5}
+            <CustomTablePagination
+              total={categoryListData?.total}
+              success={categoryListSuccess}
+              current_page={categoryListData?.current_page}
+              per_page={categoryListData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

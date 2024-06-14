@@ -26,7 +26,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -36,6 +35,7 @@ import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ViewTagged from "../../Components/Reusable/ViewTagged";
 import { closeDialog, openDialog, openDrawer } from "../../Redux/StateManagement/booleanStateSlice";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Department = () => {
   const [search, setSearch] = useState("");
@@ -441,15 +441,11 @@ const Department = () => {
             </Box>
 
             <Box className="mcontainer__pagination">
-              <TablePagination
-                rowsPerPageOptions={[
-                  5, 10, 15, 100,
-                  // { label: "All", value: parseInt(departmentApiData?.total) }
-                ]}
-                component="div"
-                count={departmentApiSuccess ? departmentApiData.total : 0}
-                page={departmentApiSuccess ? departmentApiData.current_page - 1 : 0}
-                rowsPerPage={departmentApiSuccess ? parseInt(departmentApiData?.per_page) : 5}
+              <CustomTablePagination
+                total={departmentApiData?.total}
+                success={departmentApiSuccess}
+                current_page={departmentApiData?.current_page}
+                per_page={departmentApiData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />

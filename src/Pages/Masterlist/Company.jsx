@@ -23,7 +23,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -31,6 +30,7 @@ import {
 import { Help } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Company = () => {
   const [search, setSearch] = useState("");
@@ -336,15 +336,11 @@ const Company = () => {
             </Box>
 
             <Box className="mcontainer__pagination">
-              <TablePagination
-                rowsPerPageOptions={[
-                  5, 10, 15, 100,
-                  // { label: "All", value: parseInt(companyApiData?.total) },
-                ]}
-                component="div"
-                count={companyApiSuccess ? companyApiData.total : 0}
-                page={companyApiSuccess ? companyApiData.current_page - 1 : 0}
-                rowsPerPage={companyApiSuccess ? parseInt(companyApiData?.per_page) : 5}
+              <CustomTablePagination
+                total={companyApiData?.total}
+                success={companyApiSuccess}
+                current_page={companyApiData?.current_page}
+                per_page={companyApiData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />

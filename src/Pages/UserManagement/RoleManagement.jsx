@@ -26,7 +26,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -35,6 +34,7 @@ import { Help, ReportProblem } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../ErrorFetching";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Role = () => {
   const [search, setSearch] = useState("");
@@ -364,15 +364,11 @@ const Role = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 100,
-                //  { label: "All", value: parseInt(roleData?.total) }
-              ]}
-              component="div"
-              count={roleSuccess ? roleData.total : 0}
-              page={roleSuccess ? roleData.current_page - 1 : 0}
-              rowsPerPage={roleSuccess ? parseInt(roleData?.per_page) : 5}
+            <CustomTablePagination
+              total={roleData?.total}
+              success={roleSuccess}
+              current_page={roleData?.current_page}
+              per_page={roleData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

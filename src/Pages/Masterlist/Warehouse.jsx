@@ -23,7 +23,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -34,6 +33,7 @@ import ErrorFetching from "../ErrorFetching";
 import AddWarehouse from "./AddEdit/AddWarehouse";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import { openDrawer } from "../../Redux/StateManagement/booleanStateSlice";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Warehouse = () => {
   const [search, setSearch] = useState("");
@@ -343,12 +343,11 @@ const Warehouse = () => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 15, { label: "All", value: parseInt(warehouseData?.total) }]}
-              component="div"
-              count={warehouseSuccess ? warehouseData.total : 0}
-              page={warehouseSuccess ? warehouseData.current_page - 1 : 0}
-              rowsPerPage={warehouseSuccess ? parseInt(warehouseData?.per_page) : 5}
+            <CustomTablePagination
+              total={warehouseData?.total}
+              success={warehouseSuccess}
+              current_page={warehouseData?.current_page}
+              per_page={warehouseData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

@@ -23,7 +23,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -33,6 +32,7 @@ import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ViewTagged from "../../Components/Reusable/ViewTagged";
 import { closeDialog, openDialog } from "../../Redux/StateManagement/booleanStateSlice";
+import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 
 const Location = () => {
   const [search, setSearch] = useState("");
@@ -400,15 +400,11 @@ const Location = () => {
             </Box>
 
             <Box className="mcontainer__pagination">
-              <TablePagination
-                rowsPerPageOptions={[
-                  5, 10, 15, 100,
-                  // { label: "All", value: parseInt(locationApiData?.total) },
-                ]}
-                component="div"
-                count={locationApiSuccess ? locationApiData.total : 0}
-                page={locationApiSuccess ? locationApiData.current_page - 1 : 0}
-                rowsPerPage={locationApiSuccess ? parseInt(locationApiData?.per_page) : 5}
+              <CustomTablePagination
+                total={locationApiData?.total}
+                success={locationApiSuccess}
+                current_page={locationApiData?.current_page}
+                per_page={locationApiData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />
