@@ -4,14 +4,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 // ROUTER
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoginRoutes, PrivateRoutes } from "./Routes/PrivateRoutes";
 
 // MUI
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Alert, AlertTitle, Dialog, Snackbar } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 // REDUX
 import { useSelector, useDispatch } from "react-redux";
@@ -19,8 +18,6 @@ import { closeToast } from "./Redux/StateManagement/toastSlice";
 import { closeConfirm } from "./Redux/StateManagement/confirmSlice";
 
 // QUERIES
-import Modules from "./Pages/Masterlist/Modules";
-
 import Masterlist from "./Pages/Masterlist";
 import Company from "./Pages/Masterlist/Company";
 import BusinessUnit from "./Pages/Masterlist/BusinessUnit";
@@ -430,42 +427,48 @@ const theme = createTheme({
       light: "#fabb5b",
       main: "#f9aa33",
       dark: "#ae7623",
-      // contrastText: "#222831",
     },
 
     secondary: {
       light: "#5c6d77",
       main: "#344955",
       dark: "#24333b",
-      // contrastText: "#EEEEEE",
+    },
+
+    tertiary: {
+      light: "#358a8c",
+      main: "#036d70",
+      dark: "#024c4e",
+    },
+
+    quaternary: {
+      light: "#57a482",
+      main: "#2e8e63",
+      dark: "#206345",
     },
 
     text: {
       light: "#565e60",
       main: "#2C3639",
       dark: "#1e2527",
-      // contrastText: "#EEEEEE",
     },
 
     background: {
       light: "#f1f1f1",
       main: "#EEEEEE",
       dark: "#a6a6a6",
-      // contrastText: "#222831",
     },
 
     black: {
       light: "#565e60",
       main: "#2c3639",
       dark: "#1e2527",
-      // contrastText: "#222831",
     },
 
     link: {
       light: "#35baf6",
       main: "#03a9f4",
       dark: "#0276aa",
-      // contrastText: "#222831",
     },
 
     active: {
@@ -491,7 +494,6 @@ const theme = createTheme({
     info: {
       main: "#0288d1",
     },
-
     alert: {
       main: "#ed6c02",
     },

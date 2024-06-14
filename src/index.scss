@@ -1,24 +1,34 @@
-// $primary: #00adb5;
-// $secondary: #393e46;
-// $background: #eeeeee;
-// $text: #222831;
-// $scrollBar: #a6a6a6;
-
+//* COLORS
+$primaryLight: #fabb5b;
 $primary: #f9aa33;
+$primaryDark: #ae7623;
+$primaryText: #fc9701;
+
+$secondaryLight: #5c6d77;
 $secondary: #344955;
+$secondaryDark: #24333b;
+$secondaryText: #90a0aac9;
+
+$tertiaryLight: #024c4e;
+$tertiary: #036d70;
+$tertiaryDark: #358a8c;
+
+$quaternaryLight: #57a482;
+$quaternary: #2e8e63;
+$quaternaryDark: #206345;
+
+$black: #2c3639;
 $background: #eeeeee;
 $text: #2c3639;
-$scrollBar: #a6a6a6;
-$primaryLight: #ffa51dc0;
-$primaryText: #fc9701;
-$secondaryText: #90a0aac9;
-$terciary: #2e8e63;
-$black: #2c3639;
 $divider: #c7c7c742;
 
+$scrollBar: #a6a6a6;
 $scrollBar: #dbdbdb3c;
+
 $pending: #c59e00;
 $pending: #f5cc2a2f;
+
+// * CSS
 
 :root {
   font-family: "Anton", Impact, "Josefin Sans", "Poppins", "Raleway", "Roboto", sans-serif;
