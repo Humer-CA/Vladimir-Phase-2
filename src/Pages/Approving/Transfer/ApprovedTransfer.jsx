@@ -24,7 +24,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -32,6 +31,7 @@ import {
 import { Help, ReportProblem, Visibility } from "@mui/icons-material";
 import { useGetApprovalApiQuery, usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
 import { useNavigate } from "react-router-dom";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const ApprovedTransfer = (props) => {
   const [search, setSearch] = useState("");
@@ -285,18 +285,11 @@ const ApprovedTransfer = (props) => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 50,
-                // {
-                //   label: "All",
-                //   value: parseInt(majorCategoryData?.total),
-                // },
-              ]}
-              component="div"
-              count={approvalSuccess ? approvedTransferData.total : 0}
-              page={approvalSuccess ? approvedTransferData.current_page - 1 : 0}
-              rowsPerPage={approvalSuccess ? parseInt(approvedTransferData?.per_page) : 5}
+            <CustomTablePagination
+              total={approvedTransferData?.total}
+              success={approvalSuccess}
+              current_page={approvedTransferData?.current_page}
+              per_page={approvedTransferData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

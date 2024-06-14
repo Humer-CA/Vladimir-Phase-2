@@ -24,7 +24,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   TextField,
@@ -450,10 +449,10 @@ const PendingRequest = (props) => {
 
           <Box className="mcontainer__pagination">
             <CustomTablePagination
-              total={approvalData?.data?.total}
+              total={approvalData?.total}
               success={approvalSuccess}
-              current_page={approvalData?.data?.current_page}
-              per_page={approvalData?.data?.per_page}
+              current_page={approvalData?.current_page}
+              per_page={approvalData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />

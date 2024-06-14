@@ -55,7 +55,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -522,16 +521,6 @@ const FixedAsset = (props) => {
             >
               EXPORT
             </Button>
-
-            {/* <TablePagination
-              rowsPerPageOptions={[5, 10, 15, 50]}
-              component="div"
-              count={fixedAssetSuccess ? fixedAssetData?.total : 0}
-              page={fixedAssetSuccess ? fixedAssetData?.current_page - 1 : 0}
-              rowsPerPage={fixedAssetSuccess ? parseInt(fixedAssetData?.per_page) : 5}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            /> */}
 
             <CustomTablePagination
               total={fixedAssetData?.total}
