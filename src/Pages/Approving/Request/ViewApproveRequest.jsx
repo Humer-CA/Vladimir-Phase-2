@@ -252,19 +252,19 @@ const ViewApproveRequest = (props) => {
     useDownloadAttachment({ attachment: value?.value, id: value?.id });
   };
 
-  const handleCloseDialog = () => {
-    dispatch(closeDialog()) || dispatch(closeDialog1());
-  };
+  // const handleCloseDialog = () => {
+  //   dispatch(closeDialog()) || dispatch(closeDialog1());
+  // };
 
-  const perPageHandler = (e) => {
-    setPage(1);
-    setPerPage(parseInt(e.target.value));
-  };
+  // const perPageHandler = (e) => {
+  //   setPage(1);
+  //   setPerPage(parseInt(e.target.value));
+  // };
 
-  const pageHandler = (_, page) => {
-    // console.log(page + 1);
-    setPage(page + 1);
-  };
+  // const pageHandler = (_, page) => {
+  //   // console.log(page + 1);
+  //   setPage(page + 1);
+  // };
 
   const attachmentSx = {
     textDecoration: "underline",
@@ -272,9 +272,6 @@ const ViewApproveRequest = (props) => {
     color: "primary.main",
     fontSize: "12px",
   };
-
-  // console.log(transactionData);
-  // console.log(transactionData?.asset_approval_id);
 
   return (
     <>
@@ -506,7 +503,7 @@ const ViewApproveRequest = (props) => {
                   Transactions : {approveRequestData?.data?.length} request
                 </Typography>
 
-                {transactionData.status === "For Approval" && (
+                {!transactionData?.approved && (
                   <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
                     <Button
                       variant="contained"
