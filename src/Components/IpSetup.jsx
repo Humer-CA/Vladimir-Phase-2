@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../Style/changePassword.scss";
 import ipAddressIcon from "../Img/PNG/ipAddress.png";
 import CustomTextField from "./Reusable/CustomTextField";
-import CustomNumberField from "./Reusable/CustomNumberField";
 import moment from "moment";
 
 import {
@@ -29,7 +28,6 @@ import {
   Button,
   Chip,
   Divider,
-  FormGroup,
   IconButton,
   OutlinedInput,
   Stack,
@@ -38,7 +36,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   TextField,
@@ -49,19 +46,13 @@ import {
 import { LoadingButton } from "@mui/lab";
 import {
   AddCircle,
-  AddCircleOutline,
   ArrowBackIosNewRounded,
   CheckCircleOutline,
-  CheckRounded,
-  Close,
   Delete,
-  EditRounded,
   Help,
   Lens,
   PrintDisabledRounded,
-  RemoveCircleOutline,
   Report,
-  ReportProblem,
   Warning,
 } from "@mui/icons-material";
 import axios from "axios";
@@ -258,68 +249,6 @@ const IpSetup = (props) => {
       setPage(1);
     }
   };
-
-  // const onSetStatusHandler = async (id, action = "update") => {
-  //   dispatch(
-  //     openConfirm({
-  //       icon: action === "update" ? Help : Warning,
-  //       iconColor: action === "update" ? "info" : "warning",
-  //       message: (
-  //         <Box>
-  //           <Typography> Are you sure you want to</Typography>
-  //           <Typography
-  //             sx={{
-  //               display: "inline-block",
-  //               color: "secondary.main",
-  //               fontWeight: "bold",
-  //             }}
-  //           >
-  //             {action === "delete" ? "DELETE" : "ACTIVATE"}
-  //           </Typography>{" "}
-  //           this IP Address?
-  //         </Box>
-  //       ),
-
-  //       onConfirm: async () => {
-  //         try {
-  //           dispatch(onLoading());
-  //           let result;
-  //           if (action === "delete") {
-  //             result = await deleteIpStatusApi(id).unwrap();
-  //           } else {
-  //             result = await patchIpStatusApi(id).unwrap();
-  //           }
-  //           setPage(1);
-  //           dispatch(
-  //             openToast({
-  //               message: result.message,
-  //               duration: 5000,
-  //             })
-  //           );
-  //           dispatch(closeConfirm());
-  //         } catch (err) {
-  //           if (err?.status === 422) {
-  //             dispatch(
-  //               openToast({
-  //                 message: err.data.message,
-  //                 duration: 5000,
-  //                 variant: "error",
-  //               })
-  //             );
-  //           } else if (err?.status !== 422) {
-  //             dispatch(
-  //               openToast({
-  //                 message: "Something went wrong. Please try again.",
-  //                 duration: 5000,
-  //                 variant: "error",
-  //               })
-  //             );
-  //           }
-  //         }
-  //       },
-  //     })
-  //   );
-  // };
 
   const onSetStatusHandler = async (id, action = "update") => {
     dispatch(
@@ -823,24 +752,6 @@ const IpSetup = (props) => {
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />
-              {/* <TablePagination
-                sx={{ padding: "0" }}
-                rowsPerPageOptions={[
-                  5,
-                  10,
-                  15,
-                  {
-                    label: "All",
-                    value: parseInt(ipData?.data?.total),
-                  },
-                ]}
-                component="div"
-                count={isIpSuccess ? ipData?.data?.total : 0}
-                page={isIpSuccess ? ipData?.data?.current_page - 1 : 0}
-                rowsPerPage={isIpSuccess ? parseInt(ipData?.data?.per_page) : 5}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              /> */}
             </Box>
           </Box>
         </Stack>
