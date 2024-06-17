@@ -5,16 +5,15 @@ import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import CustomAttachment from "../../../Components/Reusable/CustomAttachment";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
+import { useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import {
   requestContainerApi,
   useDeleteRequestContainerAllApiMutation,
   useDeleteRequestContainerApiMutation,
 } from "../../../Redux/Query/Request/RequestContainer";
-import AttachmentIcon from "../../../Img/SVG/SVG/Attachment.svg";
 import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -41,15 +40,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import {
-  AddAlert,
   AddToPhotos,
   ArrowBackIosRounded,
   Create,
-  Folder,
   Info,
   Remove,
   Report,
-  Save,
   SaveAlt,
   Update,
   Warning,
@@ -58,47 +54,30 @@ import { LoadingButton } from "@mui/lab";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { closeDialog, closeDrawer, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
+import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useLazyGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
 import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
-import {
-  useGetDepartmentAllApiQuery,
-  useLazyGetDepartmentAllApiQuery,
-} from "../../../Redux/Query/Masterlist/YmirCoa/Department";
+import { useLazyGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
-import {
-  useGetLocationAllApiQuery,
-  useLazyGetLocationAllApiQuery,
-} from "../../../Redux/Query/Masterlist/YmirCoa/Location";
-import {
-  useGetSubUnitAllApiQuery,
-  useLazyGetSubUnitAllApiQuery,
-} from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
-import {
-  useGetAccountTitleAllApiQuery,
-  useLazyGetAccountTitleAllApiQuery,
-} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
+import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
+import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
 import {
   useGetByTransactionApiQuery,
   usePostRequisitionApiMutation,
   usePostResubmitRequisitionApiMutation,
   useUpdateRequisitionApiMutation,
   useDeleteRequisitionReferenceApiMutation,
-  useGetByTransactionPageApiQuery,
 } from "../../../Redux/Query/Request/Requisition";
 
-import {
-  useGetTypeOfRequestAllApiQuery,
-  useLazyGetTypeOfRequestAllApiQuery,
-} from "../../../Redux/Query/Masterlist/TypeOfRequest";
+import { useLazyGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
 import { useLocation, useNavigate } from "react-router-dom";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import {
-  // useGetRequestContainerAllApiQuery,
   useGetRequestContainerAllApiQuery,
   usePostRequestContainerApiMutation,
   useUpdateRequestContainerApiMutation,
@@ -110,7 +89,6 @@ import CustomPatternField from "../../../Components/Reusable/CustomPatternField"
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 import ErrorFetching from "../../ErrorFetching";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
-import { useGetFixedAssetAllApiQuery } from "../../../Redux/Query/FixedAsset/FixedAssets";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetWarehouseAllApiQuery } from "../../../Redux/Query/Masterlist/Warehouse";
@@ -218,7 +196,7 @@ const AddRequisition = (props) => {
   const isFullWidth = useMediaQuery("(max-width: 600px)");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   const LetterOfRequestRef = useRef(null);
   const QuotationRef = useRef(null);
@@ -228,21 +206,12 @@ const AddRequisition = (props) => {
 
   const attachmentType = ["Budgeted", "Unbudgeted"];
 
+  const userCoa = useSelector((state) => state.userLogin?.user?.coa);
+
   const [
     postRequisition,
     { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostRequisitionApiMutation();
-
-  const [
-    updateRequisition,
-    {
-      data: updateData,
-      isLoading: isUpdateLoading,
-      isSuccess: isUpdateSuccess,
-      isError: isUpdateError,
-      error: updateError,
-    },
-  ] = useUpdateRequisitionApiMutation();
 
   const [
     resubmitRequest,
@@ -398,7 +367,7 @@ const AddRequisition = (props) => {
   );
 
   const [postRequest, { data: postRequestData }] = usePostRequestContainerApiMutation();
-  const [upDateRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
+  const [updateDataRequest, { data: updateRequestData }] = useUpdateRequestContainerApiMutation();
   const [deleteRequest, { data: deleteRequestData }] = useDeleteRequestContainerApiMutation();
   const [deleteAllRequest, { data: deleteAllRequestData }] = useDeleteRequestContainerAllApiMutation();
   const [deleteRequestContainer, { data: deleteRequestContainerData }] = useDeleteRequisitionReferenceApiMutation();
@@ -451,34 +420,23 @@ const AddRequisition = (props) => {
   });
 
   useEffect(() => {
-    if (isPostError) {
-      if (postError?.status === 422) {
-        dispatch(
-          openToast({
-            message: postError?.data?.errors.detail || postError?.data?.errors.pr_number[0],
-            duration: 5000,
-            variant: "error",
-          })
-        );
-      } else {
-        dispatch(
-          openToast({
-            message: "Something went wrong. Please try again.",
-            duration: 5000,
-            variant: "error",
-          })
-        );
-      }
-    }
-  }, [isPostError]);
-
-  useEffect(() => {
     if (transactionData?.additionalCost) {
       setDisable(false);
     }
     !transactionData && setDisable(false);
     // deleteAllRequest();
   }, []);
+
+  useEffect(() => {
+    if (!transactionData) {
+      setValue("department_id", userCoa?.department);
+      setValue("company_id", userCoa?.company);
+      setValue("business_unit_id", userCoa?.business_unit);
+      setValue("unit_id", userCoa?.unit);
+      setValue("subunit_id", userCoa?.subunit);
+      setValue("location_id", userCoa?.location);
+    }
+  }, [transactionData]);
 
   useEffect(() => {
     if (updateRequest.id) {
@@ -491,7 +449,6 @@ const AddRequisition = (props) => {
       const dateNeededFormat = updateRequest?.date_needed === "-" ? null : new Date(updateRequest?.date_needed);
       const cellphoneNumber = updateRequest?.cellphone_number === "-" ? "" : updateRequest?.cellphone_number.slice(2);
       const attachmentFormat = (fields) => (updateRequest?.[fields] === "-" ? "" : updateRequest?.[fields]);
-
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
@@ -523,38 +480,8 @@ const AddRequisition = (props) => {
       setValue("specification_form", attachmentFormat("specification_form"));
       setValue("tool_of_trade", attachmentFormat("tool_of_trade"));
       setValue("other_attachments", attachmentFormat("other_attachments"));
-
-      console.log(attachmentFormat("letter_of_request"));
     }
   }, [updateRequest]);
-
-  // console.log(updateRequest);
-
-  // Table Sorting --------------------------------
-  const [order, setOrder] = useState("desc");
-  const [orderBy, setOrderBy] = useState("id");
-
-  const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  };
-
-  const comparator = (order, orderBy) => {
-    return order === "desc"
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  };
-
-  const onSort = (property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
 
   const handleEditRequestData = () => {
     if (transactionData && updateRequest) {
@@ -564,10 +491,6 @@ const AddRequisition = (props) => {
     } else {
       setEditRequest(false) && true;
     }
-  };
-
-  const handleCloseDrawer = () => {
-    dispatch(closeDrawer());
   };
 
   const attachmentValidation = (fieldName, formData) => {
@@ -1187,9 +1110,6 @@ const AddRequisition = (props) => {
     });
   };
 
-  // console.log(updateEntries.map((item) => item[1]?.attachments?.letter_of_request?.file_name));
-  // console.log(transactionData);
-
   const formInputs = () => {
     return (
       <Box>
@@ -1797,8 +1717,6 @@ const AddRequisition = (props) => {
       </Box>
     );
   };
-  // console.log("editRequest", editRequest);
-  // console.log("updateRequest", updateRequest);
 
   const handleAcquisitionDetails = () => {
     if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
@@ -1839,17 +1757,6 @@ const AddRequisition = (props) => {
 
   const handleShowItems = (data) => {
     transactionData && data?.po_number && data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
-  };
-
-  // * Page / Limit
-  const perPageHandler = (e) => {
-    setPage(1);
-    setPerPage(parseInt(e.target.value));
-  };
-
-  const pageHandler = (_, page) => {
-    // console.log(page + 1);
-    setPage(page + 1);
   };
 
   const filterOptions = createFilterOptions({
@@ -1921,7 +1828,8 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">{transactionData ? "Ref No." : "Index"}</TableCell>
                       <TableCell className="tbl-cell">Type of Request</TableCell>
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
-                      <TableCell className="tbl-cell">Attachment Type</TableCell>
+                      {/* <TableCell className="tbl-cell">Attachment Type</TableCell> */}
+                      <TableCell className="tbl-cell">Warehouse</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
@@ -1986,13 +1894,23 @@ const AddRequisition = (props) => {
                               {transactionData ? data?.reference_number : index + 1}
                             </TableCell>
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.type_of_request?.type_of_request_name}
+                              <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
+                              <Typography
+                                fontWeight={400}
+                                fontSize={12}
+                                color={data.attachment_type === "Budgeted" ? "success.main" : "primary.dark"}
+                              >
+                                {data.attachment_type}
+                              </Typography>
                             </TableCell>
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.acquisition_details}
                             </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                            {/* <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.attachment_type}
+                            </TableCell> */}
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.warehouse?.warehouse_name}
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
@@ -2219,7 +2137,7 @@ const AddRequisition = (props) => {
                           ? true
                           : false
                       }
-                      loading={isPostLoading || isUpdateLoading}
+                      loading={isPostLoading}
                     >
                       Resubmit
                     </LoadingButton>
@@ -2231,7 +2149,7 @@ const AddRequisition = (props) => {
                       color="secondary"
                       startIcon={<Create color={"primary"} />}
                       disabled={isRequestLoading || addRequestAllApi?.data?.length === 0}
-                      loading={isPostLoading || isUpdateLoading}
+                      loading={isPostLoading}
                     >
                       Create
                     </LoadingButton>
