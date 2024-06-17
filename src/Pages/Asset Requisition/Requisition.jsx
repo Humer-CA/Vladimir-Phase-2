@@ -35,7 +35,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Tooltip,
@@ -65,6 +64,7 @@ const Requisition = () => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState([]);
+  const viewData = true;
 
   // const enableForm = true;
 
@@ -228,10 +228,10 @@ const Requisition = () => {
   const handleEditRequisition = (data) => {
     data?.is_addcost === 1
       ? navigate(`/asset-requisition/requisition/additional-cost/${data.transaction_number}`, {
-          state: { ...data },
+          state: { ...data, viewData },
         })
       : navigate(`/asset-requisition/requisition/view-requisition/${data.transaction_number}`, {
-          state: { ...data },
+          state: { ...data, viewData },
         });
   };
 
