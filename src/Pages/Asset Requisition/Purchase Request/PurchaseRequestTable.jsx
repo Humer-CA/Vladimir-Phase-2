@@ -1,29 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Moment from "moment";
 import MasterlistToolbar from "../../../Components/Reusable/MasterlistToolbar";
-import ActionMenu from "../../../Components/Reusable/ActionMenu";
 import ErrorFetching from "../../ErrorFetching";
 import MasterlistSkeleton from "../../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 // RTK
-import { useDispatch, useSelector } from "react-redux";
-import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { openConfirm, closeConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
-import {
-  useGetByTransactionApiQuery,
-  useGetRequisitionApiQuery,
-  usePatchRequisitionStatusApiMutation,
-  useVoidRequisitionApiMutation,
-} from "../../../Redux/Query/Request/Requisition";
+import { useDispatch } from "react-redux";
 
 // MUI
 import {
   Box,
-  Button,
-  Chip,
-  Dialog,
   IconButton,
   Stack,
   Table,
@@ -31,21 +19,15 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Help, LibraryAdd, Report, ReportProblem, Visibility } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
-import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import RequestTimeline from "../RequestTimeline";
-import {
-  useGetPurchaseRequestApiQuery,
-  useGetPurchaseRequestWithPrApiQuery,
-} from "../../../Redux/Query/Request/PurchaseRequest";
+import { Visibility } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useGetPurchaseRequestWithPrApiQuery } from "../../../Redux/Query/Request/PurchaseRequest";
 
 const PurchaseRequestTable = (props) => {
   const { withPr } = props;
@@ -54,11 +36,8 @@ const PurchaseRequestTable = (props) => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
 
-  //   const [transactionIdData, setTransactionIdData] = useState();
-
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
-  //   const drawer = useSelector((state) => state.booleanState.drawer);
   //   const dialog = useSelector((state) => state.booleanState.dialog);
 
   //* Table Sorting -------------------------------------------------------
