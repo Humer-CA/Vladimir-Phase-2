@@ -9,14 +9,11 @@ import NoRecordsFound from "../../../Layout/NoRecordsFound";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
 
 // MUI
 import {
   Box,
   Chip,
-  Dialog,
   IconButton,
   Stack,
   Table,
@@ -24,20 +21,21 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { Help, ReportProblem, Visibility } from "@mui/icons-material";
-import { useGetApprovalApiQuery, usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
+import { Visibility } from "@mui/icons-material";
+import { useGetApprovalApiQuery } from "../../../Redux/Query/Approving/Approval";
 import { useNavigate } from "react-router-dom";
+import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 const ApprovedRequest = (props) => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("Approved");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
+  const approved = true;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -108,8 +106,8 @@ const ApprovedRequest = (props) => {
 
   // console.log(approvalData);
   const handleViewRequisition = (data) => {
-    navigate(`/approving/${data.transaction_number}`, {
-      state: { ...data },
+    navigate(`/approving/request/${data.transaction_number}`, {
+      state: { ...data, approved },
     });
   };
 
@@ -311,18 +309,11 @@ const ApprovedRequest = (props) => {
           </Box>
 
           <Box className="mcontainer__pagination">
-            <TablePagination
-              rowsPerPageOptions={[
-                5, 10, 15, 50,
-                // {
-                //   label: "All",
-                //   value: parseInt(majorCategoryData?.total),
-                // },
-              ]}
-              component="div"
-              count={approvalSuccess ? approvalData.total : 0}
-              page={approvalSuccess ? approvalData.current_page - 1 : 0}
-              rowsPerPage={approvalSuccess ? parseInt(approvalData?.per_page) : 5}
+            <CustomTablePagination
+              total={approvalData?.total}
+              success={approvalSuccess}
+              current_page={approvalData?.current_page}
+              per_page={approvalData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
             />
