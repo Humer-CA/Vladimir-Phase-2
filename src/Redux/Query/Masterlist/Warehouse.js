@@ -37,7 +37,7 @@ export const warehouseApi = createApi({
     postWarehouseStatusApi: builder.mutation({
       query: ({ id, status }) => ({
         url: `/warehouse/archived-warehouse/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: {
           status: status,
         },
