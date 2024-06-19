@@ -38,7 +38,8 @@ export const transferApi = createApi({
     }),
 
     getTransferApprovalApi: builder.query({
-      query: (params) => `transfer-approver?page=${params.page}&per_page=${params.per_page}&search=${params.search}`,
+      query: (params) =>
+        `transfer-approver?page=${params.page}&per_page=${params.per_page}&search=${params.search}&status=${params.status}`,
       providesTags: ["Transfer"],
     }),
 
