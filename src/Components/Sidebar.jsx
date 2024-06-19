@@ -7,7 +7,7 @@ import { toggleSidebar } from "../Redux/StateManagement/sidebar";
 import { notificationApi } from "../Redux/Query/Notification";
 
 //Img
-import VladimirLogoSmally from "../Img/VladimirSmally.png";
+import VladimirLogoSmaller from "../Img/VladimirSmaller.png";
 import MisLogo from "../Img/MIS LOGO.png";
 
 // Components
@@ -100,14 +100,15 @@ const Sidebar = () => {
   const [assetMovementCollapse, setAssetMovementCollapse] = useState(false);
   const [approvingCollapse, setApprovingCollapse] = useState(false);
   const [reportCollapse, setReportCollapse] = useState(false);
-  // const collapseArray = [
-  //   masterListCollapse,
-  //   userManagementCollapse,
-  //   settingsCollapse,
-  //   assetRequestCollapse,
-  //   assetMovementCollapse,
-  //   reportCollapse,
-  // ];
+  const collapseArray = [
+    masterListCollapse,
+    userManagementCollapse,
+    settingsCollapse,
+    assetRequisitionCollapse,
+    assetMovementCollapse,
+    reportCollapse,
+  ];
+
   const isSmallScreen = useMediaQuery("(width: 800)");
   const sidebarRef = useRef(null);
 
@@ -129,15 +130,62 @@ const Sidebar = () => {
     setSettingsCollapse(false);
     setAssetRequisitionCollapse(false);
     setAssetMovementCollapse(false);
+    setApprovingCollapse(false);
     setReportCollapse(false);
   };
 
+  // NOTIFICATION
   const { data: notifData, refetch } = useGetNotificationApiQuery(null, { refetchOnMountOrArgChange: true });
   // console.log("notif", notifData);
-
   useEffect(() => {
     refetch();
   }, [notifData]);
+
+  const { pathname } = useLocation();
+  const location = useLocation();
+
+  // COLLAPSE SIDEBAR
+  useEffect(() => {
+    if (!collapse || pathname === "/") {
+      closeCollapse();
+      return;
+    }
+
+    const routeStateMap = {
+      masterlist: setMasterListCollapse,
+      "user-management": setUserManagementCollapse,
+      settings: setSettingsCollapse,
+      "asset-requisition": setAssetRequisitionCollapse,
+      "asset-movement": setAssetMovementCollapse,
+      approving: setApprovingCollapse,
+      reports: setReportCollapse,
+    };
+
+    const match = Object.keys(routeStateMap).find((route) => pathname.includes(route));
+    if (match) {
+      routeStateMap[match](true);
+    }
+  }, [collapse, pathname]);
+
+  // OVERFLOW
+  useEffect(() => {
+    const checkOverflow = () => {
+      const content = sidebarRef.current;
+      if (content) {
+        const overflowing = content.scrollHeight > content.clientHeight;
+        setIsOverflowing(overflowing);
+      }
+    };
+
+    setTimeout(() => {
+      checkOverflow();
+    }, 200);
+
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [isSmallScreen]);
 
   const MENU_LIST = [
     {
@@ -573,49 +621,6 @@ const Sidebar = () => {
     // },
   ];
 
-  const { pathname } = useLocation();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!collapse || pathname === "/") {
-      closeCollapse();
-      return;
-    }
-
-    const routeStateMap = {
-      masterlist: setMasterListCollapse,
-      "user-management": setUserManagementCollapse,
-      settings: setSettingsCollapse,
-      "asset-requisition": setAssetRequisitionCollapse,
-      "asset-movement": setAssetMovementCollapse,
-      reports: setReportCollapse,
-    };
-
-    const match = Object.keys(routeStateMap).find((route) => pathname.includes(route));
-    if (match) {
-      routeStateMap[match](true);
-    }
-  }, [collapse, pathname]);
-
-  useEffect(() => {
-    const checkOverflow = () => {
-      const content = sidebarRef.current;
-      if (content) {
-        const overflowing = content.scrollHeight > content.clientHeight;
-        setIsOverflowing(overflowing);
-      }
-    };
-
-    setTimeout(() => {
-      checkOverflow();
-    }, 200);
-
-    window.addEventListener("resize", checkOverflow);
-    return () => {
-      window.removeEventListener("resize", checkOverflow);
-    };
-  }, [isSmallScreen]);
-
   return (
     <Box className={`sidebar ${collapse ? "" : isOverflowing === true ? "collapsed85" : "collapsed"}`}>
       <Box>
@@ -631,7 +636,7 @@ const Sidebar = () => {
         ) : null}
         <Box className="sidebar__logo-container" onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
           <img
-            src={VladimirLogoSmally}
+            src={VladimirLogoSmaller}
             alt="Vladimir Logo"
             style={{
               width: "40px",
