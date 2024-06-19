@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Moment from "moment";
 import MasterlistToolbar from "../../../Components/Reusable/MasterlistToolbar";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
@@ -16,7 +16,6 @@ import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManage
 import {
   Box,
   Chip,
-  Dialog,
   IconButton,
   Stack,
   Table,
@@ -28,16 +27,22 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { Help, ReportProblem, Visibility } from "@mui/icons-material";
-import { useGetApprovalApiQuery, usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
+import { Help, Report, Visibility } from "@mui/icons-material";
+import { usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
 import { useNavigate } from "react-router-dom";
+
+import { notificationApi } from "../../../Redux/Query/Notification";
+import { useGetTransferApprovalApiQuery } from "../../../Redux/Query/Movement/Transfer";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
+import { usePatchTransferApprovalStatusApiMutation } from "../../../Redux/Query/Approving/TransferApproval";
 
 const ApprovedTransfer = (props) => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("Approved");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
+
+  const drawer = useSelector((state) => state.booleanState.drawer);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,6 +51,8 @@ const ApprovedTransfer = (props) => {
 
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  // const [remarks, setRemarks] = useState("");
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) {
@@ -71,8 +78,6 @@ const ApprovedTransfer = (props) => {
 
   // Table Properties --------------------------------
 
-  const drawer = useSelector((state) => state.booleanState.drawer);
-
   const perPageHandler = (e) => {
     setPage(1);
     setPerPage(parseInt(e.target.value));
@@ -96,20 +101,22 @@ const ApprovedTransfer = (props) => {
     isError: approvalError,
     error: errorData,
     refetch,
-  } = useGetApprovalApiQuery(
+  } = useGetTransferApprovalApiQuery(
     {
       page: page,
       per_page: perPage,
-      status: status,
       search: search,
+      status: status,
     },
     { refetchOnMountOrArgChange: true }
   );
 
-  // console.log(approvedTransferData);
-  const handleViewRequisition = (data) => {
-    navigate(`/approving/${data.transaction_number}`, {
-      state: { ...data },
+  const handleViewTransfer = (data) => {
+    const view = true;
+    const approved = true;
+
+    navigate(`/approving/transfer/${data?.transfer_number}`, {
+      state: { ...data, view, approved },
     });
   };
 
@@ -124,6 +131,7 @@ const ApprovedTransfer = (props) => {
             onStatusChange={setStatus}
             onSearchChange={setSearch}
             onSetPage={setPage}
+            // onAdd={() => {}}
             hideArchive
           />
 
@@ -140,18 +148,16 @@ const ApprovedTransfer = (props) => {
                     }}
                   >
                     <TableCell className="tbl-cell-category">
-                      {/* <TableSortLabel
-                        active={orderBy === `major_category_name`}
-                        direction={
-                          orderBy === `major_category_name` ? order : `asc`
-                        }
-                        onClick={() => onSort(`major_category_name`)}
+                      <TableSortLabel
+                        active={orderBy === `id`}
+                        direction={orderBy === `id` ? order : `asc`}
+                        onClick={() => onSort(`id`)}
                       >
-                    </TableSortLabel> */}
-                      Transaction No.
+                        Transfer No.
+                      </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category">Acquisition Details</TableCell>
+                    <TableCell className="tbl-cell-category">Description</TableCell>
 
                     <TableCell className="tbl-cell-category">
                       <TableSortLabel
@@ -162,8 +168,8 @@ const ApprovedTransfer = (props) => {
                         Requestor
                       </TableSortLabel>
                     </TableCell>
-
-                    {/* <TableCell className="tbl-cell-category">
+                    {/* 
+                    <TableCell className="tbl-cell-category">
                       <TableSortLabel
                         active={orderBy === `requestor`}
                         direction={orderBy === `requestor` ? order : `asc`}
@@ -193,35 +199,27 @@ const ApprovedTransfer = (props) => {
 
                     <TableCell className="tbl-cell-category text-center">
                       <TableSortLabel
-                        active={orderBy === `created_at`}
-                        direction={orderBy === `created_at` ? order : `asc`}
-                        onClick={() => onSort(`created_at`)}
+                        active={orderBy === `date_requested`}
+                        direction={orderBy === `date_requested` ? order : `asc`}
+                        onClick={() => onSort(`date_requested`)}
                       >
                         Date Requested
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category text-center">
-                      <TableSortLabel
-                        active={orderBy === `date_approved`}
-                        direction={orderBy === `date_approved` ? order : `asc`}
-                        onClick={() => onSort(`date_approved`)}
-                      >
-                        Date Approved
-                      </TableSortLabel>
-                    </TableCell>
+                    <TableCell className="tbl-cell-category  text-center">Action</TableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
-                  {approvedTransferData.data.length === 0 ? (
+                  {approvedTransferData?.data.length === 0 ? (
                     <NoRecordsFound approvedTransferData={approvedTransferData} category />
                   ) : (
                     <>
                       {approvalSuccess &&
                         [...approvedTransferData.data].sort(comparator(order, orderBy))?.map((data) => (
                           <TableRow
-                            key={data.id}
+                            key={data?.transfer_number}
                             hover={true}
                             sx={{
                               "&:last-child td, &:last-child th": {
@@ -229,13 +227,9 @@ const ApprovedTransfer = (props) => {
                               },
                             }}
                           >
-                            <TableCell className="tbl-cell-category ">
-                              {data.asset_request?.transaction_number}
-                            </TableCell>
+                            <TableCell className="tbl-cell-category ">{data?.transfer_number}</TableCell>
 
-                            <TableCell className="tbl-cell-category ">
-                              {data.asset_request?.acquisition_details}
-                            </TableCell>
+                            <TableCell className="tbl-cell-category ">{data?.description}</TableCell>
 
                             <TableCell className="tbl-cell-category">
                               <Typography fontSize={14} fontWeight={600} color={"secondary"} noWrap>
@@ -246,10 +240,10 @@ const ApprovedTransfer = (props) => {
                               </Typography>
                             </TableCell>
 
-                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.number_of_item}</TableCell>
+                            <TableCell className="tbl-cell-category tr-cen-pad45">{data.quantity}</TableCell>
 
-                            <TableCell className="tbl-cell-category" align="center">
-                              <IconButton onClick={() => handleViewRequisition(data)}>
+                            <TableCell className="tbl-cell-category text-center">
+                              <IconButton onClick={() => handleViewTransfer(data)}>
                                 <Visibility color="secondary" />
                               </IconButton>
                             </TableCell>
@@ -269,11 +263,11 @@ const ApprovedTransfer = (props) => {
                             </TableCell>
 
                             <TableCell className="tbl-cell-category tr-cen-pad45">
-                              {Moment(data.created_at).format("MMM DD, YYYY")}
+                              {Moment(data.asset_request?.date_requested).format("MMM DD, YYYY")}
                             </TableCell>
 
-                            <TableCell className="tbl-cell-category tr-cen-pad45">
-                              {Moment(data.created_at).format("MMM DD, YYYY")}
+                            <TableCell className="tbl-cell-category text-center">
+                              <ActionMenu status={status} data={data} showApprover hideArchive />
                             </TableCell>
                           </TableRow>
                         ))}
