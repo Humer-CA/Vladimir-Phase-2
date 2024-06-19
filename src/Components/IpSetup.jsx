@@ -78,7 +78,7 @@ const IpSetup = (props) => {
   });
 
   const isSmallScreen = useMediaQuery("(max-width: 1375px)");
-  const isSmallerScreen = useMediaQuery("(max-width: 500px)");
+  const isSmallerScreen = useMediaQuery("(max-width: 600px)");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -407,10 +407,8 @@ const IpSetup = (props) => {
         </Stack>
       )}
 
-      {/* Form */}
       <Stack
         gap="10px"
-        height="100%"
         sx={
           isSmallScreen
             ? {
@@ -420,27 +418,23 @@ const IpSetup = (props) => {
                 padding: "0 20px",
               }
             : {
-                alignItems: "center",
+                alignItems: "flex-start",
                 justifyContent: "center",
                 flexDirection: "row",
                 padding: "10px",
               }
         }
       >
+        {/* Form */}
         <Stack
           component="form"
-          // alignSelf={isSmallScreen ? "flex-start" : "center"}
-          // margin={isSmallScreen ? "auto" : null}
-          width={isSmallScreen ? "100%" : null}
+          width={isSmallScreen ? "100%" : "400px"}
           gap={3}
           sx={{
             backgroundColor: "white",
             padding: "20px",
             borderRadius: "20px",
             boxShadow: "10px 10px 20px #bebebe,-10px -15px 40px #ffffff",
-            // maxWidth: "350px",
-            // minWidth: isSmallScreen ? null : "300px",
-            // flex: 1,
           }}
           onSubmit={handleSubmit(onSubmitHandler)}
         >
@@ -525,11 +519,12 @@ const IpSetup = (props) => {
         <Stack
           direction="column"
           gap="10px"
+          width={isSmallScreen ? "100%" : "1200px"}
           sx={{
             backgroundColor: "white",
             borderRadius: "10px",
             boxShadow: "10px 10px 20px #bebebe,-10px -15px 40px #ffffff",
-            padding: "10px",
+            padding: "20px",
             // flex: 1,
           }}
         >
@@ -555,10 +550,8 @@ const IpSetup = (props) => {
 
           <Box className="mcontainer__wrapper">
             <TableContainer
-              // className="mcontainer__th-body"
               sx={{
-                // height: "45vh",
-                height: "300px",
+                height: isSmallScreen ? "calc(100vh - 450px)" : "calc(100vh - 400px)",
                 overflow: "auto",
                 px: "10px",
               }}
@@ -756,9 +749,6 @@ const IpSetup = (props) => {
           </Box>
         </Stack>
       </Stack>
-
-      {/* <Divider sx={{ border: "0.25px solid #c7c7c742" }} /> */}
-      {/* </Box> */}
     </>
   );
 };
