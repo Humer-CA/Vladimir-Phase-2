@@ -106,6 +106,7 @@ const PendingTransfer = (props) => {
       page: page,
       per_page: perPage,
       search: search,
+      status: status,
     },
     { refetchOnMountOrArgChange: true }
   );
