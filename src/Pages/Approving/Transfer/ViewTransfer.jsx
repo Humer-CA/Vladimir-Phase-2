@@ -757,29 +757,31 @@ const AddTransfer = (props) => {
             <Typography color="secondary.main">Back</Typography>
           </Button>
 
-          {transactionData?.view && !edit ? (
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={<BorderColor color="secondary" />}
-              onClick={() => setEdit(true)}
-              sx={{ mb: "5px" }}
-            >
-              Edit
-            </Button>
-          ) : (
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="small"
-              startIcon={<Cancel color="secondary" />}
-              onClick={() => setEdit(false)}
-              sx={{ mb: "5px" }}
-            >
-              Cancel Edit
-            </Button>
-          )}
+          {transactionData?.view && !edit
+            ? !transactionData?.approved && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<BorderColor color="secondary" />}
+                  onClick={() => setEdit(true)}
+                  sx={{ mb: "5px" }}
+                >
+                  Edit
+                </Button>
+              )
+            : !transactionData?.approved && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  startIcon={<Cancel color="secondary" />}
+                  onClick={() => setEdit(false)}
+                  sx={{ mb: "5px" }}
+                >
+                  Cancel Edit
+                </Button>
+              )}
         </Stack>
 
         <Box
@@ -1074,7 +1076,7 @@ const AddTransfer = (props) => {
           <Box className="request__table">
             <TableContainer
               className="mcontainer__th-body  mcontainer__wrapper"
-              sx={{ height: "calc(100vh - 260px)", pt: 0 }}
+              sx={{ height: transactionData?.approved ? "calc(100vh - 210px)" : "calc(100vh - 260px)", pt: 0 }}
             >
               <Table className="mcontainer__table " stickyHeader>
                 <TableHead>
@@ -1095,7 +1097,6 @@ const AddTransfer = (props) => {
                     </TableCell>
                   </TableRow>
                 </TableHead>{" "}
-                |
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
@@ -1253,50 +1254,57 @@ const AddTransfer = (props) => {
               </Table>
             </TableContainer>
             {/* Buttons */}
-            <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" sx={{ pt: "10px" }}>
-                Added: {fields.length} Asset(s)
-              </Typography>
-              <Stack flexDirection="row" gap={2} sx={{ pt: "10px" }}>
-                {!transactionData?.view || edit ? (
-                  <LoadingButton
-                    type="submit"
-                    variant="contained"
-                    size="small"
-                    color="secondary"
-                    startIcon={<Create color={"primary"} />}
-                    loading={isPostLoading || isUpdateLoading}
-                  >
-                    {edit ? "Update" : "Create"}
-                  </LoadingButton>
-                ) : (
-                  <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
-                    <Button
+            {!transactionData?.approved && (
+              <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
+                <Typography
+                  fontFamily="Anton, Impact, Roboto"
+                  fontSize="16px"
+                  color="secondary.main"
+                  sx={{ pt: "10px" }}
+                >
+                  Added: {fields.length} Asset(s)
+                </Typography>
+                <Stack flexDirection="row" gap={2} sx={{ pt: "10px" }}>
+                  {!transactionData?.view || edit ? (
+                    <LoadingButton
+                      type="submit"
                       variant="contained"
                       size="small"
                       color="secondary"
-                      onClick={() => onApprovalApproveHandler(transactionData?.transfer_number)}
-                      startIcon={<Check color="primary" />}
+                      startIcon={<Create color={"primary"} />}
+                      loading={isPostLoading || isUpdateLoading}
                     >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={() => onApprovalReturnHandler(transactionData?.transfer_number)}
-                      startIcon={<Undo sx={{ color: "#5f3030" }} />}
-                      sx={{
-                        color: "white",
-                        backgroundColor: "error.main",
-                        ":hover": { backgroundColor: "error.dark" },
-                      }}
-                    >
-                      Return
-                    </Button>
-                  </Stack>
-                )}
+                      {edit ? "Update" : "Create"}
+                    </LoadingButton>
+                  ) : (
+                    <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                        onClick={() => onApprovalApproveHandler(transactionData?.transfer_number)}
+                        startIcon={<Check color="primary" />}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => onApprovalReturnHandler(transactionData?.transfer_number)}
+                        startIcon={<Undo sx={{ color: "#5f3030" }} />}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "error.main",
+                          ":hover": { backgroundColor: "error.dark" },
+                        }}
+                      >
+                        Return
+                      </Button>
+                    </Stack>
+                  )}
+                </Stack>
               </Stack>
-            </Stack>
+            )}
           </Box>
         </Box>
       </Box>
