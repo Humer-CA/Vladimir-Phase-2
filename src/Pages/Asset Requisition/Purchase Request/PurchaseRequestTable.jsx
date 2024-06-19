@@ -27,7 +27,10 @@ import {
 } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useGetPurchaseRequestWithPrApiQuery } from "../../../Redux/Query/Request/PurchaseRequest";
+import {
+  useGetPurchaseRequestApiQuery,
+  useGetPurchaseRequestWithPrApiQuery,
+} from "../../../Redux/Query/Request/PurchaseRequest";
 
 const PurchaseRequestTable = (props) => {
   const { withPr } = props;
