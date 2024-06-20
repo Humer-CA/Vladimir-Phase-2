@@ -249,9 +249,9 @@ const PendingTransfer = (props) => {
   };
 
   const handleViewTransfer = (data) => {
-    const view = true;
+    // const view = true;
     navigate(`/approving/transfer/${data?.transfer_number}`, {
-      state: { ...data, view },
+      state: { ...data },
     });
   };
 
