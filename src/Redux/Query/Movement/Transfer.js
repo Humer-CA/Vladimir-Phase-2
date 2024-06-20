@@ -60,6 +60,10 @@ export const transferApi = createApi({
       invalidatesTags: ["Transfer"],
     }),
 
+    getNextTransfer: builder.query({
+      query: () => `/next-transfer`,
+    }),
+
     downloadAttachmentApi: builder.mutation({
       query: (transfer_number) => ({
         url: `transfer-attachment/${transfer_number}`,
@@ -78,5 +82,6 @@ export const {
   useGetTransferApprovalApiQuery,
   usePostTransferApiMutation,
   useArchiveTransferApiMutation,
+  useLazyGetNextTransferQuery,
   useDownloadAttachmentApiMutation,
 } = transferApi;
