@@ -79,12 +79,12 @@ const ViewApproveRequest = (props) => {
     { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
     { refetchOnMountOrArgChange: true }
   );
-  console.log(approveRequestData);
-  const {
-    data: nextDataApi,
-    isLoading: isNextDataLoading,
-    refetch: isNextDataRefetch,
-  } = useGetNextRequestQuery(null, { refetchOnMountOrArgChange: true });
+  // console.log(approveRequestData);
+  // const {
+  //   data: nextDataApi,
+  //   isLoading: isNextDataLoading,
+  //   refetch: isNextDataRefetch,
+  // } = useGetNextRequestQuery(null, { refetchOnMountOrArgChange: true });
 
   const [downloadAttachment] = useLazyDlAttachmentQuery({ attachment: attachment, id: approveRequestData?.id });
 
@@ -114,7 +114,7 @@ const ViewApproveRequest = (props) => {
     setOrderBy(property);
   };
 
-  const onApprovalApproveHandler = (id) => {
+  const onApprovalApproveHandler = (transaction_number) => {
     dispatch(
       openConfirm({
         icon: Help,
@@ -141,7 +141,7 @@ const ViewApproveRequest = (props) => {
             dispatch(onLoading());
             const result = await patchApprovalStatus({
               action: "Approve",
-              asset_approval_id: id,
+              transaction_number: transaction_number,
             }).unwrap();
             dispatch(
               openToast({
@@ -151,10 +151,10 @@ const ViewApproveRequest = (props) => {
             );
             // console.log(result);
             const next = await getNextRequest().unwrap();
-            navigate(`/approving/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
+            navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
           } catch (err) {
             if (err?.status === 404) {
-              navigate(`/approving`);
+              navigate(`/approving/request`);
             } else if (err?.status === 422) {
               dispatch(
                 openToast({
@@ -179,7 +179,7 @@ const ViewApproveRequest = (props) => {
     );
   };
 
-  const onApprovalReturnHandler = (id) => {
+  const onApprovalReturnHandler = (transaction_number) => {
     dispatch(
       openConfirm({
         icon: Report,
@@ -209,7 +209,7 @@ const ViewApproveRequest = (props) => {
             dispatch(onLoading());
             const result = await patchApprovalStatus({
               action: "Return",
-              asset_approval_id: id,
+              transaction_number: transaction_number,
               remarks: data,
             }).unwrap();
 
@@ -220,10 +220,10 @@ const ViewApproveRequest = (props) => {
               })
             );
             const next = await getNextRequest().unwrap();
-            navigate(`/approving/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
+            navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
           } catch (err) {
             if (err?.status === 404) {
-              navigate(`/approving`);
+              navigate(`/approving/request`);
             } else if (err?.status === 422) {
               dispatch(
                 openToast({
@@ -502,14 +502,13 @@ const ViewApproveRequest = (props) => {
                 >
                   Transactions : {approveRequestData?.data?.length} request
                 </Typography>
-
                 {!transactionData?.approved && (
                   <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
                     <Button
                       variant="contained"
                       size="small"
                       color="secondary"
-                      onClick={() => onApprovalApproveHandler(transactionData?.asset_approval_id)}
+                      onClick={() => onApprovalApproveHandler(transactionData?.transaction_number)}
                       startIcon={<Check color="primary" />}
                     >
                       Approve
@@ -517,7 +516,7 @@ const ViewApproveRequest = (props) => {
                     <Button
                       variant="contained"
                       size="small"
-                      onClick={() => onApprovalReturnHandler(transactionData?.asset_approval_id)}
+                      onClick={() => onApprovalReturnHandler(transactionData?.transaction_number)}
                       startIcon={<Undo sx={{ color: "#5f3030" }} />}
                       sx={{
                         color: "white",
