@@ -84,6 +84,7 @@ import CustomMultipleAttachment from "../../../Components/CustomMultipleAttachme
 import {
   useGetTransferNumberApiQuery,
   useLazyGetFixedAssetTransferAllApiQuery,
+  useLazyGetNextTransferQuery,
   usePostTransferApiMutation,
 } from "../../../Redux/Query/Movement/Transfer";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
@@ -124,12 +125,18 @@ const schema = yup.object().shape({
 });
 
 const AddTransfer = (props) => {
-  const dispatch = useDispatch();
+  const [view, setView] = useState(true);
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+
   const { state: transactionData } = useLocation();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const AttachmentRef = useRef(null);
+
+  // console.log(transactionData);
 
   const [updateRequest, setUpdateRequest] = useState({
     id: "",
@@ -173,7 +180,8 @@ const AddTransfer = (props) => {
   ] = usePostRequisitionSmsApiMutation();
 
   const [patchApprovalStatus, { isLoading: isPatchApprovalLoading }] = usePatchTransferApprovalStatusApiMutation();
-
+  const [getNextTransfer, { data: nextData, isLoading: isNextTransferLoading }] = useLazyGetNextTransferQuery();
+  console.log(nextData);
   //* QUERY ------------------------------------------------------------------
 
   const {
@@ -323,7 +331,6 @@ const AddTransfer = (props) => {
   const handleAppendItem = () => append({ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null });
 
   //* useEffects() ----------------------------------------------------------------
-
   useEffect(() => {
     if (isPostError) {
       if (postError?.status === 422) {
@@ -556,7 +563,7 @@ const AddTransfer = (props) => {
           label={label}
           autoComplete="off"
           color="secondary"
-          disabled={edit ? false : transactionData?.view}
+          disabled={edit ? false : view}
           value={value ? `${value} file(s) selected` : null}
           InputProps={{
             startAdornment: (
@@ -629,11 +636,12 @@ const AddTransfer = (props) => {
             );
 
             dispatch(closeConfirm());
-            navigate(-1);
-            // const next = await getNextRequest().unwrap();
-            // navigate(`/approving/${next?.[0].transfer_number}`, { state: next?.[0], replace: true });
+            const next = await getNextTransfer().unwrap();
+            navigate(`/approving/transfer/${next?.[0].transfer_number}`, { state: next[0], replace: true });
           } catch (err) {
-            if (err?.status === 422) {
+            if (err?.status === 404) {
+              navigate(`/approving/transfer`);
+            } else if (err?.status === 422) {
               dispatch(
                 openToast({
                   // message: err.data.message,
@@ -698,10 +706,13 @@ const AddTransfer = (props) => {
               })
             );
             dispatch(closeConfirm());
-            navigate(-1);
+            const next = await getNextTransfer().unwrap();
+            navigate(`/approving/transfer/${next?.[0].transfer_number}`, { state: next?.[0], view, replace: true });
           } catch (err) {
             console.log(err);
-            if (err?.status === 422) {
+            if (err?.status === 404) {
+              navigate(`/approving/transfer`);
+            } else if (err?.status === 422) {
               dispatch(
                 openToast({
                   // message: err.data.message,
@@ -757,7 +768,7 @@ const AddTransfer = (props) => {
             <Typography color="secondary.main">Back</Typography>
           </Button>
 
-          {transactionData?.view && !edit
+          {view && !edit
             ? !transactionData?.approved && (
                 <Button
                   variant="contained"
@@ -793,7 +804,13 @@ const AddTransfer = (props) => {
         >
           <Box>
             <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
-              {`${transactionData?.view ? (edit ? "EDIT INFORMATION" : "VIEW INFORMATION") : "ADD TRANSFER REQUEST"} `}
+              {`${
+                view
+                  ? edit
+                    ? "EDIT INFORMATION"
+                    : `TRANSFER : ${transactionData?.transfer_number}`
+                  : "ADD TRANSFER REQUEST"
+              }`}
             </Typography>
 
             <Box id="requestForm" className="request__form">
@@ -802,7 +819,7 @@ const AddTransfer = (props) => {
                   <CustomTextField
                     control={control}
                     name="description"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     label="Description"
                     type="text"
                     error={!!errors?.description}
@@ -814,7 +831,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     control={control}
                     name="accountability"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     options={["Personal Issued", "Common"]}
                     isOptionEqualToValue={(option, value) => option === value}
                     renderInput={(params) => (
@@ -835,7 +852,7 @@ const AddTransfer = (props) => {
                   {watch("accountability") === "Personal Issued" && (
                     <CustomAutoComplete
                       name="accountable"
-                      disabled={edit ? false : transactionData?.view}
+                      disabled={edit ? false : view}
                       control={control}
                       includeInputInList
                       disablePortal
@@ -863,7 +880,7 @@ const AddTransfer = (props) => {
                     autoComplete
                     control={control}
                     name="department_id"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     options={departmentData}
                     onOpen={() =>
                       isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
@@ -947,7 +964,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="unit_id"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     control={control}
                     options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
                     onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
@@ -974,7 +991,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="subunit_id"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     control={control}
                     options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
                     loading={isSubUnitLoading}
@@ -995,7 +1012,7 @@ const AddTransfer = (props) => {
                   <CustomAutoComplete
                     autoComplete
                     name="location_id"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     control={control}
                     options={locationData?.filter((item) => {
                       return item.subunit.some((subunit) => {
@@ -1019,7 +1036,7 @@ const AddTransfer = (props) => {
 
                   <CustomAutoComplete
                     name="account_title_id"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     control={control}
                     options={accountTitleData}
                     onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
@@ -1040,7 +1057,7 @@ const AddTransfer = (props) => {
                   <CustomTextField
                     control={control}
                     name="remarks"
-                    disabled={edit ? false : transactionData?.view}
+                    disabled={edit ? false : view}
                     label="Remarks (Optional)"
                     type="text"
                     error={!!errors?.remarks}
@@ -1057,7 +1074,7 @@ const AddTransfer = (props) => {
                     <CustomMultipleAttachment
                       control={control}
                       name="attachments"
-                      disabled={edit ? false : transactionData?.view}
+                      disabled={edit ? false : view}
                       label="Attachments"
                       inputRef={AttachmentRef}
                       error={!!errors?.attachments?.message}
@@ -1065,13 +1082,14 @@ const AddTransfer = (props) => {
                     />
                   )}
 
-                  {watch("attachments") !== null && (!transactionData?.view || edit) && (
+                  {watch("attachments") !== null && (!view || edit) && (
                     <RemoveFile title="Attachments" value="attachments" />
                   )}
                 </Stack>
               </Stack>
             </Box>
           </Box>
+
           {/* TABLE */}
           <Box className="request__table">
             <TableContainer
@@ -1096,7 +1114,7 @@ const AddTransfer = (props) => {
                       Action
                     </TableCell>
                   </TableRow>
-                </TableHead>{" "}
+                </TableHead>
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
@@ -1110,7 +1128,7 @@ const AddTransfer = (props) => {
                               options={vTagNumberData}
                               onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
                               loading={isVTagNumberLoading}
-                              disabled={edit ? false : transactionData?.view}
+                              disabled={edit ? false : view}
                               size="small"
                               value={value}
                               filterOptions={filterOptions}
@@ -1210,15 +1228,10 @@ const AddTransfer = (props) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <IconButton
-                          onClick={() => remove(index)}
-                          disabled={edit ? false : fields.length === 1 || transactionData?.view}
-                        >
+                        <IconButton onClick={() => remove(index)} disabled={edit ? false : fields.length === 1 || view}>
                           <Tooltip title="Delete Row" placement="top" arrow>
                             <RemoveCircle
-                              color={
-                                fields.length === 1 || transactionData?.view ? (edit ? "warning" : "gray") : "warning"
-                              }
+                              color={fields.length === 1 || view ? (edit ? "warning" : "gray") : "warning"}
                             />
                           </Tooltip>
                         </IconButton>
@@ -1234,7 +1247,7 @@ const AddTransfer = (props) => {
                           size="small"
                           startIcon={<Add />}
                           onClick={() => handleAppendItem()}
-                          disabled={edit ? false : transactionData?.view}
+                          disabled={edit ? false : view}
                         >
                           Add Row
                         </Button>
@@ -1265,7 +1278,7 @@ const AddTransfer = (props) => {
                   Added: {fields.length} Asset(s)
                 </Typography>
                 <Stack flexDirection="row" gap={2} sx={{ pt: "10px" }}>
-                  {!transactionData?.view || edit ? (
+                  {!view || edit ? (
                     <LoadingButton
                       type="submit"
                       variant="contained"
