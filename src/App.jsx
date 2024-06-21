@@ -72,7 +72,7 @@ import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
 
 import RequestApproving from "./Pages/Approving/Request/RequestApproving";
 import TransferApproving from "./Pages/Approving/Transfer/TransferApproval";
-import PullOutApproving from "./Pages/Approving/Pullout/PullOutApproving";
+import PulloutApproval from "./Pages/Approving/Pullout/PullOutApproval";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import Approving from "./Pages/Approving";
 import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
