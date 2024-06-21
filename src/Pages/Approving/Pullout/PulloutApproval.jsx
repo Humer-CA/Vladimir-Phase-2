@@ -6,7 +6,7 @@ import { Badge, Box, Tab, Tabs, Typography } from "@mui/material";
 // import ApprovedPullout from "./ApprovedPullout";
 import { useGetNotificationApiQuery } from "../../../Redux/Query/Notification";
 
-const PullOutApproving = () => {
+const PullOutApproval = () => {
   const [value, setValue] = useState("1");
   const { data: notifData, refetch } = useGetNotificationApiQuery();
 
@@ -54,4 +54,4 @@ const PullOutApproving = () => {
   );
 };
 
-export default PullOutApproving;
+export default PullOutApproval;
