@@ -124,7 +124,7 @@ const schema = yup.object().shape({
   ),
 });
 
-const AddPullout = (props) => {
+const ViewPullout = (props) => {
   const [view, setView] = useState(true);
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -1325,4 +1325,4 @@ const AddPullout = (props) => {
   );
 };
 
-export default AddPullout;
+export default ViewPullout;
