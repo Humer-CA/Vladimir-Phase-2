@@ -72,11 +72,12 @@ import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
 
 import RequestApproving from "./Pages/Approving/Request/RequestApproving";
 import TransferApproving from "./Pages/Approving/Transfer/TransferApproval";
-import PulloutApproval from "./Pages/Approving/Pullout/PullOutApproval";
+import PullOutApproval from "./Pages/Approving/Pullout/PullOutApproval";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import Approving from "./Pages/Approving";
 import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
 import Warehouse from "./Pages/Masterlist/Warehouse";
+import ViewPullout from "./Pages/Approving/Pullout/ViewPullout";
 
 const router = createBrowserRouter([
   {
@@ -355,11 +356,11 @@ const router = createBrowserRouter([
               },
               {
                 path: "pull-out",
-                element: <PullOutApproving />,
+                element: <PullOutApproval />,
               },
               {
                 path: "pullout/:transaction_number",
-                element: <ViewApproveRequest />,
+                element: <ViewPullout />,
               },
               {
                 path: "disposal",
