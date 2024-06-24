@@ -82,11 +82,12 @@ import { requestContainerApi } from "../Query/Request/RequestContainer";
 import { purchaseRequestApi } from "../Query/Request/PurchaseRequest";
 
 import { approvalApi } from "../Query/Approving/Approval";
+import { transferApi } from "../Query/Movement/Transfer";
 import { transferApprovalApi } from "../Query/Approving/TransferApproval";
+import { pulloutApi } from "../Query/Movement/Pullout";
+import { pulloutApprovalApi } from "../Query/Approving/PulloutApproval";
 
 import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
-
-import { transferApi } from "../Query/Movement/Transfer";
 
 import { assetReceivingApi } from "../Query/Request/AssetReceiving";
 import { assetReleasingApi } from "../Query/Request/AssetReleasing";
@@ -125,9 +126,7 @@ export const store = configureStore({
     // [categoryListApi.reducerPath]: categoryListApi.reducer,
 
     [fistoCompanyApi.reducerPath]: fistoCompanyApi.reducer,
-    // [ymirBusinessUnitApi.reducerPath]: ymirApi.reducer,
     [fistoDepartmentApi.reducerPath]: fistoDepartmentApi.reducer,
-    // [ymirUnitApi.reducerPath]: ymirApi.reducer,
     [fistoLocationApi.reducerPath]: fistoLocationApi.reducer,
     [fistoAccountTitleApi.reducerPath]: fistoAccountTitleApi.reducer,
     [fistoSupplierApi.reducerPath]: fistoSupplierApi.reducer,
@@ -148,7 +147,7 @@ export const store = configureStore({
     [ipAddressSetupApi.reducerPath]: ipAddressSetupApi.reducer,
     [ipAddressPretestSetupApi.reducerPath]: ipAddressPretestSetupApi.reducer,
 
-    // User Mangement
+    // User Management
     [userAccountsApi.reducerPath]: userAccountsApi.reducer,
     [sedarUsersApi.reducerPath]: sedarUsersApi.reducer,
     [roleManagementApi.reducerPath]: roleManagementApi.reducer,
@@ -176,10 +175,12 @@ export const store = configureStore({
     [purchaseRequestApi.reducerPath]: purchaseRequestApi.reducer,
 
     [transferApi.reducerPath]: transferApi.reducer,
+    [pulloutApi.reducerPath]: pulloutApi.reducer,
 
     // Approval
     [approvalApi.reducerPath]: approvalApi.reducer,
     [transferApprovalApi.reducerPath]: transferApprovalApi.reducer,
+    [pulloutApprovalApi.reducerPath]: pulloutApprovalApi.reducer,
 
     [assetReceivingApi.reducerPath]: assetReceivingApi.reducer,
     [assetReleasingApi.reducerPath]: assetReleasingApi.reducer,
@@ -255,6 +256,7 @@ export const store = configureStore({
 
       // Transfer
       transferApi.middleware,
+      pulloutApi.middleware,
 
       // Approval
       approvalApi.middleware,
