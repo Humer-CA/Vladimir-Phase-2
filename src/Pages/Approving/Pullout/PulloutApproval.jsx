@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { TabContext, TabPanel } from "@mui/lab";
 import { Badge, Box, Tab, Tabs, Typography } from "@mui/material";
 
-// import PendingPullout from "./PendingPullout";
-// import ApprovedPullout from "./ApprovedPullout";
 import { useGetNotificationApiQuery } from "../../../Redux/Query/Notification";
+import PendingPullout from "./PendingPullout";
+import ApprovedPullout from "./ApprovedPullout";
 
-const PullOutApproval = () => {
+const PulloutApproval = () => {
   const [value, setValue] = useState("1");
   const { data: notifData, refetch } = useGetNotificationApiQuery();
 
@@ -42,11 +42,11 @@ const PullOutApproval = () => {
           </Tabs>
 
           <TabPanel sx={{ p: 0 }} value="1" index="1">
-            {/* <PendingPullout refetch /> */}
+            <PendingPullout refetch />
           </TabPanel>
 
           <TabPanel sx={{ p: 0 }} value="2" index="2">
-            {/* <ApprovedPullout /> */}
+            <ApprovedPullout />
           </TabPanel>
         </TabContext>
       </Box>
@@ -54,4 +54,4 @@ const PullOutApproval = () => {
   );
 };
 
-export default PullOutApproval;
+export default PulloutApproval;

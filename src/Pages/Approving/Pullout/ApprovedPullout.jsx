@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import Moment from "moment";
 import MasterlistToolbar from "../../../Components/Reusable/MasterlistToolbar";
 import ActionMenu from "../../../Components/Reusable/ActionMenu";
-// import AddMajorCategory from "../AddEdit/AddMajorCategory";
 import MasterlistSkeleton from "../../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../../ErrorFetching";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
 
 // MUI
 import {
@@ -27,8 +24,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { Help, Report, Visibility } from "@mui/icons-material";
-import { usePatchApprovalStatusApiMutation } from "../../../Redux/Query/Approving/Approval";
+import { Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 import { notificationApi } from "../../../Redux/Query/Notification";
