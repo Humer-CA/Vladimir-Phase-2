@@ -87,7 +87,7 @@ const TransferTimeline = (props) => {
         </Stepper>
       </Box>
 
-      <Divider width="100%" sx={{ mb: 1.5, width: "90%", alignSelf: "center" }} />
+      <Divider sx={{ mb: 1.5, width: "90%", alignSelf: "center" }} />
 
       <Stack sx={{ mt: -1.5 }} width="100%">
         <Stack flexDirection="row" alignItems="center" justifyContent="center" gap={1} mb={2} mt={1}>

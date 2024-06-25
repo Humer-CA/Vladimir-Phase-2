@@ -743,10 +743,9 @@ const AddTransfer = (props) => {
 
   //* Styles ----------------------------------------------------------------
   const BoxStyle = {
-    display: "flex",
+    display: "block",
     flexDirection: "column",
     gap: "15px",
-    width: "100%",
     pb: "10px",
   };
 

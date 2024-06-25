@@ -746,7 +746,6 @@ const ViewPullout = (props) => {
     display: "flex",
     flexDirection: "column",
     gap: "15px",
-    width: "100%",
     pb: "10px",
   };
 
