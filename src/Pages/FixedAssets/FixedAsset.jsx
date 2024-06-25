@@ -137,7 +137,6 @@ const FixedAsset = (props) => {
   const scanFile = useSelector((state) => state.booleanState.scanFile);
 
   // Table Sorting --------------------------------
-
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
 
@@ -188,7 +187,7 @@ const FixedAsset = (props) => {
       per_page: perPage,
       status: status,
       search: search,
-      faFilter: faFilter,
+      filter: faFilter,
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -290,8 +289,8 @@ const FixedAsset = (props) => {
             onImport={() => {}}
             onPrint
             faStatus
-            faFilter
-            setFaFilter
+            faFilter={faFilter}
+            setFaFilter={setFaFilter}
             scanAsset
             openScan
             hideArchive
