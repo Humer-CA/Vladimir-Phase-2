@@ -70,11 +70,12 @@ import Transfer from "./Pages/Asset Movement/Transfer/Transfer";
 import UnitOfMeasurement from "./Pages/Masterlist/UnitOfMeasurement";
 import AddTransfer from "./Pages/Asset Movement/Transfer/AddTransfer";
 
+import Approving from "./Pages/Approving";
 import RequestApproving from "./Pages/Approving/Request/RequestApproving";
 import TransferApproving from "./Pages/Approving/Transfer/TransferApproval";
-import PullOutApproval from "./Pages/Approving/Pullout/PullOutApproval";
+import PulloutApproval from "./Pages/Approving/Pullout/PulloutApproval";
 import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
-import Approving from "./Pages/Approving";
+
 import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
 import Warehouse from "./Pages/Masterlist/Warehouse";
 import ViewPullout from "./Pages/Approving/Pullout/ViewPullout";
@@ -356,7 +357,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "pull-out",
-                element: <PullOutApproval />,
+                element: <PulloutApproval />,
               },
               {
                 path: "pullout/:transaction_number",
