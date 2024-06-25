@@ -63,7 +63,7 @@ const Requisition = () => {
   const [status, setStatus] = useState("active");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState([]);
+  const [requestFilter, setRequestFilter] = useState([]);
   const viewData = true;
 
   // const enableForm = true;
@@ -132,7 +132,7 @@ const Requisition = () => {
       per_page: perPage,
       status: status,
       search: search,
-      filter: filter,
+      filter: requestFilter,
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -251,9 +251,8 @@ const Requisition = () => {
               onStatusChange={setStatus}
               onSearchChange={setSearch}
               onSetPage={setPage}
-              requestFilter
-              setFilter={setFilter}
-              filter={filter}
+              setRequestFilter={setRequestFilter}
+              requestFilter={requestFilter}
             />
             <Box className="masterlist-toolbar__addBtn" sx={{ mt: 0.25 }}>
               <Button
