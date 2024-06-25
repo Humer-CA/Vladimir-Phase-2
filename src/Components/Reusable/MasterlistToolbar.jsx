@@ -50,7 +50,6 @@ import {
   Archive,
   CheckBox,
   Filter,
-  Filter1,
   FilterAlt,
   FilterList,
   LibraryAdd,
@@ -84,7 +83,7 @@ const MasterlistToolbar = (props) => {
     faStatus,
     handleAddRequest,
     requestFilter,
-    setFilter,
+    setRequestFilter,
     filter,
     faFilter,
     setFaFilter,
@@ -222,21 +221,21 @@ const MasterlistToolbar = (props) => {
 
   const handleFilterChange = (value) => {
     // console.log(value)
-    if (filter.includes(value)) {
-      setFilter(filter.filter((filter) => filter !== value));
+    if (requestFilter.includes(value)) {
+      setRequestFilter(requestFilter.filter((requestFilter) => requestFilter !== value));
     } else {
-      setFilter([...filter, value]);
+      setRequestFilter([...requestFilter, value]);
     }
   };
 
-  // const handleFaFilterChange = (value) => {
-  //   // console.log(value)
-  //   if (faFilter.includes(value)) {
-  //     setFaFilter(faFilter.filter((filter) => filter !== value));
-  //   } else {
-  //     setFaFilter([...faFilter, value]);
-  //   }
-  // };
+  const handleFaFilterChange = (value) => {
+    console.log(value);
+    if (faFilter.includes(value)) {
+      setFaFilter(faFilter.filter((filter) => filter !== value));
+    } else {
+      setFaFilter([...faFilter, value]);
+    }
+  };
 
   return (
     <Box className="masterlist-toolbar">
@@ -523,11 +522,50 @@ const MasterlistToolbar = (props) => {
                         control={
                           <Checkbox
                             size="small"
-                            // onChange={() => handleFaFilterChange("isRequest")}
-                            // checked={fafilter.includes("isRequest")}
+                            onChange={() => handleFaFilterChange("From Request")}
+                            checked={faFilter.includes("From Request")}
                           />
                         }
-                        label="Request (TBA)"
+                        label="From Request"
+                      />
+                    </MenuItem>
+
+                    <MenuItem dense>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            onChange={() => handleFaFilterChange("Fixed Asset")}
+                            checked={faFilter.includes("Fixed Asset")}
+                          />
+                        }
+                        label="Fixed Asset"
+                      />
+                    </MenuItem>
+
+                    <MenuItem dense>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            onChange={() => handleFaFilterChange("To Depreciate")}
+                            checked={faFilter.includes("To Depreciate")}
+                          />
+                        }
+                        label="To Depreciate"
+                      />
+                    </MenuItem>
+
+                    <MenuItem dense>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            onChange={() => handleFaFilterChange("Additional Cost")}
+                            checked={faFilter.includes("Additional Cost")}
+                          />
+                        }
+                        label="Additional Cost"
                       />
                     </MenuItem>
                   </FormGroup>
@@ -590,7 +628,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("For Approval")}
-                        checked={filter.includes("For Approval")}
+                        checked={requestFilter.includes("For Approval")}
                       />
                     }
                     label="For Approval"
@@ -603,7 +641,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("For PR")}
-                        checked={filter.includes("For PR")}
+                        checked={requestFilter.includes("For PR")}
                       />
                     }
                     label="For PR"
@@ -616,7 +654,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("For PO")}
-                        checked={filter.includes("For PO")}
+                        checked={requestFilter.includes("For PO")}
                       />
                     }
                     label="For PO"
@@ -629,7 +667,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("For Tagging")}
-                        checked={filter.includes("For Tagging")}
+                        checked={requestFilter.includes("For Tagging")}
                       />
                     }
                     label="For Tagging"
@@ -642,7 +680,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("For Pickup")}
-                        checked={filter.includes("For Pickup")}
+                        checked={requestFilter.includes("For Pickup")}
                       />
                     }
                     label="For Pickup"
@@ -655,7 +693,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("Released")}
-                        checked={filter.includes("Released")}
+                        checked={requestFilter.includes("Released")}
                       />
                     }
                     label="Released"
@@ -668,7 +706,7 @@ const MasterlistToolbar = (props) => {
                       <Checkbox
                         size="small"
                         onChange={() => handleFilterChange("Returned")}
-                        checked={filter.includes("Returned")}
+                        checked={requestFilter.includes("Returned")}
                       />
                     }
                     label="Returned"
