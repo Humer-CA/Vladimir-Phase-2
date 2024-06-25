@@ -20,7 +20,7 @@ export const fixedAssetApi = createApi({
   endpoints: (builder) => ({
     getFixedAssetApi: builder.query({
       query: (params) =>
-        `fixed-asset-search?search=${params.search}&page=${params.page}&per_page=${params.per_page}&status=${params.status}`,
+        `fixed-asset-search?search=${params.search}&page=${params.page}&per_page=${params.per_page}&status=${params.status}&filter=${params.filter}`,
       // query: (params) => `fixed-assets/search=${params.search}&page=${params.page}&limit=${params.limit}`,
       providesTags: ["FixedAsset"],
     }),
