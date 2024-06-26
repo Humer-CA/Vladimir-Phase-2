@@ -21,7 +21,6 @@ export const fixedAssetApi = createApi({
     getFixedAssetApi: builder.query({
       query: (params) =>
         `fixed-asset-search?search=${params.search}&page=${params.page}&per_page=${params.per_page}&status=${params.status}&filter=${params.filter}`,
-      // query: (params) => `fixed-assets/search=${params.search}&page=${params.page}&limit=${params.limit}`,
       providesTags: ["FixedAsset"],
     }),
 
@@ -38,6 +37,11 @@ export const fixedAssetApi = createApi({
         }
         return `show-fixed-asset/${tagNumber}`;
       },
+      providesTags: ["FixedAsset"],
+    }),
+
+    getVoucherFaApi: builder.query({
+      query: (params) => `fisto-voucher?po_no=${params.po_no}&rr_no=${params.rr_no}`,
       providesTags: ["FixedAsset"],
     }),
 
@@ -167,6 +171,7 @@ export const {
   useLazyGetFixedAssetAllApiQuery,
   useGetFixedAssetAllApiQuery,
   useGetFixedAssetIdApiQuery,
+  useLazyGetVoucherFaApiQuery,
   useArchiveFixedAssetStatusApiMutation,
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
