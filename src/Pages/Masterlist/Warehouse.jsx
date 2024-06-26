@@ -342,16 +342,14 @@ const Warehouse = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={warehouseData?.total}
-              success={warehouseSuccess}
-              current_page={warehouseData?.current_page}
-              per_page={warehouseData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={warehouseData?.total}
+            success={warehouseSuccess}
+            current_page={warehouseData?.current_page}
+            per_page={warehouseData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
 

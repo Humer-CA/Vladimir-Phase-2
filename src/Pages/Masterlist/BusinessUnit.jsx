@@ -338,16 +338,14 @@ const BusinessUnit = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={businessUnitApiData?.total}
-                success={businessUnitApiSuccess}
-                current_page={businessUnitApiData?.current_page}
-                per_page={businessUnitApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={businessUnitApiData?.total}
+              success={businessUnitApiSuccess}
+              current_page={businessUnitApiData?.current_page}
+              per_page={businessUnitApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

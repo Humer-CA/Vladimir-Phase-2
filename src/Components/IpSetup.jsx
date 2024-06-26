@@ -736,16 +736,14 @@ const IpSetup = (props) => {
               </Table>
             </TableContainer>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={ipData?.total}
-                success={isIpSuccess}
-                current_page={ipData?.current_page}
-                per_page={ipData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={ipData?.total}
+              success={isIpSuccess}
+              current_page={ipData?.current_page}
+              per_page={ipData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </Stack>
       </Stack>

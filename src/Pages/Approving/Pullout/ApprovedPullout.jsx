@@ -274,16 +274,14 @@ const ApprovedPullout = (props) => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={approvedPulloutData?.total}
-              success={approvalSuccess}
-              current_page={approvedPulloutData?.current_page}
-              per_page={approvedPulloutData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={approvedPulloutData?.total}
+            success={approvalSuccess}
+            current_page={approvedPulloutData?.current_page}
+            per_page={approvedPulloutData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
     </Stack>

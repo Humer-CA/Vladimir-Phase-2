@@ -359,16 +359,14 @@ const MajorCategory = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={majorCategoryData?.total}
-              success={majorCategorySuccess}
-              current_page={majorCategoryData?.current_page}
-              per_page={majorCategoryData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={majorCategoryData?.total}
+            success={majorCategorySuccess}
+            current_page={majorCategoryData?.current_page}
+            per_page={majorCategoryData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
 
           <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
             <AddMajorCategory data={updateMajorCategory} onUpdateResetHandler={onUpdateResetHandler} />

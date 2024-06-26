@@ -312,16 +312,14 @@ const ServiceProvider = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={serviceProviderData?.total}
-              success={serviceProviderSuccess}
-              current_page={serviceProviderData?.current_page}
-              per_page={serviceProviderData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={serviceProviderData?.total}
+            success={serviceProviderSuccess}
+            current_page={serviceProviderData?.current_page}
+            per_page={serviceProviderData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

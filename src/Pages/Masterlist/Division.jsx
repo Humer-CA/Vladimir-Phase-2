@@ -365,16 +365,14 @@ const Division = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={divisionData?.total}
-              success={divisionSuccess}
-              current_page={divisionData?.current_page}
-              per_page={divisionData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={divisionData?.total}
+            success={divisionSuccess}
+            current_page={divisionData?.current_page}
+            per_page={divisionData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
 

@@ -721,16 +721,14 @@ const PrintFixedAsset = (props) => {
             </Table>
           </TableContainer>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={fixedAssetData?.total}
-              success={fixedAssetSuccess}
-              current_page={fixedAssetData?.current_page}
-              per_page={fixedAssetData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={fixedAssetData?.total}
+            success={fixedAssetSuccess}
+            current_page={fixedAssetData?.current_page}
+            per_page={fixedAssetData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
 
         <Stack flexDirection="row" width="100%" justifyContent="space-between" flexWrap="wrap" alignItems="center">

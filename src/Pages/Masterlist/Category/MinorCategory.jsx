@@ -407,16 +407,14 @@ const MinorCategory = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={minorCategoryData?.total}
-              success={minorCategorySuccess}
-              current_page={minorCategoryData?.current_page}
-              per_page={minorCategoryData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={minorCategoryData?.total}
+            success={minorCategorySuccess}
+            current_page={minorCategoryData?.current_page}
+            per_page={minorCategoryData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
 
           <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
             <AddMinorCategory data={updateMinorCategory} onUpdateResetHandler={onUpdateResetHandler} />

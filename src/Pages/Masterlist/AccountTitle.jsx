@@ -406,16 +406,14 @@ const AccountTitle = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={accountTitleApiData?.total}
-                success={accountTitleApiSuccess}
-                current_page={accountTitleApiData?.current_page}
-                per_page={accountTitleApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={accountTitleApiData?.total}
+              success={accountTitleApiSuccess}
+              current_page={accountTitleApiData?.current_page}
+              per_page={accountTitleApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

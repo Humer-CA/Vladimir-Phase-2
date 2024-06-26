@@ -332,16 +332,14 @@ const ApproverSettings = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={approverSettingsData?.total}
-                success={approverSettingsSuccess}
-                current_page={approverSettingsData?.current_page}
-                per_page={approverSettingsData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={approverSettingsData?.total}
+              success={approverSettingsSuccess}
+              current_page={approverSettingsData?.current_page}
+              per_page={approverSettingsData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

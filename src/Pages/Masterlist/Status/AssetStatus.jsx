@@ -327,16 +327,14 @@ const AssetStatus = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={assetStatusData?.total}
-              success={assetStatusSuccess}
-              current_page={assetStatusData?.current_page}
-              per_page={assetStatusData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={assetStatusData?.total}
+            success={assetStatusSuccess}
+            current_page={assetStatusData?.current_page}
+            per_page={assetStatusData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

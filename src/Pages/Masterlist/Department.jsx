@@ -440,16 +440,14 @@ const Department = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={departmentApiData?.total}
-                success={departmentApiSuccess}
-                current_page={departmentApiData?.current_page}
-                per_page={departmentApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={departmentApiData?.total}
+              success={departmentApiSuccess}
+              current_page={departmentApiData?.current_page}
+              per_page={departmentApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

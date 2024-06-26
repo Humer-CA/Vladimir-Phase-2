@@ -420,16 +420,14 @@ const PendingTransfer = (props) => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={pendingTransferData?.total}
-              success={approvalSuccess}
-              current_page={pendingTransferData?.current_page}
-              per_page={pendingTransferData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={pendingTransferData?.total}
+            success={approvalSuccess}
+            current_page={pendingTransferData?.current_page}
+            per_page={pendingTransferData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
     </Stack>

@@ -420,16 +420,14 @@ const PendingPullout = (props) => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={pendingPulloutData?.total}
-              success={approvalSuccess}
-              current_page={pendingPulloutData?.current_page}
-              per_page={pendingPulloutData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={pendingPulloutData?.total}
+            success={approvalSuccess}
+            current_page={pendingPulloutData?.current_page}
+            per_page={pendingPulloutData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
     </Stack>

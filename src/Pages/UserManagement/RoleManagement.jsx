@@ -363,16 +363,14 @@ const Role = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={roleData?.total}
-              success={roleSuccess}
-              current_page={roleData?.current_page}
-              per_page={roleData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={roleData?.total}
+            success={roleSuccess}
+            current_page={roleData?.current_page}
+            per_page={roleData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

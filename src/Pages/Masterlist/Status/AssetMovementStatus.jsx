@@ -330,16 +330,14 @@ const AssetMovementStatus = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={assetMovementStatusData?.total}
-              success={assetMovementStatusSuccess}
-              current_page={assetMovementStatusData?.current_page}
-              per_page={assetMovementStatusData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={assetMovementStatusData?.total}
+            success={assetMovementStatusSuccess}
+            current_page={assetMovementStatusData?.current_page}
+            per_page={assetMovementStatusData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

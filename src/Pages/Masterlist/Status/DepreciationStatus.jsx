@@ -329,16 +329,14 @@ const DepreciationStatus = () => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={depreciationStatusData?.total}
-              success={depreciationStatusSuccess}
-              current_page={depreciationStatusData?.current_page}
-              per_page={depreciationStatusData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={depreciationStatusData?.total}
+            success={depreciationStatusSuccess}
+            current_page={depreciationStatusData?.current_page}
+            per_page={depreciationStatusData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

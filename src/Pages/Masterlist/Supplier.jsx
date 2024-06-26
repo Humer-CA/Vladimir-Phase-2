@@ -335,16 +335,14 @@ const Supplier = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={supplierApiData?.total}
-                success={supplierApiSuccess}
-                current_page={supplierApiData?.current_page}
-                per_page={supplierApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={supplierApiData?.total}
+              success={supplierApiSuccess}
+              current_page={supplierApiData?.current_page}
+              per_page={supplierApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

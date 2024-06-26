@@ -399,16 +399,14 @@ const Location = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={locationApiData?.total}
-                success={locationApiSuccess}
-                current_page={locationApiData?.current_page}
-                per_page={locationApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={locationApiData?.total}
+              success={locationApiSuccess}
+              current_page={locationApiData?.current_page}
+              per_page={locationApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}

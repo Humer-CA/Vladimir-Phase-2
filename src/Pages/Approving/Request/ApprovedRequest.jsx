@@ -308,16 +308,14 @@ const ApprovedRequest = (props) => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={approvalData?.total}
-              success={approvalSuccess}
-              current_page={approvalData?.current_page}
-              per_page={approvalData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={approvalData?.total}
+            success={approvalSuccess}
+            current_page={approvalData?.current_page}
+            per_page={approvalData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
     </Stack>

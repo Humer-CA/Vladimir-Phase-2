@@ -278,16 +278,14 @@ const ApprovedTransfer = (props) => {
             </TableContainer>
           </Box>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={approvedTransferData?.total}
-              success={approvalSuccess}
-              current_page={approvedTransferData?.current_page}
-              per_page={approvedTransferData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={approvedTransferData?.total}
+            success={approvalSuccess}
+            current_page={approvedTransferData?.current_page}
+            per_page={approvedTransferData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
     </Stack>

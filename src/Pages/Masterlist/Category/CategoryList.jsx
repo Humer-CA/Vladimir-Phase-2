@@ -219,16 +219,14 @@ const CategoryList = () => {
             </Table>
           </TableContainer>
 
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={categoryListData?.total}
-              success={categoryListSuccess}
-              current_page={categoryListData?.current_page}
-              per_page={categoryListData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={categoryListData?.total}
+            success={categoryListSuccess}
+            current_page={categoryListData?.current_page}
+            per_page={categoryListData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
 
           <Dialog open={drawer} onClose={() => {}}>
             <AddCategoryList data={updateCategoryList} onUpdateResetHandler={onUpdateResetHandler} />

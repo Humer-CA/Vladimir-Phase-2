@@ -327,17 +327,14 @@ const CycleCountStatus = () => {
               </Table>
             </TableContainer>
           </Box>
-
-          <Box className="mcontainer__pagination">
-            <CustomTablePagination
-              total={cycleCountStatusData?.total}
-              success={cycleCountStatusSuccess}
-              current_page={cycleCountStatusData?.current_page}
-              per_page={cycleCountStatusData?.per_page}
-              onPageChange={pageHandler}
-              onRowsPerPageChange={perPageHandler}
-            />
-          </Box>
+          <CustomTablePagination
+            total={cycleCountStatusData?.total}
+            success={cycleCountStatusSuccess}
+            current_page={cycleCountStatusData?.current_page}
+            per_page={cycleCountStatusData?.per_page}
+            onPageChange={pageHandler}
+            onRowsPerPageChange={perPageHandler}
+          />
         </Box>
       )}
       <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>

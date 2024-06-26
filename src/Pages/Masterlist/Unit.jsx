@@ -342,16 +342,14 @@ const Unit = () => {
               </TableContainer>
             </Box>
 
-            <Box className="mcontainer__pagination">
-              <CustomTablePagination
-                total={unitApiData?.total}
-                success={unitApiSuccess}
-                current_page={unitApiData?.current_page}
-                per_page={unitApiData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+            <CustomTablePagination
+              total={unitApiData?.total}
+              success={unitApiSuccess}
+              current_page={unitApiData?.current_page}
+              per_page={unitApiData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}
