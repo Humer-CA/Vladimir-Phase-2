@@ -407,6 +407,16 @@ const UserAccounts = () => {
                       </TableSortLabel>
                     </TableCell>
 
+                    <TableCell className="tbl-cell">
+                      <TableSortLabel
+                        active={orderBy === `username`}
+                        direction={orderBy === `username` ? order : `asc`}
+                        onClick={() => onSort(`username`)}
+                      >
+                        Username
+                      </TableSortLabel>
+                    </TableCell>
+
                     {/* <TableCell className="tbl-cell">
                       <TableSortLabel
                         active={orderBy === `lastname`}
@@ -416,8 +426,6 @@ const UserAccounts = () => {
                         Lastname
                       </TableSortLabel>
                     </TableCell> */}
-
-                    <TableCell className="tbl-cell">Chart of Account</TableCell>
 
                     {/* <TableCell className="tbl-cell">
                       <TableSortLabel
@@ -430,16 +438,7 @@ const UserAccounts = () => {
                     </TableCell> */}
 
                     <TableCell className="tbl-cell">Role</TableCell>
-
-                    <TableCell className="tbl-cell">
-                      <TableSortLabel
-                        active={orderBy === `username`}
-                        direction={orderBy === `username` ? order : `asc`}
-                        onClick={() => onSort(`username`)}
-                      >
-                        Username
-                      </TableSortLabel>
-                    </TableCell>
+                    <TableCell className="tbl-cell">Chart of Account</TableCell>
 
                     <TableCell className="tbl-cell text-center">Status</TableCell>
 
@@ -482,6 +481,16 @@ const UserAccounts = () => {
                               <Typography fontSize={12}>{users.lastname}</Typography>
                             </TableCell>
 
+                            <TableCell className="tbl-cell">{users.username}</TableCell>
+
+                            {/* <TableCell className="tbl-cell">
+                              {users.subunit?.subunit_code} - {users.subunit?.subunit_name}
+                            </TableCell> */}
+
+                            <TableCell className="tbl-cell capitalized" sx={{ whiteSpace: "nowrap" }}>
+                              {users.role.role_name}
+                            </TableCell>
+
                             <TableCell className="tbl-cell">
                               <Typography fontSize={10} color="gray">
                                 {`(${users.company?.company_code}) - ${users.company?.company_name}`}
@@ -502,16 +511,6 @@ const UserAccounts = () => {
                                 {`(${users.location?.location_code}) - ${users.location?.location_name}`}
                               </Typography>
                             </TableCell>
-
-                            {/* <TableCell className="tbl-cell">
-                              {users.subunit?.subunit_code} - {users.subunit?.subunit_name}
-                            </TableCell> */}
-
-                            <TableCell className="tbl-cell capitalized" sx={{ whiteSpace: "nowrap" }}>
-                              {users.role.role_name}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell">{users.username}</TableCell>
 
                             <TableCell className="tbl-cell text-center">
                               {users.is_active ? (
