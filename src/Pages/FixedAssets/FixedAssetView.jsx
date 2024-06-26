@@ -903,7 +903,7 @@ const FixedAssetView = (props) => {
                       {dataApi?.data?.unit_of_measure?.uom_name}
                     </Typography>
                   </Box>
-                  {console.log(dataApi)}
+
                   <Box className="tableCard__properties">
                     Asset Status:
                     <Typography className="tableCard__info" fontSize="14px">
@@ -1246,12 +1246,14 @@ const FixedAssetView = (props) => {
             data={updateFixedAsset}
             dataApiRefetch={dataApiRefetch}
             onUpdateResetHandler={onUpdateResetHandler}
+            voucher
           />
         ) : (
           <AddFixedAsset
             data={updateFixedAsset}
             dataApiRefetch={dataApiRefetch}
             onUpdateResetHandler={onUpdateResetHandler}
+            voucher
           />
         )}
       </Drawer>
