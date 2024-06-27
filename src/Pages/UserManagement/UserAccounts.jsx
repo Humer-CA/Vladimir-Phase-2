@@ -403,7 +403,7 @@ const UserAccounts = () => {
                         direction={orderBy === `firstname` ? order : `asc`}
                         onClick={() => onSort(`firstname`)}
                       >
-                        Fullname
+                        Employee
                       </TableSortLabel>
                     </TableCell>
 
@@ -439,9 +439,7 @@ const UserAccounts = () => {
 
                     <TableCell className="tbl-cell">Role</TableCell>
                     <TableCell className="tbl-cell">Chart of Account</TableCell>
-
                     <TableCell className="tbl-cell text-center">Status</TableCell>
-
                     <TableCell className="tbl-cell text-center">
                       <TableSortLabel
                         active={orderBy === `created_at`}
@@ -455,7 +453,6 @@ const UserAccounts = () => {
                     <TableCell className="tbl-cell text-center">Action</TableCell>
                   </TableRow>
                 </TableHead>
-
                 <TableBody>
                   {users.data.length === 0 ? (
                     <NoRecordsFound />
@@ -473,14 +470,15 @@ const UserAccounts = () => {
                             }}
                           >
                             <TableCell className="tbl-cell tr-cen-pad45">{users.id}</TableCell>
-
                             <TableCell className="tbl-cell" sx={{ textTransform: "capitalize" }}>
                               <Typography fontSize={14} fontWeight={600} color="secondary.main">
                                 {users.firstname}
                               </Typography>
                               <Typography fontSize={12}>{users.lastname}</Typography>
+                              <Typography fontSize={12} fontWeight={500} color="primary.main">
+                                {users.employee_id}
+                              </Typography>
                             </TableCell>
-
                             <TableCell className="tbl-cell">{users.username}</TableCell>
 
                             {/* <TableCell className="tbl-cell">
@@ -490,7 +488,6 @@ const UserAccounts = () => {
                             <TableCell className="tbl-cell capitalized" sx={{ whiteSpace: "nowrap" }}>
                               {users.role.role_name}
                             </TableCell>
-
                             <TableCell className="tbl-cell">
                               <Typography fontSize={10} color="gray">
                                 {`(${users.company?.company_code}) - ${users.company?.company_name}`}
@@ -511,7 +508,6 @@ const UserAccounts = () => {
                                 {`(${users.location?.location_code}) - ${users.location?.location_name}`}
                               </Typography>
                             </TableCell>
-
                             <TableCell className="tbl-cell text-center">
                               {users.is_active ? (
                                 <Chip
