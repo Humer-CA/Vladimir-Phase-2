@@ -7,10 +7,7 @@ const MasterlistSkeleton = (props) => {
 
   return (
     <>
-      <Box
-        className="mcontainer__wrapper"
-        sx={{ position: "relative", flexWrap: "wrap" }}
-      >
+      <Box className="mcontainer__wrapper" sx={{ position: "relative", flexWrap: "wrap" }}>
         <Box sx={{ display: "flex", position: "relative" }}>
           {Boolean(onAdd) && (
             <Skeleton
@@ -83,12 +80,8 @@ const MasterlistSkeleton = (props) => {
         </Box>
 
         <Box sx={{ padding: "5px 20px" }}>
-          <Skeleton
-            variant={"rounded"}
-            height="40px"
-            sx={{ marginBottom: "10px" }}
-          />
-          <Skeleton variant={"rounded"} height={category ? "41vh" : "48vh"} />
+          <Skeleton variant={"rounded"} height="40px" sx={{ marginBottom: "10px" }} />
+          <Skeleton variant={"rounded"} height={category ? "calc(100vh - 27.5rem)" : "calc(100vh - 24rem)"} />
         </Box>
 
         <Box sx={{ padding: "5px 20px 10px" }}>
