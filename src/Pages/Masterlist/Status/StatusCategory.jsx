@@ -25,7 +25,7 @@ const FaStatusCategory = () => {
         Status Category
       </Typography>
 
-      <Stack sx={{ height: "100dvh" || "100vh" }}>
+      <Stack sx={{ height: "calc(100dvh - 22rem)" }}>
         <Select
           size="small"
           value={value}
