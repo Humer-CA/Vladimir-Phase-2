@@ -19,12 +19,14 @@ import {
   Button,
   Divider,
   IconButton,
+  Stack,
   TextField,
+  Tooltip,
   Typography,
   createFilterOptions,
   useMediaQuery,
 } from "@mui/material";
-import { ArrowForwardIosRounded } from "@mui/icons-material";
+import { ArrowForwardIosRounded, Info, Report, Sync, Warning } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 
 // RTK
@@ -65,6 +67,7 @@ import {
   useLazyGetAccountTitleAllApiQuery,
 } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
 import {
+  useLazyGetVoucherFaApiQuery,
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
 } from "../../../Redux/Query/FixedAsset/FixedAssets";
@@ -92,6 +95,7 @@ import {
   useGetDepreciationStatusAllApiQuery,
   useLazyGetDepreciationStatusAllApiQuery,
 } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
+import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -276,15 +280,25 @@ const schema = yup.object().shape({
 });
 
 const AddFixedAsset = (props) => {
-  const { data, onUpdateResetHandler, dataApiRefetch } = props;
+  const { data, onUpdateResetHandler, dataApiRefetch, voucher } = props;
+  const [poNumber, setPoNumber] = useState("");
+  const [rrNumber, setRrNumber] = useState("");
+  const [syncedVoucher, setSyncedVoucher] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const isFullWidth = useMediaQuery("(max-width: 600px)");
-
-  // const [filteredMinorCategoryData, setFilteredMinorCategoryData] = useState(
-  //   []
-  // );
   const dispatch = useDispatch();
+
+  const [
+    getVoucher,
+    {
+      data: voucherData,
+      isLoading: isVoucherLoading,
+      isSuccess: isVoucherSuccess,
+      isError: isVoucherError,
+      error: voucherError,
+    },
+  ] = useLazyGetVoucherFaApiQuery();
 
   const [
     postFixedAsset,
@@ -632,6 +646,8 @@ const AddFixedAsset = (props) => {
   }, [isPostSuccess, isUpdateSuccess]);
 
   useEffect(() => {
+    setPoNumber(data?.po_number);
+    setRrNumber(data?.receipt);
     const acquisitionDateFormat = new Date(data.acquisition_date);
     const releaseDateFormat = new Date(data.release_date);
     const voucherDateFormat = new Date(data.voucher_date);
@@ -768,6 +784,67 @@ const AddFixedAsset = (props) => {
     dispatch(closeDrawer());
   };
 
+  const handleGetVoucher = (data) => {
+    dispatch(
+      openConfirm({
+        icon: Info,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              SYNC
+            </Typography>{" "}
+            voucher data?
+          </Box>
+        ),
+
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            let result = await getVoucher({ po_no: poNumber, rr_no: rrNumber }).unwrap();
+            const voucherDateFormat = new Date(result?.voucher_date);
+            setValue("voucher", result?.voucher_no);
+            setValue("voucher_date", voucherDateFormat);
+            dispatch(
+              openToast({
+                message: "Successfully Synched!",
+                duration: 5000,
+              })
+            );
+            dispatch(closeConfirm());
+          } catch (err) {
+            console.log(err);
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err.data.message,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+  console.log(voucherData);
+
   const sxSubtitle = {
     fontWeight: "bold",
     color: "secondary.main",
@@ -780,21 +857,38 @@ const AddFixedAsset = (props) => {
     matchFrom: "any",
   });
 
-  const isFormValid = Object.keys(errors).length === 0;
-
-  // console.log(errors);
-  // console.log(watch("depreciation_method"));
-  // console.log(data);
-
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="addFixedAsset">
       <Box className="addFixedAsset__title">
-        <IconButton onClick={handleCloseDrawer}>
-          <ArrowForwardIosRounded color="secondary" />
-        </IconButton>
-        <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-          {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
-        </Typography>
+        <Stack flexDirection="row" alignItems="center">
+          <IconButton onClick={handleCloseDrawer}>
+            <ArrowForwardIosRounded color="secondary" />
+          </IconButton>
+          <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+            {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
+          </Typography>
+        </Stack>
+        {voucher && (
+          <Tooltip title="Sync Voucher" arrow>
+            <>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                startIcon={<Sync color="primary" />}
+                disabled={
+                  isVoucherSuccess ||
+                  (isVoucherLoading && watch("receipt") === "") ||
+                  watch("po_number") === "" ||
+                  (watch("voucher") !== "" && watch("voucher_date") !== null)
+                }
+                onClick={() => handleGetVoucher(data)}
+              >
+                <Typography fontSize="inherit">Sync</Typography>
+              </Button>
+            </>
+          </Tooltip>
+        )}
       </Box>
 
       <Divider />
@@ -1303,6 +1397,7 @@ const AddFixedAsset = (props) => {
               type="text"
               color="secondary"
               size="small"
+              disabled
               error={!!errors?.voucher}
               helperText={errors?.voucher?.message}
               fullWidth
@@ -1313,6 +1408,7 @@ const AddFixedAsset = (props) => {
               name="voucher_date"
               label="Voucher Date"
               size="small"
+              disabled
               views={["year", "month", "day"]}
               openTo="year"
               error={!!errors?.voucher_date}
@@ -1826,7 +1922,7 @@ const AddFixedAsset = (props) => {
           variant="contained"
           size="small"
           loading={isUpdateLoading || isPostLoading}
-          disabled={!isDirty}
+          disabled={!isDirty && !isVoucherSuccess}
         >
           {data.status ? "Update" : "Create"}
         </LoadingButton>
