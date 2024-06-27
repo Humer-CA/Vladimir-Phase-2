@@ -43,6 +43,10 @@ const CustomDatePicker = ({ name, control, onChange: onValueChange, error, helpe
                     backgroundColor: "background.light",
                     borderRadius: "12px",
                   },
+
+                  "& .MuiInputLabel-root.Mui-disabled": {
+                    backgroundColor: "transparent",
+                  },
                 },
                 fullWidth,
               },
