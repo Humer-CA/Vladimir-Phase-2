@@ -406,7 +406,12 @@ const FixedAsset = (props) => {
                                 </TableCell> */}
 
                               <TableCell className="tbl-cell-fa">
-                                <Typography variant="h6" fontSize="16px" color="secondary" fontWeight="bold">
+                                <Typography
+                                  variant="h6"
+                                  fontSize="15px"
+                                  color={data.is_additional_cost ? "secondary.light" : "secondary.main"}
+                                  fontWeight={data.is_additional_cost ? null : "bold"}
+                                >
                                   {data.vladimir_tag_number}
                                   {data.is_additional_cost === 1 ? `-${data.add_cost_sequence}` : null}
                                 </Typography>
@@ -415,12 +420,12 @@ const FixedAsset = (props) => {
                                 </Typography>
                                 <Typography
                                   fontSize="12px"
-                                  fontWeight="bold"
-                                  color={data.is_additional_cost === 0 ? "secondary.main" : "success.dark"}
+                                  fontWeight={data.is_additional_cost ? null : "bold"}
+                                  color={data.is_additional_cost === 0 ? "quaternary.main" : "secondary.light"}
                                 >
                                   {data.is_additional_cost === 0
-                                    ? `Additional Cost Count - ${data.additional_cost_count}`
-                                    : `(Additional Cost)`}
+                                    ? `MAIN ASSET - ${data.additional_cost_count}`
+                                    : `(ADDITIONAL COST)`}
                                 </Typography>
                                 <Typography fontSize="12px" color="primary.main" fontWeight="bold">
                                   {data.type_of_request.type_of_request_name.toUpperCase()}
@@ -447,35 +452,35 @@ const FixedAsset = (props) => {
                               </TableCell>
 
                               <TableCell className="tbl-cell-fa">
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.company.company_code}
                                   {" - "} {data.company.company_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.business_unit?.business_unit_code}
                                   {" - "}
                                   {data.business_unit?.business_unit_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.department.department_code}
                                   {" - "}
                                   {data.department.department_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.unit?.unit_code}
                                   {" - "}
                                   {data.unit?.unit_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.subunit?.subunit_code}
                                   {" - "}
                                   {data.subunit?.subunit_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.location.location_code} {" - "}
                                   {data.location.location_name}
                                 </Typography>
-                                <Typography fontSize="12px" color="gray">
+                                <Typography fontSize="10px" color="gray">
                                   {data.account_title.account_title_code}
                                   {" - "}
                                   {data.account_title.account_title_name}
