@@ -14,6 +14,8 @@ import { openToast } from "../../../Redux/StateManagement/toastSlice";
 
 import {
   Autocomplete,
+  Avatar,
+  Badge,
   Box,
   Button,
   Dialog,
@@ -93,7 +95,7 @@ const schema = yup.object().shape({
   unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
-  account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
+  // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
 
   remarks: yup.string().label("Remarks"),
   attachments: yup.mixed().required().label("Attachments"),
@@ -127,7 +129,7 @@ const AddTransfer = (props) => {
     unit_id: null,
     subunit_id: null,
     location_id: null,
-    account_title_id: null,
+    // account_title_id: null,
 
     remarks: "",
     attachments: null,
@@ -290,7 +292,7 @@ const AddTransfer = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
 
       remarks: "",
       attachments: null,
@@ -350,7 +352,7 @@ const AddTransfer = (props) => {
       setValue("unit_id", data?.unit);
       setValue("subunit_id", data?.subunit);
       setValue("location_id", data?.location);
-      setValue("account_title_id", data?.account_title);
+      // setValue("account_title_id", data?.account_title);
       setValue("remarks", data?.remarks);
       setValue("attachments", attachmentFormat);
       setValue(
@@ -417,7 +419,7 @@ const AddTransfer = (props) => {
       unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
-      account_title_id: formData?.account_title_id.id?.toString(),
+      // account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
       attachments: formData?.attachments,
@@ -681,7 +683,7 @@ const AddTransfer = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
       remarks: "",
       attachments: null,
 
@@ -737,13 +739,16 @@ const AddTransfer = (props) => {
 
         <Box className="request mcontainer__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
           <Box>
-            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", py: 1 }}>
               {`${transactionData?.view ? (edit ? "EDIT INFORMATION" : "VIEW INFORMATION") : "ADD TRANSFER REQUEST"} `}
             </Typography>
 
             <Box id="requestForm" className="request__form">
-              <Stack gap={2} py={2}>
-                <Box sx={BoxStyle}>
+              <Stack gap={2}>
+                <Stack gap={2}>
+                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                    TRANSFER DETAILS
+                  </Typography>
                   <CustomTextField
                     control={control}
                     name="description"
@@ -803,6 +808,24 @@ const AddTransfer = (props) => {
                       )}
                     />
                   )}
+
+                  <CustomTextField
+                    control={control}
+                    name="remarks"
+                    disabled={edit ? false : transactionData?.view}
+                    label="Remarks (Optional)"
+                    type="text"
+                    error={!!errors?.remarks}
+                    helperText={errors?.remarks?.message}
+                    fullWidth
+                    multiline
+                  />
+                </Stack>
+
+                <Stack gap={2}>
+                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                    CHART OF ACCOUNT
+                  </Typography>
 
                   <CustomAutoComplete
                     autoComplete
@@ -962,38 +985,30 @@ const AddTransfer = (props) => {
                     )}
                   />
 
-                  <CustomAutoComplete
-                    name="account_title_id"
-                    disabled={edit ? false : transactionData?.view}
-                    control={control}
-                    options={accountTitleData}
-                    onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
-                    loading={isAccountTitleLoading}
-                    getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
-                    isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        color="secondary"
-                        label="Account Title  "
-                        error={!!errors?.account_title_id}
-                        helperText={errors?.account_title_id?.message}
-                      />
-                    )}
-                  />
+                  {/* <CustomAutoComplete
+                      name="account_title_id"
+                      disabled={edit ? false : transactionData?.view}
+                      control={control}
+                      options={accountTitleData}
+                      onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
+                      loading={isAccountTitleLoading}
+                      getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+                      isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          color="secondary"
+                          label="Account Title  "
+                          error={!!errors?.account_title_id}
+                          helperText={errors?.account_title_id?.message}
+                        />
+                      )}
+                    /> */}
+                </Stack>
 
-                  <CustomTextField
-                    control={control}
-                    name="remarks"
-                    disabled={edit ? false : transactionData?.view}
-                    label="Remarks (Optional)"
-                    type="text"
-                    error={!!errors?.remarks}
-                    helperText={errors?.remarks?.message}
-                    fullWidth
-                    multiline
-                  />
-                </Box>
+                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                  ATTACHMENTS
+                </Typography>
 
                 <Stack flexDirection="row" gap={1} alignItems="center">
                   {watch("attachments") !== null ? (
@@ -1019,10 +1034,7 @@ const AddTransfer = (props) => {
           </Box>
           {/* TABLE */}
           <Box className="request__table">
-            <TableContainer
-              className="mcontainer__th-body  mcontainer__wrapper"
-              sx={{ height: "calc(100vh - 260px)", pt: 0 }}
-            >
+            <TableContainer className="mcontainer__th-body  mcontainer__wrapper" sx={{ height: "calc(100vh - 250px)" }}>
               <Table className="mcontainer__table " stickyHeader>
                 <TableHead>
                   <TableRow
@@ -1045,7 +1057,18 @@ const AddTransfer = (props) => {
                 <TableBody>
                   {fields.map((item, index) => (
                     <TableRow key={item.id}>
-                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell sx={{ pl: "30px" }}>
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            backgroundColor: "primary.main",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {index + 1}
+                        </Avatar>
+                      </TableCell>
                       <TableCell>
                         <Controller
                           control={control}
