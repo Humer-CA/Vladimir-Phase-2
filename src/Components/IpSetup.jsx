@@ -428,7 +428,7 @@ const IpSetup = (props) => {
         {/* Form */}
         <Stack
           component="form"
-          width={isSmallScreen ? "100%" : "400px"}
+          width={isSmallScreen ? "100%" : "300px"}
           gap={3}
           sx={{
             backgroundColor: "white",
@@ -579,15 +579,15 @@ const IpSetup = (props) => {
 
                     <TableCell>
                       <TableSortLabel
-                        active={orderBy === `ip`}
-                        direction={orderBy === `ip` ? order : `asc`}
-                        onClick={() => onSort(`ip`)}
+                        active={orderBy === `name`}
+                        direction={orderBy === `name` ? order : `asc`}
+                        onClick={() => onSort(`name`)}
                       >
                         IP Address
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       <TableSortLabel
                         active={orderBy === `name`}
                         direction={orderBy === `name` ? order : `asc`}
@@ -595,7 +595,7 @@ const IpSetup = (props) => {
                       >
                         User
                       </TableSortLabel>
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell sx={{ textAlign: "center" }}>Status</TableCell>
 
@@ -634,9 +634,16 @@ const IpSetup = (props) => {
                           >
                             <TableCell sx={{ textAlign: "center", pr: "45px" }}>{data.id}</TableCell>
 
-                            <TableCell className="tbl-cell">{data.ip}</TableCell>
+                            <TableCell className="tbl-cell">
+                              <Typography fontWeight={600} color="secondary.main">
+                                {data.ip}
+                              </Typography>
+                              <Typography fontSize={14} color="quaternary.main">
+                                {data.name}
+                              </Typography>
+                            </TableCell>
 
-                            <TableCell className="tbl-cell">{data.name}</TableCell>
+                            {/* <TableCell className="tbl-cell">{data.name}</TableCell> */}
 
                             <TableCell sx={{ textAlign: "center" }}>
                               {data.is_active ? (
@@ -709,23 +716,21 @@ const IpSetup = (props) => {
                                   </Tooltip>
                                 </>
                               ) : (
-                                <>
+                                <Stack flexDirection="row" justifyContent="center" gap={1}>
                                   <Tooltip title="Activate" placement="top" arrow>
                                     <IconButton size="small" onClick={() => onSetStatusHandler(data.id)}>
-                                      <CheckCircleOutline
-                                      // sx={{ color: "primary.main" }}
-                                      />
+                                      <CheckCircleOutline sx={{ color: "success.light" }} />
                                     </IconButton>
                                   </Tooltip>
 
+                                  <Divider orientation="vertical" flexItem />
+
                                   <Tooltip title="Delete" placement="top" arrow>
                                     <IconButton size="small" onClick={() => onDeleteHandler(data.id, "delete")}>
-                                      <Delete
-                                      // sx={{ color: "black.main" }}
-                                      />
+                                      <Delete sx={{ color: "error.light" }} />
                                     </IconButton>
                                   </Tooltip>
-                                </>
+                                </Stack>
                               )}
                             </TableCell>
                           </TableRow>
