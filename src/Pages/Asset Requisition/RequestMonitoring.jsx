@@ -45,7 +45,7 @@ const RequestMonitoring = () => {
   const [status, setStatus] = useState("active");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState([]);
+  const [requestFilter, setRequestFilter] = useState([]);
   const [transactionIdData, setTransactionIdData] = useState();
 
   const navigate = useNavigate();
@@ -108,7 +108,7 @@ const RequestMonitoring = () => {
       per_page: perPage,
       status: status,
       search: search,
-      filter: filter,
+      filter: requestFilter,
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -195,9 +195,8 @@ const RequestMonitoring = () => {
               onStatusChange={setStatus}
               onSearchChange={setSearch}
               onSetPage={setPage}
-              requestFilter
-              setFilter={setFilter}
-              filter={filter}
+              setRequestFilter={setRequestFilter}
+              requestFilter={requestFilter}
             />
 
             <Box>

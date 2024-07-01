@@ -1247,6 +1247,7 @@ const FixedAssetView = (props) => {
             dataApiRefetch={dataApiRefetch}
             onUpdateResetHandler={onUpdateResetHandler}
             voucher
+            disableItems
           />
         ) : (
           <AddFixedAsset
@@ -1254,6 +1255,7 @@ const FixedAssetView = (props) => {
             dataApiRefetch={dataApiRefetch}
             onUpdateResetHandler={onUpdateResetHandler}
             voucher
+            disableItems
           />
         )}
       </Drawer>

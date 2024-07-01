@@ -59,7 +59,6 @@ const UserManagement = () => {
         <Outlet />
       )}
     </>
-    // <Outlet />
   );
 };
 
