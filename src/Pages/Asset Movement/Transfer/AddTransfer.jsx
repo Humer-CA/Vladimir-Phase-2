@@ -110,12 +110,13 @@ const schema = yup.object().shape({
 });
 
 const AddTransfer = (props) => {
-  const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { state: transactionData } = useLocation();
+
   const AttachmentRef = useRef(null);
+  const { state: transactionData } = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [updateRequest, setUpdateRequest] = useState({
     id: "",
@@ -309,7 +310,6 @@ const AddTransfer = (props) => {
   const handleAppendItem = () => append({ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null });
 
   //* useEffects() ----------------------------------------------------------------
-
   useEffect(() => {
     if (isPostError) {
       if (postError?.status === 422) {
@@ -718,9 +718,9 @@ const AddTransfer = (props) => {
               navigate(-1);
             }}
             disableRipple
-            sx={{ pl: "20px", ml: "-15px", mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
+            // sx={{ pl: "20px", ml: "-15px", mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
           {transactionData?.view && !edit && (
@@ -1056,7 +1056,7 @@ const AddTransfer = (props) => {
                 </TableHead>
                 <TableBody>
                   {fields.map((item, index) => (
-                    <TableRow key={item.id}>
+                    <TableRow key={item.id} id="appendedRow">
                       <TableCell sx={{ pl: "30px" }}>
                         <Avatar
                           sx={{
@@ -1202,7 +1202,13 @@ const AddTransfer = (props) => {
                           size="small"
                           startIcon={<Add />}
                           onClick={() => handleAppendItem()}
-                          disabled={edit ? false : transactionData?.view}
+                          disabled={
+                            watch(`assets`).some((item) => item?.fixed_asset_id === null)
+                              ? true
+                              : edit
+                              ? false
+                              : transactionData?.view
+                          }
                         >
                           Add Row
                         </Button>
@@ -1221,6 +1227,7 @@ const AddTransfer = (props) => {
                 </TableBody>
               </Table>
             </TableContainer>
+
             {/* Buttons */}
             <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
               <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" sx={{ pt: "10px" }}>
