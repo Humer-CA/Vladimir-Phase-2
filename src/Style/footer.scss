@@ -4,9 +4,9 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 30px;
+  height: 35px;
   width: 100%;
-  padding: 20px;
+  padding: 10px 30px 10px 5px;
   gap: 10px;
   color: index.$secondary;
   user-select: none;
@@ -20,6 +20,7 @@
   &__status {
     display: flex;
     align-items: center;
+    // justify-content: center;
     // color: index.$primary;
     font-weight: bold;
     gap: 5px;
