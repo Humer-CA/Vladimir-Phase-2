@@ -16,7 +16,7 @@ const Footer = () => {
       <p className="footer__label">Status:</p>
       {online ? (
         <Typography className="footer__status" color="primary" sx={{ fontSize: "14px" }}>
-          <SignalWifiStatusbar4Bar sx={{ fontSize: "18px" }} color="primary.dark" />
+          <SignalWifiStatusbar4Bar sx={{ fontSize: "20px", mb: "3px" }} color="primary.dark" />
           ONLINE
         </Typography>
       ) : (
