@@ -290,7 +290,7 @@ const ViewApproveRequest = (props) => {
             disableRipple
             sx={{ width: "90px", marginLeft: "-15px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
           <Box className="request mcontainer__wrapper" p={2} pb={0}>

@@ -438,7 +438,7 @@ const AddContainer = (props) => {
           onClick={() => navigate(-1)}
           sx={{ width: "90px", marginLeft: "-15px" }}
         >
-          <Typography color="secondary.main">Back</Typography>
+          Back
         </Button>
 
         <Box className="request mcontainer__wrapper" p={2}>

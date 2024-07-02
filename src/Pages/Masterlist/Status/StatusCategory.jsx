@@ -30,15 +30,16 @@ const FaStatusCategory = () => {
           size="small"
           value={value}
           onChange={handleChange}
+          color="primary"
           sx={{
             minWidth: "230px",
-            width: "30%",
+            width: "250px",
             borderRadius: "10px",
             backgroundColor: "white",
-            border: "1px solid #c7c7c70e",
+            // border: "1px solid primary.main",
             my: "5px",
             fontWeight: "bold",
-            color: "secondary.main",
+            color: "secondary.light",
           }}
         >
           <MenuItem value="option1">Asset Status</MenuItem>

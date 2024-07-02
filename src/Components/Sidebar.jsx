@@ -209,6 +209,7 @@ const Sidebar = () => {
         //   permission: [],
         // },
 
+        // * Synching
         {
           label: "Company",
           icon: Apartment,
@@ -259,6 +260,14 @@ const Sidebar = () => {
           permission: "supplier",
         },
         {
+          label: "Unit of Measurement",
+          icon: Straighten,
+          path: "masterlist/unit-of-measurement",
+          permission: "unit-of-measurement",
+        },
+
+        // * CRUD Operations
+        {
           label: "Division",
           icon: Groups2Rounded,
           path: "/masterlist/division",
@@ -299,13 +308,6 @@ const Sidebar = () => {
           icon: FactCheck,
           path: "/masterlist/status-category",
           permission: "status-category",
-        },
-
-        {
-          label: "Unit of Measurement",
-          icon: Straighten,
-          path: "masterlist/unit-of-measurement",
-          permission: "unit-of-measurement",
         },
       ],
       open: masterListCollapse,
@@ -622,7 +624,10 @@ const Sidebar = () => {
   ];
 
   return (
-    <Box className={`sidebar ${collapse ? "" : isOverflowing === true ? "collapsed85" : "collapsed"}`}>
+    <Box
+      className={`sidebar ${collapse ? "" : isOverflowing === true ? "collapsed85" : "collapsed"}`}
+      sx={{ transition: ".4s ease-in-out" }}
+    >
       <Box>
         {collapse ? (
           <IconButton
@@ -686,9 +691,9 @@ const Sidebar = () => {
                       component={NavLink}
                       to={item.path}
                       sx={{
-                        width: collapse ? "222px" : "98%",
+                        width: collapse ? "225px" : "98%",
                         borderRadius: "12px",
-                        transition: "0.2s ease-in-out",
+                        transition: "0.3s ease-in-out",
                       }}
                       onClick={item?.setter}
                     >
@@ -706,7 +711,7 @@ const Sidebar = () => {
                         <ExpandLessRounded
                           sx={{
                             transform: item.open ? "rotate(0deg)" : "rotate(180deg)",
-                            transition: "0.2s ease-in-out",
+                            transition: "0.3s ease-in-out",
                           }}
                         />
                       )}
@@ -763,7 +768,7 @@ const Sidebar = () => {
           }}
         />
         {collapse && (
-          <p>
+          <p sx={{ transition: "0.3s ease-in-out" }}>
             Powered By MIS All rights reserved <br />
             Copyrights © 2021
           </p>

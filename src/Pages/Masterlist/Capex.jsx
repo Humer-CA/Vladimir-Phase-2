@@ -383,7 +383,6 @@ const Capex = () => {
 
             <Box className="mcontainer__pagination-export">
               <Button
-                className="mcontainer__export"
                 variant="outlined"
                 size="small"
                 color="text"

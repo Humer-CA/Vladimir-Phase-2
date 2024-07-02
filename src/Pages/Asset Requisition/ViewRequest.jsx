@@ -113,10 +113,10 @@ const ViewRequest = (props) => {
             disableRipple
             sx={{ width: "90px", marginLeft: "-15px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
-          <Box className="request mcontainer__wrapper" p={2} pb={0}>
+          <Box className="request request__wrapper" p={2} pb={0}>
             {/* TABLE */}
             <Box className="request__table">
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
@@ -124,11 +124,8 @@ const ViewRequest = (props) => {
                 {transactionData && transactionData?.transaction_number}
               </Typography>
 
-              <TableContainer
-                className="mcontainer__th-body  mcontainer__wrapper"
-                sx={{ height: "calc(100vh - 290px)", pt: 0 }}
-              >
-                <Table className="mcontainer__table " stickyHeader>
+              <TableContainer className="request__th-body  request__wrapper">
+                <Table className="request__table " stickyHeader>
                   <TableHead>
                     <TableRow
                       sx={{

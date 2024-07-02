@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 const schema = yup.object().shape({
   id: yup.string(),
   po_number: yup.number().required().label("PO Number").typeError("PO Number is a required field"),
-  rr_number: yup.string().required().label("RR Number"),
+  rr_number: yup.string().required().label("RR Number").typeError("RR Number is a required field"),
   supplier_id: yup
     .string()
     .required()

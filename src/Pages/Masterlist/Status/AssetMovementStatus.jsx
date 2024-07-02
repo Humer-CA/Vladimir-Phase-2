@@ -316,7 +316,7 @@ const AssetMovementStatus = () => {
                               <ActionMenu
                                 status={status}
                                 data={data}
-                                hideEdit={true}
+                                hideEdit
                                 onUpdateHandler={onUpdateHandler}
                                 onArchiveRestoreHandler={onArchiveRestoreHandler}
                               />

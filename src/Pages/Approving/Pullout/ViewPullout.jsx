@@ -764,7 +764,7 @@ const ViewPullout = (props) => {
             disableRipple
             sx={{ pl: "20px", ml: "-15px", mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
           {view && !edit

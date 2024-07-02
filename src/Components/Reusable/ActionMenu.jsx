@@ -201,7 +201,7 @@ const ActionMenu = (props) => {
           TransitionComponent={Fade}
           disablePortal
         >
-          {status === "active" && (
+          {status === "active" && !hideEdit && (
             <MenuItem onClick={!showEditNav ? handleEdit : handleEditNav} dense>
               <ListItemIcon>
                 <BorderColor />

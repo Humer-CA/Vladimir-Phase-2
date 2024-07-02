@@ -743,7 +743,7 @@ const AddTransfer = (props) => {
 
   //* Styles ----------------------------------------------------------------
   const BoxStyle = {
-    display: "block",
+    display: "flex",
     flexDirection: "column",
     gap: "15px",
     pb: "10px",
@@ -764,7 +764,7 @@ const AddTransfer = (props) => {
             disableRipple
             sx={{ pl: "20px", ml: "-15px", mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
           {view && !edit
@@ -775,7 +775,7 @@ const AddTransfer = (props) => {
                   size="small"
                   startIcon={<BorderColor color="secondary" />}
                   onClick={() => setEdit(true)}
-                  sx={{ mb: "5px" }}
+                  sx={{ color: "secondary.main", mb: "10px" }}
                 >
                   Edit
                 </Button>
@@ -787,20 +787,14 @@ const AddTransfer = (props) => {
                   size="small"
                   startIcon={<Cancel color="secondary" />}
                   onClick={() => setEdit(false)}
-                  sx={{ mb: "5px" }}
+                  sx={{ color: "secondary.main", mb: "10px" }}
                 >
                   Cancel Edit
                 </Button>
               )}
         </Stack>
 
-        <Box
-          className="request mcontainer__wrapper"
-          sx={{}}
-          p={2}
-          component="form"
-          onSubmit={handleSubmit(onSubmitHandler)}
-        >
+        <Box className="request mcontainer__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
           <Box>
             <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pt: 1 }}>
               {`${
@@ -1093,7 +1087,7 @@ const AddTransfer = (props) => {
           <Box className="request__table">
             <TableContainer
               className="mcontainer__th-body  mcontainer__wrapper"
-              sx={{ height: transactionData?.approved ? "calc(100vh - 210px)" : "calc(100vh - 260px)", pt: 0 }}
+              sx={{ height: transactionData?.approved ? "calc(100vh - 230px)" : "calc(100vh - 280px)", pt: 0 }}
             >
               <Table className="mcontainer__table " stickyHeader>
                 <TableHead>
@@ -1268,15 +1262,10 @@ const AddTransfer = (props) => {
             {/* Buttons */}
             {!transactionData?.approved && (
               <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-                <Typography
-                  fontFamily="Anton, Impact, Roboto"
-                  fontSize="16px"
-                  color="secondary.main"
-                  sx={{ pt: "10px" }}
-                >
+                <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main">
                   Added: {fields.length} Asset(s)
                 </Typography>
-                <Stack flexDirection="row" gap={2} sx={{ pt: "10px" }}>
+                <Stack flexDirection="row" gap={2}>
                   {!view || edit ? (
                     <LoadingButton
                       type="submit"
@@ -1289,7 +1278,7 @@ const AddTransfer = (props) => {
                       {edit ? "Update" : "Create"}
                     </LoadingButton>
                   ) : (
-                    <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
+                    <Stack flexDirection="row" justifyContent="flex-end" alignItems="center" gap={2}>
                       <Button
                         variant="contained"
                         size="small"

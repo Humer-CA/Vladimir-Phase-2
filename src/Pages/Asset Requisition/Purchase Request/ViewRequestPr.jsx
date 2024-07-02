@@ -179,7 +179,7 @@ const ViewRequestPr = () => {
             disableRipple
             sx={{ width: "90px", marginLeft: "-15px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
           {!transactionData?.withPr && (

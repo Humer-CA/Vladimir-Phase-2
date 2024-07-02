@@ -4,7 +4,7 @@ export const ymirApi = createApi({
   reducerPath: "ymirApi",
 
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://10.10.10.17:8000/api",
+    baseUrl: "http://10.10.13.6:8080/api",
     prepareHeaders: (headers) => {
       const token = "33|nRbzIxaxXQOnGcnMvUhdp01STUuY3k7bggGX8Xds";
       // const token = process.env.YMIR_KEY;

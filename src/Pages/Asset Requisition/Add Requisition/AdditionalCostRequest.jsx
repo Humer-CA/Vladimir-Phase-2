@@ -1949,10 +1949,10 @@ const AdditionalCostRequest = (props) => {
             disableRipple
             sx={{ width: "90px", ml: "-15px", mt: "-5px", pb: "10px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
-          <Box className="request mcontainer__wrapper" p={2}>
+          <Box className="request request__wrapper" p={2}>
             {/* FORM */}
             {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()}
 
@@ -1963,11 +1963,8 @@ const AdditionalCostRequest = (props) => {
                 {transactionData && transactionData?.transaction_number}
               </Typography>
 
-              <TableContainer
-                className="mcontainer__th-body  mcontainer__wrapper"
-                sx={{ height: "calc(100vh - 290px)", pt: 0 }}
-              >
-                <Table className="mcontainer__table " stickyHeader>
+              <TableContainer className="request__th-body  request__wrapper">
+                <Table className="request__table " stickyHeader>
                   <TableHead>
                     <TableRow
                       sx={{

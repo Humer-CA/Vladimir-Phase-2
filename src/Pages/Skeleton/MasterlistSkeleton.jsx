@@ -8,7 +8,7 @@ const MasterlistSkeleton = (props) => {
   return (
     <>
       <Box className="mcontainer__wrapper" sx={{ position: "relative", flexWrap: "wrap" }}>
-        <Box sx={{ display: "flex", position: "relative" }}>
+        <Box sx={{ display: "flex", position: "relative", marginRight: "-15px" }}>
           {Boolean(onAdd) && (
             <Skeleton
               variant={"rounded"}
@@ -18,6 +18,7 @@ const MasterlistSkeleton = (props) => {
                 position: "absolute",
                 top: "-45px",
                 right: "5px",
+
                 gap: "10px",
               }}
             />

@@ -51,7 +51,7 @@ const CustomTextField = (props) => {
                 },
               }}
             />
-            {errors && <Typography sx={{ color: "blue" }}>{errors}</Typography>}
+            {/* {errors && <Typography sx={{ color: "blue" }}>{errors}</Typography>} */}
           </>
         );
       }}
