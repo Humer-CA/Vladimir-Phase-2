@@ -167,14 +167,13 @@ const AddDivision = (props) => {
   return (
     <Box className="add-masterlist">
       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-        {data.action === "view" ? "View Divisions" : data.status ? "Edit Division" : "Add Division"}
+        {data.action === "view" ? "View Division" : data.status ? "Edit Division" : "Add Division"}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomAutoComplete
           readOnly={data.action === "view"}
           autoComplete
-          required
           multiple
           disableCloseOnSelect
           name="sync_id"
@@ -182,11 +181,11 @@ const AddDivision = (props) => {
           options={departmentData}
           loading={isDepartmentLoading}
           size="small"
-          getOptionLabel={(option) => option.department_name}
+          getOptionLabel={(option) => `${option.department_code} - ${option.department_name}`}
           getOptionDisabled={(option) =>
             option?.division?.division_id !== "-" && !data?.sync_id?.some((item) => item?.sync_id === option?.sync_id)
           }
-          isOptionEqualToValue={(option, value) => option.department_name === value.department_name}
+          isOptionEqualToValue={(option, value) => option.sync_id === value.sync_id}
           slotProps={{
             popper: {
               placement: "top",
@@ -217,7 +216,7 @@ const AddDivision = (props) => {
           renderOption={(props, option, { selected }) => (
             <li {...props}>
               <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-              {option.department_name}
+              {`${option.department_code} - ${option.department_name}`}
             </li>
           )}
           renderInput={(params) => (

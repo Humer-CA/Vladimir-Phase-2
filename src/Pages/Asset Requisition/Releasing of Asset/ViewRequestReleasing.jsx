@@ -202,7 +202,7 @@ const ViewRequestReleasing = (props) => {
                   )} */}
 
               {/* <ActionMenu
-                  // faStatus={dataApi?.data?.asset_status?.asset_status_name}
+                  // faStatus={releasingData?.asset_status?.asset_status_name}
                   data={releasingData}
                   // status={status}
                   // onArchiveRestoreHandler={onArchiveRestoreHandler}
@@ -212,25 +212,24 @@ const ViewRequestReleasing = (props) => {
             </Box>
           </Box>
 
-          {releasingData.is_additional_cost === 1 && (
-            <Chip
-              variant="contained"
-              size="small"
-              sx={{
-                fontFamily: "Anton",
-                fontSize: "1rem",
-                color: "secondary.main",
-                mb: "5px",
-                backgroundColor: "primary.light",
-                width: "98%",
-                alignSelf: "center",
-              }}
-              label="ADDITIONAL COST"
-            />
-          )}
-
           <Box className="tableCard__container">
             <Box>
+              {releasingData.is_additional_cost === 1 && (
+                <Chip
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    fontFamily: "Anton",
+                    fontSize: "1rem",
+                    color: "secondary.main",
+                    mb: "5px",
+                    backgroundColor: "primary.light",
+                    width: "98%",
+                    alignSelf: "center",
+                  }}
+                  label="ADDITIONAL COST"
+                />
+              )}
               <Card className="tableCard__cardCapex" sx={{ bgcolor: "secondary.main" }}>
                 <Typography
                   color="secondary.main"
@@ -342,49 +341,42 @@ const ViewRequestReleasing = (props) => {
                   <Box className="tableCard__properties">
                     Company:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.company.company_name}
+                      {`${releasingData?.company.company_code} - ${releasingData?.company.company_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Business Unit:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.business_unit.business_unit_name}
+                      {`${releasingData?.business_unit.business_unit_code} - ${releasingData?.business_unit.business_unit_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Department:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.department.department_name}
+                      {`${releasingData?.department.department_code} - ${releasingData?.department.department_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Unit:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.unit.unit_name}
-                    </Typography>
-                  </Box>
-
-                  <Box className="tableCard__properties">
-                    Sub Unit:
-                    <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.subunit.subunit_name}
+                      {`${releasingData?.unit.unit_code} - ${releasingData?.unit.unit_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Location:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.location.location_name}
+                      {`${releasingData?.location.location_code} - ${releasingData?.location.location_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Account Title:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {releasingData?.account_title.account_title_name}
+                      {`${releasingData?.account_title.account_title_code} - ${releasingData?.account_title.account_title_name}`}
                     </Typography>
                   </Box>
                 </AccordionDetails>

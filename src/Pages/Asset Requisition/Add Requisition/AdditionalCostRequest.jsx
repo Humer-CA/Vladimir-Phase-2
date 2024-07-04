@@ -23,6 +23,7 @@ import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   Divider,
   IconButton,
@@ -1958,10 +1959,25 @@ const AdditionalCostRequest = (props) => {
 
             {/* TABLE */}
             <Box className="request__table">
-              <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-                {`${transactionData ? "TRANSACTION NO." : "FIXED ASSET"}`}{" "}
-                {transactionData && transactionData?.transaction_number}
-              </Typography>
+              <Stack flexDirection="row" alignItems="center" gap={2}>
+                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+                  {`${transactionData ? "TRANSACTION NO." : "FIXED ASSET"}`}{" "}
+                  {transactionData && transactionData?.transaction_number}
+                </Typography>
+
+                {transactionData && (
+                  <Chip
+                    size="small"
+                    variant="filled"
+                    sx={{
+                      color: "white",
+                      fontSize: "0.7rem",
+                      backgroundColor: "tertiary.light",
+                    }}
+                    label={transactionData?.status}
+                  />
+                )}
+              </Stack>
 
               <TableContainer className="request__th-body  request__wrapper">
                 <Table className="request__table " stickyHeader>
@@ -2239,7 +2255,7 @@ const AdditionalCostRequest = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-
+              {console.log(transactionDataApi[0]?.can_edit)}
               {/* Buttons */}
               <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
                 <Typography
@@ -2272,7 +2288,7 @@ const AdditionalCostRequest = (props) => {
                     >
                       Resubmit
                     </LoadingButton>
-                  ) : (
+                  ) : updateRequest ? null : (
                     <LoadingButton
                       onClick={onSubmitHandler}
                       variant="contained"

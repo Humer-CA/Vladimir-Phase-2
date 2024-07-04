@@ -622,25 +622,24 @@ const FixedAssetView = (props) => {
             </Box>
           </Box>
 
-          {dataApi.data?.is_additional_cost === 1 && (
-            <Chip
-              variant="contained"
-              size="small"
-              sx={{
-                fontFamily: "Anton",
-                fontSize: "1rem",
-                color: "secondary.main",
-                mb: "5px",
-                backgroundColor: "primary.light",
-                width: "98%",
-                alignSelf: "center",
-              }}
-              label="ADDITIONAL COST"
-            />
-          )}
-
           <Box className="tableCard__container">
             <Box>
+              {dataApi.data?.is_additional_cost === 1 && (
+                <Chip
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    fontFamily: "Anton",
+                    fontSize: "1rem",
+                    color: "secondary.main",
+                    mb: "5px",
+                    backgroundColor: "primary.light",
+                    width: "98%",
+                    alignSelf: "center",
+                  }}
+                  label="ADDITIONAL COST"
+                />
+              )}
               <Card className="tableCard__cardCapex" sx={{ bgcolor: "secondary.main" }}>
                 <Typography
                   color="secondary.main"
@@ -752,45 +751,42 @@ const FixedAssetView = (props) => {
                   <Box className="tableCard__properties">
                     Company:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.company.company_code}
-                    </Typography>
-                    <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.company.company_name}
+                      {`${dataApi?.data?.company.company_code} - ${dataApi?.data?.company.company_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Business Unit:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.business_unit.business_unit_name}
+                      {`${dataApi?.data?.business_unit.business_unit_code} - ${dataApi?.data?.business_unit.business_unit_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Department:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.department.department_name}
+                      {`${dataApi?.data?.department.department_code} - ${dataApi?.data?.department.department_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Unit:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.unit.unit_name}
+                      {`${dataApi?.data?.unit.unit_code} - ${dataApi?.data?.unit.unit_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Location:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.location.location_name}
+                      {`${dataApi?.data?.location.location_code} - ${dataApi?.data?.location.location_name}`}
                     </Typography>
                   </Box>
 
                   <Box className="tableCard__properties">
                     Account Title:
                     <Typography className="tableCard__info" fontSize="14px">
-                      {dataApi?.data?.account_title.account_title_name}
+                      {`${dataApi?.data?.account_title.account_title_code} - ${dataApi?.data?.account_title.account_title_name}`}
                     </Typography>
                   </Box>
                 </AccordionDetails>

@@ -37,7 +37,7 @@ export const LoadingData = ({ category }) => {
           rowSpan={999}
           sx={{
             borderBottom: "none",
-            height: "calc(100vh - 360px)",
+            height: "calc(100vh - 400px)",
           }}
         >
           <Box className="tblLoading" sx={category ? { marginTop: "-20px!important" } : null}>

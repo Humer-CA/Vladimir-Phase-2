@@ -246,7 +246,7 @@ const Requisition = () => {
       {requisitionError && <ErrorFetching refetch={refetch} error={errorData} />}
       {requisitionData && !requisitionError && (
         <>
-          <Box className="mcontainer__wrapper">
+          <Box className="request__wrapper">
             <MasterlistToolbar
               onStatusChange={setStatus}
               onSearchChange={setSearch}
@@ -254,7 +254,7 @@ const Requisition = () => {
               setRequestFilter={setRequestFilter}
               requestFilter={requestFilter}
             />
-            <Box className="masterlist-toolbar__addBtn" sx={{ mt: 0.25 }}>
+            <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
               <Button
                 onClick={handleOpenAdd}
                 variant="contained"
@@ -386,8 +386,10 @@ const Requisition = () => {
                                 </TableCell> */}
                               <TableCell className="tbl-cell text-weight">{data.transaction_number}</TableCell>
                               <TableCell className="tbl-cell">
-                                <Typography fontSize={14}>{data.acquisition_details}</Typography>
-                                <Typography fontSize={12} color="primary.main" fontWeight={600}>
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  {data.acquisition_details}
+                                </Typography>
+                                <Typography fontSize={12} color="primary.main" fontWeight={400}>
                                   {data.is_addcost === 1 && "Additional Cost"}
                                 </Typography>
                               </TableCell>

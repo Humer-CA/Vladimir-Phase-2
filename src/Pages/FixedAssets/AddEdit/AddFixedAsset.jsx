@@ -280,11 +280,9 @@ const schema = yup.object().shape({
 });
 
 const AddFixedAsset = (props) => {
-  const { data, onUpdateResetHandler, dataApiRefetch, voucher } = props;
+  const { data, onUpdateResetHandler, dataApiRefetch, voucher, disableItems } = props;
   const [poNumber, setPoNumber] = useState("");
   const [rrNumber, setRrNumber] = useState("");
-  const [syncedVoucher, setSyncedVoucher] = useState(null);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const isFullWidth = useMediaQuery("(max-width: 600px)");
   const dispatch = useDispatch();
@@ -608,10 +606,8 @@ const AddFixedAsset = (props) => {
 
   useEffect(() => {
     const errorData = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
-
     if (errorData) {
       const errors = (postError?.data || updateError?.data)?.errors || {};
-
       Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
     }
 
@@ -829,6 +825,14 @@ const AddFixedAsset = (props) => {
                   variant: "error",
                 })
               );
+            } else if (err?.status === 404) {
+              dispatch(
+                openToast({
+                  message: err.data.errors.detail,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
             } else if (err?.status !== 422) {
               dispatch(
                 openToast({
@@ -843,7 +847,6 @@ const AddFixedAsset = (props) => {
       })
     );
   };
-  console.log(voucherData);
 
   const sxSubtitle = {
     fontWeight: "bold",
@@ -1429,6 +1432,7 @@ const AddFixedAsset = (props) => {
             size="small"
             error={!!errors?.receipt}
             helperText={errors?.receipt?.message}
+            disabled={disableItems}
             fullWidth
           />
 
@@ -1442,6 +1446,7 @@ const AddFixedAsset = (props) => {
             size="small"
             error={!!errors?.po_number}
             helperText={errors?.po_number?.message}
+            disabled={disableItems}
             fullWidth
           />
 

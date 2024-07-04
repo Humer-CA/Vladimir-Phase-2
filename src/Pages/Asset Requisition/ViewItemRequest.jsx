@@ -5,6 +5,7 @@ import { LoadingData } from "../../Components/LottieFiles/LottieComponents";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   Divider,
   IconButton,
@@ -122,21 +123,22 @@ const ViewItemRequest = (props) => {
                       whiteSpace: "nowrap",
                       bgcolor: "secondary.main",
                       color: "white",
+                      borderColor: "none",
                     },
                   }}
                 >
-                  <TableCell className="tbl-cell">Index</TableCell>
-                  <TableCell className="tbl-cell">Type of Request</TableCell>
-                  <TableCell className="tbl-cell">Vladimir Tag #</TableCell>
-                  <TableCell className="tbl-cell">Asset Information</TableCell>
-                  <TableCell className="tbl-cell">Receiving Information</TableCell>
-                  <TableCell className="tbl-cell">Status</TableCell>
-                  <TableCell className="tbl-cell">Chart of Accounts</TableCell>
-                  <TableCell className="tbl-cell">Accountability</TableCell>
-                  <TableCell className="tbl-cell text-center">Quantity</TableCell>
-                  <TableCell className="tbl-cell">Cellphone #</TableCell>
-                  <TableCell className="tbl-cell">Remarks</TableCell>
-                  {/* <TableCell className="tbl-cell">Attachments</TableCell> */}
+                  <TableCell className="tbl-cell-dark">Index</TableCell>
+                  <TableCell className="tbl-cell-dark">Type of Request</TableCell>
+                  <TableCell className="tbl-cell-dark">Vladimir Tag #</TableCell>
+                  <TableCell className="tbl-cell-dark">Asset Information</TableCell>
+                  <TableCell className="tbl-cell-dark">Receiving Information</TableCell>
+                  <TableCell className="tbl-cell-dark">Status</TableCell>
+                  <TableCell className="tbl-cell-dark">Chart of Accounts</TableCell>
+                  <TableCell className="tbl-cell-dark">Accountability</TableCell>
+                  <TableCell className="tbl-cell-dark text-center">Quantity</TableCell>
+                  <TableCell className="tbl-cell-dark">Cellphone #</TableCell>
+                  <TableCell className="tbl-cell-dark">Remarks</TableCell>
+                  {/* <TableCell className="tbl-cell-dark">Attachments</TableCell> */}
                 </TableRow>
               </TableHead>
 
@@ -186,7 +188,42 @@ const ViewItemRequest = (props) => {
                           </Typography>
                         </TableCell>
 
-                        <TableCell className="tbl-cell">{data.status}</TableCell>
+                        <TableCell className="tbl-cell">
+                          {data.status === "Cancelled" ? (
+                            <Chip
+                              placement="top"
+                              size="small"
+                              variant="filled"
+                              sx={{
+                                backgroundColor: "error.light",
+                                color: "white",
+                                fontSize: "0.7rem",
+                                px: 1,
+                                ":hover": { backgroundColor: "error.dark" },
+                              }}
+                              label={`${data.status}`}
+                            />
+                          ) : (
+                            data.status === "Served" && (
+                              <Chip
+                                size="small"
+                                variant="filled"
+                                sx={{
+                                  borderColor: "primary.main",
+                                  color: "white",
+                                  fontSize: "0.7rem",
+                                  px: 1,
+                                  cursor: "pointer",
+                                  backgroundColor: "success.dark",
+                                  ":hover": {
+                                    backgroundColor: "success.dark",
+                                  },
+                                }}
+                                label={`${data.status}`}
+                              />
+                            )
+                          )}
+                        </TableCell>
 
                         <TableCell className="tbl-cell">
                           <Typography fontSize={10} color="gray">
@@ -329,6 +366,7 @@ const ViewItemRequest = (props) => {
             per_page={perItemData?.per_page}
             onPageChange={pageHandler}
             onRowsPerPageChange={perPageHandler}
+            removeShadow
           />
         </Stack>
       </Box>

@@ -13,7 +13,7 @@ const NoRecordsFound = (props) => {
           rowSpan={999}
           sx={{
             borderBottom: "none",
-            height: category ? "calc(100vh - 440px)" : request ? "calc(100vh - 360px)" : "calc(100vh - 390px)",
+            height: category ? "calc(100vh - 440px)" : request ? "calc(100vh - 500px)" : "calc(100vh - 390px)",
           }}
         >
           <Box

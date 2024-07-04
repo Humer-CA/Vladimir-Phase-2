@@ -20,6 +20,7 @@ import {
   TableSortLabel,
   Tooltip,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { ArrowBackIosRounded, RemoveCircle, Report } from "@mui/icons-material";
 
@@ -40,6 +41,8 @@ const ViewRequestReceiving = () => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [viewData, setViewData] = useState("");
+
+  const isSmallScreen = useMediaQuery("(max-width: 1375px)");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -177,7 +180,7 @@ const ViewRequestReceiving = () => {
     <>
       {isReceivingError && <ErrorFetching refetch={refetch} error={errorData} />}
       {!isReceivingError && (
-        <Box className="mcontainer" sx={{ height: "calc(100vh - 380px)" }}>
+        <Box className="mcontainer">
           <Button
             variant="text"
             color="secondary"
@@ -190,10 +193,10 @@ const ViewRequestReceiving = () => {
             disableRipple
             sx={{ width: "90px", marginLeft: "-15px", "&:hover": { backgroundColor: "transparent" } }}
           >
-            <Typography color="secondary.main">Back</Typography>
+            Back
           </Button>
 
-          <Box className="mcontainer__wrapper" p={2} pb={0}>
+          <Box className="request__wrapper" p={2} pb={0}>
             {/* TABLE */}
             <Box className="request__table">
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
@@ -202,10 +205,10 @@ const ViewRequestReceiving = () => {
               </Typography>
 
               <TableContainer
-                className="mcontainer__th-body  mcontainer__wrapper"
+                className="request__th-body  request__wrapper"
                 sx={{ height: "calc(100vh - 290px)", pt: 0 }}
               >
-                <Table className="mcontainer__table " stickyHeader>
+                <Table className="request__table " stickyHeader>
                   <TableHead>
                     <TableRow
                       sx={{
@@ -415,7 +418,7 @@ const ViewRequestReceiving = () => {
               </TableContainer>
 
               {/* Buttons */}
-              <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
+              <Box className="mcontainer__pagination-export" width="100%" marginInline="auto">
                 <Typography fontFamily="Anton, Impact, Roboto" fontSize="18px" color="secondary.main">
                   Transactions : {receivingData?.data?.length} request
                 </Typography>
@@ -427,8 +430,9 @@ const ViewRequestReceiving = () => {
                   per_page={receivingData?.per_page}
                   onPageChange={pageHandler}
                   onRowsPerPageChange={perPageHandler}
+                  removeShadow
                 />
-              </Stack>
+              </Box>
             </Box>
           </Box>
 

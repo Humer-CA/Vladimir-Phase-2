@@ -575,6 +575,7 @@ const UserAccounts = () => {
             >
               EXPORT
             </Button>
+
             <CustomTablePagination
               total={users?.total}
               success={usersSuccess}
@@ -582,14 +583,15 @@ const UserAccounts = () => {
               per_page={users?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
+              removeShadow
             />
           </Box>
-
-          <Drawer anchor="right" open={drawer} onClose={() => {}}>
-            <AddUserAccounts data={updateUser} onUpdateResetHandler={onUpdateResetHandler} />
-          </Drawer>
         </Box>
       )}
+
+      <Drawer anchor="right" open={drawer} onClose={() => {}}>
+        <AddUserAccounts data={updateUser} onUpdateResetHandler={onUpdateResetHandler} />
+      </Drawer>
     </Box>
   );
 };

@@ -104,7 +104,6 @@ const ActionMenu = (props) => {
   };
 
   const handleDelete = () => {
-    // console.log(data);
     onDeleteHandler(data?.id || data?.subunit?.id || data);
     handleClose();
   };
