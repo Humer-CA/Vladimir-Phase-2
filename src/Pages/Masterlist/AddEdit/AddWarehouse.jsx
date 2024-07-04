@@ -17,10 +17,19 @@ import { usePostWarehouseApiMutation, useUpdateWarehouseApiMutation } from "../.
 import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 import { departmentApi } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
+import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
 
 const schema = yup.object().shape({
   id: yup.string(),
   sync_id: yup.array().required().label("Department").typeError("Department is required"),
+  location_id: yup
+    .string()
+    .required()
+    .typeError("Location is required")
+    .label("Location")
+    .transform((value) => {
+      return value?.id.toString();
+    }),
   warehouse_name: yup.string().required().label("Warehouse Name"),
 });
 
@@ -44,9 +53,12 @@ const AddWarehouse = (props) => {
     defaultValues: {
       id: "",
       sync_id: null || [],
+      location_id: null,
       warehouse_name: "",
     },
   });
+
+  console.log("location", watch("location_id"));
 
   const [
     postWarehouse,
@@ -63,6 +75,17 @@ const AddWarehouse = (props) => {
       error: updateError,
     },
   ] = useUpdateWarehouseApiMutation();
+
+  const [
+    locationTrigger,
+    {
+      data: locationData = [],
+      isLoading: isLocationLoading,
+      isSuccess: isLocationSuccess,
+      isError: isLocationError,
+      error: locationError,
+    },
+  ] = useLazyGetLocationAllApiQuery();
 
   useEffect(() => {
     const hasError = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
@@ -131,6 +154,28 @@ const AddWarehouse = (props) => {
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
+        <CustomAutoComplete
+          autoComplete
+          name="location_id"
+          disabled={data.action === "view"}
+          onOpen={() => (isLocationSuccess ? null : locationTrigger())}
+          control={control}
+          options={locationData}
+          loading={isLocationLoading}
+          size="small"
+          getOptionLabel={(option) => option.location_code + " - " + option.location_name}
+          isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
+          renderInput={(params) => (
+            <TextField
+              color="secondary"
+              {...params}
+              label="Location"
+              error={!!errors?.location_id}
+              helperText={errors?.location_id?.message}
+            />
+          )}
+        />
+
         <CustomTextField
           disabled={data.action === "view"}
           control={control}
@@ -143,6 +188,7 @@ const AddWarehouse = (props) => {
           helperText={errors?.warehouse_name?.message}
           fullWidth
         />
+
         <Box className="add-masterlist__buttons">
           <LoadingButton
             type="submit"

@@ -25,8 +25,7 @@ export const warehouseApi = createApi({
     }),
 
     getWarehouseAllApi: builder.query({
-      query: () => `warehouse?pagination=none`,
-      transformResponse: (response) => response.data,
+      query: () => `warehouse?pagination=none&status=active`,
       providesTags: ["Warehouse"],
     }),
 
