@@ -30,14 +30,14 @@ const AssetRequisition = () => {
       permission: "requisition",
     },
 
-    {
-      icon: <ShoppingBasket />,
-      label: "Purchase Request",
-      description: "Matching of Purchase Request",
-      path: "/asset-requisition/purchase-request",
-      permission: "purchase-request",
-      notification: notifData?.toPR,
-    },
+    // {
+    //   icon: <ShoppingBasket />,
+    //   label: "Purchase Request",
+    //   description: "Matching of Purchase Request",
+    //   path: "/asset-requisition/purchase-request",
+    //   permission: "purchase-request",
+    //   notification: notifData?.toPR,
+    // },
 
     {
       icon: <OpenInBrowserOutlined />,
@@ -71,6 +71,7 @@ const AssetRequisition = () => {
               fontSize: "25px",
               alignSelf: isSmallScreen ? "center" : "flex-start",
               marginLeft: isSmallScreen ? null : "30px",
+              marginBottom: isSmallScreen ? "30px" : null,
             }}
           >
             Asset Requisition

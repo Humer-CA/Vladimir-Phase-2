@@ -415,14 +415,14 @@ const Sidebar = () => {
           permission: "requisition",
           setter: closeCollapse,
         },
-        {
-          label: "Purchase Request",
-          icon: ShoppingBasket,
-          path: "/asset-requisition/purchase-request",
-          permission: "purchase-request",
-          notification: notifData?.toPR,
-          setter: closeCollapse,
-        },
+        // {
+        //   label: "Purchase Request",
+        //   icon: ShoppingBasket,
+        //   path: "/asset-requisition/purchase-request",
+        //   permission: "purchase-request",
+        //   notification: notifData?.toPR,
+        //   setter: closeCollapse,
+        // },
         {
           label: "Receiving of Asset",
           icon: OpenInBrowserOutlined,
