@@ -17,6 +17,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   Dialog,
   FormControlLabel,
   IconButton,
@@ -317,16 +318,29 @@ const ReleasingTable = (props) => {
                                 </TableCell>
                               )}
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
-                                {data.warehouse_number?.warehouse_number}
-                              </TableCell>
-                              <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
-                                <Typography fontSize={12} fontWeight={600} color="primary.main">
-                                  {data.type_of_request?.type_of_request_name}
+                                <Chip
+                                  size="small"
+                                  variant="filled"
+                                  sx={{
+                                    color: "white",
+                                    font: "bold 12px Roboto",
+                                    backgroundColor: "quaternary.light",
+                                  }}
+                                  label={data.warehouse_number?.warehouse_number}
+                                />
+                                <Typography fontSize={12} pt={0.5}>
+                                  {data.warehouse?.warehouse_name}
                                 </Typography>
+                              </TableCell>
+
+                              <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
                                 <Typography fontSize={14} fontWeight={600}>
                                   {data.asset_description}
                                 </Typography>
                                 <Typography fontSize={14}>{data.asset_specification}</Typography>
+                                <Typography fontSize={12} fontWeight={600} color="primary.main">
+                                  {data.type_of_request?.type_of_request_name.toUpperCase()}
+                                </Typography>
                               </TableCell>
 
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell text-weight">
@@ -369,7 +383,12 @@ const ReleasingTable = (props) => {
                               </TableCell>
 
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell ">
-                                {`(${data.requestor?.employee_id}) - ${data.requestor?.firstname} ${data.requestor?.lastname}`}
+                                <Typography fontSize={14} fontWeight={600}>
+                                  {data.requestor?.employee_id}
+                                </Typography>
+                                <Typography
+                                  fontSize={12}
+                                >{`${data.requestor?.firstname} ${data.requestor?.lastname}`}</Typography>
                               </TableCell>
 
                               {released && (
@@ -379,10 +398,12 @@ const ReleasingTable = (props) => {
                               )}
 
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
-                                <Typography fontSize={14} fontWeight={600}>
+                                <Typography fontSize={14} fontWeight={data.accountability === "Common" ? 400 : 600}>
                                   {data.accountability}
                                 </Typography>
-                                <Typography fontSize={12}>{data.accountable}</Typography>
+                                {data.accountability !== "Common" && (
+                                  <Typography fontSize={12}>{data.accountable}</Typography>
+                                )}
                               </TableCell>
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell tr-cen-pad45">
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
