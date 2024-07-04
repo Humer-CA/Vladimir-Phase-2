@@ -6,6 +6,7 @@ import {
   Dialog,
   Divider,
   IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Tooltip,
@@ -24,7 +25,7 @@ import { closeDialog, closeDialog1, openDialog1 } from "../../../Redux/StateMana
 import { useDispatch, useSelector } from "react-redux";
 import { usePutAssetReleasingMutation } from "../../../Redux/Query/Request/AssetReleasing";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { Info, Refresh, Save } from "@mui/icons-material";
+import { Info, Refresh, Remove, Save } from "@mui/icons-material";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import { notificationApi } from "../../../Redux/Query/Notification";
 import { useLazyGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
@@ -34,6 +35,8 @@ import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirC
 import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
 import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import CustomImgAttachment from "../../../Components/Reusable/CustomImgAttachment";
+import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
 
 const schema = yup.object().shape({
   warehouse_number_id: yup.array(),
@@ -43,7 +46,7 @@ const schema = yup.object().shape({
   unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
-  account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
+  // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().required().typeError("Accountability is a required field"),
   accountable: yup
     .object()
@@ -53,15 +56,29 @@ const schema = yup.object().shape({
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
   received_by: yup.object().required().typeError("Received By is a required field"),
+
+  receiver_img: yup.mixed().required().label("Receiver Image").typeError("Receiver Image is a required field"),
+  assignment_memo_img: yup.mixed().required().label("Assignment Memo").typeError("Assignment Memo is a required field"),
+  authorization_memo_img: yup
+    .mixed()
+    .required()
+    .label("Authorization Letter")
+    .typeError("Authorization Letter is a required field"),
 });
 
 const AddReleasingInfo = (props) => {
   const { data, refetch, warehouseNumber, hideWN } = props;
   const [signature, setSignature] = useState();
   const [trimmedDataURL, setTrimmedDataURL] = useState(null);
+  const [viewImage, setViewImage] = useState(null);
+  const [base64Image, setBase64Image] = useState(null);
 
   const signatureRef = useRef();
+  const assignmentMemoRef = useRef(null);
+  const authorizationLetterRef = useRef(null);
+
   const dialog = useSelector((state) => state.booleanState?.dialogMultiple?.dialog1);
+  const dialog1 = useSelector((state) => state.booleanState?.dialogMultiple?.dialog2);
 
   const {
     handleSubmit,
@@ -81,10 +98,15 @@ const AddReleasingInfo = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
       accountability: null,
       accountable: null,
       received_by: null,
+
+      // Attachments
+      receiver_img: null,
+      assignment_memo_img: null,
+      authorization_memo_img: null,
     },
   });
 
@@ -245,7 +267,25 @@ const AddReleasingInfo = (props) => {
     fontSize: "16px",
   };
 
-  const onSubmitHandler = (formData) => {
+  const onSubmitHandler = async (formData) => {
+    // fileToBase64
+    const fileToBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    };
+
+    // Formats
+    const receiverImgBase64 = formData?.receiver_img && (await fileToBase64(formData.receiver_img));
+    const assignmentMemoImgBase64 = formData?.assignment_memo_img && (await fileToBase64(formData.assignment_memo_img));
+    const authorizationLetterImgBase64 =
+      formData?.authorization_memo_img && (await fileToBase64(formData.authorization_memo_img));
+
     const newFormData = {
       ...formData,
       warehouse_number_id: warehouseNumber ? formData?.warehouse_number_id : [data?.warehouse_number?.id],
@@ -255,10 +295,13 @@ const AddReleasingInfo = (props) => {
       unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
-      account_title_id: formData?.account_title_id.id?.toString(),
+      // account_title_id: formData?.account_title_id.id?.toString(),
       accountable: formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
       received_by: formData?.received_by?.general_info?.full_id_number_full_name?.toString(),
-      signature: signature,
+      // signature: signature,
+      receiver_img: receiverImgBase64,
+      assignment_memo_img: assignmentMemoImgBase64,
+      authorization_memo_img: authorizationLetterImgBase64,
     };
 
     dispatch(
@@ -341,7 +384,88 @@ const AddReleasingInfo = (props) => {
     signatureRef.current.clear();
   };
 
+  // Images
   const handleCloseSignature = () => {
+    dispatch(closeDialog1());
+  };
+
+  const UpdateField = ({ value, label, watch }) => {
+    const handleViewImage = () => {
+      const url = URL.createObjectURL(watch);
+      // console.log("Object URL created:", url);
+      setViewImage(url);
+      dispatch(openDialog1());
+    };
+
+    return (
+      <Stack flexDirection="row" gap={1} alignItems="center">
+        <Tooltip title={watch && "Click to view Image"} placement="top" arrow>
+          <TextField
+            type="text"
+            size="small"
+            label={label}
+            autoComplete="off"
+            color="secondary"
+            value={value}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <img src={AttachmentActive} width="20px" />
+                </InputAdornment>
+              ),
+            }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              input: { cursor: "pointer" },
+              ".MuiInputBase-root": {
+                borderRadius: "12px",
+                // color: "#636363",
+              },
+
+              ".MuiInputLabel-root.Mui-disabled": {
+                backgroundColor: "transparent",
+                color: "text.main",
+              },
+
+              ".Mui-disabled": {
+                backgroundColor: "background.light",
+                borderRadius: "12px",
+                color: "text.main",
+              },
+            }}
+            onClick={() => (watch === null ? null : handleViewImage())}
+          />
+        </Tooltip>
+      </Stack>
+    );
+  };
+
+  const RemoveFile = ({ title, value }) => {
+    return (
+      <Tooltip title={`Remove ${title}`} arrow>
+        <IconButton
+          onClick={() => {
+            setValue(value, null);
+            // ref.current.files = [];
+          }}
+          size="small"
+          sx={{
+            backgroundColor: "error.main",
+            color: "white",
+            ":hover": { backgroundColor: "error.main" },
+            height: "25px",
+            width: "25px",
+          }}
+        >
+          <Remove />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const handleCloseView = () => {
     dispatch(closeDialog1());
   };
 
@@ -357,119 +481,184 @@ const AddReleasingInfo = (props) => {
 
       <Divider sx={{ mb: "20px" }} />
 
-      <Stack flexDirection="row" gap={4} overflow="auto" sx={{ justifyContent: "center" }}>
-        <Stack>
-          <Stack gap={2} width="220px">
-            {!hideWN && <Typography sx={sxSubtitle}>Warehouse Number</Typography>}
-            {warehouseNumber && (
-              <Autocomplete
-                {...register}
-                readOnly
-                required
-                multiple
-                name="warehouse_number_id"
-                options={warehouseNumber?.warehouse_number_id}
-                value={warehouseNumber?.warehouse_number_id}
-                size="small"
-                renderInput={(params) => (
-                  <TextField
-                    label={watch("warehouse_number_id") ? "Warehouse Number" : "No Data"}
-                    color="secondary"
-                    sx={{
-                      ".MuiInputBase-root ": { borderRadius: "10px" },
-                      pointer: "default",
-                    }}
-                    {...params}
-                    // label={`${name}`}
-                  />
-                )}
+      <Stack gap={2} pb={3}>
+        {!hideWN && <Typography sx={sxSubtitle}>Warehouse Number</Typography>}
+        {warehouseNumber && (
+          <Autocomplete
+            {...register}
+            readOnly
+            required
+            multiple
+            name="warehouse_number_id"
+            options={warehouseNumber?.warehouse_number_id}
+            value={warehouseNumber?.warehouse_number_id}
+            size="small"
+            renderInput={(params) => (
+              <TextField
+                label={watch("warehouse_number_id") ? "Warehouse Number" : "No Data"}
+                color="secondary"
+                sx={{
+                  ".MuiInputBase-root ": { borderRadius: "10px" },
+                  pointer: "default",
+                }}
+                {...params}
+                // label={`${name}`}
               />
             )}
+          />
+        )}
+      </Stack>
 
-            <Box sx={BoxStyle}>
-              <Typography sx={sxSubtitle}>Accountability</Typography>
-              <CustomAutoComplete
-                autoComplete
-                name="accountability"
-                control={control}
-                options={["Personal Issued", "Common"]}
-                size="small"
-                isOptionEqualToValue={(option, value) => option === value}
-                renderInput={(params) => (
-                  <TextField
-                    color="secondary"
-                    {...params}
-                    label="Accountability  "
-                    error={!!errors?.accountability}
-                    helperText={errors?.accountability?.message}
-                  />
-                )}
-              />
-
-              {watch("accountability") === "Personal Issued" && (
-                <CustomAutoComplete
-                  name="accountable"
-                  control={control}
-                  size="small"
-                  includeInputInList
-                  filterOptions={filterOptions}
-                  options={sedarData}
-                  loading={isSedarLoading}
-                  getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
-                  isOptionEqualToValue={(option, value) =>
-                    option.general_info?.full_id_number === value.general_info?.full_id_number
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Accountable"
-                      color="secondary"
-                      error={!!errors?.accountable?.message}
-                      helperText={errors?.accountable?.message}
-                    />
-                  )}
+      <Stack flexDirection="row" justifyContent="center" gap={4} overflow="auto">
+        <Stack gap={2} width="220px">
+          <Box sx={BoxStyle}>
+            <Typography sx={sxSubtitle}>Accountability</Typography>
+            <CustomAutoComplete
+              autoComplete
+              name="accountability"
+              control={control}
+              options={["Personal Issued", "Common"]}
+              size="small"
+              isOptionEqualToValue={(option, value) => option === value}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Accountability  "
+                  error={!!errors?.accountability}
+                  helperText={errors?.accountability?.message}
                 />
               )}
+            />
 
+            {watch("accountability") === "Personal Issued" && (
               <CustomAutoComplete
-                autoComplete
-                name="received_by"
+                name="accountable"
                 control={control}
+                size="small"
+                includeInputInList
                 filterOptions={filterOptions}
                 options={sedarData}
                 loading={isSedarLoading}
-                size="small"
                 getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
                 isOptionEqualToValue={(option, value) =>
                   option.general_info?.full_id_number === value.general_info?.full_id_number
                 }
                 renderInput={(params) => (
                   <TextField
-                    color="secondary"
                     {...params}
-                    label="Received By"
-                    error={!!errors?.received_by}
-                    helperText={errors?.received_by?.message}
+                    label="Accountable"
+                    color="secondary"
+                    error={!!errors?.accountable?.message}
+                    helperText={errors?.accountable?.message}
                   />
                 )}
               />
+            )}
 
-              {trimmedDataURL ? (
+            <CustomAutoComplete
+              autoComplete
+              name="received_by"
+              control={control}
+              filterOptions={filterOptions}
+              options={sedarData}
+              loading={isSedarLoading}
+              size="small"
+              getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
+              isOptionEqualToValue={(option, value) =>
+                option.general_info?.full_id_number === value.general_info?.full_id_number
+              }
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Received By"
+                  error={!!errors?.received_by}
+                  helperText={errors?.received_by?.message}
+                />
+              )}
+            />
+
+            {/* Signature */}
+            {/* {trimmedDataURL ? (
                 <Box
                   sx={{ display: "grid", placeContent: "center", border: "1px solid gray", borderRadius: "10px", p: 2 }}
                 >
                   <img src={trimmedDataURL} alt="Trimmed Signature" height="100px" width="200px" />
                 </Box>
               ) : null}
-              {/* {signature ? <></>} */}
-              <Button onClick={() => dispatch(openDialog1())}>{signature ? "Change Sign" : "Add Signature"}</Button>
-            </Box>
-          </Stack>
+              <Button onClick={() => dispatch(openDialog1())}>{signature ? "Change Sign" : "Add Signature"}</Button> */}
+          </Box>
 
-          <Stack py={1}></Stack>
+          <Box sx={BoxStyle}>
+            <Typography sx={sxSubtitle}>Attachments</Typography>
+            <Stack flexDirection="row" gap={1} alignItems="center">
+              {watch("receiver_img") !== null ? (
+                <UpdateField
+                  label={"Receiver Image"}
+                  value={watch("receiver_img")?.name}
+                  watch={watch("receiver_img")}
+                />
+              ) : (
+                <CustomImgAttachment
+                  control={control}
+                  name="receiver_img"
+                  label="Receiver Image"
+                  inputRef={assignmentMemoRef}
+                  error={!!errors?.receiver_img?.message}
+                  helperText={errors?.receiver_img?.message}
+                />
+              )}
+              {watch("receiver_img") !== null && <RemoveFile title="Receiver Image" value="receiver_img" />}
+            </Stack>
+
+            <Stack flexDirection="row" gap={1} alignItems="center">
+              {watch("assignment_memo_img") !== null ? (
+                <UpdateField
+                  label={"Assignment Memo"}
+                  value={watch("assignment_memo_img")?.name}
+                  watch={watch("assignment_memo_img")}
+                />
+              ) : (
+                <CustomImgAttachment
+                  control={control}
+                  name="assignment_memo_img"
+                  label="Assignment Memo"
+                  inputRef={assignmentMemoRef}
+                  error={!!errors?.assignment_memo_img?.message}
+                  helperText={errors?.assignment_memo_img?.message}
+                />
+              )}
+              {watch("assignment_memo_img") !== null && (
+                <RemoveFile title="Assignment Memo" value="assignment_memo_img" />
+              )}
+            </Stack>
+
+            <Stack flexDirection="row" gap={1} alignItems="center">
+              {watch("authorization_memo_img") !== null ? (
+                <UpdateField
+                  label={"Authorization Letter"}
+                  value={watch("authorization_memo_img")?.name}
+                  watch={watch("authorization_memo_img")}
+                />
+              ) : (
+                <CustomImgAttachment
+                  control={control}
+                  name="authorization_memo_img"
+                  label="Authorization Letter"
+                  inputRef={authorizationLetterRef}
+                  error={!!errors?.authorization_memo_img?.message}
+                  helperText={errors?.authorization_memo_img?.message}
+                />
+              )}
+              {watch("authorization_memo_img") !== null && (
+                <RemoveFile title="Authorization Letter" value="authorization_memo_img" />
+              )}
+            </Stack>
+          </Box>
         </Stack>
 
-        <Stack sx={BoxStyle} width="220px!important" maxWidth="220px" height="100%">
+        <Stack sx={BoxStyle} width="250px">
           <Typography sx={sxSubtitle}>Charging Information</Typography>
           <CustomAutoComplete
             autoComplete
@@ -623,7 +812,7 @@ const AddReleasingInfo = (props) => {
             )}
           />
 
-          <CustomAutoComplete
+          {/* <CustomAutoComplete
             name="account_title_id"
             control={control}
             // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
@@ -641,13 +830,13 @@ const AddReleasingInfo = (props) => {
                 helperText={errors?.account_title_id?.message}
               />
             )}
-          />
+          /> */}
         </Stack>
       </Stack>
 
-      <Divider sx={{ mb: "10px" }} />
+      <Divider sx={{ my: "10px" }} />
 
-      <Stack flexDirection="row" justifyContent="flex-end" gap={2} p={1}>
+      <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
         <LoadingButton variant="contained" loading={isPostLoading} size="small" type="submit" disabled={!isDirty}>
           Release
         </LoadingButton>
@@ -657,7 +846,7 @@ const AddReleasingInfo = (props) => {
         </Button>
       </Stack>
 
-      <Dialog open={dialog} onClose={handleCloseSignature}>
+      {/* <Dialog open={dialog} onClose={handleCloseSignature}>
         <Box p={2}>
           <Typography fontFamily="Anton, Impact, Roboto" fontSize={20} color="secondary.main" p={1}>
             ADD SIGNATURE
@@ -681,6 +870,21 @@ const AddReleasingInfo = (props) => {
                 Close
               </Button>
             </Stack>
+          </Stack>
+        </Box>
+      </Dialog> */}
+
+      <Dialog open={dialog} onClose={handleCloseView}>
+        <Box p={2} borderRadius="10px">
+          <Typography fontFamily="Anton, Impact, Roboto" fontSize={20} color="secondary.main" px={1}>
+            View Image
+          </Typography>
+          <Stack justifyContent="space-between" p={2} gap={2}>
+            <img src={viewImage} alt="Assignment Memo" />
+
+            <Button variant="outlined" size="small" color="secondary" onClick={handleCloseSignature}>
+              Close
+            </Button>
           </Stack>
         </Box>
       </Dialog>
