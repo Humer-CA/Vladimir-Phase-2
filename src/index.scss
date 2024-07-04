@@ -106,10 +106,12 @@ img {
   align-self: center;
 
   position: relative;
-  padding: 0 10px;
+  // padding: 0 10px;
   color: $secondary;
   margin: 0 10px;
   width: 95%;
+  max-width: 1800px;
+
   // height: 250px;
   // height: 100vh;
   flex: 1;
@@ -127,15 +129,6 @@ img {
     border: #34495515 solid 1px;
     border-radius: 10px;
     padding-inline: 10px;
-    // overflow: overlay;
-
-    // @media (max-width: 700px) {
-    //   margin-top: 43px;
-    // }
-
-    // display: flex;
-    // flex-direction: column;
-    // flex-grow: 1;
   }
 
   & &__title {
@@ -156,15 +149,8 @@ img {
 
   &__th-body {
     overscroll-behavior: none;
-    height: calc(100vh - 330px);
+    height: calc(100vh - 20rem);
     margin-bottom: 10px;
-
-    // overflow: auto;
-    // max-height: 400px;
-    // padding-bottom: 30px;
-    // @media (max-height: 500px) {
-    //   height: 50vh;
-    // }
   }
 
   &__th-body-category {
@@ -182,6 +168,17 @@ img {
     border-bottom: 3px solid $background;
     // border-left: 0.1px solid rgba(245, 245, 245, 0.925);
     // min-width: 200px;
+
+    @media (max-height: 600px) {
+      padding: 8px 20px;
+    }
+  }
+
+  .tbl-cell-dark {
+    color: $background;
+    background-color: $secondary;
+    font-size: smaller;
+    white-space: nowrap;
 
     @media (max-height: 600px) {
       padding: 8px 20px;
@@ -270,24 +267,13 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0px -3px 19px -10px rgba(166, 166, 166, 0.4);
-    flex-wrap: wrap;
     overscroll-behavior: none;
+    box-shadow: 0px -3px 19px -10px rgba(166, 166, 166, 0.4);
     margin-inline: -10px;
-    padding-inline: 10px;
 
     @media (max-width: 850px) {
       flex-wrap: wrap;
       justify-content: center;
-    }
-  }
-
-  // ? Other CSS
-  &__export {
-    width: inherit;
-
-    @media (max-width: 580px) {
-      width: 90%;
     }
   }
 
@@ -392,4 +378,27 @@ input::file-selector-button {
 .signCanvas {
   border: 1px solid $secondaryText;
   border-radius: 10px;
+}
+
+.rowItem {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animateROw {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
