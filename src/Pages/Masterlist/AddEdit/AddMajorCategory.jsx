@@ -22,19 +22,9 @@ import { LoadingButton } from "@mui/lab";
 
 const schema = yup.object().shape({
   id: yup.string(),
-  major_category_name: yup.string().required(),
-  est_useful_life: yup.string().required(),
-  // division_id: yup
-  //   .string()
-  //   // .transform((value) => {
-  //   //   return value?.id.toString();
-  //   // })
-  //   .required()
-  //   .label("Division"),
+  major_category_name: yup.string().required().typeError("Major Category Name is required"),
+  est_useful_life: yup.number().required(),
 });
-
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const AddMajorCategory = (props) => {
   const { data, onUpdateResetHandler } = props;
@@ -45,13 +35,7 @@ const AddMajorCategory = (props) => {
 
   const [
     postMajorCategory,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostMajorCategoryApiMutation();
 
   const [
@@ -64,12 +48,6 @@ const AddMajorCategory = (props) => {
       error: updateError,
     },
   ] = useUpdateMajorCategoryApiMutation();
-
-  // const {
-  //   data: divisionData = [],
-  //   isLoading: isDivisionLoading,
-  //   isError: isDivisionError,
-  // } = useGetDivisionAllApiQuery();
 
   const {
     handleSubmit,
@@ -85,26 +63,16 @@ const AddMajorCategory = (props) => {
       id: "",
       major_category_name: "",
       est_useful_life: null,
-      // division_id: null || [],
-      // division_name: null,
     },
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("major_category_name", {
         type: "validate",
-        message:
-          postError?.data?.errors.major_category_name ||
-          updateError?.data?.errors.major_category_name,
+        message: postError?.data?.errors.major_category_name || updateError?.data?.errors.major_category_name,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -114,6 +82,9 @@ const AddMajorCategory = (props) => {
       );
     }
   }, [isPostError, isUpdateError]);
+
+  console.log(isPostError);
+  console.log(postError);
 
   useEffect(() => {
     if (isPostSuccess || isUpdateSuccess) {
@@ -135,23 +106,16 @@ const AddMajorCategory = (props) => {
   useEffect(() => {
     if (data.status) {
       setValue("id", data.id);
-      // setValue("division_id", {
-      //   id: data.division_id,
-      //   division_name: data.division_name,
-      // });
       setValue("major_category_name", data.major_category_name);
       setValue("est_useful_life", data.est_useful_life);
-      // console.log(data);
     }
   }, [data]);
-  // console.log(data);
 
   const onSubmitHandler = (formData) => {
     if (data.status) {
       updateMajorCategory(formData);
       return;
     }
-
     postMajorCategory(formData);
   };
 
@@ -163,25 +127,15 @@ const AddMajorCategory = (props) => {
     dispatch(closeDrawer());
   };
 
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-  console.log(data);
+  console.log(errors);
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Major Category" : "Add Major Category"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="major_category_name"
@@ -196,70 +150,24 @@ const AddMajorCategory = (props) => {
 
         <CustomNumberField
           control={control}
-          color="secondary"
           name="est_useful_life"
+          color="secondary"
           label="Estimated Useful Life"
-          type="text"
-          size="small"
           error={!!errors?.est_useful_life}
           helperText={errors?.est_useful_life?.message}
-          // isAllowed={(values) => {
-          //   const { floatValue } = values;
-          //   return floatValue >= 1 && floatValue <= 100;
-          // }}
-          fullWidth
-          onChange={(e) => {
-            const inputValue = e.target.value;
-            if (inputValue === "0") {
-              setValue("est_useful_life", inputValue);
-            } else {
-              setValue("est_useful_life", "");
-            }
+          isAllowed={(values) => {
+            const { floatValue } = values;
+            return floatValue >= 0.1 && floatValue <= 100;
           }}
+          // onChange={(e) => {
+          //   const inputValue = e.target.value;
+          //   if (inputValue === 0) {
+          //     setValue("est_useful_life", inputValue);
+          //   } else {
+          //     setValue("est_useful_life", null);
+          //   }
+          // }}
         />
-
-        {/* <CustomAutoComplete
-          autoComplete
-          required
-          multiple
-          disableCloseOnSelect
-          name="division_id"
-          control={control}
-          options={divisionData}
-          loading={isDivisionLoading}
-          size="small"
-          getOptionLabel={(option) => option.division_name}
-          isOptionEqualToValue={(option, value) =>
-            option.division_name === value.division_name
-          }
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-              />
-              {option.division_name}
-            </li>
-          )}
-          renderInput={(params) => (
-            <TextField
-              color="secondary"
-              {...params}
-              label={
-                <>
-                  Division <span style={{ color: "red" }}>*</span>
-                </>
-              }
-              sx={{
-                ".MuiInputBase-root": { borderRadius: "12px" },
-              }}
-              error={!!errors?.division_id?.message}
-              helperText={errors?.division_id?.message}
-            />
-          )}
-        /> */}
 
         <Box className="add-masterlist__buttons">
           <LoadingButton
@@ -267,11 +175,7 @@ const AddMajorCategory = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("major_category_name") === "" ||
-              // watch("division_id") === "" ||
-              watch("est_useful_life") === null
-            }
+            disabled={watch("major_category_name") === "" || watch("est_useful_life") === null}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>
