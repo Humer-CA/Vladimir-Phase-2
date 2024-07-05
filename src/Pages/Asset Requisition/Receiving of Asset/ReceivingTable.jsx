@@ -22,8 +22,6 @@ import {
 import {
   Box,
   Button,
-  Chip,
-  Dialog,
   IconButton,
   Stack,
   Table,
@@ -37,10 +35,14 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Help, LibraryAdd, Report, ReportProblem, Visibility } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
-import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useGetAssetReceivingApiQuery, useGetAssetReceivedApiQuery } from "../../../Redux/Query/Request/AssetReceiving";
+import { Help, SyncOutlined, Visibility } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import {
+  useGetAssetReceivingApiQuery,
+  useGetAssetReceivedApiQuery,
+  usePostReceivingSyncApiMutation,
+} from "../../../Redux/Query/Request/AssetReceiving";
+import { useLazyGetYmirReceivingAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 
 const ReceivingTable = (props) => {
   const { received } = props;
@@ -50,7 +52,61 @@ const ReceivingTable = (props) => {
   const [page, setPage] = useState(1);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
+
+  const [
+    syncTrigger,
+    {
+      data: ymirReceivingApi,
+      isLoading: ymirReceivingApiLoading,
+      isSuccess: ymirReceivingApiSuccess,
+      isFetching: ymirReceivingApiFetching,
+      isError: ymirReceivingApiError,
+    },
+  ] = useLazyGetYmirReceivingAllApiQuery();
+
+  // console.log(ymirReceivingApi);
+
+  const [
+    postSyncData,
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
+  ] = usePostReceivingSyncApiMutation();
+
+  useEffect(() => {
+    if (ymirReceivingApiSuccess) {
+      postSyncData(ymirReceivingApi);
+    }
+  }, [ymirReceivingApiSuccess, ymirReceivingApiFetching]);
+
+  useEffect(() => {
+    if (isPostError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if (postError?.status === 404 || postError?.status === 422) {
+        message = postError?.data?.errors.detail || postError?.data?.message;
+        if (postError?.status === 422) {
+          console.log(postError);
+          dispatch(closeConfirm());
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
+    }
+  }, [isPostError]);
+
+  useEffect(() => {
+    if (isPostSuccess && !isPostLoading) {
+      dispatch(
+        openToast({
+          message: postData?.message,
+          duration: 5000,
+        })
+      );
+      dispatch(closeConfirm());
+    }
+  }, [isPostSuccess, isPostLoading]);
 
   //* Table Sorting -------------------------------------------------------
   const [order, setOrder] = useState("desc");
@@ -106,16 +162,52 @@ const ReceivingTable = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const dispatch = useDispatch();
-
   const handleViewData = (data) => {
     navigate(`/asset-requisition/requisition-receiving/${data.transaction_number}`, {
       state: { ...data, received },
     });
   };
 
-  const onSetPage = () => {
-    setPage(1);
+  const handleSync = () => {
+    dispatch(
+      openConfirm({
+        icon: Help,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              SYNC
+            </Typography>{" "}
+            the data?
+          </Box>
+        ),
+        autoClose: true,
+
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            await syncTrigger().unwrap;
+            refetch();
+          } catch (err) {
+            console.log(err.message);
+            dispatch(
+              openToast({
+                message: postData?.message,
+                duration: 5000,
+              })
+            );
+            dispatch(closeConfirm());
+          }
+        },
+      })
+    );
   };
 
   return (
@@ -126,6 +218,19 @@ const ReceivingTable = (props) => {
         <>
           <Box className="mcontainer__wrapper">
             <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
+
+            <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
+              <Button
+                variant="contained"
+                startIcon={isSmallScreen ? null : <SyncOutlined color="primary" />}
+                size="small"
+                color="secondary"
+                sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
+                onClick={() => handleSync()}
+              >
+                {isSmallScreen ? <SyncOutlined color="primary" /> : "SYNC"}
+              </Button>
+            </Box>
 
             <Box>
               <TableContainer className="mcontainer__th-body-category">
