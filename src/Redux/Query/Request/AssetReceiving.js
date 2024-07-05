@@ -57,6 +57,15 @@ export const assetReceivingApi = createApi({
       }),
       invalidatesTags: ["AssetReceiving"],
     }),
+
+    postReceivingSyncApi: builder.mutation({
+      query: (body) => ({
+        url: `/ymir-po-receiving`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["AssetReceiving"],
+    }),
   }),
 });
 
@@ -69,4 +78,5 @@ export const {
   useLazyGetAssetReceivingApiQuery,
   useAddAssetReceivingApiMutation,
   useCancelAssetReceivingApiMutation,
+  usePostReceivingSyncApiMutation,
 } = assetReceivingApi;

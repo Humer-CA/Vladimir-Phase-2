@@ -44,6 +44,10 @@ export const ymirApi = createApi({
     getYmirUnitOfMeasurementAllApi: builder.query({
       query: () => `/uoms?status=active&pagination=none&vladimir=sync`,
     }),
+
+    getYmirReceivingAllApi: builder.query({
+      query: () => `/asset_vladimir`,
+    }),
   }),
 });
 
@@ -62,4 +66,5 @@ export const {
   useLazyGetYmirLocationAllApiQuery,
   useGetYmirUnitOfMeasurementAllApiQuery,
   useLazyGetYmirUnitOfMeasurementAllApiQuery,
+  useLazyGetYmirReceivingAllApiQuery,
 } = ymirApi;
