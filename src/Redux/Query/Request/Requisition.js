@@ -51,8 +51,7 @@ export const requisitionApi = createApi({
     }),
 
     getByTransactionApi: builder.query({
-      query: (params) => `asset-request/${params.transaction_number}`,
-      transformResponse: (res) => res.data,
+      query: (params) => `asset-request/${params.transaction_number}?pagination=none`,
       providesTags: ["Requisition"],
     }),
 
