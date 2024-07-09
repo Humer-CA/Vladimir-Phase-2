@@ -574,29 +574,6 @@ const MasterlistToolbar = (props) => {
             </>
           )}
 
-          {!hideSearch && (
-            <TextField
-              autoComplete="off"
-              variant="outlined"
-              name="search"
-              label="🔍︎ Search"
-              // label="🔍 Search"
-              type="text"
-              size="small"
-              color="secondary"
-              sx={{
-                ".MuiInputBase-root": {
-                  borderRadius: "15px",
-                  border: ".5px",
-                  background: "#f4f4f4",
-                  width: "100%",
-                  minWidth: "100px",
-                },
-              }}
-              onKeyDown={searchHandler}
-            />
-          )}
-
           {requestFilter && (
             <Tooltip title="Filter" TransitionComponent={Zoom} placement="top" arrow>
               <IconButton onClick={handleOpenRequestFilter}>
@@ -640,11 +617,11 @@ const MasterlistToolbar = (props) => {
                     control={
                       <Checkbox
                         size="small"
-                        onChange={() => handleFilterChange("For PR")}
-                        checked={requestFilter.includes("For PR")}
+                        onChange={() => handleFilterChange("For FA Approval")}
+                        checked={requestFilter.includes("For FA Approval")}
                       />
                     }
-                    label="For PR"
+                    label="For FA Approval"
                   />
                 </MenuItem>
 
@@ -653,11 +630,11 @@ const MasterlistToolbar = (props) => {
                     control={
                       <Checkbox
                         size="small"
-                        onChange={() => handleFilterChange("For PO")}
-                        checked={requestFilter.includes("For PO")}
+                        onChange={() => handleFilterChange("Sent To Ymir")}
+                        checked={requestFilter.includes("Sent To Ymir")}
                       />
                     }
-                    label="For PO"
+                    label="Sent To Ymir"
                   />
                 </MenuItem>
 
@@ -714,6 +691,29 @@ const MasterlistToolbar = (props) => {
                 </MenuItem>
               </FormGroup>
             </Menu>
+          )}
+
+          {!hideSearch && (
+            <TextField
+              autoComplete="off"
+              variant="outlined"
+              name="search"
+              label="🔍︎ Search"
+              // label="🔍 Search"
+              type="text"
+              size="small"
+              color="secondary"
+              sx={{
+                ".MuiInputBase-root": {
+                  borderRadius: "15px",
+                  border: ".5px",
+                  background: "#f4f4f4",
+                  width: "100%",
+                  minWidth: "100px",
+                },
+              }}
+              onKeyDown={searchHandler}
+            />
           )}
         </Box>
       </Box>
