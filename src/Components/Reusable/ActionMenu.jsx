@@ -113,7 +113,7 @@ const ActionMenu = (props) => {
     handleClose();
   };
 
-  const handleVoidReference = () => {
+  const handleDeleteReference = () => {
     onDeleteReferenceHandler({
       transaction_number: data?.transaction_number,
       reference_number: data?.reference_number,
@@ -273,8 +273,19 @@ const ActionMenu = (props) => {
             </MenuItem>
           )}
 
+          {(showDelete || onDeleteHandler) && (
+            <MenuItem onClick={handleDelete} dense>
+              <ListItemIcon>
+                <Delete />
+              </ListItemIcon>
+              <ListItemText disableTypography align="left">
+                Delete
+              </ListItemText>
+            </MenuItem>
+          )}
+
           {onDeleteReferenceHandler && (
-            <MenuItem onClick={handleVoidReference} dense disabled={disableDelete}>
+            <MenuItem onClick={handleDeleteReference} dense disabled={disableDelete}>
               <ListItemIcon>
                 <Delete />
               </ListItemIcon>
@@ -337,17 +348,6 @@ const ActionMenu = (props) => {
               </ListItemText>
             </MenuItem>
           )} */}
-
-          {(showDelete || onDeleteHandler) && (
-            <MenuItem onClick={handleDelete} dense>
-              <ListItemIcon>
-                <Delete />
-              </ListItemIcon>
-              <ListItemText disableTypography align="left">
-                Delete
-              </ListItemText>
-            </MenuItem>
-          )}
 
           {onArchiveHandler && (
             <MenuItem onClick={handleDelete} dense>
