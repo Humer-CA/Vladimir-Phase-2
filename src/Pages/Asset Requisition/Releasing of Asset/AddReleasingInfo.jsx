@@ -74,6 +74,7 @@ const AddReleasingInfo = (props) => {
   const [base64Image, setBase64Image] = useState(null);
 
   const signatureRef = useRef();
+  const receiverMemoRef = useRef(null);
   const assignmentMemoRef = useRef(null);
   const authorizationLetterRef = useRef(null);
 
@@ -604,7 +605,7 @@ const AddReleasingInfo = (props) => {
                   control={control}
                   name="receiver_img"
                   label="Receiver Image"
-                  inputRef={assignmentMemoRef}
+                  inputRef={receiverMemoRef}
                   error={!!errors?.receiver_img?.message}
                   helperText={errors?.receiver_img?.message}
                 />
