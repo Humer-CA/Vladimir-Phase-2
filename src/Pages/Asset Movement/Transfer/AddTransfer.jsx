@@ -35,7 +35,17 @@ import {
   createFilterOptions,
   useMediaQuery,
 } from "@mui/material";
-import { Add, ArrowBackIosRounded, BorderColor, Create, Edit, Info, Remove, RemoveCircle } from "@mui/icons-material";
+import {
+  Add,
+  ArrowBackIosRounded,
+  BorderColor,
+  Cancel,
+  Create,
+  Edit,
+  Info,
+  Remove,
+  RemoveCircle,
+} from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 
 // RTK
@@ -370,36 +380,10 @@ const AddTransfer = (props) => {
         }))
       );
     }
-  }, [data]);
+  }, [data, edit]);
 
   // console.log("assets", watch("assets"));
   // console.log("assets", data?.assets);
-
-  //* Table Sorting ----------------------------------------------------------------
-  const [order, setOrder] = useState("desc");
-  const [orderBy, setOrderBy] = useState("id");
-
-  const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  };
-
-  const comparator = (order, orderBy) => {
-    return order === "desc"
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  };
-
-  const onSort = (property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
 
   //* Form functions ----------------------------------------------------------------
   const onSubmitHandler = (formData) => {
@@ -508,64 +492,6 @@ const AddTransfer = (props) => {
     );
   };
 
-  const onDeleteHandler = async (id) => {
-    dispatch(
-      openConfirm({
-        icon: Report,
-        iconColor: "warning",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              DELETE
-            </Typography>{" "}
-            this Item?
-          </Box>
-        ),
-
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            let result = await deleteRequest(id).unwrap();
-
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            dispatch(closeConfirm());
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
-
   const RemoveFile = ({ title, value }) => {
     return (
       <Tooltip title="attachment" arrow>
@@ -632,83 +558,74 @@ const AddTransfer = (props) => {
     );
   };
 
-  const onUpdateHandler = (props) => {
-    const {
-      id,
-      description,
-      accountability,
-      accountable,
+  // const onUpdateHandler = (props) => {
+  //   const {
+  //     id,
+  //     description,
+  //     accountability,
+  //     accountable,
 
-      company,
-      business_unit,
-      department,
-      unit,
-      subunit,
-      location,
-      account_title,
+  //     company,
+  //     business_unit,
+  //     department,
+  //     unit,
+  //     subunit,
+  //     location,
+  //     account_title,
 
-      remarks,
-      attachments,
-      assets: [{ fixed_asset_id, asset_accountable, created_at }],
-    } = props;
-    setUpdateRequest({
-      id,
-      description,
-      accountability,
-      accountable,
+  //     remarks,
+  //     attachments,
+  //     assets: [{ fixed_asset_id, asset_accountable, created_at }],
+  //   } = props;
+  //   setUpdateRequest({
+  //     id,
+  //     description,
+  //     accountability,
+  //     accountable,
 
-      company,
-      business_unit,
-      department,
-      unit,
-      subunit,
-      location,
-      account_title,
+  //     company,
+  //     business_unit,
+  //     department,
+  //     unit,
+  //     subunit,
+  //     location,
+  //     account_title,
 
-      remarks,
-      attachments,
-      assets: [{ fixed_asset_id, asset_accountable, created_at }],
-    });
-  };
+  //     remarks,
+  //     attachments,
+  //     assets: [{ fixed_asset_id, asset_accountable, created_at }],
+  //   });
+  // };
 
-  const onUpdateResetHandler = () => {
-    setUpdateRequest({
-      description: "",
-      accountability: null,
-      accountable: null,
+  // const onUpdateResetHandler = () => {
+  //   setUpdateRequest({
+  //     description: "",
+  //     accountability: null,
+  //     accountable: null,
 
-      company_id: null,
-      business_unit_id: null,
-      department_id: null,
-      unit_id: null,
-      subunit_id: null,
-      location_id: null,
-      // account_title_id: null,
-      remarks: "",
-      attachments: null,
+  //     company_id: null,
+  //     business_unit_id: null,
+  //     department_id: null,
+  //     unit_id: null,
+  //     subunit_id: null,
+  //     location_id: null,
+  //     // account_title_id: null,
+  //     remarks: "",
+  //     attachments: null,
 
-      assets: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
-    });
-  };
+  //     assets: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
+  //   });
+  // };
 
   const filterOptions = createFilterOptions({
     limit: 100,
     matchFrom: "any",
   });
 
-  //* Styles ----------------------------------------------------------------
-  const BoxStyle = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-    width: "100%",
-    pb: "10px",
-  };
-
   return (
     <>
-      <Box className="mcontainer" sx={{ height: "calc(100vh - 380px)" }}>
-        <Stack flexDirection="row" justifyContent="space-between">
+      <Box className="mcontainer">
+        <Stack flexDirection="row" justifyContent="space-between" alignItems="center" width="inherit">
           <Button
             variant="text"
             color="secondary"
@@ -718,33 +635,48 @@ const AddTransfer = (props) => {
               navigate(-1);
             }}
             disableRipple
-            // sx={{ pl: "20px", ml: "-15px", mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
+            sx={{ mt: "-5px", "&:hover": { backgroundColor: "transparent" } }}
           >
             Back
           </Button>
 
-          {transactionData?.view && !edit && (
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={<BorderColor color="secondary" />}
-              onClick={() => setEdit(true)}
-              sx={{ mb: "5px" }}
-            >
-              Edit
-            </Button>
-          )}
+          {!transactionData?.view
+            ? null
+            : !edit
+            ? !transactionData?.approved && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<BorderColor color="secondary" />}
+                  onClick={() => setEdit(true)}
+                  sx={{ color: "secondary.main", mb: "10px" }}
+                >
+                  Edit
+                </Button>
+              )
+            : !transactionData?.approved && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  startIcon={<Cancel color="secondary" />}
+                  onClick={() => setEdit(false)}
+                  sx={{ color: "secondary.main", mb: "10px" }}
+                >
+                  Cancel Edit
+                </Button>
+              )}
         </Stack>
 
-        <Box className="request mcontainer__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
+        <Box className="request request__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
           <Box>
-            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", py: 1 }}>
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", py: 1, height: "100%" }}>
               {`${transactionData?.view ? (edit ? "EDIT INFORMATION" : "VIEW INFORMATION") : "ADD TRANSFER REQUEST"} `}
             </Typography>
 
             <Box id="requestForm" className="request__form">
-              <Stack gap={2}>
+              <Stack gap={2} pb={1}>
                 <Stack gap={2}>
                   <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
                     TRANSFER DETAILS
@@ -1032,10 +964,11 @@ const AddTransfer = (props) => {
               </Stack>
             </Box>
           </Box>
+
           {/* TABLE */}
           <Box className="request__table">
-            <TableContainer className="mcontainer__th-body  mcontainer__wrapper" sx={{ height: "calc(100vh - 250px)" }}>
-              <Table className="mcontainer__table " stickyHeader>
+            <TableContainer className="request__th-body  request__wrapper" sx={{ height: "calc(100vh - 280px)" }}>
+              <Table className="request__table " stickyHeader>
                 <TableHead>
                   <TableRow
                     sx={{
@@ -1056,7 +989,7 @@ const AddTransfer = (props) => {
                 </TableHead>
                 <TableBody>
                   {fields.map((item, index) => (
-                    <TableRow key={item.id} id="appendedRow">
+                    <TableRow key={item.id} id="appendedRow" className={`rowItem ${item.id ? "animateRow" : ""}`}>
                       <TableCell sx={{ pl: "30px" }}>
                         <Avatar
                           sx={{
@@ -1149,6 +1082,7 @@ const AddTransfer = (props) => {
                             ml: "-10px",
                             minWidth: "250px",
                           }}
+                          inputProps={{ color: "red" }}
                           fullWidth
                         />
                       </TableCell>
@@ -1159,11 +1093,10 @@ const AddTransfer = (props) => {
                           variant="outlined"
                           disabled
                           type="date"
-                          // error={!!errors?.dateCreated}
-                          // helperText={errors?.dateCreated?.message}
                           sx={{
                             backgroundColor: "transparent",
                             border: "none",
+                            ml: "-10px",
                             "& .MuiOutlinedInput-root": {
                               "& fieldset": {
                                 border: "none",
@@ -1172,7 +1105,9 @@ const AddTransfer = (props) => {
                             "& .MuiInputBase-input": {
                               backgroundColor: "transparent",
                             },
-                            ml: "-10px",
+                            "& .Mui-disabled": {
+                              color: "red",
+                            },
                           }}
                         />
                       </TableCell>
@@ -1230,10 +1165,10 @@ const AddTransfer = (props) => {
 
             {/* Buttons */}
             <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" sx={{ pt: "10px" }}>
+              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" pt="7px">
                 Added: {fields.length} Asset(s)
               </Typography>
-              <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
+              <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
                 {(!transactionData?.view || edit) && (
                   <LoadingButton
                     type="submit"
