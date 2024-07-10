@@ -5,20 +5,53 @@
   justify-content: center;
   align-items: flex-start;
   gap: 15px;
-  width: 100%;
   position: relative;
-  //   max-width: 270px;
+  // max-width: 270px;
 
-  &__form {
-    width: 250px;
-    padding-right: 8px;
-    margin-top: 10px;
-    overflow: auto;
+  &__wrapper {
+    position: relative;
+    padding-top: 5px;
+    background: #fdfdfd;
+    border: #34495515 solid 1px;
+    border-radius: 10px;
+    padding-inline: 10px;
+  }
+
+  &__header-btn {
+    align-self: center;
+    padding-top: 5px;
+    background: #fdfdfd;
+    border: #34495515 solid 1px;
+    border-radius: 10px;
+    padding-inline: 10px;
+    width: 95%;
+    max-width: 1800px;
+    // overflow: auto;
+  }
+
+  &__th-body {
+    overscroll-behavior: none;
     height: calc(100vh - 310px);
   }
 
+  &__th-body-category {
+    height: calc(100vh - 380px);
+    margin-bottom: 10px;
+  }
+
+  &__form {
+    width: 250px;
+    min-width: 250px;
+    padding-right: 8px;
+    margin-top: 10px;
+    overflow: auto;
+    height: calc(100vh - 20rem);
+  }
+
   &__table {
+    // height: calc(100vh - 14rem);
     overflow: auto;
     width: 100%;
+    min-width: 350px;
   }
 }
