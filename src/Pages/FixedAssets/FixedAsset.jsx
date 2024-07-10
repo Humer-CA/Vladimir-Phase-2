@@ -409,7 +409,7 @@ const FixedAsset = (props) => {
                                 <Typography
                                   variant="h6"
                                   fontSize="15px"
-                                  color={data.is_additional_cost ? "secondary.light" : "secondary.main"}
+                                  color={data.is_additional_cost ? "text.light" : "secondary.main"}
                                   fontWeight={data.is_additional_cost ? null : "bold"}
                                 >
                                   {data.vladimir_tag_number}
@@ -421,7 +421,7 @@ const FixedAsset = (props) => {
                                 <Typography
                                   fontSize="12px"
                                   fontWeight={data.is_additional_cost ? null : "bold"}
-                                  color={data.is_additional_cost === 0 ? "quaternary.main" : "secondary.light"}
+                                  color={data.is_additional_cost === 0 ? "quaternary.main" : "quaternary.light"}
                                 >
                                   {data.is_additional_cost === 0
                                     ? `MAIN ASSET - ${data.additional_cost_count}`

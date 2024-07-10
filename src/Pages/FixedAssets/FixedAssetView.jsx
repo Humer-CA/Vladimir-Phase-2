@@ -623,7 +623,7 @@ const FixedAssetView = (props) => {
           </Box>
 
           <Box className="tableCard__container">
-            <Box>
+            <Stack alignItems="center">
               {dataApi.data?.is_additional_cost === 1 && (
                 <Chip
                   variant="contained"
@@ -634,8 +634,8 @@ const FixedAssetView = (props) => {
                     color: "secondary.main",
                     mb: "5px",
                     backgroundColor: "primary.light",
-                    width: "98%",
-                    alignSelf: "center",
+                    width: "90%",
+                    height: "25px",
                   }}
                   label="ADDITIONAL COST"
                 />
@@ -735,7 +735,7 @@ const FixedAssetView = (props) => {
                   </Box>
                 </Box>
               </Card>
-            </Box>
+            </Stack>
 
             <Box className="tableCard__wrapper" sx={{ pb: "2px" }}>
               <Accordion>
