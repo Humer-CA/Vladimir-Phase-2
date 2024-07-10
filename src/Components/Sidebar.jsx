@@ -624,10 +624,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <Box
-      className={`sidebar ${collapse ? "" : isOverflowing === true ? "collapsed85" : "collapsed"}`}
-      sx={{ transition: ".4s ease-in-out" }}
-    >
+    <Box className={`sidebar ${collapse ? "" : isOverflowing === true ? "collapsed85" : "collapsed"}`}>
       <Box>
         {collapse ? (
           <IconButton
@@ -693,7 +690,6 @@ const Sidebar = () => {
                       sx={{
                         width: collapse ? "225px" : "98%",
                         borderRadius: "12px",
-                        transition: "0.3s ease-in-out",
                       }}
                       onClick={item?.setter}
                     >
@@ -720,7 +716,7 @@ const Sidebar = () => {
 
                   {Boolean(item.children?.length) && (
                     <Collapse in={item.open} timeout="auto" unmountOnExit sx={{ width: "100%" }}>
-                      <List component="div" className="sidebar__menu-list" sx={{ pt: 0.5 }}>
+                      <List component="div" sx={{ pt: 0.5 }}>
                         {item.children.map((childItem) => {
                           return (
                             permissions.split(", ").includes(childItem.permission) && (
