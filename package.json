@@ -41,7 +41,7 @@
     "react-router-dom": "^6.6.2",
     "react-signature-canvas": "^1.0.6",
     "react-sortablejs": "^6.1.4",
-    "react-to-print": "^2.14.12",
+    "react-to-print": "^2.15.1",
     "redux": "^4.2.0",
     "sass": "^1.57.1",
     "sort-by": "^0.0.2",
