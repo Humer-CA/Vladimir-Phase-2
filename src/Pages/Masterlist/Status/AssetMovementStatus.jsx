@@ -262,7 +262,7 @@ const AssetMovementStatus = () => {
 
                 <TableBody>
                   {assetMovementStatusData.data.length === 0 ? (
-                    <NoRecordsFound category />
+                    <NoRecordsFound heightData="small" />
                   ) : (
                     <>
                       {assetMovementStatusSuccess &&

@@ -283,7 +283,7 @@ const MajorCategory = () => {
 
                 <TableBody>
                   {majorCategoryData.data.length === 0 ? (
-                    <NoRecordsFound category />
+                    <NoRecordsFound heightData="xs" />
                   ) : (
                     <>
                       {majorCategorySuccess &&

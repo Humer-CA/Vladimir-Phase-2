@@ -283,7 +283,7 @@ const ReleasingTable = (props) => {
 
                   <TableBody>
                     {releasingData?.data?.length === 0 ? (
-                      <NoRecordsFound category />
+                      <NoRecordsFound heightData="xs" />
                     ) : (
                       <>
                         {releasingSuccess &&

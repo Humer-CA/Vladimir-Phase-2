@@ -322,7 +322,7 @@ const MinorCategory = () => {
 
                 <TableBody>
                   {minorCategoryData.data.length === 0 ? (
-                    <NoRecordsFound category />
+                    <NoRecordsFound heightData="small" />
                   ) : (
                     <>
                       {minorCategorySuccess &&

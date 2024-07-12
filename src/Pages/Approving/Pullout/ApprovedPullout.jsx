@@ -209,7 +209,7 @@ const ApprovedPullout = (props) => {
 
                 <TableBody>
                   {approvedPulloutData?.data.length === 0 ? (
-                    <NoRecordsFound approvedPulloutData={approvedPulloutData} category />
+                    <NoRecordsFound approvedPulloutData={approvedPulloutData} heightData="small" />
                   ) : (
                     <>
                       {approvalSuccess &&

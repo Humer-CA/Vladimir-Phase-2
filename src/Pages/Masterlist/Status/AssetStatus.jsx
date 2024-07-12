@@ -259,7 +259,7 @@ const AssetStatus = () => {
 
                 <TableBody>
                   {assetStatusData.data.length === 0 ? (
-                    <NoRecordsFound category />
+                    <NoRecordsFound heightData="small" />
                   ) : (
                     <>
                       {assetStatusSuccess &&

@@ -213,7 +213,7 @@ const ApprovedTransfer = (props) => {
 
                 <TableBody>
                   {approvedTransferData?.data.length === 0 ? (
-                    <NoRecordsFound approvedTransferData={approvedTransferData} category />
+                    <NoRecordsFound approvedTransferData={approvedTransferData} heightData="small" />
                   ) : (
                     <>
                       {approvalSuccess &&

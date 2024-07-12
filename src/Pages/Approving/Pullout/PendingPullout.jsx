@@ -348,7 +348,7 @@ const PendingPullout = (props) => {
 
                 <TableBody>
                   {pendingPulloutData?.data.length === 0 ? (
-                    <NoRecordsFound pendingPulloutData={pendingPulloutData} category />
+                    <NoRecordsFound pendingPulloutData={pendingPulloutData} heightData="small" />
                   ) : (
                     <>
                       {approvalSuccess &&

@@ -348,7 +348,7 @@ const PendingTransfer = (props) => {
 
                 <TableBody>
                   {pendingTransferData?.data.length === 0 ? (
-                    <NoRecordsFound pendingTransferData={pendingTransferData} category />
+                    <NoRecordsFound pendingTransferData={pendingTransferData} heightData="small" />
                   ) : (
                     <>
                       {approvalSuccess &&

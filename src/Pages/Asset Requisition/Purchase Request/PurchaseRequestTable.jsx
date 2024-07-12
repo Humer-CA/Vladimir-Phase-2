@@ -183,7 +183,7 @@ const PurchaseRequestTable = (props) => {
 
                   <TableBody>
                     {purchaseRequestData?.data?.length === 0 ? (
-                      <NoRecordsFound category />
+                      <NoRecordsFound heightData="xs" />
                     ) : (
                       <>
                         {purchaseRequestSuccess &&

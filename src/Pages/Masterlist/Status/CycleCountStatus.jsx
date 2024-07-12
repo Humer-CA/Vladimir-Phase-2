@@ -260,7 +260,7 @@ const CycleCountStatus = () => {
 
                 <TableBody>
                   {cycleCountStatusData.data.length === 0 ? (
-                    <NoRecordsFound category />
+                    <NoRecordsFound heightData="small" />
                   ) : (
                     <>
                       {cycleCountStatusSuccess &&

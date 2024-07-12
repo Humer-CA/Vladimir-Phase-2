@@ -223,7 +223,7 @@ const ApprovedRequest = (props) => {
 
                 <TableBody>
                   {approvalData?.data.length === 0 ? (
-                    <NoRecordsFound approvalData={approvalData} category />
+                    <NoRecordsFound approvalData={approvalData} heightData="small" />
                   ) : (
                     <>
                       {approvalSuccess &&
