@@ -3,7 +3,23 @@ import { Box, TableCell, TableRow, Typography } from "@mui/material";
 import ImgNoRecordsFound from "../Img/SVG/ImgNoRecordsFound.svg";
 
 const NoRecordsFound = (props) => {
-  const { category, request } = props;
+  const { heightData } = props;
+
+  let heightVh = heightData;
+  switch (heightVh) {
+    case "xs":
+      heightVh = "calc(100vh - 860px)";
+      break;
+    case "small":
+      heightVh = "calc(100vh - 500px)";
+      break;
+    case "medium":
+      heightVh = "calc(100vh - 400px)";
+      break;
+    default:
+      heightVh = "calc(100vh - 390px)";
+  }
+
   return (
     <>
       <TableRow>
@@ -13,7 +29,7 @@ const NoRecordsFound = (props) => {
           rowSpan={999}
           sx={{
             borderBottom: "none",
-            height: category ? "calc(100vh - 440px)" : request ? "calc(100vh - 500px)" : "calc(100vh - 390px)",
+            height: heightVh,
           }}
         >
           <Box
