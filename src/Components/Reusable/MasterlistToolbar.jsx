@@ -49,6 +49,7 @@ import {
   AddCard,
   Archive,
   CheckBox,
+  FileCopy,
   Filter,
   FilterAlt,
   FilterList,
@@ -215,6 +216,11 @@ const MasterlistToolbar = (props) => {
     setAnchorElPrintFa(!e.currentTarget);
   };
 
+  const handleOpenAssignedMemo = (e) => {
+    dispatch(openDialog());
+    setAnchorElPrintFa(!e.currentTarget);
+  };
+
   const handleScan = () => {
     dispatch(openScan());
   };
@@ -334,6 +340,15 @@ const MasterlistToolbar = (props) => {
                   </Badge>
                 </ListItemIcon>
                 <ListItemText>Print Request</ListItemText>
+              </MenuItem>
+
+              <Divider sx={{ mx: 2 }} />
+
+              <MenuItem onClick={handleOpenAssignedMemo} dense>
+                <ListItemIcon>
+                  <FileCopy />
+                </ListItemIcon>
+                <ListItemText>Assigned Memo</ListItemText>
               </MenuItem>
             </Menu>
           )}
@@ -566,6 +581,21 @@ const MasterlistToolbar = (props) => {
                           />
                         }
                         label="Additional Cost"
+                      />
+                    </MenuItem>
+
+                    <Divider />
+
+                    <MenuItem dense>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            onChange={() => handleFaFilterChange("For Voucher")}
+                            checked={faFilter.includes("For Voucher")}
+                          />
+                        }
+                        label="For Voucher (TBA)"
                       />
                     </MenuItem>
                   </FormGroup>
