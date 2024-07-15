@@ -116,6 +116,7 @@ import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
 import { useGetUnitAllApiQuery, useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/UnitOfMeasurement";
+import { useLazyGetWarehouseAllApiQuery } from "../../../Redux/Query/Masterlist/Warehouse";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -132,6 +133,7 @@ const schema = yup.object().shape({
   // })
   cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
+  receiving_warehouse_id: yup.object().required().label("Warehouse").typeError("Warehouse is a required field"),
 
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
   company_id: yup.object().required().label("Company").typeError("Company is a required field"),
@@ -139,7 +141,7 @@ const schema = yup.object().shape({
   unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
-  account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
+  // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
   accountable: yup
     .object()
@@ -185,6 +187,7 @@ const AdditionalCostRequest = (props) => {
     type_of_request_id: null,
     cip_number: "",
     attachment_type: null,
+    receiving_warehouse_id: null,
 
     department_id: null,
     company_id: null,
@@ -192,7 +195,7 @@ const AdditionalCostRequest = (props) => {
     unit_id: null,
     subunit_id: null,
     location_id: null,
-    account_title_id: null,
+    // account_title_id: null,
 
     asset_description: "",
     asset_specification: "",
@@ -277,6 +280,17 @@ const AdditionalCostRequest = (props) => {
       refetch: isTypeOfRequestRefetch,
     },
   ] = useLazyGetTypeOfRequestAllApiQuery();
+
+  const [
+    warehouseTrigger,
+    {
+      data: warehouseData = [],
+      isLoading: isWarehouseLoading,
+      isSuccess: isWarehouseSuccess,
+      isError: isWarehouseError,
+      refetch: isWarehouseRefetch,
+    },
+  ] = useLazyGetWarehouseAllApiQuery();
 
   const [
     companyTrigger,
@@ -427,6 +441,7 @@ const AdditionalCostRequest = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
+      receiving_warehouse_id: null,
 
       department_id: null,
       company_id: null,
@@ -434,7 +449,7 @@ const AdditionalCostRequest = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
       acquisition_details: "",
 
       asset_description: "",
@@ -503,17 +518,18 @@ const AdditionalCostRequest = (props) => {
       setValue("fixed_asset_id", updateRequest?.fixed_asset_id);
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("cip_number", updateRequest?.cip_number);
-      setValue("acquisition_details", updateRequest?.acquisition_details);
       setValue("attachment_type", updateRequest?.attachment_type);
+      setValue("receiving_warehouse_id", updateRequest?.warehouse);
       setValue("department_id", updateRequest?.department);
       setValue("company_id", updateRequest?.company);
       setValue("business_unit_id", updateRequest?.business_unit);
       setValue("unit_id", updateRequest?.unit);
       setValue("subunit_id", updateRequest?.subunit);
       setValue("location_id", updateRequest?.location);
-      setValue("account_title_id", updateRequest?.account_title);
+      // setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
       setValue("accountable", accountable);
+      setValue("acquisition_details", updateRequest?.acquisition_details);
 
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
@@ -591,6 +607,8 @@ const AdditionalCostRequest = (props) => {
     }
   };
 
+  console.log(errors);
+
   //  * CONTAINER
   // Adding of Request
   const addRequestHandler = (formData) => {
@@ -608,6 +626,7 @@ const AdditionalCostRequest = (props) => {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
       cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
+      receiving_warehouse_id: formData?.receiving_warehouse_id?.id?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
       company_id: updatingCoa("company_id", "company"),
@@ -615,7 +634,7 @@ const AdditionalCostRequest = (props) => {
       unit_id: formData.unit_id.id?.toString(),
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
-      account_title_id: formData?.account_title_id.id?.toString(),
+      // account_title_id: formData?.account_title_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
 
@@ -638,7 +657,7 @@ const AdditionalCostRequest = (props) => {
       other_attachments: updateRequest && attachmentValidation("other_attachments", formData),
     };
 
-    // console.log("data", data);
+    console.log("data", data);
 
     const payload = new FormData();
     Object.entries(data).forEach((item) => {
@@ -681,6 +700,7 @@ const AdditionalCostRequest = (props) => {
             : reset({
                 type_of_request_id: formData?.type_of_request_id,
                 attachment_type: formData?.attachment_type,
+                receiving_warehouse_id: formData?.receiving_warehouse_id,
 
                 company_id: formData?.company_id,
                 business_unit_id: formData?.business_unit_id,
@@ -688,7 +708,7 @@ const AdditionalCostRequest = (props) => {
                 unit_id: formData?.unit_id,
                 subunit_id: formData?.subunit_id,
                 location_id: formData?.location_id,
-                account_title_id: formData?.account_title_id,
+                // account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
 
                 asset_description: "",
@@ -746,23 +766,23 @@ const AdditionalCostRequest = (props) => {
           false
         );
       } else {
-        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
           return true;
         }
         return false;
       }
     };
 
-    const addCoaConfirmation = () => {
+    const addConfirmation = () => {
       dispatch(
         openConfirm({
           icon: Warning,
@@ -796,22 +816,11 @@ const AdditionalCostRequest = (props) => {
       ? validation()
         ? addConfirmation()
         : submitData()
-      : addRequestAllApi?.data.length === 0
+      : addRequestAllApi.length === 0
       ? submitData()
       : validation()
       ? addConfirmation()
       : submitData();
-    // : console.log("submit add") && submitData();
-
-    // transactionData
-    // ? validation()
-    //   ? addConfirmation()
-    //   : submitData()
-    // : addRequestAllApi?.data.length === 0
-    // ? submitData()
-    // : validation()
-    // ? addConfirmation()
-    // : submitData();
   };
 
   const onSubmitHandler = () => {
@@ -1145,6 +1154,7 @@ const AdditionalCostRequest = (props) => {
       type_of_request,
       cip_number,
       attachment_type,
+      warehouse,
 
       department,
       company,
@@ -1152,7 +1162,7 @@ const AdditionalCostRequest = (props) => {
       unit,
       subunit,
       location,
-      account_title,
+      // account_title,
       accountability,
       accountable,
 
@@ -1175,6 +1185,7 @@ const AdditionalCostRequest = (props) => {
       type_of_request,
       cip_number,
       attachment_type,
+      warehouse,
 
       department,
       company,
@@ -1182,7 +1193,7 @@ const AdditionalCostRequest = (props) => {
       unit,
       subunit,
       location,
-      account_title,
+      // account_title,
       accountability,
       accountable,
       acquisition_details,
@@ -1211,6 +1222,7 @@ const AdditionalCostRequest = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
+      receiving_warehouse_id: null,
 
       company_id: null,
       business_unit_id: null,
@@ -1218,7 +1230,7 @@ const AdditionalCostRequest = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
       acquisition_details: "",
 
       asset_description: "",
@@ -1271,7 +1283,7 @@ const AdditionalCostRequest = (props) => {
                 options={vTagNumberData}
                 onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
                 loading={isVTagNumberLoading}
-                disabled={updateRequest || addRequestAllApi?.data === 0 ? disable : false}
+                disabled={updateRequest || addRequestAllApi === 0 ? disable : false}
                 size="small"
                 filterOptions={filterOptions}
                 getOptionLabel={(option) => "(" + option.vladimir_tag_number + ")" + " - " + option.asset_description}
@@ -1289,13 +1301,14 @@ const AdditionalCostRequest = (props) => {
                   if (value) {
                     setValue("type_of_request_id", value?.type_of_request);
                     setValue("attachment_type", value?.attachment_type);
+                    setValue("receiving_warehouse_id", value?.receiving_warehouse_id);
                     setValue("department_id", value?.department);
                     setValue("company_id", value?.company);
                     setValue("business_unit_id", value?.business_unit);
                     setValue("unit_id", value?.unit);
                     setValue("subunit_id", value?.subunit);
                     setValue("location_id", value?.location);
-                    setValue("account_title_id", value?.account_title);
+                    // setValue("account_title_id", value?.account_title);
                     setValue("accountability", value?.accountability);
                     value.accountability === "Personal Issued" &&
                       setValue("accountable", {
@@ -1307,13 +1320,14 @@ const AdditionalCostRequest = (props) => {
                   } else {
                     setValue("type_of_request_id", null);
                     setValue("attachment_type", null);
+                    setValue("receiving_warehouse_id", null);
                     setValue("department_id", null);
                     setValue("company_id", null);
                     setValue("business_unit_id", null);
                     setValue("unit_id", null);
                     setValue("subunit_id", null);
                     setValue("location_id", null);
-                    setValue("account_title_id", null);
+                    // setValue("account_title_id", null);
                     setValue("accountability", null);
                     setValue("accountable", null);
                   }
@@ -1328,7 +1342,7 @@ const AdditionalCostRequest = (props) => {
                 options={typeOfRequestData}
                 onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
                 loading={isTypeOfRequestLoading}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.type_of_request_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1368,7 +1382,7 @@ const AdditionalCostRequest = (props) => {
                 type="text"
                 disabled={updateRequest && disable}
                 onBlur={() => handleAcquisitionDetails()}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 error={!!errors?.acquisition_details}
                 helperText={errors?.acquisition_details?.message}
                 fullWidth
@@ -1379,7 +1393,7 @@ const AdditionalCostRequest = (props) => {
                 control={control}
                 name="attachment_type"
                 options={attachmentType}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
 
                 disabled={updateRequest && disable}
                 renderInput={(params) => (
@@ -1389,6 +1403,27 @@ const AdditionalCostRequest = (props) => {
                     label="Attachment Type"
                     error={!!errors?.attachment_type}
                     helperText={errors?.attachment_type?.message}
+                  />
+                )}
+              />
+
+              <CustomAutoComplete
+                control={control}
+                name="receiving_warehouse_id"
+                options={warehouseData}
+                onOpen={() => (isWarehouseSuccess ? null : warehouseTrigger())}
+                loading={isWarehouseLoading}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
+                disabled={updateRequest && disable}
+                getOptionLabel={(option) => option.warehouse_name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="Warehouse"
+                    error={!!errors?.receiving_warehouse_id}
+                    helperText={errors?.receiving_warehouse_id?.message}
                   />
                 )}
               />
@@ -1560,10 +1595,10 @@ const AdditionalCostRequest = (props) => {
                 )}
               />
 
-              <CustomAutoComplete
+              {/* <CustomAutoComplete
                 name="account_title_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 options={accountTitleData}
                 onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
                 loading={isAccountTitleLoading}
@@ -1579,7 +1614,8 @@ const AdditionalCostRequest = (props) => {
                     helperText={errors?.account_title_id?.message}
                   />
                 )}
-              />
+              /> */}
+
               <CustomAutoComplete
                 autoComplete
                 name="accountability"
@@ -1740,6 +1776,7 @@ const AdditionalCostRequest = (props) => {
 
             <Divider />
 
+            {/* Attachments */}
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Attachments</Typography>
               <Stack flexDirection="row" gap={1} alignItems="center">
@@ -1747,7 +1784,7 @@ const AdditionalCostRequest = (props) => {
                   <UpdateField
                     label={"Letter of Request"}
                     // value={
-                    //   transactionDataApi.length
+                    //   transactionDataApi.length === 0
                     //     ? watch("letter_of_request")?.name || updateRequest?.letter_of_request?.file_name
                     //     : watch("letter_of_request")?.name
                     // }
@@ -1801,7 +1838,7 @@ const AdditionalCostRequest = (props) => {
                     label="Specification (Form)"
                     disabled={updateRequest && disable}
                     inputRef={SpecificationRef}
-                    updateData={updateRequest}
+                    // updateData={updateRequest}
                   />
                 )}
                 {watch("specification_form") !== null && (
@@ -1872,7 +1909,7 @@ const AdditionalCostRequest = (props) => {
   };
 
   const handleAcquisitionDetails = () => {
-    if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
+    if (watch("acquisition_details") === "" || addRequestAllApi.length === 0) {
       return null;
     } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
       return dispatch(
@@ -1995,6 +2032,7 @@ const AdditionalCostRequest = (props) => {
                       <TableCell className="tbl-cell">Type of Request</TableCell>
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
                       <TableCell className="tbl-cell">Attachment Type</TableCell>
+                      <TableCell className="tbl-cell">Warehouse</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
@@ -2036,11 +2074,11 @@ const AdditionalCostRequest = (props) => {
                   <TableBody>
                     {(updateRequest && isTransactionLoading) || isRequestLoading ? (
                       <LoadingData />
-                    ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.data?.length === 0) ? (
-                      <NoRecordsFound request />
+                    ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.length === 0) ? (
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
-                        {(transactionData ? transactionDataApi : addRequestAllApi?.data)?.map((data, index) => (
+                        {(transactionData ? transactionDataApi : addRequestAllApi)?.map((data, index) => (
                           <TableRow
                             key={index}
                             sx={{
@@ -2072,6 +2110,9 @@ const AdditionalCostRequest = (props) => {
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.attachment_type}
                             </TableCell>
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.warehouse?.warehouse_name}
+                            </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               <Typography fontSize={10} color="gray">
@@ -2092,10 +2133,11 @@ const AdditionalCostRequest = (props) => {
                               <Typography fontSize={10} color="gray">
                                 {`(${data.location?.location_code}) - ${data.location?.location_name}`}
                               </Typography>
-                              <Typography fontSize={10} color="gray">
+                              {/* <Typography fontSize={10} color="gray">
                                 {`(${data.account_title?.account_title_code}) - ${data.account_title?.account_title_name}`}
-                              </Typography>
+                              </Typography> */}
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.accountability === "Personal Issued" ? (
                                 <>
@@ -2108,6 +2150,7 @@ const AdditionalCostRequest = (props) => {
                                 "Common"
                               )}
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               <Typography fontWeight={600} fontSize="14px" color="secondary.main">
                                 {data.asset_description}
@@ -2255,20 +2298,12 @@ const AdditionalCostRequest = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              {console.log(transactionDataApi[0]?.can_edit)}
+
               {/* Buttons */}
-              <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-                <Typography
-                  fontFamily="Anton, Impact, Roboto"
-                  fontSize="18px"
-                  color="secondary.main"
-                  sx={{ pt: "10px" }}
-                >
-                  {transactionData ? "Transactions" : "Added"} :{" "}
-                  {transactionData ? transactionDataApi?.length : addRequestAllApi?.data?.length} request
-                </Typography>
+              {
                 <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
-                  {transactionDataApi[0]?.can_edit === 1 ? (
+                  {transactionData?.status === "For Approval of Approver 1" ||
+                  transactionData?.status === "Returned" ? (
                     <LoadingButton
                       onClick={onSubmitHandler}
                       variant="contained"
@@ -2276,7 +2311,7 @@ const AdditionalCostRequest = (props) => {
                       color="secondary"
                       startIcon={<SaveAlt color={"primary"} />}
                       disabled={
-                        updateRequest
+                        transactionDataApi[0]?.can_edit === 0
                           ? isTransactionLoading
                             ? disable
                             : null
@@ -2284,25 +2319,25 @@ const AdditionalCostRequest = (props) => {
                           ? true
                           : false
                       }
-                      loading={isPostLoading || isUpdateLoading}
+                      loading={isPostLoading}
                     >
                       Resubmit
                     </LoadingButton>
-                  ) : updateRequest ? null : (
+                  ) : (
                     <LoadingButton
                       onClick={onSubmitHandler}
                       variant="contained"
                       size="small"
                       color="secondary"
                       startIcon={<Create color={"primary"} />}
-                      disabled={isRequestLoading || addRequestAllApi?.data?.length === 0}
-                      loading={isPostLoading || isUpdateLoading}
+                      disabled={isRequestLoading || addRequestAllApi?.length === 0}
+                      loading={isPostLoading}
                     >
                       Create
                     </LoadingButton>
                   )}
                 </Stack>
-              </Stack>
+              }
             </Box>
           </Box>
         </Box>
