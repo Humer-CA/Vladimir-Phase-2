@@ -235,13 +235,26 @@ const MasterlistToolbar = (props) => {
   };
 
   const handleFaFilterChange = (value) => {
-    console.log(value);
-    if (faFilter.includes(value)) {
-      setFaFilter(faFilter.filter((filter) => filter !== value));
+    if (value === "With Voucher") {
+      if (faFilter.includes("With Voucher")) {
+        setFaFilter([]);
+      } else {
+        setFaFilter(["With Voucher"]);
+      }
     } else {
-      setFaFilter([...faFilter, value]);
+      if (faFilter.includes("With Voucher")) {
+        return;
+      } else {
+        if (faFilter.includes(value)) {
+          setFaFilter(faFilter.filter((filter) => filter !== value));
+        } else {
+          setFaFilter([...faFilter, value]);
+        }
+      }
     }
   };
+
+  const handleVoucherFilterChange = (value) => {};
 
   return (
     <Box className="masterlist-toolbar">
@@ -539,6 +552,7 @@ const MasterlistToolbar = (props) => {
                             size="small"
                             onChange={() => handleFaFilterChange("From Request")}
                             checked={faFilter.includes("From Request")}
+                            disabled={faFilter.includes("With Voucher")}
                           />
                         }
                         label="From Request"
@@ -552,6 +566,7 @@ const MasterlistToolbar = (props) => {
                             size="small"
                             onChange={() => handleFaFilterChange("Fixed Asset")}
                             checked={faFilter.includes("Fixed Asset")}
+                            disabled={faFilter.includes("With Voucher")}
                           />
                         }
                         label="Fixed Asset"
@@ -565,6 +580,7 @@ const MasterlistToolbar = (props) => {
                             size="small"
                             onChange={() => handleFaFilterChange("To Depreciate")}
                             checked={faFilter.includes("To Depreciate")}
+                            disabled={faFilter.includes("With Voucher")}
                           />
                         }
                         label="To Depreciate"
@@ -578,6 +594,7 @@ const MasterlistToolbar = (props) => {
                             size="small"
                             onChange={() => handleFaFilterChange("Additional Cost")}
                             checked={faFilter.includes("Additional Cost")}
+                            disabled={faFilter.includes("With Voucher")}
                           />
                         }
                         label="Additional Cost"
@@ -591,11 +608,11 @@ const MasterlistToolbar = (props) => {
                         control={
                           <Checkbox
                             size="small"
-                            onChange={() => handleFaFilterChange("For Voucher")}
-                            checked={faFilter.includes("For Voucher")}
+                            onChange={() => handleFaFilterChange("With Voucher")}
+                            checked={faFilter.includes("With Voucher")}
                           />
                         }
-                        label="For Voucher (TBA)"
+                        label="With Voucher"
                       />
                     </MenuItem>
                   </FormGroup>
