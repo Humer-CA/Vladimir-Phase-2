@@ -22,6 +22,7 @@ import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   Divider,
   IconButton,
@@ -102,7 +103,7 @@ const schema = yup.object().shape({
   // })
   cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
-  warehouse_id: yup.object().required().label("Warehouse").typeError("Warehouse is a required field"),
+  receiving_warehouse_id: yup.object().required().label("Warehouse").typeError("Warehouse is a required field"),
 
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
   company_id: yup.object().required().label("Company").typeError("Company is a required field"),
@@ -155,7 +156,7 @@ const AddRequisition = (props) => {
     type_of_request_id: null,
     cip_number: "",
     attachment_type: null,
-    warehouse_id: null,
+    receiving_warehouse_id: null,
 
     department_id: null,
     company_id: null,
@@ -352,7 +353,8 @@ const AddRequisition = (props) => {
     isError: isRequestError,
     error: errorRequest,
     refetch: isRequestRefetch,
-  } = useGetRequestContainerAllApiQuery({ page: page, per_page: perPage }, { refetchOnMountOrArgChange: true });
+  } = useGetRequestContainerAllApiQuery({}, { refetchOnMountOrArgChange: true });
+  // } = useGetRequestContainerAllApiQuery({ page: page, per_page: perPage }, { refetchOnMountOrArgChange: true });
 
   const {
     data: transactionDataApi = [],
@@ -389,7 +391,7 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
-      warehouse_id: null,
+      receiving_warehouse_id: null,
 
       company_id: null,
       business_unit_id: null,
@@ -452,7 +454,7 @@ const AddRequisition = (props) => {
       setValue("type_of_request_id", updateRequest?.type_of_request);
       setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
-      setValue("warehouse", updateRequest?.warehouse);
+      setValue("receiving_warehouse_id", updateRequest?.warehouse);
       setValue("department_id", updateRequest?.department);
       setValue("company_id", updateRequest?.company);
       setValue("business_unit_id", updateRequest?.business_unit);
@@ -494,7 +496,7 @@ const AddRequisition = (props) => {
   };
 
   const attachmentValidation = (fieldName, formData) => {
-    const validateAdd = addRequestAllApi?.data.find((item) => item.id === updateRequest.id);
+    const validateAdd = addRequestAllApi.find((item) => item.id === updateRequest.id);
     const validate = transactionDataApi.find((item) => item.id === updateRequest.id);
 
     if (watch(`${fieldName}`) === null) {
@@ -525,7 +527,7 @@ const AddRequisition = (props) => {
       type_of_request_id: formData?.type_of_request_id?.id?.toString(),
       cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
-      warehouse_id: formData?.warehouse_id?.id?.toString(),
+      receiving_warehouse_id: formData?.receiving_warehouse_id?.id?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
       company_id: updatingCoa("company_id", "company"),
@@ -579,16 +581,16 @@ const AddRequisition = (props) => {
           false
         );
       } else {
-        if (addRequestAllApi?.data.every((item) => item?.department?.id !== watch("department_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.department?.id !== watch("department_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.unit?.id !== watch("unit_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.subunit?.id !== watch("subunit_id")?.id)) {
           return true;
         }
-        if (addRequestAllApi?.data.every((item) => item?.location?.id !== watch("location_id")?.id)) {
+        if (addRequestAllApi.every((item) => item?.location?.id !== watch("location_id")?.id)) {
           return true;
         }
         return false;
@@ -630,7 +632,7 @@ const AddRequisition = (props) => {
                 type_of_request_id: formData?.type_of_request_id,
                 cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
-                warehouse_id: formData?.warehouse,
+                receiving_warehouse_id: formData?.receiving_warehouse_id,
 
                 company_id: formData?.company_id,
                 business_unit_id: formData?.business_unit_id,
@@ -718,7 +720,7 @@ const AddRequisition = (props) => {
       ? validation()
         ? addConfirmation()
         : submitData()
-      : addRequestAllApi?.data.length === 0
+      : addRequestAllApi.length === 0
       ? submitData()
       : validation()
       ? addConfirmation()
@@ -740,7 +742,7 @@ const AddRequisition = (props) => {
                 fontWeight: "bold",
               }}
             >
-              {transactionData && transactionDataApi.length === 0 ? "CREATE" : "RESUBMIT"}
+              {transactionDataApi[0]?.can_edit === 1 ? "RESUBMIT" : "CREATE"}
             </Typography>{" "}
             this Data?
           </Box>
@@ -887,7 +889,7 @@ const AddRequisition = (props) => {
     );
   };
 
-  const onVoidReferenceHandler = async (id) => {
+  const onDeleteReferenceHandler = async (id) => {
     dispatch(
       openConfirm({
         icon: Report,
@@ -1082,7 +1084,7 @@ const AddRequisition = (props) => {
       type_of_request_id: null,
       cip_number: "",
       attachment_type: null,
-      warehouse_id: null,
+      receiving_warehouse_id: null,
 
       company_id: null,
       department_id: null,
@@ -1130,7 +1132,7 @@ const AddRequisition = (props) => {
                 options={typeOfRequestData}
                 onOpen={() => (isTypeOfRequestSuccess ? null : typeOfRequestTrigger())}
                 loading={isTypeOfRequestLoading}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.type_of_request_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1193,7 +1195,7 @@ const AddRequisition = (props) => {
                 type="text"
                 disabled={updateRequest && disable}
                 onBlur={() => handleAcquisitionDetails()}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 error={!!errors?.acquisition_details}
                 helperText={errors?.acquisition_details?.message}
                 fullWidth
@@ -1219,11 +1221,11 @@ const AddRequisition = (props) => {
 
               <CustomAutoComplete
                 control={control}
-                name="warehouse_id"
+                name="receiving_warehouse_id"
                 options={warehouseData}
                 onOpen={() => (isWarehouseSuccess ? null : warehouseTrigger())}
                 loading={isWarehouseLoading}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
                 getOptionLabel={(option) => option.warehouse_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1232,8 +1234,8 @@ const AddRequisition = (props) => {
                     {...params}
                     color="secondary"
                     label="Warehouse"
-                    error={!!errors?.warehouse_id}
-                    helperText={errors?.warehouse_id?.message}
+                    error={!!errors?.receiving_warehouse_id}
+                    helperText={errors?.receiving_warehouse_id?.message}
                   />
                 )}
               />
@@ -1404,7 +1406,7 @@ const AddRequisition = (props) => {
               {/* <CustomAutoComplete
                 name="account_title_id"
                 control={control}
-                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.data?.length !== 0}
+                // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 options={accountTitleData}
                 onOpen={() => (isAccountTitleSuccess ? null : accountTitleTrigger())}
                 loading={isAccountTitleLoading}
@@ -1719,7 +1721,7 @@ const AddRequisition = (props) => {
   };
 
   const handleAcquisitionDetails = () => {
-    if (watch("acquisition_details") === "" || addRequestAllApi?.data.length === 0) {
+    if (watch("acquisition_details") === "" || addRequestAllApi.length === 0) {
       return null;
     } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
       return dispatch(
@@ -1806,13 +1808,26 @@ const AddRequisition = (props) => {
 
             {/* TABLE */}
             <Box className="request__table">
-              <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-                {`${transactionData ? "TRANSACTION NO." : "FIXED ASSET"}`}{" "}
-                {transactionData && transactionData?.transaction_number}
-              </Typography>
+              <Stack flexDirection="row" alignItems="center" gap={2}>
+                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+                  {`${transactionData ? `TRANSACTION NO. ${transactionData?.transaction_number}` : "FIXED ASSET"}`}
+                </Typography>
+                {transactionData && (
+                  <Chip
+                    size="small"
+                    variant="filled"
+                    sx={{
+                      color: "white",
+                      fontSize: "0.7rem",
+                      backgroundColor: `${transactionData?.status === "Returned" ? "error.light" : "tertiary.light"}`,
+                    }}
+                    label={transactionData?.status}
+                  />
+                )}
+              </Stack>
 
-              <TableContainer className="mcontainer__th-body  request__wrapper">
-                <Table className="mcontainer__table" stickyHeader>
+              <TableContainer className="request__th-body  request__wrapper">
+                <Table className="request__table" stickyHeader>
                   <TableHead>
                     <TableRow
                       sx={{
@@ -1868,11 +1883,11 @@ const AddRequisition = (props) => {
                   <TableBody>
                     {(updateRequest && isTransactionLoading) || isRequestLoading ? (
                       <LoadingData />
-                    ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.data?.length === 0) ? (
-                      <NoRecordsFound request />
+                    ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.length === 0) ? (
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
-                        {(transactionData ? transactionDataApi : addRequestAllApi?.data)?.map((data, index) => (
+                        {(transactionData ? transactionDataApi : addRequestAllApi)?.map((data, index) => (
                           <TableRow
                             key={index}
                             sx={{
@@ -1962,17 +1977,18 @@ const AddRequisition = (props) => {
                               {data.date_needed}
                             </TableCell>
 
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                            {addRequestAllApi && !data.po_number && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                 {data.quantity}
                               </TableCell>
                             )}
 
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                            {addRequestAllApi && !data.po_number && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                 {data.unit_of_measure?.uom_name}
                               </TableCell>
                             )}
+
                             {transactionData && data.po_number && (
                               <>
                                 <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
@@ -1990,7 +2006,7 @@ const AddRequisition = (props) => {
                               </>
                             )}
 
-                            {transactionData && !data.po_number && data?.is_removed === 1 && (
+                            {!addRequestAllApi && transactionData && !data.po_number && data?.is_removed === 1 && (
                               <>
                                 <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                   {data.ordered}
@@ -2063,25 +2079,37 @@ const AddRequisition = (props) => {
                             <TableCell className="tbl-cell">
                               {data?.is_removed === 0 && (
                                 <ActionMenu
+                                  // DATA
                                   data={data}
                                   status={data?.status}
                                   hideArchive
-                                  disableDelete={data.status !== "For Approval of Approver 1" ? true : false}
                                   addRequestAllApi
+                                  transactionData={transactionData ? true : false}
+                                  // EDIT request
+                                  editRequestData={() => handleEditRequestData()}
+                                  editRequest={editRequest}
+                                  setEditRequest={setEditRequest}
                                   setDisable={setDisable}
                                   onUpdateHandler={onUpdateHandler}
                                   onUpdateResetHandler={onUpdateResetHandler}
                                   setUpdateToggle={setUpdateToggle}
-                                  onDeleteHandler={!transactionData && onDeleteHandler}
-                                  transactionData={transactionData}
-                                  editRequest={editRequest}
-                                  setEditRequest={setEditRequest}
-                                  editRequestData={() => handleEditRequestData()}
+                                  //DELETE request
+                                  onDeleteHandler={
+                                    (transactionData && addRequestAllApi?.length === 0) ||
+                                    addRequestAllApi?.length === 1
+                                      ? false
+                                      : onDeleteHandler
+                                  }
+                                  disableDelete={
+                                    transactionDataApi?.length === 1 && data.status !== "For Approval of Approver 1"
+                                      ? true
+                                      : false
+                                  }
                                   onDeleteReferenceHandler={
                                     transactionData &&
-                                    transactionData.item_count !== 1 &&
+                                    transactionData?.item_count !== 1 &&
                                     transactionDataApi.length !== 1 &&
-                                    onVoidReferenceHandler
+                                    onDeleteReferenceHandler
                                   }
                                 />
                               )}
@@ -2093,7 +2121,6 @@ const AddRequisition = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-
               {/* {(isTransactionSuccess || isRequestSuccess) && (
               <CustomTablePagination
                 total={(transactionDataApiPage || addRequestAllApi)?.total}
@@ -2114,44 +2141,47 @@ const AddRequisition = (props) => {
                   sx={{ pt: "10px" }}
                 >
                   {transactionData ? "Transactions" : "Added"} :{" "}
-                  {transactionData ? transactionDataApi?.length : addRequestAllApi?.data?.length} request
+                  {transactionData ? transactionDataApi?.length : addRequestAllApi?.length} request
                 </Typography>
-                <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
-                  {/* {transactionData && transactionDataApi[0]?.can_edit === 1 && ( */}
-                  {transactionDataApi[0]?.can_edit === 1 ? (
-                    <LoadingButton
-                      onClick={onSubmitHandler}
-                      variant="contained"
-                      size="small"
-                      color="secondary"
-                      startIcon={<SaveAlt color={"primary"} />}
-                      disabled={
-                        updateRequest
-                          ? isTransactionLoading
-                            ? disable
-                            : null
-                          : transactionDataApi.length === 0
-                          ? true
-                          : false
-                      }
-                      loading={isPostLoading}
-                    >
-                      Resubmit
-                    </LoadingButton>
-                  ) : (
-                    <LoadingButton
-                      onClick={onSubmitHandler}
-                      variant="contained"
-                      size="small"
-                      color="secondary"
-                      startIcon={<Create color={"primary"} />}
-                      disabled={isRequestLoading || addRequestAllApi?.data?.length === 0}
-                      loading={isPostLoading}
-                    >
-                      Create
-                    </LoadingButton>
-                  )}
-                </Stack>
+
+                {
+                  <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
+                    {transactionData?.status === "For Approval of Approver 1" ||
+                    transactionData?.status === "Returned" ? (
+                      <LoadingButton
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                        startIcon={<SaveAlt color={"primary"} />}
+                        disabled={
+                          transactionDataApi[0]?.can_edit === 0
+                            ? isTransactionLoading
+                              ? disable
+                              : null
+                            : transactionDataApi.length === 0
+                            ? true
+                            : false
+                        }
+                        loading={isPostLoading}
+                      >
+                        Resubmit
+                      </LoadingButton>
+                    ) : (
+                      <LoadingButton
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                        startIcon={<Create color={"primary"} />}
+                        disabled={isRequestLoading || addRequestAllApi?.length === 0}
+                        loading={isPostLoading}
+                      >
+                        Create
+                      </LoadingButton>
+                    )}
+                  </Stack>
+                }
               </Stack>
             </Box>
           </Box>
