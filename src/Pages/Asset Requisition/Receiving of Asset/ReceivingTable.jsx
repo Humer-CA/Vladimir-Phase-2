@@ -63,10 +63,9 @@ const ReceivingTable = (props) => {
       isSuccess: ymirReceivingApiSuccess,
       isFetching: ymirReceivingApiFetching,
       isError: ymirReceivingApiError,
+      error: syncError,
     },
   ] = useLazyGetYmirReceivingAllApiQuery();
-
-  // console.log(ymirReceivingApi);
 
   const [
     postSyncData,
@@ -80,7 +79,7 @@ const ReceivingTable = (props) => {
   }, [ymirReceivingApiSuccess, ymirReceivingApiFetching]);
 
   useEffect(() => {
-    if (isPostError) {
+    if (isPostError || ymirReceivingApiError) {
       let message = "Something went wrong. Please try again.";
       let variant = "error";
 
@@ -95,6 +94,23 @@ const ReceivingTable = (props) => {
       dispatch(openToast({ message, duration: 5000, variant }));
     }
   }, [isPostError]);
+
+  useEffect(() => {
+    if (ymirReceivingApiError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if (syncError?.status === 404 || syncError?.status === 422) {
+        message = syncError?.data?.message;
+        if (syncError?.status === 404) {
+          // console.log(syncError);
+          dispatch(closeConfirm());
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
+    }
+  }, [ymirReceivingApiError]);
 
   useEffect(() => {
     if (isPostSuccess && !isPostLoading) {
@@ -196,13 +212,16 @@ const ReceivingTable = (props) => {
             await syncTrigger().unwrap;
             refetch();
           } catch (err) {
+            if (err?.status === 404) {
+              dispatch(
+                openToast({
+                  message: postData?.message,
+                  duration: 5000,
+                })
+              );
+            }
             console.log(err.message);
-            dispatch(
-              openToast({
-                message: postData?.message,
-                duration: 5000,
-              })
-            );
+
             dispatch(closeConfirm());
           }
         },
@@ -298,7 +317,7 @@ const ReceivingTable = (props) => {
 
                   <TableBody>
                     {receivingData?.data?.length === 0 ? (
-                      <NoRecordsFound category />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {receivingSuccess &&
