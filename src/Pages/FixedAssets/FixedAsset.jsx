@@ -66,6 +66,7 @@ import { useGetAdditionalCostIdApiQuery } from "../../Redux/Query/FixedAsset/Add
 import ImportCost from "./ImportCost";
 import useScanDetection from "use-scan-detection-react18";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
+import AssignmentMemoReprint from "./AssignmentMemoReprint";
 
 const FixedAsset = (props) => {
   const navigate = useNavigate();
@@ -129,6 +130,8 @@ const FixedAsset = (props) => {
 
   const drawer = useSelector((state) => state.booleanState.drawer);
   const drawer1 = useSelector((state) => state.booleanState.drawerMultiple.drawer1);
+
+  const dialog = useSelector((state) => state.booleanState.dialog);
 
   const add = useSelector((state) => state.booleanState.add);
   const importFile = useSelector((state) => state.booleanState.importFile);
@@ -269,6 +272,8 @@ const FixedAsset = (props) => {
   const onSetPage = () => {
     setPage(1);
   };
+
+  // console.log(faFilter);
 
   return (
     <Box className="mcontainer">
@@ -533,6 +538,7 @@ const FixedAsset = (props) => {
               per_page={fixedAssetData?.per_page}
               onPageChange={pageHandler}
               onRowsPerPageChange={perPageHandler}
+              removeShadow
             />
           </Box>
         </Box>
@@ -597,6 +603,7 @@ const FixedAsset = (props) => {
       >
         <ImportCost />
       </Dialog>
+
       <Dialog
         open={print}
         onClose={() => dispatch(closePrint())}
@@ -630,6 +637,25 @@ const FixedAsset = (props) => {
       >
         <ExportFixedAsset />
       </Dialog>
+
+      <Dialog
+        open={dialog}
+        onClose={() => dispatch(closeDialog())}
+        PaperProps={{
+          sx: {
+            borderRadius: "10px",
+            margin: "0",
+            width: "80%",
+            maxWidth: "1200px",
+            maxHeight: "95%",
+            padding: "20px",
+            backgroundColor: "white",
+          },
+        }}
+      >
+        <AssignmentMemoReprint />
+      </Dialog>
+
       <Dialog
         open={scanFile}
         onClose={() => dispatch(closeScan())}

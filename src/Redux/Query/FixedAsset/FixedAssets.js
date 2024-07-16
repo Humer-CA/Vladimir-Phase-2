@@ -45,6 +45,12 @@ export const fixedAssetApi = createApi({
       providesTags: ["FixedAsset"],
     }),
 
+    getReprintMemoApi: builder.query({
+      query: (params) => `reprint-memo?per_page=${params.per_page}&page=${params.page}&search=${params.search}`,
+      // transformResponse: (response) => response.data,
+      providesTags: ["FixedAsset"],
+    }),
+
     archiveFixedAssetStatusApi: builder.mutation({
       query: ({ id, status, remarks }) => ({
         url: `/fixed-asset/archived-fixed-asset/${id}`,
@@ -115,8 +121,19 @@ export const fixedAssetApi = createApi({
     postPrintApi: builder.mutation({
       query: (params) => {
         return {
-          url: `http://10.10.10.11:9000/api/fixed-asset/barcode`,
+          url: `http://10.10.10.6:9000/api/fixed-asset/barcode`,
           method: "POST",
+          body: params,
+        };
+      },
+      invalidatesTags: ["FixedAsset"],
+    }),
+
+    putMemoPrintApi: builder.mutation({
+      query: (params) => {
+        return {
+          url: `/memo-print`,
+          method: "PUT",
           body: params,
         };
       },
@@ -148,6 +165,7 @@ export const fixedAssetApi = createApi({
           `per_page=${params.per_page}`,
           `page=${params.page}`,
           `isRequest=${params.isRequest}`,
+          `printMemo=${params.printMemo}`,
         ];
 
         if (params.startDate) {
@@ -172,12 +190,14 @@ export const {
   useGetFixedAssetAllApiQuery,
   useGetFixedAssetIdApiQuery,
   useLazyGetVoucherFaApiQuery,
+  useGetReprintMemoApiQuery,
   useArchiveFixedAssetStatusApiMutation,
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
   usePostImportApiMutation,
   useLazyGetExportApiQuery,
   usePostPrintApiMutation,
+  usePutMemoPrintApiMutation,
   usePostLocalPrintApiMutation,
   usePostCalcDepreApiMutation,
   useGetPrintViewingApiQuery,
