@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Dialog,
   Divider,
   Fade,
   FormControlLabel,
@@ -44,6 +45,7 @@ import {
   useGetPrintViewingApiQuery,
   usePostPrintApiMutation,
   usePostLocalPrintApiMutation,
+  usePutMemoPrintApiMutation,
 } from "../../Redux/Query/FixedAsset/FixedAssets";
 import { usePostPrintOfflineApiMutation } from "../../Redux/Query/FixedAsset/OfflinePrintingFA";
 import { usePostPrintStalwartDateApiMutation } from "../../Redux/Query/FixedAsset/StalwartPrintingFA";
@@ -55,6 +57,7 @@ import NoRecordsFound from "../../Layout/NoRecordsFound";
 import { useGetIpApiQuery } from "../../Redux/Query/IpAddressSetup";
 import { closeConfirm, onLoading, openConfirm } from "../../Redux/StateManagement/confirmSlice";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
+import AssignmentMemo from "./AssignmentMemo";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -85,7 +88,11 @@ const PrintFixedAsset = (props) => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("active");
   const [filter, setFilter] = useState([]);
+  const [printMemo, setPrintMemo] = useState(false);
+  const [printAssignmentMemo, setPrintAssignmentMemo] = useState(false);
   const [faFilter, setFaFilter] = useState(false);
+  const [selectedMemo, setSelectedMemo] = useState(null);
+  const [faData, setFaData] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -142,49 +149,15 @@ const PrintFixedAsset = (props) => {
     setPage(page + 1);
   };
 
-  const isLocalIp = `210.5.110.212`;
-
-  // const isStalwart = `http://stalwart:8069/VladimirPrinting/public/index.php/api`;
-
-  // const [
-  //   printAsset,
-  //   {
-  //     data: printData,
-  //     isLoading,
-  //     isError: isPostError,
-  //     isSuccess: isPostSuccess,
-  //     error: postError,
-  //   },
-  // ] = isLocalIp
-  //   ? usePostPrintApiMutation()
-  //   : usePostPrintStalwartDateApiMutation();
-
   const { data: ip } = useGetIpApiQuery();
-  // console.log(ip);
 
   const [printAsset, { data: printData, isLoading, isError: isPostError, isSuccess: isPostSuccess, error: postError }] =
     usePostPrintApiMutation();
 
-  // usePostLocalPrintApiMutation();
-
-  // console.log(isLocalIp);
-
-  // const {
-  //   data: fixedAssetData,
-  //   isLoading: fixedAssetLoading,
-  //   isSuccess: fixedAssetSuccess,
-  //   isError: fixedAssetError,
-  //   error: errorData,
-  //   refetch: fixedAssetRefetch,
-  // } = useGetFixedAssetApiQuery(
-  //   {
-  //     page: page,
-  //     perPage: perPage,
-  //     status: status,
-  //     search: search,
-  //   },
-  //   { refetchOnMountOrArgChange: true }
-  // );
+  const [
+    putMemo,
+    { data: memoData, isLoading: isMemoLoading, isError: isMemoError, isSuccess: isMemoSuccess, error: memoError },
+  ] = usePutMemoPrintApiMutation();
 
   const {
     data: fixedAssetData,
@@ -202,19 +175,10 @@ const PrintFixedAsset = (props) => {
       startDate: startDate,
       endDate: endDate,
       isRequest: isRequest ? 1 : 0,
+      printMemo: isRequest ? (printMemo ? 1 : 0) : null,
     },
     { refetchOnMountOrArgChange: true }
   );
-
-  // console.log(fixedAssetData);
-
-  // const {
-  //   data: typeOfRequestData = [],
-  //   isLoading: isTypeOfRequestLoading,
-  //   isSuccess: isTypeOfRequestSuccess,
-  //   isError: isTypeOfRequestError,
-  //   refetch: isTypeOfRequestRefetch,
-  // } = useGetTypeOfRequestAllApiQuery();
 
   const {
     handleSubmit,
@@ -282,32 +246,8 @@ const PrintFixedAsset = (props) => {
     }
   }, [isPostError]);
 
-  // useEffect(() => {
-  //   tagNumberAllHandler(reset({ tagNumber: [] }));
-  // }, [page, perPage]);
-
-  // const onPrintHandler = (formData) => {
-  // const newFormData = {
-  //   ...formData,
-  //   tagNumber: formData.tagNumber === null ? "" : formData.tagNumber,
-  //   startDate:
-  //     formData.startDate === null
-  //       ? ""
-  //       : moment(new Date(formData.startDate)).format("YYYY-MM-DD"),
-  //   endDate:
-  //     formData.endDate === null
-  //       ? ""
-  //       : moment(new Date(formData.endDate)).format("YYYY-MM-DD"),
-  // };
-  // printAsset({ ip: ip.data, ...newFormData });
-  // printAsset({ ip: ip.data, formData });
-  // console.log({ ip: ip.data, formData });
-
-  //   printAsset({ ip: ip.data, tagNumber: formData?.tagNumber });
-  //   console.log(formData.tagNumber);
-  // };
-
   const onPrintHandler = (formData) => {
+    // console.log(formData);
     dispatch(
       openConfirm({
         icon: Help,
@@ -371,6 +311,63 @@ const PrintFixedAsset = (props) => {
     );
   };
 
+  const onPrintMemoHandler = async (formData) => {
+    // console.log(formData);
+    setFaData(fixedAssetData?.data);
+    setSelectedMemo(formData?.tagNumber);
+    dispatch(
+      openConfirm({
+        icon: Help,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography>Are you sure you want to print</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+                fontFamily: "Raleway",
+              }}
+            >
+              ASSIGNMENT MEMO?
+            </Typography>
+          </Box>
+        ),
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            const res = await putMemo({
+              fixed_asset_id: formData?.tagNumber,
+            }).unwrap();
+            setPrintAssignmentMemo(true);
+            reset();
+          } catch (err) {
+            console.log(err.data.message);
+            if (err?.status === 403 || err?.status === 404 || err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err?.data?.errors?.detail || err.data?.message,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+              console.log(err);
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+
   const handleClose = () => {
     dispatch(closePrint());
   };
@@ -385,9 +382,6 @@ const PrintFixedAsset = (props) => {
       e.preventDefault();
     }
   };
-
-  // console.log(moment(watch("startDate")).format("YYYY-MM-DD"));
-  // console.log(moment(watch("endDate")).format("YYYY-MM-DD"));
 
   const handleSearchClick = () => {
     setSearch(watch("search"));
@@ -416,20 +410,11 @@ const PrintFixedAsset = (props) => {
     }
   };
 
-  const handleFilterChange = (value) => {
-    // console.log(value)
-    if (filter.includes(value)) {
-      setFilter(filter.filter((filter) => filter !== value));
-    } else {
-      setFilter([...filter, value]);
-    }
-  };
-
   return (
     <>
       <Box
         component="form"
-        onSubmit={handleSubmit(onPrintHandler)}
+        onSubmit={printMemo ? handleSubmit(onPrintMemoHandler) : handleSubmit(onPrintHandler)}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -438,18 +423,36 @@ const PrintFixedAsset = (props) => {
           gap: "10px",
         }}
       >
-        <Stack flexDirection="row" alignItems="center" pl="10px" gap={1.5}>
-          <Print color="primary" fontSize="large" />
-          <Typography
-            noWrap
-            variant="h5"
-            color="secondary"
-            sx={{
-              fontFamily: "Anton",
-            }}
-          >
-            {isRequest ? "Print Request" : "Print Assets"}
-          </Typography>
+        <Stack flexDirection="row" justifyContent="space-between" width="100%">
+          <Stack flexDirection="row" alignItems="center" pl="10px" gap={1.5}>
+            <Print color="primary" fontSize="large" />
+            <Typography
+              noWrap
+              variant="h5"
+              color="secondary"
+              sx={{
+                fontFamily: "Anton",
+              }}
+            >
+              {isRequest ? "Print Request" : "Print Assets"}
+            </Typography>
+          </Stack>
+
+          {!!isRequest && (
+            <FormControlLabel
+              label="Assignment Memo"
+              control={
+                <Checkbox size="small" color="primary" checked={printMemo} onChange={() => setPrintMemo(!printMemo)} />
+              }
+              sx={{
+                pr: 2,
+                pl: 0.5,
+                borderRadius: 3,
+                outline: "2px solid",
+                outlineColor: printMemo ? "primary.main" : "secondary.main",
+              }}
+            />
+          )}
         </Stack>
         <Divider width="100%" sx={{ boxShadow: "1px solid black" }} />
 
@@ -569,6 +572,7 @@ const PrintFixedAsset = (props) => {
                         <Checkbox
                           value=""
                           size="small"
+                          sx={{ color: "primary" }}
                           checked={
                             !!fixedAssetData?.data
                               ?.map((mapItem) => mapItem.vladimir_tag_number)
@@ -631,7 +635,7 @@ const PrintFixedAsset = (props) => {
 
               <TableBody>
                 {fixedAssetSuccess && fixedAssetData.data.length === 0 ? (
-                  <NoRecordsFound />
+                  <NoRecordsFound heightData="xs" />
                 ) : (
                   <>
                     {fixedAssetSuccess &&
@@ -675,20 +679,32 @@ const PrintFixedAsset = (props) => {
                             </TableCell>
 
                             <TableCell>
-                              <Typography noWrap fontSize="12px" color="gray">
+                              <Typography noWrap fontSize="10px" color="gray">
                                 {data.company.company_code}
                                 {" - "} {data.company.company_name}
                               </Typography>
-                              <Typography noWrap fontSize="12px" color="gray">
+                              <Typography noWrap fontSize="10px" color="gray">
+                                {data.business_unit.business_unit_code}
+                                {" - "} {data.business_unit.business_unit_name}
+                              </Typography>
+                              <Typography noWrap fontSize="10px" color="gray">
                                 {data.department.department_code}
                                 {" - "}
                                 {data.department.department_name}
                               </Typography>
-                              <Typography noWrap fontSize="12px" color="gray">
+                              <Typography noWrap fontSize="10px" color="gray">
+                                {data.unit.unit_code}
+                                {" - "} {data.unit.unit_name}
+                              </Typography>
+                              <Typography noWrap fontSize="10px" color="gray">
+                                {data.subunit.subunit_code}
+                                {" - "} {data.subunit.subunit_name}
+                              </Typography>
+                              <Typography noWrap fontSize="10px" color="gray">
                                 {data.location.location_code} {" - "}
                                 {data.location.location_name}
                               </Typography>
-                              <Typography noWrap fontSize="12px" color="gray">
+                              <Typography noWrap fontSize="10px" color="gray">
                                 {data.account_title.account_title_code}
                                 {" - "}
                                 {data.account_title.account_title_name}
@@ -728,6 +744,7 @@ const PrintFixedAsset = (props) => {
             per_page={fixedAssetData?.per_page}
             onPageChange={pageHandler}
             onRowsPerPageChange={perPageHandler}
+            removeShadow
           />
         </Box>
 
@@ -742,19 +759,13 @@ const PrintFixedAsset = (props) => {
             <LoadingButton
               variant="contained"
               loading={isLoading}
-              startIcon={
-                isLoading ? null : (
-                  // <Print color={disabledItems() ? "lightgray" : "primary"} />
-                  <Print color={watch("tagNumber").length === 0 ? "gray" : "primary"} />
-                )
-              }
+              startIcon={isLoading ? null : <Print color={watch("tagNumber").length === 0 ? "gray" : "primary"} />}
               disabled={watch("tagNumber").length === 0}
               type="submit"
-              color="secondary"
-              onClick={onPrintHandler}
-              // disabled={disabledItems()}
+              color={printMemo ? "tertiary" : "secondary"}
+              sx={{ color: "white" }}
             >
-              Print
+              {printMemo ? "Print Assignment Memo" : "Print"}
             </LoadingButton>
 
             <Button variant="outlined" size="small" color="secondary" onClick={handleClose}>
@@ -762,6 +773,30 @@ const PrintFixedAsset = (props) => {
             </Button>
           </Stack>
         </Stack>
+
+        <Dialog
+          open={printAssignmentMemo}
+          PaperProps={{
+            sx: {
+              borderRadius: "10px",
+              margin: "0",
+              maxWidth: "90%",
+              padding: "20px",
+              // overflow: "hidden",
+              bgcolor: "background.light",
+            },
+          }}
+        >
+          <Box>
+            <AssignmentMemo
+              data={faData}
+              setPrintAssignmentMemo={setPrintAssignmentMemo}
+              memoData={memoData}
+              selectedMemo={selectedMemo}
+              fixedAssetRefetch={fixedAssetRefetch}
+            />
+          </Box>
+        </Dialog>
       </Box>
     </>
   );
