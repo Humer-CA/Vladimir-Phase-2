@@ -43,7 +43,7 @@ const AddWarehouse = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -195,7 +195,7 @@ const AddWarehouse = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("sync_id") === null || watch("warehouse_name") === ""}
+            disabled={!isValid}
             sx={data.action === "view" ? { display: "none" } : null}
           >
             {data.status ? "Update" : "Create"}

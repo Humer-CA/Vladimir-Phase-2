@@ -20,10 +20,7 @@ import { openToast } from "../../../../Redux/StateManagement/toastSlice";
 const schema = yup.object().shape({
   id: yup.string(),
 
-  depreciation_status_name: yup
-    .string()
-    .required()
-    .label("Depreciation Status Name"),
+  depreciation_status_name: yup.string().required().label("Depreciation Status Name"),
 });
 
 const AddDepreciationStatus = (props) => {
@@ -33,7 +30,7 @@ const AddDepreciationStatus = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -48,13 +45,7 @@ const AddDepreciationStatus = (props) => {
 
   const [
     postDepreciationStatus,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostDepreciationStatusApiMutation();
 
   const [
@@ -69,13 +60,9 @@ const AddDepreciationStatus = (props) => {
   ] = useUpdateDepreciationStatusApiMutation();
 
   useEffect(() => {
-    const hasError =
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422);
+    const hasError = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
     const errors = (postError?.data || updateError?.data)?.errors || {};
-    Object.entries(errors).forEach(([name, [message]]) =>
-      setError(name, { type: "validate", message })
-    );
+    Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
 
     const showToast = () => {
       dispatch(
@@ -133,18 +120,11 @@ const AddDepreciationStatus = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Depreciation Status" : "Add Depreciation Status"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="depreciation_status_name"
@@ -162,7 +142,7 @@ const AddDepreciationStatus = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("depreciation_status_name") === ""}
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

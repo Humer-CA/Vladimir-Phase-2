@@ -27,13 +27,7 @@ const AddServiceProvider = (props) => {
 
   const [
     postServiceProvider,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostServiceProviderApiMutation();
   // console.log(isPostError);
   // console.log(postError);
@@ -54,7 +48,7 @@ const AddServiceProvider = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -67,20 +61,12 @@ const AddServiceProvider = (props) => {
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("service_provider_name", {
         type: "validate",
-        message:
-          postError?.data?.errors.service_provider_name ||
-          updateError?.data?.errors.service_provider_name,
+        message: postError?.data?.errors.service_provider_name || updateError?.data?.errors.service_provider_name,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -133,18 +119,11 @@ const AddServiceProvider = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Service Provider" : "Add Service Provider"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           required
           control={control}
@@ -163,21 +142,12 @@ const AddServiceProvider = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              (errors?.service_provider_name ? true : false) ||
-              watch("service_provider_name") === undefined ||
-              watch("service_provider_name") === ""
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>
 
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="small"
-            onClick={handleCloseDrawer}
-          >
+          <Button variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
             Cancel
           </Button>
         </Box>

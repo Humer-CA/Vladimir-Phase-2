@@ -427,7 +427,7 @@ const AdditionalCostRequest = (props) => {
     handleSubmit,
     control,
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -698,6 +698,7 @@ const AdditionalCostRequest = (props) => {
           transactionData
             ? reset()
             : reset({
+                fixed_asset_id: formData?.fixed_asset_id,
                 type_of_request_id: formData?.type_of_request_id,
                 attachment_type: formData?.attachment_type,
                 receiving_warehouse_id: formData?.receiving_warehouse_id,
@@ -741,8 +742,8 @@ const AdditionalCostRequest = (props) => {
           dispatch(
             openToast({
               message:
-                Object.entries(err?.response?.data?.errors).at(0).at(1).at(0) ||
-                err?.response?.data?.errors?.detail ||
+                (Object.entries(err?.response?.data?.errors).at(0).at(1).at(0) &&
+                  err?.response?.data?.errors?.detail) ||
                 err?.response?.data?.errors[0]?.detail ||
                 err?.response?.data?.message,
               duration: 5000,
@@ -1022,7 +1023,7 @@ const AdditionalCostRequest = (props) => {
     );
   };
 
-  const onVoidReferenceHandler = async (id) => {
+  const onDeleteReferenceHandler = async (id) => {
     dispatch(
       openConfirm({
         icon: Report,
@@ -1276,14 +1277,16 @@ const AdditionalCostRequest = (props) => {
           <Stack gap={2}>
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Request Information</Typography>
-
+              {console.log(transactionDataApi.length)}
               <CustomAutoComplete
                 control={control}
                 name="fixed_asset_id"
                 options={vTagNumberData}
                 onOpen={() => (isVTagNumberSuccess ? null : fixedAssetTrigger())}
                 loading={isVTagNumberLoading}
-                disabled={updateRequest || addRequestAllApi === 0 ? disable : false}
+                disabled={
+                  addRequestAllApi.length !== 0 ? true : updateRequest || addRequestAllApi === 0 ? disable : false
+                }
                 size="small"
                 filterOptions={filterOptions}
                 getOptionLabel={(option) => "(" + option.vladimir_tag_number + ")" + " - " + option.asset_description}
@@ -1524,7 +1527,9 @@ const AdditionalCostRequest = (props) => {
                 control={control}
                 disabled={updateRequest && disable}
                 options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
-                onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+                onOpen={() =>
+                  isUnitSuccess ? null : (departmentTrigger(), unitTrigger(), subunitTrigger(), locationTrigger())
+                }
                 loading={isUnitLoading}
                 size="small"
                 getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
@@ -1897,7 +1902,7 @@ const AdditionalCostRequest = (props) => {
           variant="contained"
           type="submit"
           size="small"
-          disabled={!transactionData ? !isDirty : updateToggle}
+          disabled={!transactionData ? !isValid : updateToggle}
           fullWidth
           sx={{ gap: 1 }}
         >
@@ -2015,7 +2020,6 @@ const AdditionalCostRequest = (props) => {
                   />
                 )}
               </Stack>
-
               <TableContainer className="request__th-body  request__wrapper">
                 <Table className="request__table " stickyHeader>
                   <TableHead>
@@ -2031,7 +2035,7 @@ const AdditionalCostRequest = (props) => {
                       <TableCell className="tbl-cell">Vladimir Tag Number</TableCell>
                       <TableCell className="tbl-cell">Type of Request</TableCell>
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
-                      <TableCell className="tbl-cell">Attachment Type</TableCell>
+                      {/* <TableCell className="tbl-cell">Attachment Type</TableCell> */}
                       <TableCell className="tbl-cell">Warehouse</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
@@ -2067,7 +2071,9 @@ const AdditionalCostRequest = (props) => {
                       <TableCell className="tbl-cell">Cellphone #</TableCell>
                       <TableCell className="tbl-cell">Additional Info.</TableCell>
                       <TableCell className="tbl-cell">Attachments</TableCell>
-                      <TableCell className="tbl-cell">Action</TableCell>
+                      {transactionData?.status === "For Approval of Approver 1" && (
+                        <TableCell className="tbl-cell">Action</TableCell>
+                      )}
                     </TableRow>
                   </TableHead>
 
@@ -2092,24 +2098,30 @@ const AdditionalCostRequest = (props) => {
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell tr-cen-pad45 ">
                               {transactionData ? data?.reference_number : index + 1}
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               <Typography fontSize={14} fontWeight={600}>
                                 {data.fixed_asset?.vladimir_tag_number || data.fixed_asset}
                               </Typography>
-
                               <Typography fontSize={12} fontWeight={600} color="primary.main">
                                 {data.is_addcost === 1 && "Additional Cost"}
                               </Typography>
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.type_of_request?.type_of_request_name}
+                              <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
+                              <Typography
+                                fontWeight={400}
+                                fontSize={12}
+                                color={data.attachment_type === "Budgeted" ? "success.main" : "primary.dark"}
+                              >
+                                {data.attachment_type}
+                              </Typography>
                             </TableCell>
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.acquisition_details}
                             </TableCell>
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.attachment_type}
-                            </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.warehouse?.warehouse_name}
                             </TableCell>
@@ -2166,13 +2178,13 @@ const AdditionalCostRequest = (props) => {
                               {data.date_needed}
                             </TableCell>
 
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                            {addRequestAllApi && !data.po_number && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                 {data.quantity}
                               </TableCell>
                             )}
 
-                            {addRequestAllApi && !data.po_number && data?.is_removed === 0 && (
+                            {addRequestAllApi && !data.po_number && (
                               <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                 {data.unit_of_measure?.uom_name}
                               </TableCell>
@@ -2195,7 +2207,7 @@ const AdditionalCostRequest = (props) => {
                               </>
                             )}
 
-                            {transactionData && !data.po_number && data?.is_removed === 1 && (
+                            {!addRequestAllApi && transactionData && !data.po_number && data?.is_removed === 1 && (
                               <>
                                 <TableCell onClick={() => handleShowItems(data)} className="tbl-cell text-center">
                                   {data.ordered}
@@ -2265,32 +2277,46 @@ const AdditionalCostRequest = (props) => {
                                 </Stack>
                               )}
                             </TableCell>
-                            <TableCell className="tbl-cell">
-                              {data?.is_removed === 0 && (
-                                <ActionMenu
-                                  data={data}
-                                  status={data?.status}
-                                  hideArchive
-                                  disableDelete={data.status !== "For Approval of Approver 1" ? true : false}
-                                  addRequestAllApi
-                                  setDisable={setDisable}
-                                  onUpdateHandler={onUpdateHandler}
-                                  onUpdateResetHandler={onUpdateResetHandler}
-                                  setUpdateToggle={setUpdateToggle}
-                                  onDeleteHandler={!transactionData && onDeleteHandler}
-                                  transactionData={transactionData}
-                                  editRequest={editRequest}
-                                  setEditRequest={setEditRequest}
-                                  editRequestData={() => handleEditRequestData()}
-                                  onDeleteReferenceHandler={
-                                    transactionData &&
-                                    transactionData.item_count !== 1 &&
-                                    transactionDataApi.length !== 1 &&
-                                    onVoidReferenceHandler
-                                  }
-                                />
-                              )}
-                            </TableCell>
+                            {transactionData?.status === "For Approval of Approver 1" && (
+                              <TableCell className="tbl-cell">
+                                {data?.is_removed === 0 && (
+                                  <ActionMenu
+                                    // DATA
+                                    data={data}
+                                    status={data?.status}
+                                    hideArchive
+                                    addRequestAllApi
+                                    transactionData={transactionData ? true : false}
+                                    // EDIT request
+                                    editRequestData={() => handleEditRequestData()}
+                                    editRequest={editRequest}
+                                    setEditRequest={setEditRequest}
+                                    setDisable={setDisable}
+                                    onUpdateHandler={onUpdateHandler}
+                                    onUpdateResetHandler={onUpdateResetHandler}
+                                    setUpdateToggle={setUpdateToggle}
+                                    //DELETE request
+                                    onDeleteHandler={
+                                      (transactionData && addRequestAllApi?.length === 0) ||
+                                      addRequestAllApi?.length === 1
+                                        ? false
+                                        : onDeleteHandler
+                                    }
+                                    disableDelete={
+                                      transactionDataApi?.length === 1 && data.status !== "For Approval of Approver 1"
+                                        ? true
+                                        : false
+                                    }
+                                    onDeleteReferenceHandler={
+                                      transactionData &&
+                                      transactionData?.item_count !== 1 &&
+                                      transactionDataApi.length !== 1 &&
+                                      onDeleteReferenceHandler
+                                    }
+                                  />
+                                )}
+                              </TableCell>
+                            )}
                           </TableRow>
                         ))}
                       </>
@@ -2298,46 +2324,57 @@ const AdditionalCostRequest = (props) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-
               {/* Buttons */}
-              {
-                <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
-                  {transactionData?.status === "For Approval of Approver 1" ||
-                  transactionData?.status === "Returned" ? (
-                    <LoadingButton
-                      onClick={onSubmitHandler}
-                      variant="contained"
-                      size="small"
-                      color="secondary"
-                      startIcon={<SaveAlt color={"primary"} />}
-                      disabled={
-                        transactionDataApi[0]?.can_edit === 0
-                          ? isTransactionLoading
-                            ? disable
-                            : null
-                          : transactionDataApi.length === 0
-                          ? true
-                          : false
-                      }
-                      loading={isPostLoading}
-                    >
-                      Resubmit
-                    </LoadingButton>
-                  ) : (
-                    <LoadingButton
-                      onClick={onSubmitHandler}
-                      variant="contained"
-                      size="small"
-                      color="secondary"
-                      startIcon={<Create color={"primary"} />}
-                      disabled={isRequestLoading || addRequestAllApi?.length === 0}
-                      loading={isPostLoading}
-                    >
-                      Create
-                    </LoadingButton>
-                  )}
-                </Stack>
-              }
+              <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
+                <Typography
+                  fontFamily="Anton, Impact, Roboto"
+                  fontSize="18px"
+                  color="secondary.main"
+                  sx={{ pt: "10px" }}
+                >
+                  {transactionData ? "Transactions" : "Added"} :{" "}
+                  {transactionData ? transactionDataApi?.length : addRequestAllApi?.length} request
+                </Typography>
+
+                {transactionData?.status === "For Approval of Approver 1" && (
+                  <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
+                    {transactionData?.status === "For Approval of Approver 1" ||
+                    transactionData?.status === "Returned" ? (
+                      <LoadingButton
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                        startIcon={<SaveAlt color={"primary"} />}
+                        disabled={
+                          transactionDataApi[0]?.can_edit === 0
+                            ? isTransactionLoading
+                              ? disable
+                              : null
+                            : transactionDataApi.length === 0
+                            ? true
+                            : false
+                        }
+                        loading={isPostLoading}
+                      >
+                        Resubmit
+                      </LoadingButton>
+                    ) : (
+                      <LoadingButton
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                        startIcon={<Create color={"primary"} />}
+                        disabled={isRequestLoading || addRequestAllApi?.length === 0}
+                        loading={isPostLoading}
+                      >
+                        Create
+                      </LoadingButton>
+                    )}
+                  </Stack>
+                )}
+              </Stack>
             </Box>
           </Box>
         </Box>

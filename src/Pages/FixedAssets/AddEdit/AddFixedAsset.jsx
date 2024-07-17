@@ -499,7 +499,7 @@ const AddFixedAsset = (props) => {
     handleSubmit,
     control,
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -1927,7 +1927,7 @@ const AddFixedAsset = (props) => {
           variant="contained"
           size="small"
           loading={isUpdateLoading || isPostLoading}
-          disabled={!isDirty && !isVoucherSuccess}
+          disabled={!isValid && !isVoucherSuccess}
         >
           {data.status ? "Update" : "Create"}
         </LoadingButton>

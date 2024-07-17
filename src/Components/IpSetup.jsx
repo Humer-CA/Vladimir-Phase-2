@@ -171,7 +171,7 @@ const IpSetup = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     watch,
     setValue,
@@ -509,6 +509,7 @@ const IpSetup = (props) => {
                 borderRadius: "10px",
               }}
               loading={isPostLoading}
+              disabled={!isValid}
             >
               ADD
             </LoadingButton>

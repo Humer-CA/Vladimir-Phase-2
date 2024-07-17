@@ -42,7 +42,7 @@ const AddPr = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -172,13 +172,7 @@ const AddPr = (props) => {
         </Stack>
 
         <Box className="add-masterlist__buttons">
-          <LoadingButton
-            type="submit"
-            variant="contained"
-            size="small"
-            loading={isPostLoading}
-            disabled={watch("pr_number") === "" || watch("business_unit_id") === null}
-          >
+          <LoadingButton type="submit" variant="contained" size="small" loading={isPostLoading} disabled={!isValid}>
             Add
           </LoadingButton>
 

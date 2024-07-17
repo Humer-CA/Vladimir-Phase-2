@@ -40,7 +40,7 @@ const LoginPage = () => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -257,7 +257,7 @@ const LoginPage = () => {
               }}
               type="submit"
               loading={loading}
-              disabled={loading}
+              disabled={loading || !isValid}
               fullWidth
             >
               Submit

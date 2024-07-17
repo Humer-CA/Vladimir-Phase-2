@@ -10,10 +10,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch } from "react-redux";
-import {
-  usePostCapexApiMutation,
-  useUpdateCapexApiMutation,
-} from "../../../Redux/Query/Masterlist/Capex";
+import { usePostCapexApiMutation, useUpdateCapexApiMutation } from "../../../Redux/Query/Masterlist/Capex";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
 
@@ -29,13 +26,7 @@ const AddCapex = (props) => {
 
   const [
     postCapex,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostCapexApiMutation();
 
   const [
@@ -52,7 +43,7 @@ const AddCapex = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -67,25 +58,16 @@ const AddCapex = (props) => {
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("capex", {
         type: "validate",
-        message:
-          postError?.data?.errors.capex || updateError?.data?.errors.capex,
+        message: postError?.data?.errors.capex || updateError?.data?.errors.capex,
       });
       setError("project_name", {
         type: "validate",
-        message:
-          postError?.data?.errors.project_name ||
-          updateError?.data?.errors.project_name,
+        message: postError?.data?.errors.project_name || updateError?.data?.errors.project_name,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -139,18 +121,11 @@ const AddCapex = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Capex" : "Add Capex"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="capex"
@@ -180,12 +155,7 @@ const AddCapex = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("capex") === null ||
-              watch("capex") === "" ||
-              watch("project_name") === null ||
-              watch("project_name") === ""
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

@@ -44,7 +44,7 @@ const AddSubCapex = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -208,7 +208,7 @@ const AddSubCapex = (props) => {
             size="small"
             loading={isUpdateLoading || isPostLoading}
             // disabled={watch("sub_capex") === "" || watch("sub_project") === ""}
-            disabled={!isDirty}
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

@@ -378,7 +378,7 @@ const AddRequisition = (props) => {
     handleSubmit,
     control,
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -1224,6 +1224,7 @@ const AddRequisition = (props) => {
                 name="receiving_warehouse_id"
                 options={warehouseData}
                 onOpen={() => (isWarehouseSuccess ? null : warehouseTrigger())}
+                onBlur={() => handleWarehouse()}
                 loading={isWarehouseLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
@@ -1708,7 +1709,7 @@ const AddRequisition = (props) => {
           variant="contained"
           type="submit"
           size="small"
-          disabled={!transactionData ? !isDirty : updateToggle}
+          disabled={!transactionData ? !isValid : updateToggle}
           fullWidth
           sx={{ gap: 1 }}
         >
@@ -1751,6 +1752,48 @@ const AddRequisition = (props) => {
           },
           onDismiss: () => {
             setValue("acquisition_details", updateRequest?.acquisition_details);
+          },
+        })
+      );
+    }
+  };
+  console.log(addRequestAllApi);
+  const handleWarehouse = () => {
+    if (watch("receiving_warehouse_id") === "" || addRequestAllApi.length === 0) {
+      return null;
+    } else if (updateRequest?.receiving_warehouse_id !== watch("receiving_warehouse_id")) {
+      return dispatch(
+        openConfirm({
+          icon: Warning,
+          iconColor: "alert",
+          message: (
+            <Box>
+              <Typography>Are you sure you want to change</Typography>
+              <Typography
+                sx={{
+                  display: "inline-block",
+                  color: "secondary.main",
+                  fontWeight: "bold",
+                }}
+              >
+                WAREHOUSE?
+              </Typography>
+              <Typography>
+                it will apply to all Items after clicking {transactionData ? "Update" : editRequest ? "Update" : "Add"}
+              </Typography>
+            </Box>
+          ),
+
+          onConfirm: () => {
+            dispatch(closeConfirm());
+          },
+          onDismiss: () => {
+            setValue(
+              "receiving_warehouse_id",
+              addRequestAllApi?.warehouse?.warehouse_name !== watch("receiving_warehouse_id")
+                ? null
+                : updateRequest?.receiving_warehouse_id
+            );
           },
         })
       );
@@ -2144,7 +2187,7 @@ const AddRequisition = (props) => {
                   {transactionData ? transactionDataApi?.length : addRequestAllApi?.length} request
                 </Typography>
 
-                {
+                {!transactionData && (
                   <Stack flexDirection="row" justifyContent="flex-end" gap={2} sx={{ pt: "10px" }}>
                     {transactionData?.status === "For Approval of Approver 1" ||
                     transactionData?.status === "Returned" ? (
@@ -2181,7 +2224,7 @@ const AddRequisition = (props) => {
                       </LoadingButton>
                     )}
                   </Stack>
-                }
+                )}
               </Stack>
             </Box>
           </Box>

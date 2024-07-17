@@ -30,7 +30,7 @@ const AddAssetMovementStatus = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -45,13 +45,7 @@ const AddAssetMovementStatus = (props) => {
 
   const [
     postAssetStatus,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostAssetMovementStatusApiMutation();
 
   const [
@@ -66,13 +60,9 @@ const AddAssetMovementStatus = (props) => {
   ] = useUpdateAssetMovementStatusApiMutation();
 
   useEffect(() => {
-    const hasError =
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422);
+    const hasError = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
     const errors = (postError?.data || updateError?.data)?.errors || {};
-    Object.entries(errors).forEach(([name, [message]]) =>
-      setError(name, { type: "validate", message })
-    );
+    Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
 
     const showToast = () => {
       dispatch(
@@ -130,20 +120,11 @@ const AddAssetMovementStatus = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton, Roboto, Helvetica", fontSize: "1.5rem" }}
-      >
-        {data.status
-          ? "Edit Asset Movement Status"
-          : "Add Asset Movement Status"}
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton, Roboto, Helvetica", fontSize: "1.5rem" }}>
+        {data.status ? "Edit Asset Movement Status" : "Add Asset Movement Status"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="movement_status_name"
@@ -161,7 +142,7 @@ const AddAssetMovementStatus = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("movement_status_name") === ""}
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

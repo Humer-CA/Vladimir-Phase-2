@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   FormLabel,
   IconButton,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -190,7 +191,7 @@ const AddUserAccount = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     register,
@@ -277,8 +278,6 @@ const AddUserAccount = (props) => {
     }
   }, [data]);
 
-  console.log(data);
-
   const onSubmitHandler = (formData) => {
     const newFormData = {
       ...formData,
@@ -318,7 +317,7 @@ const AddUserAccount = (props) => {
       </Box>
 
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-userAccount__wrapper">
-        <Box className="add-userAccount__employee">
+        <Stack className="add-userAccount__employee">
           <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
             EMPLOYEE DETAILS
           </Typography>
@@ -670,9 +669,17 @@ const AddUserAccount = (props) => {
               </Box>
             </FormControl>
           </Box> */}
+        </Stack>
+        <Stack gap={2} pt={2}>
           <Divider sx={{ pb: 0.5 }} />
           <Box className="add-userAccount__buttons">
-            <LoadingButton type="submit" variant="contained" size="small" loading={isUpdateLoading || isPostLoading}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              size="small"
+              loading={isUpdateLoading || isPostLoading}
+              disabled={!isValid}
+            >
               {data.status ? "Update" : "Create"}
             </LoadingButton>
 
@@ -686,7 +693,7 @@ const AddUserAccount = (props) => {
               Cancel
             </Button>
           </Box>
-        </Box>
+        </Stack>
       </Box>
     </Box>
   );

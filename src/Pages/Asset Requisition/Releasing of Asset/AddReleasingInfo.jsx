@@ -89,7 +89,7 @@ const AddReleasingInfo = (props) => {
     reset,
     setValue,
     setError,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -838,7 +838,7 @@ const AddReleasingInfo = (props) => {
       <Divider sx={{ my: "10px" }} />
 
       <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
-        <LoadingButton variant="contained" loading={isPostLoading} size="small" type="submit" disabled={!isDirty}>
+        <LoadingButton variant="contained" loading={isPostLoading} size="small" type="submit" disabled={!isValid}>
           Release
         </LoadingButton>
 

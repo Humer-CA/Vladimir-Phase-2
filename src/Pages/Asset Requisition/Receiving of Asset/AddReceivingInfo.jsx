@@ -54,7 +54,7 @@ const ReceivingTable = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -457,7 +457,7 @@ const ReceivingTable = (props) => {
                 fullWidth
               />
 
-              <LoadingButton type="submit" variant="contained" size="small">
+              <LoadingButton type="submit" variant="contained" size="small" disabled={!isValid}>
                 Receive
               </LoadingButton>
             </Box>

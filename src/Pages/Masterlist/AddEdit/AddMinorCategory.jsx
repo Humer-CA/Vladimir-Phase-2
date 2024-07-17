@@ -65,9 +65,7 @@ const schema = yup.object().shape({
 
 const AddMinorCategory = (props) => {
   const { data, onUpdateResetHandler } = props;
-  const [filteredMajorCategoryData, setFilteredMajorCategoryData] = useState(
-    []
-  );
+  const [filteredMajorCategoryData, setFilteredMajorCategoryData] = useState([]);
   const dispatch = useDispatch();
 
   // const {
@@ -94,13 +92,7 @@ const AddMinorCategory = (props) => {
 
   const [
     postMinorCategory,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostMinorCategoryApiMutation();
 
   const [
@@ -117,7 +109,7 @@ const AddMinorCategory = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -137,20 +129,12 @@ const AddMinorCategory = (props) => {
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("minor_category_name", {
         type: "validate",
-        message:
-          postError?.data?.errors.minor_category_name ||
-          updateError?.data?.errors.minor_category_name,
+        message: postError?.data?.errors.minor_category_name || updateError?.data?.errors.minor_category_name,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -238,18 +222,11 @@ const AddMinorCategory = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Minor Category" : "Add Minor Category"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         {/* <CustomAutoComplete
           autoComplete
           name="division_id"
@@ -303,9 +280,7 @@ const AddMinorCategory = (props) => {
           loading={isMajorCategoryLoading}
           size="small"
           getOptionLabel={(option) => option.major_category_name}
-          isOptionEqualToValue={(option, value) =>
-            option.major_category_name === value.major_category_name
-          }
+          isOptionEqualToValue={(option, value) => option.major_category_name === value.major_category_name}
           renderInput={(params) => (
             <TextField
               color="secondary"
@@ -324,12 +299,8 @@ const AddMinorCategory = (props) => {
           options={accountTitleData}
           loading={isAccountTitleLoading}
           size="small"
-          getOptionLabel={(option) =>
-            option.account_title_code + " - " + option.account_title_name
-          }
-          isOptionEqualToValue={(option, value) =>
-            option.account_title_code === value.account_title_code
-          }
+          getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+          isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
           renderInput={(params) => (
             <TextField
               color="secondary"
@@ -360,23 +331,12 @@ const AddMinorCategory = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("minor_category_name") === "" ||
-              watch("major_category_id") === "" ||
-              watch("account_title_sync_id") === null
-              // watch("division_id") === "" ||
-              // watch("division_id") === null
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>
 
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="small"
-            onClick={handleCloseDrawer}
-          >
+          <Button variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
             Cancel
           </Button>
         </Box>

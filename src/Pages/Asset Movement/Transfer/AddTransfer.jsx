@@ -283,7 +283,7 @@ const AddTransfer = (props) => {
     handleSubmit,
     control,
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -625,7 +625,7 @@ const AddTransfer = (props) => {
   return (
     <>
       <Box className="mcontainer">
-        <Stack flexDirection="row" justifyContent="space-between" alignItems="center" width="inherit">
+        <Stack flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
           <Button
             variant="text"
             color="secondary"
@@ -670,254 +670,253 @@ const AddTransfer = (props) => {
         </Stack>
 
         <Box className="request request__wrapper" p={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
-          <Box>
-            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", py: 1, height: "100%" }}>
+          <Stack>
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
               {`${transactionData?.view ? (edit ? "EDIT INFORMATION" : "VIEW INFORMATION") : "ADD TRANSFER REQUEST"} `}
             </Typography>
 
-            <Box id="requestForm" className="request__form">
-              <Stack gap={2} pb={1}>
-                <Stack gap={2}>
-                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
-                    TRANSFER DETAILS
-                  </Typography>
-                  <CustomTextField
-                    control={control}
-                    name="description"
-                    disabled={edit ? false : transactionData?.view}
-                    label="Description"
-                    type="text"
-                    error={!!errors?.description}
-                    helperText={errors?.description?.message}
-                    fullWidth
-                    multiline
-                  />
+            <Stack id="requestForm" className="request__form" gap={2} pb={1}>
+              <Stack gap={2}>
+                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                  TRANSFER DETAILS
+                </Typography>
+                <CustomTextField
+                  control={control}
+                  name="description"
+                  disabled={edit ? false : transactionData?.view}
+                  label="Description"
+                  type="text"
+                  error={!!errors?.description}
+                  helperText={errors?.description?.message}
+                  fullWidth
+                  multiline
+                />
 
-                  <CustomAutoComplete
-                    control={control}
-                    name="accountability"
-                    disabled={edit ? false : transactionData?.view}
-                    options={["Personal Issued", "Common"]}
-                    isOptionEqualToValue={(option, value) => option === value}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        color="secondary"
-                        label="Accountability  "
-                        error={!!errors?.accountability}
-                        helperText={errors?.accountability?.message}
-                      />
-                    )}
-                    onChange={(_, value) => {
-                      setValue("accountable", null);
-                      return value;
-                    }}
-                  />
-
-                  {watch("accountability") === "Personal Issued" && (
-                    <CustomAutoComplete
-                      name="accountable"
-                      disabled={edit ? false : transactionData?.view}
-                      control={control}
-                      includeInputInList
-                      disablePortal
-                      filterOptions={filterOptions}
-                      options={sedarData}
-                      onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
-                      loading={isSedarLoading}
-                      getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
-                      isOptionEqualToValue={(option, value) =>
-                        option.general_info?.full_id_number === value.general_info?.full_id_number
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          color="secondary"
-                          label="Accountable"
-                          error={!!errors?.accountable?.message}
-                          helperText={errors?.accountable?.message}
-                        />
-                      )}
+                <CustomAutoComplete
+                  control={control}
+                  name="accountability"
+                  disabled={edit ? false : transactionData?.view}
+                  options={["Personal Issued", "Common"]}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      color="secondary"
+                      label="Accountability  "
+                      error={!!errors?.accountability}
+                      helperText={errors?.accountability?.message}
                     />
                   )}
+                  onChange={(_, value) => {
+                    setValue("accountable", null);
+                    return value;
+                  }}
+                />
 
-                  <CustomTextField
-                    control={control}
-                    name="remarks"
-                    disabled={edit ? false : transactionData?.view}
-                    label="Remarks (Optional)"
-                    type="text"
-                    error={!!errors?.remarks}
-                    helperText={errors?.remarks?.message}
-                    fullWidth
-                    multiline
-                  />
-                </Stack>
-
-                <Stack gap={2}>
-                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
-                    CHART OF ACCOUNT
-                  </Typography>
-
+                {watch("accountability") === "Personal Issued" && (
                   <CustomAutoComplete
-                    autoComplete
-                    control={control}
-                    name="department_id"
+                    name="accountable"
                     disabled={edit ? false : transactionData?.view}
-                    options={departmentData}
-                    onOpen={() =>
-                      isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
+                    control={control}
+                    includeInputInList
+                    disablePortal
+                    filterOptions={filterOptions}
+                    options={sedarData}
+                    onOpen={() => (isSedarSuccess ? null : sedarTrigger())}
+                    loading={isSedarLoading}
+                    getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
+                    isOptionEqualToValue={(option, value) =>
+                      option.general_info?.full_id_number === value.general_info?.full_id_number
                     }
-                    loading={isDepartmentLoading}
-                    size="small"
-                    // clearIcon={null}
-                    getOptionLabel={(option) => option.department_code + " - " + option.department_name}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     renderInput={(params) => (
                       <TextField
-                        color="secondary"
                         {...params}
-                        label="Department"
-                        error={!!errors?.department_id}
-                        helperText={errors?.department_id?.message}
-                      />
-                    )}
-                    onChange={(_, value) => {
-                      if (value) {
-                        const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
-                        const businessUnitID = businessUnitData?.find(
-                          (item) => item.sync_id === value.business_unit.business_unit_sync_id
-                        );
-
-                        setValue("company_id", companyID);
-                        setValue("business_unit_id", businessUnitID);
-                      } else if (value === null) {
-                        setValue("company_id", null);
-                        setValue("business_unit_id", null);
-                      }
-                      setValue("unit_id", null);
-                      setValue("subunit_id", null);
-                      setValue("location_id", null);
-                      return value;
-                    }}
-                  />
-
-                  <CustomAutoComplete
-                    name="company_id"
-                    control={control}
-                    options={companyData}
-                    onOpen={() => (isCompanySuccess ? null : company())}
-                    loading={isCompanyLoading}
-                    size="small"
-                    getOptionLabel={(option) => option.company_code + " - " + option.company_name}
-                    isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
-                    renderInput={(params) => (
-                      <TextField
                         color="secondary"
-                        {...params}
-                        label="Company"
-                        // error={!!errors?.company_id}
-                        // helperText={errors?.company_id?.message}
-                      />
-                    )}
-                    disabled
-                  />
-
-                  <CustomAutoComplete
-                    autoComplete
-                    name="business_unit_id"
-                    control={control}
-                    options={businessUnitData}
-                    loading={isBusinessUnitLoading}
-                    size="small"
-                    getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
-                    isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
-                    renderInput={(params) => (
-                      <TextField
-                        color="secondary"
-                        {...params}
-                        label="Business Unit"
-                        // error={!!errors?.business_unit_id}
-                        // helperText={errors?.business_unit_id?.message}
-                      />
-                    )}
-                    disabled
-                  />
-
-                  <CustomAutoComplete
-                    autoComplete
-                    name="unit_id"
-                    disabled={edit ? false : transactionData?.view}
-                    control={control}
-                    options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
-                    onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
-                    loading={isUnitLoading}
-                    size="small"
-                    getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
-                    isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                    renderInput={(params) => (
-                      <TextField
-                        color="secondary"
-                        {...params}
-                        label="Unit"
-                        error={!!errors?.unit_id}
-                        helperText={errors?.unit_id?.message}
-                      />
-                    )}
-                    onChange={(_, value) => {
-                      setValue("subunit_id", null);
-                      setValue("location_id", null);
-                      return value;
-                    }}
-                  />
-
-                  <CustomAutoComplete
-                    autoComplete
-                    name="subunit_id"
-                    disabled={edit ? false : transactionData?.view}
-                    control={control}
-                    options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
-                    loading={isSubUnitLoading}
-                    size="small"
-                    getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    renderInput={(params) => (
-                      <TextField
-                        color="secondary"
-                        {...params}
-                        label="Sub Unit"
-                        error={!!errors?.subunit_id}
-                        helperText={errors?.subunit_id?.message}
+                        label="Accountable"
+                        error={!!errors?.accountable?.message}
+                        helperText={errors?.accountable?.message}
                       />
                     )}
                   />
+                )}
 
-                  <CustomAutoComplete
-                    autoComplete
-                    name="location_id"
-                    disabled={edit ? false : transactionData?.view}
-                    control={control}
-                    options={locationData?.filter((item) => {
-                      return item.subunit.some((subunit) => {
-                        return subunit?.sync_id === watch("subunit_id")?.sync_id;
-                      });
-                    })}
-                    loading={isLocationLoading}
-                    size="small"
-                    getOptionLabel={(option) => option.location_code + " - " + option.location_name}
-                    isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
-                    renderInput={(params) => (
-                      <TextField
-                        color="secondary"
-                        {...params}
-                        label="Location"
-                        error={!!errors?.location_id}
-                        helperText={errors?.location_id?.message}
-                      />
-                    )}
-                  />
+                <CustomTextField
+                  control={control}
+                  name="remarks"
+                  disabled={edit ? false : transactionData?.view}
+                  label="Remarks (Optional)"
+                  type="text"
+                  error={!!errors?.remarks}
+                  helperText={errors?.remarks?.message}
+                  fullWidth
+                  multiline
+                />
+              </Stack>
 
-                  {/* <CustomAutoComplete
+              <Stack gap={2}>
+                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                  CHART OF ACCOUNT
+                </Typography>
+
+                <CustomAutoComplete
+                  autoComplete
+                  control={control}
+                  name="department_id"
+                  disabled={edit ? false : transactionData?.view}
+                  options={departmentData}
+                  onOpen={() =>
+                    isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
+                  }
+                  loading={isDepartmentLoading}
+                  size="small"
+                  // clearIcon={null}
+                  getOptionLabel={(option) => option.department_code + " - " + option.department_name}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Department"
+                      error={!!errors?.department_id}
+                      helperText={errors?.department_id?.message}
+                    />
+                  )}
+                  onChange={(_, value) => {
+                    if (value) {
+                      const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+                      const businessUnitID = businessUnitData?.find(
+                        (item) => item.sync_id === value.business_unit.business_unit_sync_id
+                      );
+
+                      setValue("company_id", companyID);
+                      setValue("business_unit_id", businessUnitID);
+                    } else if (value === null) {
+                      setValue("company_id", null);
+                      setValue("business_unit_id", null);
+                    }
+                    setValue("unit_id", null);
+                    setValue("subunit_id", null);
+                    setValue("location_id", null);
+                    return value;
+                  }}
+                />
+
+                <CustomAutoComplete
+                  name="company_id"
+                  control={control}
+                  options={companyData}
+                  onOpen={() => (isCompanySuccess ? null : company())}
+                  loading={isCompanyLoading}
+                  size="small"
+                  getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+                  isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Company"
+                      // error={!!errors?.company_id}
+                      // helperText={errors?.company_id?.message}
+                    />
+                  )}
+                  disabled
+                />
+
+                <CustomAutoComplete
+                  autoComplete
+                  name="business_unit_id"
+                  control={control}
+                  options={businessUnitData}
+                  loading={isBusinessUnitLoading}
+                  size="small"
+                  getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+                  isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Business Unit"
+                      // error={!!errors?.business_unit_id}
+                      // helperText={errors?.business_unit_id?.message}
+                    />
+                  )}
+                  disabled
+                />
+
+                <CustomAutoComplete
+                  autoComplete
+                  name="unit_id"
+                  disabled={edit ? false : transactionData?.view}
+                  control={control}
+                  options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
+                  onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+                  loading={isUnitLoading}
+                  size="small"
+                  getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Unit"
+                      error={!!errors?.unit_id}
+                      helperText={errors?.unit_id?.message}
+                    />
+                  )}
+                  onChange={(_, value) => {
+                    setValue("subunit_id", null);
+                    setValue("location_id", null);
+                    return value;
+                  }}
+                />
+
+                <CustomAutoComplete
+                  autoComplete
+                  name="subunit_id"
+                  disabled={edit ? false : transactionData?.view}
+                  control={control}
+                  options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
+                  loading={isSubUnitLoading}
+                  size="small"
+                  getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Sub Unit"
+                      error={!!errors?.subunit_id}
+                      helperText={errors?.subunit_id?.message}
+                    />
+                  )}
+                />
+
+                <CustomAutoComplete
+                  autoComplete
+                  name="location_id"
+                  disabled={edit ? false : transactionData?.view}
+                  control={control}
+                  options={locationData?.filter((item) => {
+                    return item.subunit.some((subunit) => {
+                      return subunit?.sync_id === watch("subunit_id")?.sync_id;
+                    });
+                  })}
+                  loading={isLocationLoading}
+                  size="small"
+                  getOptionLabel={(option) => option.location_code + " - " + option.location_name}
+                  isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Location"
+                      error={!!errors?.location_id}
+                      helperText={errors?.location_id?.message}
+                    />
+                  )}
+                />
+
+                {/* <CustomAutoComplete
                       name="account_title_id"
                       disabled={edit ? false : transactionData?.view}
                       control={control}
@@ -936,34 +935,33 @@ const AddTransfer = (props) => {
                         />
                       )}
                     /> */}
-                </Stack>
-
-                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
-                  ATTACHMENTS
-                </Typography>
-
-                <Stack flexDirection="row" gap={1} alignItems="center">
-                  {watch("attachments") !== null ? (
-                    <UpdateField label={"Attachments"} value={watch("attachments")?.length} />
-                  ) : (
-                    <CustomMultipleAttachment
-                      control={control}
-                      name="attachments"
-                      disabled={edit ? false : transactionData?.view}
-                      label="Attachments"
-                      inputRef={AttachmentRef}
-                      error={!!errors?.attachments?.message}
-                      helperText={errors?.attachments?.message}
-                    />
-                  )}
-
-                  {watch("attachments") !== null && (!transactionData?.view || edit) && (
-                    <RemoveFile title="Attachments" value="attachments" />
-                  )}
-                </Stack>
               </Stack>
-            </Box>
-          </Box>
+
+              <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "16px" }}>
+                ATTACHMENTS
+              </Typography>
+
+              <Stack flexDirection="row" gap={1} alignItems="center">
+                {watch("attachments") !== null ? (
+                  <UpdateField label={"Attachments"} value={watch("attachments")?.length} />
+                ) : (
+                  <CustomMultipleAttachment
+                    control={control}
+                    name="attachments"
+                    disabled={edit ? false : transactionData?.view}
+                    label="Attachments"
+                    inputRef={AttachmentRef}
+                    error={!!errors?.attachments?.message}
+                    helperText={errors?.attachments?.message}
+                  />
+                )}
+
+                {watch("attachments") !== null && (!transactionData?.view || edit) && (
+                  <RemoveFile title="Attachments" value="attachments" />
+                )}
+              </Stack>
+            </Stack>
+          </Stack>
 
           {/* TABLE */}
           <Box className="request__table">
@@ -1164,8 +1162,8 @@ const AddTransfer = (props) => {
             </TableContainer>
 
             {/* Buttons */}
-            <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
-              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" pt="7px">
+            <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
+              <Typography fontFamily="Anton, Impact, Roboto" fontSize="16px" color="secondary.main" pt="10px">
                 Added: {fields.length} Asset(s)
               </Typography>
               <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
@@ -1177,6 +1175,8 @@ const AddTransfer = (props) => {
                     color="secondary"
                     startIcon={<Create color={"primary"} />}
                     loading={isPostLoading || isUpdateLoading}
+                    disabled={!isValid}
+                    sx={{ mt: "10px" }}
                   >
                     {edit ? "Update" : "Create"}
                   </LoadingButton>

@@ -294,7 +294,7 @@ const AddTransfer = (props) => {
     handleSubmit,
     control,
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isValid },
     setError,
     reset,
     watch,
@@ -1274,6 +1274,7 @@ const AddTransfer = (props) => {
                       color="secondary"
                       startIcon={<Create color={"primary"} />}
                       loading={isPostLoading || isUpdateLoading}
+                      disabled={!isValid}
                     >
                       {edit ? "Update" : "Create"}
                     </LoadingButton>

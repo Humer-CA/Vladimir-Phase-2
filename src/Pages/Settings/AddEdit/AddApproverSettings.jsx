@@ -6,13 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  createFilterOptions,
-} from "@mui/material";
+import { Box, Button, TextField, Typography, createFilterOptions } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch } from "react-redux";
@@ -43,13 +37,7 @@ const AddApproverSettings = (props) => {
 
   const [
     postApproverSettings,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostApproverSettingsApiMutation();
 
   const [
@@ -74,7 +62,7 @@ const AddApproverSettings = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -88,20 +76,12 @@ const AddApproverSettings = (props) => {
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("approver_id", {
         type: "validate",
-        message:
-          postError?.data?.errors.approver_id ||
-          updateError?.data?.errors.approver_id,
+        message: postError?.data?.errors.approver_id || updateError?.data?.errors.approver_id,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -160,18 +140,11 @@ const AddApproverSettings = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Approver" : "Add Approver"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomAutoComplete
           name="approver_id"
           control={control}
@@ -182,9 +155,7 @@ const AddApproverSettings = (props) => {
           filterOptions={filterOptions}
           options={userData}
           loading={isUserLoading}
-          getOptionLabel={(option) =>
-            `(${option.employee_id}) - ${option.firstname} ${option.lastname}`
-          }
+          getOptionLabel={(option) => `(${option.employee_id}) - ${option.firstname} ${option.lastname}`}
           isOptionEqualToValue={(option, value) => option?.id === value?.id}
           renderInput={(params) => (
             <TextField
@@ -203,9 +174,7 @@ const AddApproverSettings = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("approver_id") === null || watch("approver_id") === ""
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

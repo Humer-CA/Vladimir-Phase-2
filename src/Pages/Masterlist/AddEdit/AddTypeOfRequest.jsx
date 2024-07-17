@@ -28,13 +28,7 @@ const AddTypeOfRequest = (props) => {
 
   const [
     postTypeOfRequest,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostTypeOfRequestApiMutation();
 
   const [
@@ -51,7 +45,7 @@ const AddTypeOfRequest = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -65,26 +59,16 @@ const AddTypeOfRequest = (props) => {
   });
 
   useEffect(() => {
-    if (
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422)
-    ) {
+    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
       setError("type_of_request", {
         type: "validate",
-        message:
-          postError?.data?.errors.type_of_request ||
-          updateError?.data?.errors.type_of_request,
+        message: postError?.data?.errors.type_of_request || updateError?.data?.errors.type_of_request,
       });
       setError("type_of_request_name", {
         type: "validate",
-        message:
-          postError?.data?.errors.type_of_request_name ||
-          updateError?.data?.errors.type_of_request_name,
+        message: postError?.data?.errors.type_of_request_name || updateError?.data?.errors.type_of_request_name,
       });
-    } else if (
-      (isPostError && postError?.status !== 422) ||
-      (isUpdateError && updateError?.status !== 422)
-    ) {
+    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
       dispatch(
         openToast({
           message: "Something went wrong. Please try again.",
@@ -138,18 +122,11 @@ const AddTypeOfRequest = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Type of Request" : "Add Type of Request"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="type_of_request_name"
@@ -167,12 +144,7 @@ const AddTypeOfRequest = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("type_of_request") === null ||
-              watch("type_of_request") === "" ||
-              watch("type_of_request_name") === null ||
-              watch("type_of_request_name") === ""
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

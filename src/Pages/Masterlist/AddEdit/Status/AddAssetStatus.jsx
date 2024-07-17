@@ -30,7 +30,7 @@ const AddAssetStatus = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -45,13 +45,7 @@ const AddAssetStatus = (props) => {
 
   const [
     postAssetStatus,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostAssetStatusApiMutation();
 
   const [
@@ -66,13 +60,9 @@ const AddAssetStatus = (props) => {
   ] = useUpdateAssetStatusApiMutation();
 
   useEffect(() => {
-    const hasError =
-      (isPostError || isUpdateError) &&
-      (postError?.status === 422 || updateError?.status === 422);
+    const hasError = (isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422);
     const errors = (postError?.data || updateError?.data)?.errors || {};
-    Object.entries(errors).forEach(([name, [message]]) =>
-      setError(name, { type: "validate", message })
-    );
+    Object.entries(errors).forEach(([name, [message]]) => setError(name, { type: "validate", message }));
 
     const showToast = () => {
       dispatch(
@@ -130,18 +120,11 @@ const AddAssetStatus = (props) => {
 
   return (
     <Box className="add-masterlist">
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         {data.status ? "Edit Asset Status" : "Add Asset Status"}
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-masterlist__content"
-      >
+      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
         <CustomTextField
           control={control}
           name="asset_status_name"
@@ -159,7 +142,7 @@ const AddAssetStatus = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("asset_status_name") === ""}
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

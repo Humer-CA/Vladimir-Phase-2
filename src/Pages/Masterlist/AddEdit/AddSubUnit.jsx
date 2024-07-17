@@ -64,7 +64,7 @@ const AddSubUnit = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -189,12 +189,7 @@ const AddSubUnit = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={
-              watch("department_id") === null ||
-              watch("department_id") === "" ||
-              watch("subunit_name") === null ||
-              watch("subunit_name") === ""
-            }
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

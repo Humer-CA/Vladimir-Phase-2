@@ -52,7 +52,7 @@ const AddMajorCategory = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -175,7 +175,7 @@ const AddMajorCategory = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading}
-            disabled={watch("major_category_name") === "" || watch("est_useful_life") === null}
+            disabled={!isValid}
           >
             {data.status ? "Update" : "Create"}
           </LoadingButton>

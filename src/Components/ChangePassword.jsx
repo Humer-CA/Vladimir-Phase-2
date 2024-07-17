@@ -13,13 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { openToast } from "../Redux/StateManagement/toastSlice";
 import { closeChangePassword } from "../Redux/StateManagement/changePasswordSlice";
 
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import changePasswordIcon from "../Img/SVG/changePasswordIcon.svg";
@@ -45,13 +39,7 @@ const ChangePassword = (props) => {
 
   const [
     postPassword,
-    {
-      data: postData,
-      isLoading: isPostLoading,
-      isSuccess: isPostSuccess,
-      isError: isPostError,
-      error: postError,
-    },
+    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostChangePasswordApiMutation();
 
   const dispatch = useDispatch();
@@ -59,7 +47,7 @@ const ChangePassword = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -138,17 +126,10 @@ const ChangePassword = (props) => {
   };
 
   return (
-    <Box
-      className="change-password"
-      component="form"
-      onSubmit={handleSubmit(onSubmitHandler)}
-    >
+    <Box className="change-password" component="form" onSubmit={handleSubmit(onSubmitHandler)}>
       <img src={changePasswordIcon} alt="icon" width="60px" />
 
-      <Typography
-        color="secondary.main"
-        sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}
-      >
+      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
         Change Password
       </Typography>
 
@@ -240,29 +221,11 @@ const ChangePassword = (props) => {
       </Box>
 
       <Box className="change-password__buttons">
-        <LoadingButton
-          type="submit"
-          variant="contained"
-          size="small"
-          loading={isPostLoading}
-          disabled={
-            watch("old_password") === undefined ||
-            watch("old_password") === "" ||
-            watch("new_password") === undefined ||
-            watch("new_password") === "" ||
-            watch("confirm_password") === undefined ||
-            watch("confirm_password") === ""
-          }
-        >
+        <LoadingButton type="submit" variant="contained" size="small" loading={isPostLoading} disabled={!isValid}>
           Update
         </LoadingButton>
 
-        <Button
-          variant="outlined"
-          color="secondary"
-          size="small"
-          onClick={handleCloseDrawer}
-        >
+        <Button variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
           Cancel
         </Button>
       </Box>

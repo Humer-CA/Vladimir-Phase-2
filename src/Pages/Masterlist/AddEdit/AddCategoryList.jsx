@@ -83,7 +83,7 @@ const AddCategoryList = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -291,14 +291,7 @@ const AddCategoryList = (props) => {
             variant="contained"
             size="small"
             loading={isUpdateLoading || isPostLoading || isUpdateMinorLoading}
-            disabled={
-              (errors?.service_provider_id ? true : false) ||
-              watch("service_provider_id") === null ||
-              (errors?.major_category_id ? true : false) ||
-              watch("major_category_id") === null ||
-              (errors?.minor_category_id ? true : false) ||
-              watch("minor_category_id").length === 0
-            }
+            disabled={!isValid}
           >
             {!data.status ? "Create" : data.action === "addMinor" ? "Add" : "Update"}
           </LoadingButton>
