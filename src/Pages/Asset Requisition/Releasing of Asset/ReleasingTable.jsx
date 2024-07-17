@@ -329,7 +329,7 @@ const ReleasingTable = (props) => {
                                   label={data.warehouse_number?.warehouse_number}
                                 />
                                 <Typography fontSize={12} pt={0.5}>
-                                  {data.warehouse?.warehouse_name}
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
                                 </Typography>
                               </TableCell>
 
