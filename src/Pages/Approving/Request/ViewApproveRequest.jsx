@@ -49,6 +49,8 @@ import { closeDialog, openDialog, closeDialog1, openDialog1 } from "../../../Red
 import { useRemovePurchaseRequestApiMutation } from "../../../Redux/Query/Request/PurchaseRequest";
 import ErrorFetching from "../../ErrorFetching";
 import { useDownloadAttachment } from "../../../Hooks/useDownloadAttachment";
+import { usePostPrYmirApiMutation } from "../../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import { useGetYmirPrApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/YmirPr";
 
 const ViewApproveRequest = (props) => {
   const { approving } = props;
@@ -64,6 +66,7 @@ const ViewApproveRequest = (props) => {
   const dialog1 = useSelector((state) => state.booleanState.dialogMultiple.dialog1);
 
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
+  const [postPr, { isLoading: isPostYmirLoading }] = usePostPrYmirApiMutation();
   const [getNextRequest, { data: nextData, isLoading: isNextRequestLoading }] = useLazyGetNextRequestQuery();
   const [removePrNumber] = useRemovePurchaseRequestApiMutation();
 
@@ -79,12 +82,16 @@ const ViewApproveRequest = (props) => {
     { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
     { refetchOnMountOrArgChange: true }
   );
-  // console.log(approveRequestData);
-  // const {
-  //   data: nextDataApi,
-  //   isLoading: isNextDataLoading,
-  //   refetch: isNextDataRefetch,
-  // } = useGetNextRequestQuery(null, { refetchOnMountOrArgChange: true });
+
+  const {
+    data: ymirData,
+    isLoading: isYmirDatading,
+    refetch: isYmirDataetch,
+  } = useGetYmirPrApiQuery(
+    // { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
+    { transaction_number: transactionData?.transaction_number },
+    { refetchOnMountOrArgChange: true }
+  );
 
   const [downloadAttachment] = useLazyDlAttachmentQuery({ attachment: attachment, id: approveRequestData?.id });
 
@@ -113,7 +120,6 @@ const ViewApproveRequest = (props) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
   const onApprovalApproveHandler = (transaction_number) => {
     dispatch(
       openConfirm({
@@ -143,6 +149,8 @@ const ViewApproveRequest = (props) => {
               action: "Approve",
               transaction_number: transaction_number,
             }).unwrap();
+
+            approveRequestData?.data?.map((data) => data?.fa_approval === 1) && postPr(ymirData);
             dispatch(
               openToast({
                 message: result.message,
