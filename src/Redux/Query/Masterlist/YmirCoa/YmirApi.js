@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const ymirApi = createApi({
   reducerPath: "ymirApi",
+  tagTypes: ["ymir"],
 
   baseQuery: fetchBaseQuery({
     baseUrl: "http://10.10.13.6:8080/api",
@@ -48,6 +49,15 @@ export const ymirApi = createApi({
     getYmirReceivingAllApi: builder.query({
       query: () => `/asset_vladimir`,
     }),
+
+    postPrYmirApi: builder.mutation({
+      query: (data) => ({
+        url: `/asset_sync`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["ymir"],
+    }),
   }),
 });
 
@@ -67,4 +77,5 @@ export const {
   useGetYmirUnitOfMeasurementAllApiQuery,
   useLazyGetYmirUnitOfMeasurementAllApiQuery,
   useLazyGetYmirReceivingAllApiQuery,
+  usePostPrYmirApiMutation,
 } = ymirApi;
