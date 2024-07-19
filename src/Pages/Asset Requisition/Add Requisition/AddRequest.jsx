@@ -1505,7 +1505,7 @@ const AddRequisition = (props) => {
               <CustomTextField
                 control={control}
                 name="brand"
-                label="Brand (optional)"
+                label="Brand (Optional)"
                 type="text"
                 disabled={updateRequest && disable}
                 error={!!errors?.brand}
@@ -1565,7 +1565,7 @@ const AddRequisition = (props) => {
               <CustomPatternField
                 control={control}
                 name="cellphone_number"
-                label="Cellphone # (optional)"
+                label="Cellphone # (Optional)"
                 type="text"
                 disabled={updateRequest && disable}
                 error={!!errors?.cellphone_number}
@@ -1847,7 +1847,8 @@ const AddRequisition = (props) => {
 
           <Box className="request request__wrapper" p={2}>
             {/* FORM */}
-            {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()}
+            {/* {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()} */}
+            {formInputs()}
 
             {/* TABLE */}
             <Box className="request__table">
