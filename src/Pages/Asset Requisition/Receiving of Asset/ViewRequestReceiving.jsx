@@ -3,7 +3,7 @@ import "../../../index.scss";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import ErrorFetching from "../../ErrorFetching";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-import AddReceivingInfo from "../../../Pages/Asset Requisition/Receiving of Asset/AddReceivingInfo";
+// import AddReceivingInfo from "../../../Pages/Asset Requisition/Receiving of Asset/AddReceivingInfo";
 
 import {
   Box,
@@ -259,16 +259,6 @@ const ViewRequestReceiving = () => {
 
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
-                          active={orderBy === `delivered`}
-                          direction={orderBy === `delivered` ? order : `asc`}
-                          onClick={() => onSort(`delivered`)}
-                        >
-                          Received
-                        </TableSortLabel>
-                      </TableCell>
-
-                      <TableCell className="tbl-cell text-center">
-                        <TableSortLabel
                           active={orderBy === `ordered`}
                           direction={orderBy === `ordered` ? order : `asc`}
                           onClick={() => onSort(`ordered`)}
@@ -283,7 +273,7 @@ const ViewRequestReceiving = () => {
                           direction={orderBy === `delivered` ? order : `asc`}
                           onClick={() => onSort(`delivered`)}
                         >
-                          Delivered
+                          Received
                         </TableSortLabel>
                       </TableCell>
 
@@ -297,7 +287,7 @@ const ViewRequestReceiving = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      {!transactionData?.received && <TableCell className="tbl-cell text-center">Action</TableCell>}
+                      {/* {!transactionData?.received && <TableCell className="tbl-cell text-center">Action</TableCell>} */}
                     </TableRow>
                   </TableHead>
 
@@ -310,106 +300,105 @@ const ViewRequestReceiving = () => {
                       <>
                         {isReceivingSuccess &&
                           [...receivingData?.data]?.sort(comparator(order, orderBy))?.map((data, index) => (
-                            <Tooltip
-                              key={index}
-                              title={data?.remaining === 0 ? null : "Click to Receive Items"}
-                              placement="left"
-                              arrow
+                            // <Tooltip
+                            //   key={index}
+                            //   title={data?.remaining === 0 ? null : "Click to Receive Items"}
+                            //   placement="left"
+                            //   arrow
+                            // >
+                            <TableRow
+                              key={data.id}
+                              hover={data?.is_removed === 1 ? false : true}
+                              sx={{
+                                // cursor: transactionData?.received ? null : "pointer",
+                                "&:last-child td, &:last-child th": {
+                                  borderBottom: 0,
+                                },
+                                bgcolor:
+                                  (data?.received === data?.ordered ? "#ff00002f" : data?.is_removed) === 1
+                                    ? "#ff00002f"
+                                    : null,
+                                "*": { color: data?.is_removed === 1 ? "black!important" : null },
+                              }}
                             >
-                              <TableRow
-                                key={data.id}
-                                hover={data?.is_removed === 1 ? false : true}
-                                sx={{
-                                  cursor: transactionData?.received ? null : "pointer",
-                                  "&:last-child td, &:last-child th": {
-                                    borderBottom: 0,
-                                  },
-                                  bgcolor: data?.is_removed === 1 ? "#ff00002f" : null,
-                                  "*": { color: data?.is_removed === 1 ? "black!important" : null },
-                                }}
-                              >
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell text-weight">
-                                  <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
-                                  <Typography fontSize="12px" fontWeight="bold" color="primary">
-                                    {data.attachment_type}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  PR - {data.pr_number}
-                                </TableCell>
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  {data.reference_number}
-                                </TableCell>
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  {data.acquisition_details}
-                                </TableCell>
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  <Typography fontSize="14px" fontWeight="bold">
-                                    {data.asset_description}
-                                  </Typography>
-                                  <Typography fontSize="12px">{data.asset_specification}</Typography>
-                                </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell text-weight">
+                                <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
+                                <Typography fontSize="12px" fontWeight="bold" color="primary">
+                                  {data.attachment_type}
+                                </Typography>
+                              </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                PR - {data.pr_number}
+                              </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                {data.reference_number}
+                              </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                {data.acquisition_details}
+                              </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                <Typography fontSize="14px" fontWeight="bold">
+                                  {data.asset_description}
+                                </Typography>
+                                <Typography fontSize="12px">{data.asset_specification}</Typography>
+                              </TableCell>
 
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.company?.company_code}) - ${data.company?.company_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.business_unit?.business_unit_code}) - ${data.business_unit?.business_unit_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.department?.department_code}) - ${data.department?.department_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.unit?.unit_code}) - ${data.unit?.unit_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.subunit?.subunit_code}) - ${data.subunit?.subunit_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.location?.location_code}) - ${data.location?.location_name}`}
-                                  </Typography>
-                                  <Typography fontSize={10} color="gray">
-                                    {`(${data.account_title?.account_title_code}) - ${data.account_title?.account_title_name}`}
-                                  </Typography>
-                                </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.company?.company_code}) - ${data.company?.company_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.business_unit?.business_unit_code}) - ${data.business_unit?.business_unit_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.department?.department_code}) - ${data.department?.department_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.unit?.unit_code}) - ${data.unit?.unit_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.subunit?.subunit_code}) - ${data.subunit?.subunit_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.location?.location_code}) - ${data.location?.location_name}`}
+                                </Typography>
+                                <Typography fontSize={10} color="gray">
+                                  {`(${data.account_title?.account_title_code}) - ${data.account_title?.account_title_name}`}
+                                </Typography>
+                              </TableCell>
 
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                  {data?.delivered}
-                                </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
+                                {data?.ordered}
+                              </TableCell>
 
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                  {data?.ordered}
-                                </TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
+                                {data?.delivered}
+                              </TableCell>
 
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                  {data?.delivered}
-                                </TableCell>
-
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                  {data?.remaining}
-                                </TableCell>
-                                {!transactionData?.received && (
-                                  <TableCell className="tbl-cell text-center">
-                                    {data?.is_removed !== 1 && (
-                                      <IconButton
-                                        disabled={data?.remaining === 0}
-                                        onClick={() => onCancelHandler(data)}
-                                        sx={{ color: "error.main", ":hover": { color: "red" } }}
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
+                                {data?.remaining}
+                              </TableCell>
+                              {/* {!transactionData?.received && (
+                                <TableCell className="tbl-cell text-center">
+                                  {data?.is_removed !== 1 && (
+                                    <IconButton
+                                      disabled={data?.remaining === 0}
+                                      onClick={() => onCancelHandler(data)}
+                                      sx={{ color: "error.main", ":hover": { color: "red" } }}
+                                    >
+                                      <Tooltip
+                                        title={data?.delivered !== 0 ? "Cancel Remaining" : "Cancel Request"}
+                                        placement="top"
+                                        arrow
                                       >
-                                        <Tooltip
-                                          title={data?.delivered !== 0 ? "Cancel Remaining" : "Cancel Request"}
-                                          placement="top"
-                                          arrow
-                                        >
-                                          <RemoveCircle />
-                                        </Tooltip>
-                                      </IconButton>
-                                    )}
-                                  </TableCell>
-                                )}
-                              </TableRow>
-                            </Tooltip>
+                                        <RemoveCircle />
+                                      </Tooltip>
+                                    </IconButton>
+                                  )}
+                                </TableCell>
+                              )} */}
+                            </TableRow>
+                            // </Tooltip>
                           ))}
                       </>
                     )}
@@ -436,7 +425,7 @@ const ViewRequestReceiving = () => {
             </Box>
           </Box>
 
-          <Dialog
+          {/* <Dialog
             open={dialog}
             // onClose={() => dispatch(closeDialog())}
             sx={{
@@ -452,7 +441,7 @@ const ViewRequestReceiving = () => {
             }}
           >
             <AddReceivingInfo data={viewData} />
-          </Dialog>
+          </Dialog> */}
         </Box>
       )}
     </>
