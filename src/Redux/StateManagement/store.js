@@ -53,6 +53,7 @@ import { divisionApi } from "../Query/Masterlist/Division";
 import { unitOfMeasurementApi } from "../Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
 import { ymirApi } from "../Query/Masterlist/YmirCoa/YmirApi";
+import { ymirPrApi } from "../Query/Masterlist/YmirCoa/YmirPr";
 
 // User Management
 import { userAccountsApi } from "../Query/UserManagement/UserAccountsApi";
@@ -132,6 +133,7 @@ export const store = configureStore({
     [fistoSupplierApi.reducerPath]: fistoSupplierApi.reducer,
 
     [ymirApi.reducerPath]: ymirApi.reducer,
+    [ymirPrApi.reducerPath]: ymirPrApi.reducer,
 
     [companyApi.reducerPath]: companyApi.reducer,
     [businessUnitApi.reducerPath]: businessUnitApi.reducer,
@@ -212,6 +214,7 @@ export const store = configureStore({
       fistoSupplierApi.middleware,
 
       ymirApi.middleware,
+      ymirPrApi.middleware,
 
       companyApi.middleware,
       businessUnitApi.middleware,
