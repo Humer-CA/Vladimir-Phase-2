@@ -177,6 +177,7 @@ const ReleasingTable = (props) => {
                 size="small"
                 startIcon={<Output />}
                 sx={{ position: "absolute", right: 0, top: -40 }}
+                disabled={watch("warehouse_number_id").length === 0}
               >
                 Release
               </Button>
