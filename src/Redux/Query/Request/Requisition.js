@@ -64,9 +64,7 @@ export const requisitionApi = createApi({
       query: ({ id, status }) => ({
         url: `/asset-request/archived-tor/${id}`,
         method: "PATCH",
-        body: {
-          status: status,
-        },
+        body: { status: status },
       }),
       invalidatesTags: ["Requisition"],
     }),
@@ -80,31 +78,15 @@ export const requisitionApi = createApi({
       invalidatesTags: ["Requisition"],
     }),
 
-    // postResubmitRequisitionApi: builder.mutation({
-    //   query: ({ transaction_number, ...body }) => ({
-    //     url: `/resubmit-request/${transaction_number}`,
-    //     method: "PATCH",
-    //     body,
-    //   }),
-    //   invalidatesTags: ["Requisition"],
-    // }),
     postResubmitRequisitionApi: builder.mutation({
       query: ({ transaction_number, body }) => ({
         url: `/resubmit-request`,
         method: "PATCH",
         body: { transaction_number },
+        // body,
       }),
       invalidatesTags: ["Requisition"],
     }),
-
-    // postRequisitionApi: builder.mutation({
-    //   query: (data) => ({
-    //     url: `/asset-request`,
-    //     method: "POST",
-    //     body: data,
-    //   }),
-    //   invalidatesTags: ["Requisition"],
-    // }),
 
     updateRequisitionApi: builder.mutation({
       query: ({ id, ...data }) => ({
@@ -126,8 +108,8 @@ export const requisitionApi = createApi({
     }),
 
     deleteRequisitionReferenceApi: builder.mutation({
-      query: (body) => ({
-        url: `/delete-request/${body?.transaction_number}/${body?.reference_number}`,
+      query: (params) => ({
+        url: `/delete-request/${params?.transaction_number}/${params?.reference_number}`,
         method: "DELETE",
         // body,
       }),
