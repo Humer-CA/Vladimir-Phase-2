@@ -23,7 +23,7 @@ const ReceivingOfAsset = () => {
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "1.6rem" }}>
-        Receiving of Asset
+        Received Asset
       </Typography>
 
       <Box>
@@ -32,7 +32,7 @@ const ReceivingOfAsset = () => {
             <Tab
               label={
                 <Badge color="error" badgeContent={notifData?.toReceive}>
-                  For Receiving
+                  Pending
                 </Badge>
               }
               value="1"
