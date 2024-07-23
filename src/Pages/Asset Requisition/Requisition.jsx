@@ -279,7 +279,7 @@ const Requisition = () => {
                   <ListItemText>Request</ListItemText>
                 </MenuItem>
 
-                <MenuItem onClick={() => navigate(`additional-cost`)} dense>
+                <MenuItem onClick={() => navigate(`additional-cost`)} dense disabled>
                   <ListItemIcon>
                     <AddCircleSharp />
                   </ListItemIcon>

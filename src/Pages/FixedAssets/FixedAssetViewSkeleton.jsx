@@ -10,7 +10,7 @@ const FixedAssetViewSkeleton = () => {
 
   return (
     <>
-      <Box className="tableCard">
+      <Box className="tableCard mcontainer">
         <Box
           sx={{
             display: "flex",

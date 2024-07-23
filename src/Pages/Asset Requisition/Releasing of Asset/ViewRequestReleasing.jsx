@@ -108,7 +108,7 @@ const ViewRequestReleasing = (props) => {
       {isPostError && <ErrorFetchFA refetch={releasingDataRefetch} error={postError} />}
 
       {releasingData && !isPostError && (
-        <Box className="tableCard">
+        <Box className="tableCard mcontainer">
           <Box
             sx={{
               display: "flex",
