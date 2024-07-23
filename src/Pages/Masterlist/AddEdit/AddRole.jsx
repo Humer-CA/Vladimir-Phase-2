@@ -74,7 +74,6 @@ const AddRole = (props) => {
       access_permission: [],
     },
   });
-  console.log(watch("access_permission"));
 
   useEffect(() => {
     if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
@@ -125,6 +124,95 @@ const AddRole = (props) => {
     }
   }, [data]);
 
+  const permissions = [
+    // List of permissions
+    "dashboard",
+    "masterlist",
+    "user-management",
+    "fixed-assets",
+    "print-fa",
+    "settings",
+    "asset-requisition",
+    "asset-movement",
+    "approving",
+    "monitoring",
+    "asset-for-tagging",
+    "asset-list",
+    "on-hand",
+    "disposal",
+    "reports",
+
+    // Masterlist
+    "company",
+    "business-unit",
+    "department",
+    "unit",
+    "sub-unit",
+    "location",
+    "account-title",
+    "supplier",
+    "unit-of-measurement",
+
+    "division",
+    "type-of-request",
+    "capex",
+    "warehouse",
+    "category",
+    "status-category",
+
+    // UserManagement
+    "user-accounts",
+    "role-management",
+    "user-requestor",
+    "user-approver",
+
+    // Settings
+    "approver-settings",
+    "form-settings",
+
+    // Asset Requisition
+    "requisition",
+    "purchase-request",
+    "requisition-receiving",
+    "requisition-releasing",
+
+    //Asset Movement
+    "transfer",
+    "pull-out",
+    "disposal",
+
+    // Approving
+    "pending-request",
+    "approved-request",
+    "approving-request",
+    "approving-transfer",
+    "approving-pull-out",
+    "approving-disposal",
+
+    // Monitoring
+    "request-monitoring",
+  ];
+
+  const masterlistValue = [
+    "company",
+    "business-unit",
+    "department",
+    "unit",
+    "location",
+    "account-title",
+    "division",
+    "type-of-request",
+    "capex",
+    "warehouse",
+    "category",
+    "status-category",
+  ];
+  const userManagement = ["user-accounts", "role-management"];
+  const settings = ["approver-settings", "form-settings"];
+  const assetRequisition = ["requisition", "purchase-request", "requisition-receiving"];
+  const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
+  const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
+
   const onSubmitHandler = (formData) => {
     if (data.status) {
       updateRole(formData);
@@ -141,6 +229,46 @@ const AddRole = (props) => {
     dispatch(closeDrawer());
   };
 
+  const MainRoles = ({ label, value }) => {
+    const convertToCamelCase = (inputString) => {
+      return inputString
+        .split(" ")
+        .map((word, index) =>
+          index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join("");
+    };
+
+    const newValue = convertToCamelCase(label);
+
+    return (
+      <FormControlLabel
+        label={label} // "User Management"
+        value={value} // "user-management"
+        sx={{ color: "text.main", fontWeight: "bold" }}
+        disabled={data.action === "view"}
+        control={
+          <Checkbox
+            checked={watch("access_permission").includes(value)}
+            indeterminate={
+              watch("access_permission").some((perm) => perm === newValue) &&
+              !watch("access_permission").every((perm) => perm === newValue)
+            }
+            onChange={(e) => {
+              if (e.target.checked) {
+                setValue("access_permission", [...new Set([...watch("access_permission"), newValue])]);
+              } else {
+                const emptyValue = watch("access_permission").filter((perm) => ![newValue, value].includes(perm));
+
+                setValue("access_permission", emptyValue);
+              }
+            }}
+          />
+        }
+      />
+    );
+  };
+
   const CheckboxItem = ({ label, value }) => (
     <FormControlLabel
       disabled={data.action === "view"}
@@ -150,16 +278,22 @@ const AddRole = (props) => {
     />
   );
 
-  const CheckboxGroup = ({ items, ml = 3 }) => (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+  const CheckboxGroup = ({ items, title }) => (
+    <Box sx={{ display: "flex", flexDirection: "column", pb: "10px" }}>
+      <Typography fontFamily="Anton, Impact" color="secondary.main" pb="5px">
+        {title}
+      </Typography>
+
       {items?.map((item) => (
         <CheckboxItem key={item.value} {...item} />
       ))}
     </Box>
   );
 
+  console.log(watch("access_permission"));
+
   const Children = () => {
-    const firstGroup = [
+    const Main = [
       { label: "Dashboard", value: "dashboard" },
       { label: "Masterlist", value: "masterlist" },
       { label: "User Management", value: "user-management" },
@@ -169,7 +303,7 @@ const AddRole = (props) => {
       { label: "Request Monitoring", value: "request-monitoring" },
     ];
 
-    const secondGroup = [
+    const Setup = [
       { label: "Asset Requisition", value: "asset-requisition" },
       { label: "Asset Movement", value: "asset-movement" },
       { label: "Approving", value: "approving" },
@@ -180,187 +314,43 @@ const AddRole = (props) => {
     ];
 
     return (
-      <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-        <CheckboxGroup items={firstGroup} ml={3} />
-        <CheckboxGroup items={secondGroup} ml={3} />
-      </Box>
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
+        <Box>
+          <CheckboxGroup items={Main} />
+        </Box>
+
+        <Box>
+          <CheckboxGroup items={Setup} />
+        </Box>
+      </Stack>
     );
   };
 
   const Masterlist = () => {
+    const masterlist1 = [
+      { label: "Company", value: "company" },
+      { label: "Business Unit", value: "business-unit" },
+      { label: "Department", value: "department" },
+      { label: "Unit", value: "unit" },
+      { label: "Sub Unit", value: "sub-unit" },
+      { label: "Location", value: "location" },
+      { label: "Account Title", value: "account-title" },
+      { label: "Supplier", value: "supplier" },
+      { label: "Unit of Measurement", value: "unit-of-measurement" },
+    ];
+
+    const masterlist2 = [
+      { label: "Division", value: "division" },
+      { label: "Type of Request", value: "type-of-request" },
+      { label: "Capex", value: "capex" },
+      { label: "Warehouse", value: "warehouse" },
+      { label: "Category", value: "category" },
+      { label: "Status Category", value: "status-category" },
+    ];
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
-        <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            mx: 2,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Company"
-            value="company"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("company")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Business Unit"
-            value="business-unit"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("business-unit")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Department"
-            value="department"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("department")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Unit"
-            value="unit"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("unit")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Location"
-            value="location"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("location")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Account Title"
-            value="account-title"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("account-title")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Sub Unit"
-            value="sub-unit"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("sub-unit")} />
-            }
-          />
-        </FormGroup>
-
-        <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            mx: 2,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Supplier"
-            value="supplier"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("supplier")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Division"
-            value="division"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("division")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Type of Request"
-            value="type-of-request"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("type-of-request")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Capex"
-            value="capex"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("capex")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Warehouse"
-            value="warehouse"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("warehouse")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Category"
-            value="category"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("category")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Status Category"
-            value="status-category"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("status-category")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Unit of Measurement"
-            value="unit-of-measurement"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("unit-of-measurement")}
-              />
-            }
-          />
-        </FormGroup>
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
+        <CheckboxGroup title="Synching" items={masterlist1} />
+        <CheckboxGroup title="Masterlist" items={masterlist2} />
       </Stack>
     );
   };
@@ -371,22 +361,16 @@ const AddRole = (props) => {
       { label: "Role Management", value: "role-management" },
     ];
 
-    const userManagement2 = [
-      { label: "User (Requestor)", value: "user-requestor" },
-      { label: "User (Approver)", value: "user-approver" },
-    ];
-
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
-        <CheckboxGroup items={userManagement1} ml={3} />
-        <CheckboxGroup items={userManagement2} ml={3} />
+      <Stack flexDirection="row" justifyContent="space-evenly" flexWrap="wrap">
+        <CheckboxGroup items={userManagement1} />
       </Stack>
     );
   };
 
   const Settings = () => {
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
         <FormGroup
           sx={{
             display: "flex",
@@ -423,131 +407,46 @@ const AddRole = (props) => {
   };
 
   const AssetRequisition = () => {
+    const assetRequisition1 = [
+      { label: "Requisition", value: "requisition" },
+      { label: "Purchase Request", value: "purchase-request" },
+    ];
+
+    const assetRequisition2 = [
+      //   { label: "User (Requestor)", value: "user-requestor" },
+      //   { label: "User (Approver)", value: "user-approver" },
+    ];
+
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
-        <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            ml: 3,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Requisition"
-            value="requisition"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("requisition")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Purchase Request"
-            value="purchase-request"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("purchase-request")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Receiving"
-            value="requisition-receiving"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("requisition-receiving")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Releasing"
-            value="requisition-releasing"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("requisition-releasing")}
-              />
-            }
-          />
-        </FormGroup>
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
+        <CheckboxGroup items={assetRequisition1} />
+        {/* <CheckboxGroup items={assetRequisition2}  /> */}
       </Stack>
     );
   };
 
   const AssetMovement = () => {
+    const assetMovement1 = [
+      { label: "Asset Transfer", value: "transfer" },
+      { label: "Asset Pullout", value: "pull-out" },
+    ];
+
+    const assetMovement2 = [
+      { label: "Asset Evaluation", value: "evaluation" },
+      { label: "Asset Disposal", value: "disposal" },
+    ];
+
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
-        <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            ml: 3,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Transfer"
-            value="transfer"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("transfer")} />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Pull Out"
-            value="pull-out"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("pull-out")} />
-            }
-          />
-        </FormGroup>
-
-        <FormGroup
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            ml: 3,
-          }}
-        >
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Evaluation"
-            value="evaluation"
-            control={
-              <Checkbox
-                {...register("access_permission")}
-                checked={watch("access_permission")?.includes("evaluation")}
-              />
-            }
-          />
-
-          <FormControlLabel
-            disabled={data.action === "view"}
-            label="Disposal"
-            value="disposal"
-            control={
-              <Checkbox {...register("access_permission")} checked={watch("access_permission")?.includes("disposal")} />
-            }
-          />
-        </FormGroup>
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
+        <CheckboxGroup items={assetMovement1} />
+        <CheckboxGroup items={assetMovement2} />
       </Stack>
     );
   };
 
   const Approving = () => {
     return (
-      <Stack flexDirection="row" flexWrap="wrap">
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
         <FormGroup
           sx={{
             display: "flex",
@@ -615,95 +514,6 @@ const AddRole = (props) => {
     );
   };
 
-  const permissions = [
-    // List of permissions
-    "dashboard",
-    "masterlist",
-    "user-management",
-    "fixed-assets",
-    "print-fa",
-    "settings",
-    "asset-requisition",
-    "asset-movement",
-    "approving",
-    "monitoring",
-    "asset-for-tagging",
-    "asset-list",
-    "on-hand",
-    "disposal",
-    "reports",
-
-    // COA
-    "company",
-    "business-unit",
-    "department",
-    "unit",
-    "subunit",
-    "location",
-    "account-title",
-
-    "division",
-    "type-of-request",
-    "capex",
-    "warehouse",
-    "category",
-    "status-category",
-    "unit-of-measurement",
-
-    // UserManagement
-    "user-accounts",
-    "role-management",
-    "user-requestor",
-    "user-approver",
-
-    // Settings
-    "approver-settings",
-    "form-settings",
-
-    // Asset Requisition
-    "requisition",
-    "purchase-request",
-    "requisition-receiving",
-
-    //Asset Movement
-    "transfer",
-    "pull-out",
-    "disposal",
-
-    // Approving
-    "pending-request",
-    "approved-request",
-    "approving-request",
-    "approving-transfer",
-    "approving-pull-out",
-    "approving-disposal",
-
-    // Monitoring
-    "request-monitoring",
-  ];
-
-  const masterlistValue = [
-    "company",
-    "business-unit",
-    "department",
-    "unit",
-    "location",
-    "account-title",
-    "division",
-    "type-of-request",
-    "capex",
-    "warehouse",
-    "category",
-    "status-category",
-  ];
-  const userManagement = ["user-accounts", "role-management"];
-  const settings = ["approver-settings", "form-settings"];
-  const assetRequisition = ["requisition", "purchase-request", "requisition-receiving"];
-  const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
-  const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
-
-  // console.log(watch("access_permission"));
-
   return (
     <Box className="add-role">
       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
@@ -736,6 +546,7 @@ const AddRole = (props) => {
                 border: "1px solid #a6a6a6",
                 borderRadius: "10px",
                 px: "10px",
+                width: "500px",
               }}
             >
               <FormLabel component="legend" sx={{ ml: "1px", pl: "5px" }}>
@@ -1082,26 +893,26 @@ const AddRole = (props) => {
                             //   watch("access_permission").includes(perm)
                             // )}
                             indeterminate={
-                              assetMovement.some((perm) => watch("access_permission").includes(perm)) &&
-                              !assetMovement.every((perm) => watch("access_permission").includes(perm))
+                              approving.some((perm) => watch("access_permission").includes(perm)) &&
+                              !approving.every((perm) => watch("access_permission").includes(perm))
                             }
                             onChange={(e) => {
                               if (e.target.checked) {
                                 setValue("access_permission", [
                                   ...new Set([
                                     ...watch("access_permission"),
-                                    "transfer",
-                                    "evaluation",
-                                    "pull-out",
-                                    "disposal",
+                                    "approving-request",
+                                    "approving-transfer",
+                                    "approving-pull-out",
+                                    "approving-disposal",
                                   ]),
                                 ]);
                               } else {
-                                const assetMovementEmptyValue = watch("access_permission").filter(
-                                  (perm) => ![...assetMovement, "asset-movement"].includes(perm)
+                                const approvingEmptyValue = watch("access_permission").filter(
+                                  (perm) => ![...approving, "approving"].includes(perm)
                                 );
 
-                                setValue("access_permission", assetMovementEmptyValue);
+                                setValue("access_permission", approvingEmptyValue);
                               }
                             }}
                           />
@@ -1126,10 +937,7 @@ const AddRole = (props) => {
             loading={isUpdateLoading || isPostLoading}
             disabled={
               // (errors?.role_name ? true : false) ||
-              watch("role_name") === undefined ||
-              watch("role_name") === "" ||
-              watch("access_permission")?.length === 0 ||
-              data.action === "view"
+              watch("role_name") === "" || watch("access_permission")?.length === 0 || data.action === "view"
             }
             sx={data.action === "view" ? { display: "none" } : null}
           >
