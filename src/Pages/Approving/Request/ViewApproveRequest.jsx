@@ -310,7 +310,7 @@ const ViewApproveRequest = (props) => {
 
               <TableContainer
                 className="mcontainer__th-body  mcontainer__wrapper"
-                sx={{ height: "calc(100vh - 290px)", pt: 0 }}
+                sx={{ height: "calc(100vh - 320px)", pt: 0 }}
               >
                 <Table className="mcontainer__table " stickyHeader>
                   <TableHead>
@@ -501,7 +501,7 @@ const ViewApproveRequest = (props) => {
               </TableContainer>
 
               {/* Buttons */}
-              <Stack flexDirection="row" justifyContent="space-between" alignItems={"center"}>
+              <Stack flexDirection="row" justifyContent="space-between" alignItems="center" pb={2}>
                 <Typography
                   fontFamily="Anton, Impact, Roboto"
                   fontSize="18px"
