@@ -1,3 +1,7 @@
-# VladimirDuplicate
+# Vladimir Phase 0 (Setup)
 
-# FORGOT TO COMMIT AND PUSH
+# Vladimir Phase 1 (Acquisition)
+
+# Vladimir Phase 1.4 (Additional)
+
+# Vladimir Phase 2 (Movement)
