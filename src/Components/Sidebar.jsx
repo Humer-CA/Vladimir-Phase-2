@@ -424,7 +424,7 @@ const Sidebar = () => {
         //   setter: closeCollapse,
         // },
         {
-          label: "Receiving of Asset",
+          label: "Received Asset",
           icon: OpenInBrowserOutlined,
           path: "/asset-requisition/requisition-receiving",
           permission: "requisition-receiving",
