@@ -993,6 +993,67 @@ const FixedAssetView = (props) => {
                   </AccordionDetails>
                 </Accordion>
 
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+                      SMALL TOOLS
+                    </Typography>
+                  </AccordionSummary>
+
+                  <Divider />
+
+                  <AccordionDetails>
+                    <TableContainer>
+                      <Table>
+                        <TableBody
+                          sx={{
+                            overflow: "auto",
+                          }}
+                          colSpan={9}
+                        >
+                          <TableRow>
+                            <TableCell>
+                              <Typography fontSize="12px" fontWeight="bold">
+                                59034903435-001
+                              </Typography>
+                              <Typography fontSize="10px" color="gray" noWrap>
+                                Index
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography fontSize="12px" fontWeight="bold">
+                                Sample Description
+                              </Typography>
+                              <Typography fontSize="10px" color="gray" noWrap>
+                                Description
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography fontSize="12px" fontWeight="bold">
+                                Specification
+                              </Typography>
+                              <Typography fontSize="10px" color="gray" noWrap>
+                                Specification
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography fontSize="12px" fontWeight="bold">
+                                4
+                              </Typography>
+                              <Typography fontSize="10px" color="gray" noWrap>
+                                Quantity
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </AccordionDetails>
+                </Accordion>
+
                 {dataApi.data?.is_additional_cost === 0 ? (
                   <Accordion
                   // expanded={expanded}
