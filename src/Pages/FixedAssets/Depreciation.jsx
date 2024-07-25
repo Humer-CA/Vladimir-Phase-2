@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { Box, Button, Card, IconButton, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Card, IconButton, Stack, Typography, useMediaQuery } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Close, CurrencyExchangeRounded, Watch } from "@mui/icons-material";
 
@@ -34,13 +34,12 @@ const Depreciation = (props) => {
 
   const data = calcDepreApi?.data;
 
-  console.log(calcDepreApi);
-
   return (
     <>
       <Box
-        component="form"
+        // component="form"
         // onSubmit={handleSubmit(handleDepreciation)}
+        sx={{ overflow: "auto" }}
       >
         <Box
           sx={{
@@ -75,7 +74,12 @@ const Depreciation = (props) => {
             </Typography>
           </Box>
 
-          <IconButton color="secondary" variant="outlined" onClick={handleClose} sx={{ mr: "-15px", mt: "-25px" }}>
+          <IconButton
+            color="secondary"
+            variant="outlined"
+            onClick={handleClose}
+            sx={{ top: 10, right: 10, position: "absolute" }}
+          >
             <Close size="small" />
           </IconButton>
         </Box>
@@ -87,8 +91,6 @@ const Depreciation = (props) => {
             gap: "10px",
             px: "5px",
             flexWrap: "wrap",
-            height: "340px",
-            overflow: "auto",
           }}
         >
           <Card
@@ -96,8 +98,8 @@ const Depreciation = (props) => {
               backgroundColor: "secondary.main",
               minWidth: "300px",
               height: "maxContent",
-              flexGrow: "1",
-              // flex: "1",
+              // flexGrow: "1",
+              flex: "1",
               alignSelf: "stretched",
               p: "10px 20px",
               borderRadius: "5px",
@@ -138,14 +140,14 @@ const Depreciation = (props) => {
                 </Box>
 
                 <Box className="tableCard__propertiesCapex">
-                  Aquisition Date:
+                  Acquisition Date:
                   <Typography className="tableCard__infoCapex" fontSize="14px">
                     {data?.acquisition_date}
                   </Typography>
                 </Box>
 
                 <Box className="tableCard__propertiesCapex">
-                  Aquisition Cost:
+                  Acquisition Cost:
                   <Typography className="tableCard__infoCapex" fontSize="14px">
                     ₱{data?.acquisition_cost?.toLocaleString()}
                   </Typography>
@@ -181,7 +183,9 @@ const Depreciation = (props) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
+                flex: "1",
                 mb: "10px",
+                height: "100%",
               }}
             >
               <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
@@ -256,6 +260,70 @@ const Depreciation = (props) => {
             </Card> */}
           </Box>
         </Box>
+
+        <Stack sx={{ flexDirection: "column", flex: "1", minWidth: "300px", px: "5px" }}>
+          <Card
+            className="tableCard__card"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              mt: "10px",
+              mx: "5px",
+            }}
+          >
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
+              Debit/Credit
+            </Typography>
+
+            <Box>
+              <Box className="tableCard__properties">
+                Debit:
+                <Typography className="tableCard__info" fontSize="14px">
+                  {calcDepreApi?.data?.accumulated_cost?.toLocaleString()}
+                </Typography>
+              </Box>
+
+              <Box className="tableCard__properties">
+                Credit:
+                <Typography className="tableCard__info" fontSize="14px">
+                  {calcDepreApi?.data?.depreciation_per_year?.toLocaleString()}
+                </Typography>
+              </Box>
+            </Box>
+          </Card>
+
+          <Card
+            className="tableCard__card"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              mt: "10px",
+              mx: "5px",
+            }}
+          >
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
+              Debit/Credit
+            </Typography>
+
+            <Box>
+              <Box className="tableCard__properties">
+                Debit:
+                <Typography className="tableCard__info" fontSize="14px">
+                  {calcDepreApi?.data?.accumulated_cost?.toLocaleString()}
+                </Typography>
+              </Box>
+
+              <Box className="tableCard__properties">
+                Credit:
+                <Typography className="tableCard__info" fontSize="14px">
+                  {calcDepreApi?.data?.depreciation_per_year?.toLocaleString()}
+                </Typography>
+              </Box>
+            </Box>
+          </Card>
+        </Stack>
 
         {/* <Box
           sx={{
