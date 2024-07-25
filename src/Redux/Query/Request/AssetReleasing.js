@@ -41,6 +41,15 @@ export const assetReleasingApi = createApi({
       }),
       invalidatesTags: ["AssetReleasing"],
     }),
+
+    putSaveReleasing: builder.mutation({
+      query: (data) => ({
+        url: `/update-release-accountability`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["AssetReleasing"],
+    }),
   }),
 });
 
@@ -51,4 +60,5 @@ export const {
   useGetByWarehouseNumberApiQuery,
   useLazyGetAssetReleasingQuery,
   usePutAssetReleasingMutation,
+  usePutSaveReleasingMutation,
 } = assetReleasingApi;
