@@ -1354,7 +1354,7 @@ const AddFixedAsset = (props) => {
             control={control}
             color="secondary"
             name="cellphone_number"
-            label="Cellphone # (optional)"
+            label="Cellphone # (Optional)"
             type="text"
             size="small"
             error={!!errors?.cellphone_number}
@@ -1369,7 +1369,7 @@ const AddFixedAsset = (props) => {
             autoComplete="off"
             control={control}
             name="brand"
-            label="Brand (optional)"
+            label="Brand (Optional)"
             type="text"
             color="secondary"
             size="small"
@@ -1382,7 +1382,7 @@ const AddFixedAsset = (props) => {
             autoComplete="off"
             control={control}
             name="care_of"
-            label="Care of (optional)"
+            label="Care of (Optional)"
             type="text"
             color="secondary"
             size="small"
@@ -1396,7 +1396,7 @@ const AddFixedAsset = (props) => {
               autoComplete="off"
               control={control}
               name="voucher"
-              label="Voucher (optional)"
+              label="Voucher (Optional)"
               type="text"
               color="secondary"
               size="small"
@@ -1426,7 +1426,7 @@ const AddFixedAsset = (props) => {
             autoComplete="off"
             control={control}
             name="receipt"
-            label="Receipt (optional)"
+            label="Receipt (Optional)"
             type="text"
             color="secondary"
             size="small"
@@ -1662,6 +1662,7 @@ const AddFixedAsset = (props) => {
                 name="release_date"
                 label="Release Date"
                 size="small"
+                disabled
                 views={["year", "month", "day"]}
                 openTo="year"
                 error={!!errors?.release_date}
@@ -1766,6 +1767,7 @@ const AddFixedAsset = (props) => {
                   label="Acquisition Cost"
                   color="secondary"
                   size="small"
+                  disabled={data}
                   error={!!errors?.acquisition_cost}
                   helperText={errors?.acquisition_cost?.message}
                   prefix="₱"
