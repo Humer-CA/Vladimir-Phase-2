@@ -444,11 +444,11 @@ const MasterlistToolbar = (props) => {
 
               <Divider sx={{ mx: 2 }} />
 
-              <MenuItem onClick={handleOpenAddCost} dense>
+              <MenuItem onClick={handleOpenAddCost} dense disabled>
                 <ListItemIcon>
                   <AddCard />
                 </ListItemIcon>
-                <ListItemText>Add Additional Cost</ListItemText>
+                <ListItemText>Additional Cost (TBA)</ListItemText>
               </MenuItem>
             </Menu>
           )}
