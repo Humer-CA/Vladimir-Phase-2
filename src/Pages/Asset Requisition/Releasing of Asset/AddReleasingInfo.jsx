@@ -23,7 +23,7 @@ import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import { LoadingButton } from "@mui/lab";
 import { closeDialog, closeDialog1, openDialog1 } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { usePutAssetReleasingMutation } from "../../../Redux/Query/Request/AssetReleasing";
+import { usePutAssetReleasingMutation, usePutSaveReleasingMutation } from "../../../Redux/Query/Request/AssetReleasing";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { Info, Refresh, Remove, Save } from "@mui/icons-material";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
@@ -66,12 +66,24 @@ const schema = yup.object().shape({
     .typeError("Authorization Letter is a required field"),
 });
 
+const schemaSave = yup.object().shape({
+  accountability: yup.string().required().typeError("Accountability is a required field"),
+  accountable: yup
+    .object()
+    .nullable()
+    .when("accountability", {
+      is: (value) => value === "Personal Issued",
+      then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
+    }),
+});
+
 const AddReleasingInfo = (props) => {
-  const { data, refetch, warehouseNumber, hideWN } = props;
+  const { data, refetch, warehouseNumber, hideWN, commonData, personalData } = props;
   const [signature, setSignature] = useState();
   const [trimmedDataURL, setTrimmedDataURL] = useState(null);
   const [viewImage, setViewImage] = useState(null);
   const [base64Image, setBase64Image] = useState(null);
+  const [validation, setValidation] = useState(true);
 
   const signatureRef = useRef();
   const receiverMemoRef = useRef(null);
@@ -89,9 +101,12 @@ const AddReleasingInfo = (props) => {
     reset,
     setValue,
     setError,
+    trigger,
+    clearErrors,
     formState: { errors, isDirty, isValid },
   } = useForm({
-    resolver: yupResolver(schema),
+    mode: "onChange",
+    resolver: yupResolver(validation ? schemaSave : schema),
     defaultValues: {
       department_id: null,
       company_id: null,
@@ -203,6 +218,11 @@ const AddReleasingInfo = (props) => {
     { data: postData, isSuccess: isPostSuccess, isLoading: isPostLoading, isError: isPostError, error: postError },
   ] = usePutAssetReleasingMutation();
 
+  const [
+    saveData,
+    { data: savedData, isSuccess: isSavedSuccess, isLoading: isSavedLoading, isError: isSavedError, error: savedError },
+  ] = usePutSaveReleasingMutation();
+
   useEffect(() => {
     const errorData = isPostError && postError?.status === 422;
 
@@ -269,6 +289,7 @@ const AddReleasingInfo = (props) => {
   };
 
   const onSubmitHandler = async (formData) => {
+    console.log(formData);
     // fileToBase64
     const fileToBase64 = (file) => {
       return new Promise((resolve, reject) => {
@@ -287,15 +308,21 @@ const AddReleasingInfo = (props) => {
     const authorizationLetterImgBase64 =
       formData?.authorization_memo_img && (await fileToBase64(formData.authorization_memo_img));
 
+    const saveFormData = {
+      warehouse_number_id: warehouseNumber ? formData?.warehouse_number_id : [data?.warehouse_number?.id],
+      accountability: formData.accountability,
+      accountable: formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
+    };
+
     const newFormData = {
       ...formData,
       warehouse_number_id: warehouseNumber ? formData?.warehouse_number_id : [data?.warehouse_number?.id],
-      department_id: formData?.department_id.id?.toString(),
-      company_id: formData.company_id.id?.toString(),
-      business_unit_id: formData.business_unit_id.id?.toString(),
-      unit_id: formData.unit_id.id?.toString(),
-      subunit_id: formData.subunit_id.id?.toString(),
-      location_id: formData?.location_id.id?.toString(),
+      department_id: handleSaveValidation() ? null : formData?.department_id?.id?.toString(),
+      company_id: handleSaveValidation() ? null : formData.company_id?.id?.toString(),
+      business_unit_id: handleSaveValidation() ? null : formData.business_unit_id?.id?.toString(),
+      unit_id: handleSaveValidation() ? null : formData.unit_id?.id?.toString(),
+      subunit_id: handleSaveValidation() ? null : formData.subunit_id?.id?.toString(),
+      location_id: handleSaveValidation() ? null : formData?.location_id?.id?.toString(),
       // account_title_id: formData?.account_title_id.id?.toString(),
       accountable: formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
       received_by: formData?.received_by?.general_info?.full_id_number_full_name?.toString(),
@@ -319,17 +346,18 @@ const AddReleasingInfo = (props) => {
                 fontWeight: "bold",
               }}
             >
-              RELEASE
+              {handleSaveValidation() ? "SAVE" : "RELEASE"}
             </Typography>{" "}
-            this Item?
+            this {handleSaveValidation() ? "data" : "item"}?
           </Box>
         ),
 
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            let result = await releaseItems(newFormData).unwrap();
-            // console.log(result);
+            let result = handleSaveValidation()
+              ? await saveData(saveFormData).unwrap()
+              : await releaseItems(newFormData).unwrap();
             dispatch(
               openToast({
                 message: result.message,
@@ -340,6 +368,7 @@ const AddReleasingInfo = (props) => {
             // dispatch(notificationApi.util.resetApiState());
             dispatch(notificationApi.util.invalidateTags(["Notif"]));
             dispatch(closeConfirm());
+            dispatch(closeDialog());
           } catch (err) {
             if (err?.status === 422) {
               dispatch(
@@ -364,26 +393,26 @@ const AddReleasingInfo = (props) => {
     );
   };
 
-  const isCanvasEmpty = () => {
-    const canvas = signatureRef.current.getCanvas();
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    const isEmpty = !imageData.some((alpha) => alpha !== 0);
-    return isEmpty;
-  };
+  // const isCanvasEmpty = () => {
+  //   const canvas = signatureRef.current.getCanvas();
+  //   const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  //   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  //   const isEmpty = !imageData.some((alpha) => alpha !== 0);
+  //   return isEmpty;
+  // };
 
-  const handleSaveSignature = () => {
-    const signatureDataURL = signatureRef.current.toDataURL();
-    !isCanvasEmpty()
-      ? (setSignature(signatureDataURL),
-        setTrimmedDataURL(signatureRef.current.getTrimmedCanvas().toDataURL("image/png"), { willReadFrequently: true }),
-        handleCloseSignature())
-      : null;
-  };
+  // const handleSaveSignature = () => {
+  //   const signatureDataURL = signatureRef.current.toDataURL();
+  //   !isCanvasEmpty()
+  //     ? (setSignature(signatureDataURL),
+  //       setTrimmedDataURL(signatureRef.current.getTrimmedCanvas().toDataURL("image/png"), { willReadFrequently: true }),
+  //       handleCloseSignature())
+  //     : null;
+  // };
 
-  const handleClearSignature = () => {
-    signatureRef.current.clear();
-  };
+  // const handleClearSignature = () => {
+  //   signatureRef.current.clear();
+  // };
 
   // Images
   const handleCloseSignature = () => {
@@ -470,6 +499,26 @@ const AddReleasingInfo = (props) => {
     dispatch(closeDialog1());
   };
 
+  const handleSaveValidation = () => {
+    if (watch("accountability") === null) {
+      return true;
+    }
+
+    return !(
+      commonData === (watch("accountability") === "Common") ||
+      personalData === (watch("accountability") === "Personal Issued")
+    );
+  };
+
+  useEffect(() => {
+    setValidation(handleSaveValidation());
+    setValue("accountable", null);
+  }, [watch("accountability")]);
+
+  console.log("handleSaveValidation", handleSaveValidation());
+  console.log("validation", validation);
+  console.log("isValid", !isValid);
+
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} gap={1} px={3} overflow="auto">
       <Typography
@@ -521,6 +570,25 @@ const AddReleasingInfo = (props) => {
               options={["Personal Issued", "Common"]}
               size="small"
               isOptionEqualToValue={(option, value) => option === value}
+              onChange={(_, value) => {
+                reset({
+                  department_id: null,
+                  company_id: null,
+                  business_unit_id: null,
+                  unit_id: null,
+                  subunit_id: null,
+                  location_id: null,
+                  // account_title_id: null,
+                  accountability: value,
+                  accountable: null,
+                  received_by: null,
+
+                  // Attachments
+                  receiver_img: null,
+                  assignment_memo_img: null,
+                  authorization_memo_img: null,
+                });
+              }}
               renderInput={(params) => (
                 <TextField
                   color="secondary"
@@ -564,6 +632,7 @@ const AddReleasingInfo = (props) => {
               filterOptions={filterOptions}
               options={sedarData}
               loading={isSedarLoading}
+              disabled={handleSaveValidation()}
               size="small"
               getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
               isOptionEqualToValue={(option, value) =>
@@ -591,7 +660,7 @@ const AddReleasingInfo = (props) => {
               <Button onClick={() => dispatch(openDialog1())}>{signature ? "Change Sign" : "Add Signature"}</Button> */}
           </Box>
 
-          <Box sx={BoxStyle}>
+          <Box sx={BoxStyle} pt={0.5}>
             <Typography sx={sxSubtitle}>Attachments</Typography>
             <Stack flexDirection="row" gap={1} alignItems="center">
               {watch("receiver_img") !== null ? (
@@ -605,6 +674,7 @@ const AddReleasingInfo = (props) => {
                   control={control}
                   name="receiver_img"
                   label="Receiver Image"
+                  disabled={handleSaveValidation()}
                   inputRef={receiverMemoRef}
                   error={!!errors?.receiver_img?.message}
                   helperText={errors?.receiver_img?.message}
@@ -625,6 +695,7 @@ const AddReleasingInfo = (props) => {
                   control={control}
                   name="assignment_memo_img"
                   label="Assignment Memo"
+                  disabled={handleSaveValidation()}
                   inputRef={assignmentMemoRef}
                   error={!!errors?.assignment_memo_img?.message}
                   helperText={errors?.assignment_memo_img?.message}
@@ -647,6 +718,7 @@ const AddReleasingInfo = (props) => {
                   control={control}
                   name="authorization_memo_img"
                   label="Authorization Letter"
+                  disabled={handleSaveValidation()}
                   inputRef={authorizationLetterRef}
                   error={!!errors?.authorization_memo_img?.message}
                   helperText={errors?.authorization_memo_img?.message}
@@ -668,6 +740,7 @@ const AddReleasingInfo = (props) => {
             options={departmentData}
             onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
             loading={isDepartmentLoading}
+            disabled={handleSaveValidation()}
             size="small"
             getOptionLabel={(option) => option.department_code + " - " + option.department_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -750,6 +823,7 @@ const AddReleasingInfo = (props) => {
             options={departmentData?.filter((obj) => obj?.id === watch("department_id")?.id)[0]?.unit || []}
             onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
             loading={isUnitLoading}
+            disabled={handleSaveValidation()}
             size="small"
             getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
             isOptionEqualToValue={(option, value) => option?.id === value?.id}
@@ -775,6 +849,7 @@ const AddReleasingInfo = (props) => {
             control={control}
             options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
             loading={isSubUnitLoading}
+            disabled={handleSaveValidation()}
             size="small"
             getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -799,6 +874,7 @@ const AddReleasingInfo = (props) => {
               });
             })}
             loading={isLocationLoading}
+            disabled={handleSaveValidation()}
             size="small"
             getOptionLabel={(option) => option.location_code + " - " + option.location_name}
             isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
@@ -835,11 +911,19 @@ const AddReleasingInfo = (props) => {
         </Stack>
       </Stack>
 
-      <Divider sx={{ my: "10px" }} />
+      <Divider flexItem sx={{ my: "10px" }} />
 
       <Stack flexDirection="row" justifyContent="flex-end" gap={2}>
-        <LoadingButton variant="contained" loading={isPostLoading} size="small" type="submit" disabled={!isValid}>
-          Release
+        <LoadingButton
+          variant="contained"
+          color={handleSaveValidation() ? "tertiary" : "primary"}
+          loading={isPostLoading}
+          size="small"
+          type="submit"
+          sx={{ color: handleSaveValidation() && "white" }}
+          disabled={!isValid}
+        >
+          {handleSaveValidation() ? "Save" : "Release"}
         </LoadingButton>
 
         <Button variant="outlined" color="secondary" size="small" onClick={() => dispatch(closeDialog())}>
