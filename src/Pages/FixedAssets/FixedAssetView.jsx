@@ -89,6 +89,7 @@ const FixedAssetView = (props) => {
   const [statusChange, setStatusChange] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expanded, setExpanded] = useState(true);
+  const [inclusionData, setInclusionData] = useState([]);
   const [updateFixedAsset, setUpdateFixedAsset] = useState({
     status: false,
     id: "",
@@ -208,6 +209,10 @@ const FixedAssetView = (props) => {
       );
     }
   }, [isPostError]);
+
+  useEffect(() => {
+    setInclusionData(dataApi?.data?.inclusion?.map((data) => data));
+  }, [dataApiSuccess]);
 
   // const onPrintHandler = () => {
   //   printAsset({
@@ -808,7 +813,6 @@ const FixedAssetView = (props) => {
                     </Box>
                   </AccordionDetails>
                 </Accordion>
-
                 <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMore sx={{ color: "secondary.main" }} />}
@@ -939,7 +943,6 @@ const FixedAssetView = (props) => {
                     </Box>
                   </AccordionDetails>
                 </Accordion>
-
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
@@ -992,68 +995,70 @@ const FixedAssetView = (props) => {
                     </Box>
                   </AccordionDetails>
                 </Accordion>
+                {inclusionData && (
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore />}>
+                      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+                        SMALL TOOLS
+                      </Typography>
+                    </AccordionSummary>
 
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMore />}>
-                    <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
-                      SMALL TOOLS
-                    </Typography>
-                  </AccordionSummary>
+                    <Divider />
 
-                  <Divider />
+                    <AccordionDetails>
+                      <TableContainer>
+                        <Table>
+                          {inclusionData?.map((data) => (
+                            <TableBody
+                              sx={{
+                                overflow: "auto",
+                              }}
+                              colSpan={9}
+                            >
+                              <TableRow>
+                                <TableCell>
+                                  <Typography fontSize="10px" color="gray">
+                                    Index
+                                  </Typography>
+                                  <Typography fontSize="14px" fontWeight="bold" color="quaternary.main">
+                                    {dataApi?.data?.vladimir_tag_number}-{data?.id}
+                                  </Typography>
+                                </TableCell>
 
-                  <AccordionDetails>
-                    <TableContainer>
-                      <Table>
-                        <TableBody
-                          sx={{
-                            overflow: "auto",
-                          }}
-                          colSpan={9}
-                        >
-                          <TableRow>
-                            <TableCell>
-                              <Typography fontSize="12px" fontWeight="bold">
-                                59034903435-001
-                              </Typography>
-                              <Typography fontSize="10px" color="gray" noWrap>
-                                Index
-                              </Typography>
-                            </TableCell>
+                                <TableCell>
+                                  <Typography fontSize="10px" color="gray">
+                                    Description
+                                  </Typography>
+                                  <Typography fontSize="14px" noWrap>
+                                    {data?.description}
+                                  </Typography>
+                                </TableCell>
 
-                            <TableCell>
-                              <Typography fontSize="12px" fontWeight="bold">
-                                Sample Description
-                              </Typography>
-                              <Typography fontSize="10px" color="gray" noWrap>
-                                Description
-                              </Typography>
-                            </TableCell>
+                                <TableCell>
+                                  <Typography fontSize="10px" color="gray">
+                                    Specification
+                                  </Typography>
+                                  <Typography fontSize="14px" noWrap>
+                                    {data?.specification}
+                                  </Typography>
+                                </TableCell>
 
-                            <TableCell>
-                              <Typography fontSize="12px" fontWeight="bold">
-                                Specification
-                              </Typography>
-                              <Typography fontSize="10px" color="gray" noWrap>
-                                Specification
-                              </Typography>
-                            </TableCell>
-
-                            <TableCell>
-                              <Typography fontSize="12px" fontWeight="bold">
-                                4
-                              </Typography>
-                              <Typography fontSize="10px" color="gray" noWrap>
-                                Quantity
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </AccordionDetails>
-                </Accordion>
-
+                                <TableCell>
+                                  <Typography fontSize="10px" color="gray">
+                                    Quantity
+                                  </Typography>
+                                  <Typography fontSize="14px" noWrap>
+                                    {data?.quantity}
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            </TableBody>
+                          ))}
+                        </Table>
+                      </TableContainer>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
                 {dataApi.data?.is_additional_cost === 0 ? (
                   <Accordion
                   // expanded={expanded}
@@ -1294,7 +1299,7 @@ const FixedAssetView = (props) => {
           </Box>
         </Box>
       )}
-
+      {console.log(dataApi?.data)}
       <Dialog
         open={viewDepre}
         PaperProps={{
