@@ -58,8 +58,6 @@ const AddWarehouse = (props) => {
     },
   });
 
-  console.log("location", watch("location_id"));
-
   const [
     postWarehouse,
     { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
@@ -127,9 +125,12 @@ const AddWarehouse = (props) => {
   useEffect(() => {
     if (data.status) {
       setValue("id", data.id);
+      setValue("location_id", data.location);
       setValue("warehouse_name", data.warehouse_name);
     }
   }, [data]);
+
+  console.log(data);
 
   const onSubmitHandler = (formData) => {
     if (data.status) {
