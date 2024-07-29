@@ -151,7 +151,7 @@ const ReleasingTable = (props) => {
     if (checked) {
       setValue(
         "warehouse_number_id",
-        releasingData.data?.map((item) => item.warehouse_number?.warehouse_number)
+        releasingData?.data?.map((item) => item.warehouse_number?.warehouse_number)
       );
     } else {
       reset({ warehouse_number_id: [] });
@@ -161,6 +161,22 @@ const ReleasingTable = (props) => {
   const onSetPage = () => {
     setPage(1);
   };
+
+  // * Validation for Releasing
+  const handleSelectedItems = releasingData?.data?.filter((item) =>
+    watch("warehouse_number_id").includes(item.warehouse_number?.warehouse_number)
+  );
+
+  const commonData = handleSelectedItems?.some((item) => item?.accountability === "Common");
+  const personalData = handleSelectedItems?.some((item) => item?.accountability !== "Common");
+
+  const validateSelectedItems = () => {
+    if (commonData && personalData) {
+      return true;
+    }
+    return !commonData && !personalData;
+  };
+  // * -------------------------------------------------------------------
 
   return (
     <Stack sx={{ height: "calc(100vh - 250px)" }}>
@@ -177,11 +193,12 @@ const ReleasingTable = (props) => {
                 size="small"
                 startIcon={<Output />}
                 sx={{ position: "absolute", right: 0, top: -40 }}
-                disabled={watch("warehouse_number_id").length === 0}
+                disabled={watch("warehouse_number_id")?.length === 0 || validateSelectedItems()}
               >
                 Release
               </Button>
             )}
+
             <Box>
               <TableContainer className="mcontainer__th-body-category">
                 <Table className="mcontainer__table" stickyHeader>
@@ -222,7 +239,7 @@ const ReleasingTable = (props) => {
                           direction={orderBy === `warehouse_number` ? order : `asc`}
                           onClick={() => onSort(`warehouse_number`)}
                         >
-                          Warehouse No.
+                          Warehouse Transaction #
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">
@@ -240,7 +257,7 @@ const ReleasingTable = (props) => {
                           direction={orderBy === `vladimir_tag_number` ? order : `asc`}
                           onClick={() => onSort(`vladimir_tag_number`)}
                         >
-                          Vladimir Tag Number
+                          Warehouse Name
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">Oracle No.</TableCell>
@@ -329,8 +346,8 @@ const ReleasingTable = (props) => {
                                   }}
                                   label={data.warehouse_number?.warehouse_number}
                                 />
-                                <Typography fontSize={12} pt={0.5}>
-                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
+                                <Typography fontSize={14} fontWeight={600} pt={0.5} color="secondary.light">
+                                  {data.vladimir_tag_number}
                                 </Typography>
                               </TableCell>
 
@@ -345,7 +362,9 @@ const ReleasingTable = (props) => {
                               </TableCell>
 
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell text-weight">
-                                <Typography fontSize={14}>{data.vladimir_tag_number}</Typography>
+                                <Typography fontSize={14}>
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
+                                </Typography>
                               </TableCell>
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
                                 <Typography fontSize={12} color="text.light">
@@ -444,7 +463,12 @@ const ReleasingTable = (props) => {
           },
         }}
       >
-        <AddReleasingInfo data={releasingData} warehouseNumber={wNumber} />
+        <AddReleasingInfo
+          data={releasingData}
+          warehouseNumber={wNumber}
+          commonData={commonData}
+          personalData={personalData}
+        />
       </Dialog>
     </Stack>
   );
