@@ -22,7 +22,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { ArrowBackIosRounded, RemoveCircle, Report } from "@mui/icons-material";
+import { Add, ArrowBackIosRounded, MoreVert, RemoveCircle, Report } from "@mui/icons-material";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
@@ -199,15 +199,12 @@ const ViewRequestReceiving = () => {
           <Box className="request__wrapper" p={2} pb={0}>
             {/* TABLE */}
             <Box className="request__table">
-              <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+              <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", pb: 1 }}>
                 {`${transactionData ? "TRANSACTION NO." : "CURRENT ASSET"}`}{" "}
                 {transactionData && transactionData?.transaction_number}
               </Typography>
 
-              <TableContainer
-                className="request__th-body  request__wrapper"
-                sx={{ height: "calc(100vh - 290px)", pt: 0 }}
-              >
+              <TableContainer className="request__th-body  request__wrapper" sx={{ height: "calc(100vh - 300px)" }}>
                 <Table className="request__table " stickyHeader>
                   <TableHead>
                     <TableRow
@@ -218,6 +215,15 @@ const ViewRequestReceiving = () => {
                         },
                       }}
                     >
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `reference_number`}
+                          direction={orderBy === `reference_number` ? order : `asc`}
+                          onClick={() => onSort(`reference_number`)}
+                        >
+                          Ref Number
+                        </TableSortLabel>
+                      </TableCell>
                       <TableCell className="tbl-cell">
                         <TableSortLabel
                           active={orderBy === `type_of_request`}
@@ -242,49 +248,22 @@ const ViewRequestReceiving = () => {
                           direction={orderBy === `reference_number` ? order : `asc`}
                           onClick={() => onSort(`reference_number`)}
                         >
-                          Ref Number
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `reference_number`}
-                          direction={orderBy === `reference_number` ? order : `asc`}
-                          onClick={() => onSort(`reference_number`)}
-                        >
                           Acquisition Details
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
-
-                      <TableCell className="tbl-cell text-center">
+                      <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `ordered`}
-                          direction={orderBy === `ordered` ? order : `asc`}
-                          onClick={() => onSort(`ordered`)}
+                          active={orderBy === `received`}
+                          direction={orderBy === `received` ? order : `asc`}
+                          onClick={() => onSort(`received`)}
                         >
-                          Ordered
+                          Item Status
                         </TableSortLabel>
                       </TableCell>
-
-                      <TableCell className="tbl-cell text-center">
-                        <TableSortLabel
-                          active={orderBy === `delivered`}
-                          direction={orderBy === `delivered` ? order : `asc`}
-                          onClick={() => onSort(`delivered`)}
-                        >
-                          Received
-                        </TableSortLabel>
-                      </TableCell>
-
-                      <TableCell className="tbl-cell text-center">
-                        <TableSortLabel
-                          active={orderBy === `remaining`}
-                          direction={orderBy === `remaining` ? order : `asc`}
-                          onClick={() => onSort(`remaining`)}
-                        >
-                          Remaining
-                        </TableSortLabel>
+                      <TableCell className="tbl-cell" align="center">
+                        Action
                       </TableCell>
 
                       {/* {!transactionData?.received && <TableCell className="tbl-cell text-center">Action</TableCell>} */}
@@ -321,18 +300,21 @@ const ViewRequestReceiving = () => {
                                 "*": { color: data?.is_removed === 1 ? "black!important" : null },
                               }}
                             >
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                {data.reference_number}
+                              </TableCell>
                               <TableCell onClick={() => handleTableData(data)} className="tbl-cell text-weight">
                                 <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
-                                <Typography fontSize="12px" fontWeight="bold" color="primary">
+                                <Typography fontSize="12px" fontWeight="bold" color="quaternary.light">
                                   {data.attachment_type}
                                 </Typography>
                               </TableCell>
                               <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                PR - {data.pr_number}
+                                <Typography fontSize={12}>PR - {data.pr_number}</Typography>
+                                <Typography fontSize={12}>PO - {data.po_number}</Typography>
+                                <Typography fontSize={12}>RR - {data.rr_number}</Typography>
                               </TableCell>
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                {data.reference_number}
-                              </TableCell>
+
                               <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
                                 {data.acquisition_details}
                               </TableCell>
@@ -367,17 +349,12 @@ const ViewRequestReceiving = () => {
                                 </Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                {data?.ordered}
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                <Typography fontSize={12}>Ordered - {data.ordered}</Typography>
+                                <Typography fontSize={12}>Received - {data.delivered}</Typography>
+                                <Typography fontSize={12}>Remaining - {data.remaining}</Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                {data?.delivered}
-                              </TableCell>
-
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell tr-cen-pad45">
-                                {data?.remaining}
-                              </TableCell>
                               {/* {!transactionData?.received && (
                                 <TableCell className="tbl-cell text-center">
                                   {data?.is_removed !== 1 && (
@@ -397,6 +374,14 @@ const ViewRequestReceiving = () => {
                                   )}
                                 </TableCell>
                               )} */}
+
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell" align="center">
+                                <Tooltip title="Add Information" placement="top" arrow>
+                                  <IconButton>
+                                    <MoreVert />
+                                  </IconButton>
+                                </Tooltip>
+                              </TableCell>
                             </TableRow>
                             // </Tooltip>
                           ))}
