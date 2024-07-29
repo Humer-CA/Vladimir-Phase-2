@@ -238,7 +238,7 @@ const ReceivingTable = (props) => {
           <Box className="mcontainer__wrapper">
             <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
 
-            <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
+            {/* <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
               <Button
                 variant="contained"
                 startIcon={isSmallScreen ? null : <SyncOutlined color="primary" />}
@@ -249,7 +249,7 @@ const ReceivingTable = (props) => {
               >
                 {isSmallScreen ? <SyncOutlined color="primary" /> : "SYNC"}
               </Button>
-            </Box>
+            </Box> */}
 
             <Box>
               <TableContainer className="mcontainer__th-body-category">
@@ -275,21 +275,21 @@ const ReceivingTable = (props) => {
 
                       <TableCell className="tbl-cell">Aqcuisition Details</TableCell>
 
-                      {received && (
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `pr_number`}
-                            direction={orderBy === `pr_number` ? order : `asc`}
-                            onClick={() => onSort(`pr_number`)}
-                          >
-                            PR Number
-                          </TableSortLabel>
-                        </TableCell>
-                      )}
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `po_number`}
+                          direction={orderBy === `po_number` ? order : `asc`}
+                          onClick={() => onSort(`po_number`)}
+                        >
+                          PR/PO Number
+                        </TableSortLabel>
+                      </TableCell>
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel>Requestor</TableSortLabel>
                       </TableCell>
+
+                      <TableCell className="tbl-cell text-center">View Information</TableCell>
 
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
@@ -301,7 +301,15 @@ const ReceivingTable = (props) => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell text-center">View Information</TableCell>
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `received`}
+                          direction={orderBy === `received` ? order : `asc`}
+                          onClick={() => onSort(`received`)}
+                        >
+                          Item Status
+                        </TableSortLabel>
+                      </TableCell>
 
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
@@ -332,17 +340,40 @@ const ReceivingTable = (props) => {
                             >
                               <TableCell className="tbl-cell">{data.transaction_number}</TableCell>
                               <TableCell className="tbl-cell text-weight">{data.acquisition_details}</TableCell>
-                              {received && <TableCell className="tbl-cell ">{data.pr_number}</TableCell>}
+                              <TableCell className="tbl-cell ">
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PR - ${data.pr_number}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PO - ${data.po_number}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`RR - ${data.rr_number}`}
+                                </Typography>
+                              </TableCell>
                               <TableCell className="tbl-cell ">
                                 {`(${data.requestor?.employee_id}) - ${data.requestor?.firstname} ${data.requestor?.lastname}`}
                               </TableCell>
-                              <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
+
                               <TableCell className="tbl-cell text-center">
                                 <Tooltip placement="top" title="View Request Information" arrow>
                                   <IconButton onClick={() => handleViewData(data)}>
                                     <Visibility />
                                   </IconButton>
                                 </Tooltip>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
+                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`Ordered - ${data?.ordered}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`Received - ${data.delivered}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`Remaining - ${data.remaining}`}
+                                </Typography>
                               </TableCell>
 
                               <TableCell className="tbl-cell tr-cen-pad45">
