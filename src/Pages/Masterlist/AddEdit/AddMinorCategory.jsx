@@ -49,7 +49,7 @@ const schema = yup.object().shape({
     .required()
     .label("Major Category"),
 
-  account_title_sync_id: yup
+  account_title_id: yup
     .string()
     .transform((value) => {
       return value?.id.toString();
@@ -120,7 +120,7 @@ const AddMinorCategory = (props) => {
       id: "",
       // division_id: null,
       major_category_id: null,
-      account_title_sync_id: null,
+      account_title_id: null,
       minor_category_name: "",
       // urgency_level: null,
       // personally_assign: null,
@@ -176,7 +176,6 @@ const AddMinorCategory = (props) => {
       // setValue("personally_assign", data.personally_assign);
       // setValue("evaluate_in_every_movement", data.evaluate_in_every_movement);
     }
-    console.log(data);
   }, [data]);
 
   // useEffect(() => {
@@ -217,8 +216,6 @@ const AddMinorCategory = (props) => {
 
     dispatch(closeDrawer());
   };
-
-  console.log(accountTitleData);
 
   return (
     <Box className="add-masterlist">
@@ -294,7 +291,7 @@ const AddMinorCategory = (props) => {
 
         <CustomAutoComplete
           autoComplete
-          name="account_title_sync_id"
+          name="account_title_id"
           control={control}
           options={accountTitleData}
           loading={isAccountTitleLoading}
@@ -306,8 +303,8 @@ const AddMinorCategory = (props) => {
               color="secondary"
               {...params}
               label="Account Title  "
-              error={!!errors?.account_title_sync_id}
-              helperText={errors?.account_title_sync_id?.message}
+              error={!!errors?.account_title_id}
+              helperText={errors?.account_title_id?.message}
             />
           )}
         />

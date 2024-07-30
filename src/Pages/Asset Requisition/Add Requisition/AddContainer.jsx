@@ -394,7 +394,7 @@ const AddContainer = (props) => {
           try {
             dispatch(onLoading());
             let result = await deleteUnitApproversApi(id).unwrap();
-            console.log(result);
+            // console.log(result);
             setPage(1);
             dispatch(
               openToast({

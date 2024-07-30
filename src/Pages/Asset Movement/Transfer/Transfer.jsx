@@ -190,7 +190,7 @@ const Transfer = () => {
   };
 
   const handleViewTimeline = (data) => {
-    console.log(data);
+    // console.log(data);
     dispatch(openDialog());
     setTransactionIdData(data);
   };

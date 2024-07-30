@@ -181,7 +181,7 @@ const ViewPullout = (props) => {
 
   const [patchApprovalStatus, { isLoading: isPatchApprovalLoading }] = usePatchPulloutApprovalStatusApiMutation();
   const [getNextPullout, { data: nextData, isLoading: isNextPulloutLoading }] = useLazyGetNextPulloutQuery();
-  console.log(nextData);
+
   //* QUERY ------------------------------------------------------------------
 
   const {

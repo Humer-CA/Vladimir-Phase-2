@@ -223,7 +223,7 @@ const UnitOfMeasurement = () => {
   const filteredData = unitOfMeasurementData?.data
     ?.find((item) => item.id === viewLocation.id)
     ?.location?.map((mapItem) => {
-      console.log(mapItem?.location_status);
+      // console.log(mapItem?.location_status);
       if (mapItem?.location_status === true) {
         return `${mapItem?.location_code} - ${mapItem?.location_name}`;
       } else {
@@ -233,8 +233,6 @@ const UnitOfMeasurement = () => {
 
   // console.log(filteredData);
   const mapLocationData = [...new Set(filteredData)];
-
-  console.log(unitOfMeasurementData);
 
   return (
     <Box className="mcontainer">

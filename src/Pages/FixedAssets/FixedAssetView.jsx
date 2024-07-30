@@ -1299,7 +1299,7 @@ const FixedAssetView = (props) => {
           </Box>
         </Box>
       )}
-      {console.log(dataApi?.data)}
+
       <Dialog
         open={viewDepre}
         PaperProps={{

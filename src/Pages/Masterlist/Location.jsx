@@ -231,9 +231,6 @@ const Location = () => {
     });
   const mapDepartmentData = [...new Set(filteredData)];
 
-  // console.log(filteredData);
-  console.log(locationApiData);
-
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>

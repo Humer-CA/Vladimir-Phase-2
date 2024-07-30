@@ -29,8 +29,6 @@ const schema = yup.object().shape({
 const AddMajorCategory = (props) => {
   const { data, onUpdateResetHandler } = props;
 
-  // console.log(data);
-
   const dispatch = useDispatch();
 
   const [
@@ -83,9 +81,6 @@ const AddMajorCategory = (props) => {
     }
   }, [isPostError, isUpdateError]);
 
-  console.log(isPostError);
-  console.log(postError);
-
   useEffect(() => {
     if (isPostSuccess || isUpdateSuccess) {
       reset();
@@ -126,8 +121,6 @@ const AddMajorCategory = (props) => {
 
     dispatch(closeDrawer());
   };
-
-  console.log(errors);
 
   return (
     <Box className="add-masterlist">

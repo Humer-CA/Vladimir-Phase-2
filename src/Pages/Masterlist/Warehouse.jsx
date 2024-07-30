@@ -293,7 +293,6 @@ const Warehouse = () => {
                               },
                             }}
                           >
-                            {console.log(data)}
                             <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
 
                             <TableCell className="tbl-cell text-weight">{data.warehouse_name}</TableCell>

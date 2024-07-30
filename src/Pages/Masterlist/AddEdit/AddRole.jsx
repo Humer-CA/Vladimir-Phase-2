@@ -209,7 +209,7 @@ const AddRole = (props) => {
   ];
   const userManagement = ["user-accounts", "role-management"];
   const settings = ["approver-settings", "form-settings"];
-  const assetRequisition = ["requisition", "purchase-request", "requisition-receiving"];
+  const assetRequisition = ["requisition", "purchase-request", "requisition-receiving", "requisition-releasing"];
   const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
   const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
 
@@ -289,8 +289,6 @@ const AddRole = (props) => {
       ))}
     </Box>
   );
-
-  console.log(watch("access_permission"));
 
   const Children = () => {
     const Main = [
@@ -409,7 +407,8 @@ const AddRole = (props) => {
   const AssetRequisition = () => {
     const assetRequisition1 = [
       { label: "Requisition", value: "requisition" },
-      { label: "Purchase Request", value: "purchase-request" },
+      { label: "Received Asset", value: "requisition-receiving" },
+      { label: "Releasing", value: "requisition-releasing" },
     ];
 
     const assetRequisition2 = [
@@ -787,8 +786,8 @@ const AddRole = (props) => {
                                   ...new Set([
                                     ...watch("access_permission"),
                                     "requisition",
-                                    "purchase-request",
-                                    "purchase-order",
+                                    "requisition-receiving",
+                                    "requisition-releasing",
                                   ]),
                                 ]);
                               } else {
@@ -945,11 +944,12 @@ const AddRole = (props) => {
           </LoadingButton>
 
           <Button
-            variant="outlined"
+            variant={data.action === "view" ? "contained" : "outlined"}
             color="secondary"
             size="small"
             onClick={handleCloseDrawer}
             disabled={(isPostLoading || isUpdateLoading) === true}
+            fullWidth={data.action === "view" ? true : false}
           >
             {!data.status ? "Cancel" : data.action === "view" ? "Close" : "Cancel"}
           </Button>
