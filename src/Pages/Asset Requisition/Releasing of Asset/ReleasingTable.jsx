@@ -167,8 +167,8 @@ const ReleasingTable = (props) => {
     watch("warehouse_number_id").includes(item.warehouse_number?.warehouse_number)
   );
 
-  const commonData = handleSelectedItems?.some((item) => item?.accountability === "Common");
-  const personalData = handleSelectedItems?.some((item) => item?.accountability !== "Common");
+  const commonData = handleSelectedItems?.every((item) => item?.accountability === "Common");
+  const personalData = handleSelectedItems?.every((item) => item?.accountability !== "Common");
 
   const validateSelectedItems = () => {
     if (commonData && personalData) {
