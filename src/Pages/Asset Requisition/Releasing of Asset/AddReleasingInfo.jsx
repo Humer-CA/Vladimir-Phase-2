@@ -16,7 +16,7 @@ import {
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import SignatureCanvas from "react-signature-canvas";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
@@ -83,7 +83,7 @@ const AddReleasingInfo = (props) => {
   const [trimmedDataURL, setTrimmedDataURL] = useState(null);
   const [viewImage, setViewImage] = useState(null);
   const [base64Image, setBase64Image] = useState(null);
-  const [validation, setValidation] = useState(true);
+  const [currentSchema, setCurrentSchema] = useState(schema);
 
   const signatureRef = useRef();
   const receiverMemoRef = useRef(null);
@@ -103,10 +103,10 @@ const AddReleasingInfo = (props) => {
     setError,
     trigger,
     clearErrors,
-    formState: { errors, isDirty, isValid },
+    formState: { errors, isDirty, isValid, isValidating },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(validation ? schemaSave : schema),
+    resolver: yupResolver(currentSchema),
     defaultValues: {
       department_id: null,
       company_id: null,
@@ -500,10 +500,6 @@ const AddReleasingInfo = (props) => {
   };
 
   const handleSaveValidation = () => {
-    if (watch("accountability") === null) {
-      return true;
-    }
-
     return !(
       commonData === (watch("accountability") === "Common") ||
       personalData === (watch("accountability") === "Personal Issued")
@@ -511,12 +507,14 @@ const AddReleasingInfo = (props) => {
   };
 
   useEffect(() => {
-    setValidation(handleSaveValidation());
-    setValue("accountable", null);
+    setCurrentSchema(handleSaveValidation() ? schemaSave : schema);
   }, [watch("accountability")]);
 
+  useEffect(() => {
+    reset({}, { keepDefaultValues: true, resolver: yupResolver(currentSchema) });
+  }, [currentSchema, reset]);
+
   console.log("handleSaveValidation", handleSaveValidation());
-  console.log("validation", validation);
   console.log("isValid", !isValid);
 
   return (
@@ -545,7 +543,7 @@ const AddReleasingInfo = (props) => {
             size="small"
             renderInput={(params) => (
               <TextField
-                label={watch("warehouse_number_id") ? "Warehouse Number" : "No Data"}
+                label={watch("warehouse_number_id") !== null ? "Warehouse Number" : "No Data"}
                 color="secondary"
                 sx={{
                   ".MuiInputBase-root ": { borderRadius: "10px" },
@@ -741,6 +739,7 @@ const AddReleasingInfo = (props) => {
             onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
             loading={isDepartmentLoading}
             disabled={handleSaveValidation()}
+            disableClearable
             size="small"
             getOptionLabel={(option) => option.department_code + " - " + option.department_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -824,6 +823,7 @@ const AddReleasingInfo = (props) => {
             onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
             loading={isUnitLoading}
             disabled={handleSaveValidation()}
+            disableClearable
             size="small"
             getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
             isOptionEqualToValue={(option, value) => option?.id === value?.id}
@@ -850,6 +850,7 @@ const AddReleasingInfo = (props) => {
             options={unitData?.filter((obj) => obj?.id === watch("unit_id")?.id)[0]?.subunit || []}
             loading={isSubUnitLoading}
             disabled={handleSaveValidation()}
+            disableClearable
             size="small"
             getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -875,6 +876,7 @@ const AddReleasingInfo = (props) => {
             })}
             loading={isLocationLoading}
             disabled={handleSaveValidation()}
+            disableClearable
             size="small"
             getOptionLabel={(option) => option.location_code + " - " + option.location_name}
             isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
