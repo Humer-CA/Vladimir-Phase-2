@@ -780,73 +780,73 @@ const AddFixedAsset = (props) => {
     dispatch(closeDrawer());
   };
 
-  const handleGetVoucher = (data) => {
-    dispatch(
-      openConfirm({
-        icon: Info,
-        iconColor: "info",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              SYNC
-            </Typography>{" "}
-            voucher data?
-          </Box>
-        ),
+  // const handleGetVoucher = (data) => {
+  //   dispatch(
+  //     openConfirm({
+  //       icon: Info,
+  //       iconColor: "info",
+  //       message: (
+  //         <Box>
+  //           <Typography> Are you sure you want to</Typography>
+  //           <Typography
+  //             sx={{
+  //               display: "inline-block",
+  //               color: "secondary.main",
+  //               fontWeight: "bold",
+  //             }}
+  //           >
+  //             SYNC
+  //           </Typography>{" "}
+  //           voucher data?
+  //         </Box>
+  //       ),
 
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            let result = await getVoucher({ po_no: poNumber, rr_no: rrNumber }).unwrap();
-            const voucherDateFormat = new Date(result?.voucher_date);
-            setValue("voucher", result?.voucher_no);
-            setValue("voucher_date", voucherDateFormat);
-            dispatch(
-              openToast({
-                message: "Successfully Synched!",
-                duration: 5000,
-              })
-            );
-            dispatch(closeConfirm());
-          } catch (err) {
-            console.log(err);
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  message: err.data.message,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status === 404) {
-              dispatch(
-                openToast({
-                  message: err.data.errors.detail,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
+  //       onConfirm: async () => {
+  //         try {
+  //           dispatch(onLoading());
+  //           let result = await getVoucher({ po_no: poNumber, rr_no: rrNumber }).unwrap();
+  //           const voucherDateFormat = new Date(result?.voucher_date);
+  //           setValue("voucher", result?.voucher_no);
+  //           setValue("voucher_date", voucherDateFormat);
+  //           dispatch(
+  //             openToast({
+  //               message: "Successfully Synched!",
+  //               duration: 5000,
+  //             })
+  //           );
+  //           dispatch(closeConfirm());
+  //         } catch (err) {
+  //           console.log(err);
+  //           if (err?.status === 422) {
+  //             dispatch(
+  //               openToast({
+  //                 message: err.data.message,
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           } else if (err?.status === 404) {
+  //             dispatch(
+  //               openToast({
+  //                 message: err.data.errors.detail,
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           } else if (err?.status !== 422) {
+  //             dispatch(
+  //               openToast({
+  //                 message: "Something went wrong. Please try again.",
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           }
+  //         }
+  //       },
+  //     })
+  //   );
+  // };
 
   const sxSubtitle = {
     fontWeight: "bold",
@@ -871,7 +871,7 @@ const AddFixedAsset = (props) => {
             {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
           </Typography>
         </Stack>
-        {voucher && (
+        {/* {voucher && (
           <Tooltip title="Sync Voucher" arrow>
             <>
               <Button
@@ -891,7 +891,7 @@ const AddFixedAsset = (props) => {
               </Button>
             </>
           </Tooltip>
-        )}
+        )} */}
       </Box>
 
       <Divider />
@@ -1767,7 +1767,7 @@ const AddFixedAsset = (props) => {
                   label="Acquisition Cost"
                   color="secondary"
                   size="small"
-                  disabled={data}
+                  disabled={data?.status}
                   error={!!errors?.acquisition_cost}
                   helperText={errors?.acquisition_cost?.message}
                   prefix="₱"
