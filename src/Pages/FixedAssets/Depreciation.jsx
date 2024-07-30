@@ -220,6 +220,20 @@ const Depreciation = (props) => {
                     ₱{calcDepreApi?.data?.remaining_book_value?.toLocaleString()}
                   </Typography>
                 </Box>
+
+                <Box className="tableCard__properties">
+                  Start Depreciation:
+                  <Typography className="tableCard__info" fontSize="14px">
+                    {calcDepreApi?.data?.start_depreciation}
+                  </Typography>
+                </Box>
+
+                <Box className="tableCard__properties">
+                  End Depreciation:
+                  <Typography className="tableCard__info" fontSize="14px">
+                    {calcDepreApi?.data?.end_depreciation}
+                  </Typography>
+                </Box>
               </Box>
             </Card>
 
