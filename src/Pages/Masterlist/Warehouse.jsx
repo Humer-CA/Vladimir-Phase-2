@@ -172,11 +172,12 @@ const Warehouse = () => {
   };
 
   const onUpdateHandler = (props) => {
-    const { id, warehouse_name, sync_id } = props;
+    const { id, warehouse_name, sync_id, location } = props;
     setUpdateWarehouse({
       status: true,
       id: id,
       sync_id: sync_id,
+      location: location,
       warehouse_name: warehouse_name,
     });
   };
@@ -186,6 +187,7 @@ const Warehouse = () => {
       status: false,
       id: null,
       sync_id: [],
+      location_id: [],
       warehouse_name: "",
     });
   };
@@ -257,6 +259,8 @@ const Warehouse = () => {
                       </TableSortLabel>
                     </TableCell>
 
+                    <TableCell className="tbl-cell">Location</TableCell>
+
                     <TableCell className="tbl-cell text-center">Status</TableCell>
 
                     <TableCell className="tbl-cell text-center">
@@ -289,9 +293,11 @@ const Warehouse = () => {
                               },
                             }}
                           >
+                            {console.log(data)}
                             <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
 
                             <TableCell className="tbl-cell text-weight">{data.warehouse_name}</TableCell>
+                            <TableCell className="tbl-cell">{`${data.location?.location_code} - ${data.location?.location_name}`}</TableCell>
 
                             <TableCell className="tbl-cell text-center">
                               {data.is_active ? (

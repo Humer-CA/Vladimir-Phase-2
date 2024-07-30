@@ -130,8 +130,6 @@ const AddWarehouse = (props) => {
     }
   }, [data]);
 
-  console.log(data);
-
   const onSubmitHandler = (formData) => {
     if (data.status) {
       updateWarehouse(formData);
