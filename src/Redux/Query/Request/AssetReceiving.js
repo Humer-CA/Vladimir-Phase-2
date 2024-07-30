@@ -66,6 +66,15 @@ export const assetReceivingApi = createApi({
       }),
       invalidatesTags: ["AssetReceiving"],
     }),
+
+    putInclusionApi: builder.mutation({
+      query: (body) => ({
+        url: `/inclusion`,
+        method: "PUT",
+        body: body,
+      }),
+      invalidatesTags: ["AssetReceiving"],
+    }),
   }),
 });
 
@@ -79,4 +88,5 @@ export const {
   useAddAssetReceivingApiMutation,
   useCancelAssetReceivingApiMutation,
   usePostReceivingSyncApiMutation,
+  usePutInclusionApiMutation,
 } = assetReceivingApi;
