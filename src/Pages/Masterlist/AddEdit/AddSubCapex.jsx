@@ -108,9 +108,6 @@ const AddSubCapex = (props) => {
     }
   }, [data]);
 
-  // console.log(data);
-  console.log(watch("sub_capex"));
-
   const onSubmitHandler = (formData) => {
     const newFormData = {
       ...formData,

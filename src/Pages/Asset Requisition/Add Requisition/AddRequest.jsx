@@ -1757,7 +1757,7 @@ const AddRequisition = (props) => {
       );
     }
   };
-  console.log(addRequestAllApi);
+
   const handleWarehouse = () => {
     if (watch("receiving_warehouse_id") === "" || addRequestAllApi.length === 0) {
       return null;
@@ -1848,7 +1848,7 @@ const AddRequisition = (props) => {
           <Box className="request request__wrapper" p={2}>
             {/* FORM */}
             {/* {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()} */}
-            {formInputs()}
+            {transactionData?.can_edit === 1 && formInputs()}
 
             {/* TABLE */}
             <Box className="request__table">
@@ -1920,7 +1920,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Cellphone #</TableCell>
                       <TableCell className="tbl-cell">Additional Info.</TableCell>
                       <TableCell className="tbl-cell">Attachments</TableCell>
-                      <TableCell className="tbl-cell">Action</TableCell>
+                      {transactionData?.can_edit === 1 && <TableCell className="tbl-cell">Action</TableCell>}
                     </TableRow>
                   </TableHead>
 
@@ -1949,6 +1949,7 @@ const AddRequisition = (props) => {
                             >
                               {transactionData ? data?.reference_number : index + 1}
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
                               <Typography
@@ -1959,6 +1960,7 @@ const AddRequisition = (props) => {
                                 {data.attachment_type}
                               </Typography>
                             </TableCell>
+
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.acquisition_details}
                             </TableCell>
@@ -2120,44 +2122,46 @@ const AddRequisition = (props) => {
                                 </Stack>
                               )}
                             </TableCell>
-                            <TableCell className="tbl-cell">
-                              {data?.is_removed === 0 && (
-                                <ActionMenu
-                                  // DATA
-                                  data={data}
-                                  status={data?.status}
-                                  hideArchive
-                                  addRequestAllApi
-                                  transactionData={transactionData ? true : false}
-                                  // EDIT request
-                                  editRequestData={() => handleEditRequestData()}
-                                  editRequest={editRequest}
-                                  setEditRequest={setEditRequest}
-                                  setDisable={setDisable}
-                                  onUpdateHandler={onUpdateHandler}
-                                  onUpdateResetHandler={onUpdateResetHandler}
-                                  setUpdateToggle={setUpdateToggle}
-                                  //DELETE request
-                                  onDeleteHandler={
-                                    (transactionData && addRequestAllApi?.length === 0) ||
-                                    addRequestAllApi?.length === 1
-                                      ? false
-                                      : onDeleteHandler
-                                  }
-                                  disableDelete={
-                                    transactionDataApi?.length === 1 && data.status !== "For Approval of Approver 1"
-                                      ? true
-                                      : false
-                                  }
-                                  onDeleteReferenceHandler={
-                                    transactionData &&
-                                    transactionData?.item_count !== 1 &&
-                                    transactionDataApi.length !== 1 &&
-                                    onDeleteReferenceHandler
-                                  }
-                                />
-                              )}
-                            </TableCell>
+                            {data?.can_edit === 1 && (
+                              <TableCell className="tbl-cell">
+                                {data?.is_removed === 0 && (
+                                  <ActionMenu
+                                    // DATA
+                                    data={data}
+                                    status={data?.status}
+                                    hideArchive
+                                    addRequestAllApi
+                                    transactionData={transactionData ? true : false}
+                                    // EDIT request
+                                    editRequestData={() => handleEditRequestData()}
+                                    editRequest={editRequest}
+                                    setEditRequest={setEditRequest}
+                                    setDisable={setDisable}
+                                    onUpdateHandler={onUpdateHandler}
+                                    onUpdateResetHandler={onUpdateResetHandler}
+                                    setUpdateToggle={setUpdateToggle}
+                                    //DELETE request
+                                    onDeleteHandler={
+                                      (transactionData && addRequestAllApi?.length === 0) ||
+                                      addRequestAllApi?.length === 1
+                                        ? false
+                                        : onDeleteHandler
+                                    }
+                                    disableDelete={
+                                      transactionDataApi?.length === 1 && data.status !== "For Approval of Approver 1"
+                                        ? true
+                                        : false
+                                    }
+                                    onDeleteReferenceHandler={
+                                      transactionData &&
+                                      transactionData?.item_count !== 1 &&
+                                      transactionDataApi.length !== 1 &&
+                                      onDeleteReferenceHandler
+                                    }
+                                  />
+                                )}
+                              </TableCell>
+                            )}
                           </TableRow>
                         ))}
                       </>

@@ -257,9 +257,9 @@ const AssignmentMemoReprint = (props) => {
     setPrintAssignmentMemo(true);
   };
 
-  console.log("fixedAssetData - Memo", fixedAssetData);
-  console.log("assignedData", assignedData?.data);
-  console.log("selectedMemo", selectedMemo);
+  // console.log("fixedAssetData - Memo", fixedAssetData);
+  // console.log("assignedData", assignedData?.data);
+  // console.log("selectedMemo", selectedMemo);
 
   const handleClose = () => {
     dispatch(closeDialog());

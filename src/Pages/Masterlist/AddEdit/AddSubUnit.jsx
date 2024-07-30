@@ -139,9 +139,6 @@ const AddSubUnit = (props) => {
     dispatch(closeDrawer());
   };
 
-  console.log(data);
-  // console.log(errors);
-
   return (
     <Box className="add-masterlist">
       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>

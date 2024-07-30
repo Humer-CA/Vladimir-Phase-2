@@ -181,7 +181,7 @@ const AddTransfer = (props) => {
 
   const [patchApprovalStatus, { isLoading: isPatchApprovalLoading }] = usePatchTransferApprovalStatusApiMutation();
   const [getNextTransfer, { data: nextData, isLoading: isNextTransferLoading }] = useLazyGetNextTransferQuery();
-  console.log(nextData);
+
   //* QUERY ------------------------------------------------------------------
 
   const {

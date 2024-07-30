@@ -225,7 +225,7 @@ const SubUnit = () => {
   const filteredData = subUnitData?.data
     ?.find((item) => item.id === viewLocation.id)
     ?.location?.map((mapItem) => {
-      console.log(mapItem?.location_status);
+      // console.log(mapItem?.location_status);
       if (mapItem?.location_status === true) {
         return `${mapItem?.location_code} - ${mapItem?.location_name}`;
       } else {
@@ -235,8 +235,6 @@ const SubUnit = () => {
 
   // console.log(filteredData);
   const mapLocationData = [...new Set(filteredData)];
-
-  console.log(subUnitData);
 
   return (
     <Box className="mcontainer">

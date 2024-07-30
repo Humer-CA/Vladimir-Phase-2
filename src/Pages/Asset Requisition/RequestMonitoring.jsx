@@ -113,8 +113,6 @@ const RequestMonitoring = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(requisitionData);
-
   const dispatch = useDispatch();
 
   const onSetPage = () => {

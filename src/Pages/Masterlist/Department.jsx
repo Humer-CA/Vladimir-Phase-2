@@ -101,8 +101,6 @@ const Department = () => {
     },
   ] = useLazyGetYmirDepartmentAllApiQuery();
 
-  console.log(ymirDepartmentApi);
-
   const {
     data: departmentApiData,
     isLoading: departmentApiLoading,

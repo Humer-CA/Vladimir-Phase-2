@@ -657,8 +657,6 @@ const AdditionalCostRequest = (props) => {
       other_attachments: updateRequest && attachmentValidation("other_attachments", formData),
     };
 
-    console.log("data", data);
-
     const payload = new FormData();
     Object.entries(data).forEach((item) => {
       const [name, value] = item;
@@ -1277,7 +1275,6 @@ const AdditionalCostRequest = (props) => {
           <Stack gap={2}>
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Request Information</Typography>
-              {console.log(transactionDataApi.length)}
               <CustomAutoComplete
                 control={control}
                 name="fixed_asset_id"

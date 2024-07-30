@@ -289,7 +289,7 @@ const AddReleasingInfo = (props) => {
   };
 
   const onSubmitHandler = async (formData) => {
-    console.log(formData);
+    // console.log(formData);
     // fileToBase64
     const fileToBase64 = (file) => {
       return new Promise((resolve, reject) => {
@@ -513,9 +513,6 @@ const AddReleasingInfo = (props) => {
   useEffect(() => {
     reset({}, { keepDefaultValues: true, resolver: yupResolver(currentSchema) });
   }, [currentSchema, reset]);
-
-  console.log("handleSaveValidation", handleSaveValidation());
-  console.log("isValid", !isValid);
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} gap={1} px={3} overflow="auto">
