@@ -193,7 +193,7 @@ const ReleasingTable = (props) => {
                 size="small"
                 startIcon={<Output />}
                 sx={{ position: "absolute", right: 0, top: -40 }}
-                disabled={watch("warehouse_number_id")?.length === 0 || validateSelectedItems()}
+                disabled={!watch("warehouse_number_id") || validateSelectedItems()}
               >
                 Release
               </Button>
@@ -239,16 +239,7 @@ const ReleasingTable = (props) => {
                           direction={orderBy === `warehouse_number` ? order : `asc`}
                           onClick={() => onSort(`warehouse_number`)}
                         >
-                          Warehouse Transaction #
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `warehouse_number`}
-                          direction={orderBy === `warehouse_number` ? order : `asc`}
-                          onClick={() => onSort(`warehouse_number`)}
-                        >
-                          Type of Request
+                          WH Transaction #
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">
@@ -257,11 +248,19 @@ const ReleasingTable = (props) => {
                           direction={orderBy === `vladimir_tag_number` ? order : `asc`}
                           onClick={() => onSort(`vladimir_tag_number`)}
                         >
-                          Warehouse Name
+                          Vladimir Tag #
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `asset_description`}
+                          direction={orderBy === `asset_description` ? order : `asc`}
+                          onClick={() => onSort(`asset_description`)}
+                        >
+                          Type of Request
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">Oracle No.</TableCell>
-
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
 
                       <TableCell className="tbl-cell">
@@ -346,8 +345,17 @@ const ReleasingTable = (props) => {
                                   }}
                                   label={data.warehouse_number?.warehouse_number}
                                 />
-                                <Typography fontSize={14} fontWeight={600} pt={0.5} color="secondary.light">
+                                {/* <Typography fontSize={14} fontWeight={600} color="quaternary.main">
+                                  {data.warehouse_number?.warehouse_number}
+                                </Typography> */}
+                              </TableCell>
+
+                              <TableCell>
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
                                   {data.vladimir_tag_number}
+                                </Typography>
+                                <Typography fontSize={12} color="secondary.light">
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
                                 </Typography>
                               </TableCell>
 
@@ -355,17 +363,14 @@ const ReleasingTable = (props) => {
                                 <Typography fontSize={14} fontWeight={600}>
                                   {data.asset_description}
                                 </Typography>
-                                <Typography fontSize={14}>{data.asset_specification}</Typography>
+                                <Typography fontSize={12} color="secondary.light">
+                                  {data.asset_specification}
+                                </Typography>
                                 <Typography fontSize={12} fontWeight={600} color="primary.main">
                                   {data.type_of_request?.type_of_request_name.toUpperCase()}
                                 </Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleViewData(data)} className="tbl-cell text-weight">
-                                <Typography fontSize={14}>
-                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
-                                </Typography>
-                              </TableCell>
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
                                 <Typography fontSize={12} color="text.light">
                                   PR - {data.pr_number}
