@@ -332,6 +332,16 @@ const Requisition = () => {
 
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
+                          active={orderBy === `pr_number`}
+                          direction={orderBy === `pr_number` ? order : `asc`}
+                          onClick={() => onSort(`pr_number`)}
+                        >
+                          PR Number
+                        </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell className="tbl-cell text-center">
+                        <TableSortLabel
                           active={orderBy === `item_count`}
                           direction={orderBy === `item_count` ? order : `asc`}
                           onClick={() => onSort(`item_count`)}
@@ -389,10 +399,14 @@ const Requisition = () => {
                                 <Typography fontSize={14} fontWeight={600} color="secondary.main">
                                   {data.acquisition_details}
                                 </Typography>
-                                <Typography fontSize={12} color="primary.main" fontWeight={400}>
-                                  {data.is_addcost === 1 && "Additional Cost"}
+                                <Typography fontSize={12} color="secondary.light">
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
                                 </Typography>
+                                {/* <Typography fontSize={12} color="primary.main" fontWeight={400}>
+                                  {data.is_addcost === 1 && "Additional Cost"}
+                                </Typography> */}
                               </TableCell>
+                              <TableCell className="tbl-cell tr-cen-pad45">{data.pr_number}</TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
                               <TableCell className="tbl-cell text-center">
                                 <Tooltip placement="top" title="View Request Information" arrow>
