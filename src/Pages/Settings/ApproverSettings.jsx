@@ -273,13 +273,13 @@ const ApproverSettings = () => {
                             >
                               <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
 
-                              <TableCell
-                                className="tbl-cell text-weight"
-                                sx={{
-                                  textTransform: "capitalize",
-                                }}
-                              >
+                              <TableCell className="tbl-cell text-weight">
                                 {data.approver?.firstname} {data.approver?.lastname}
+                                <Typography
+                                  fontSize={12}
+                                  fontWeight={400}
+                                  color="secondary.light"
+                                >{`${data.department?.department_code} - ${data.department?.department_name}`}</Typography>
                               </TableCell>
 
                               <TableCell className="tbl-cell text-center">

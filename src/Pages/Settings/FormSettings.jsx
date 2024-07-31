@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
-import AssignedApprover from "./UnitApprovers";
+import UnitApprovers from "./UnitApprovers";
 import AssetTransfer from "./AssetTransfer";
 import AssetPullout from "./AssetPullout";
 import AssetDisposal from "./AssetDisposal";
@@ -13,7 +13,7 @@ const FaStatusCategory = () => {
   };
 
   const views = {
-    option1: <AssignedApprover />,
+    option1: <UnitApprovers />,
     option2: <AssetTransfer />,
     option3: <AssetPullout />,
     option4: <AssetDisposal />,
@@ -25,7 +25,7 @@ const FaStatusCategory = () => {
         Form Settings
       </Typography>
 
-      <Stack sx={{ height: "100vh" }}>
+      <Stack>
         <Select
           size="small"
           value={value}

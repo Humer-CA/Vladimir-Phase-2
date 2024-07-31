@@ -191,14 +191,14 @@ const ReceivingTable = (props) => {
             RECEIVING OF ASSET
           </Typography>
 
-          <IconButton onClick={() => dispatch(closeDialog())} sx={{ top: -10, right: -10 }}>
+          <IconButton onClick={() => dispatch(closeDialog())} sx={{ top: -15, right: -15 }}>
             <Close />
           </IconButton>
         </Stack>
 
         <Divider />
 
-        <Box className="assetReceiving" px={2} flexWrap={isSmallScreen ? "wrap" : "noWrap"}>
+        <Box className="assetReceiving" flexWrap={isSmallScreen ? "wrap" : "noWrap"}>
           <Stack gap={1} width={isSmallScreen ? "100%" : "inherit"} sx={{ overflow: "auto", maxHeight: "440px" }}>
             <Stack gap={1}>
               <Typography className="assetReceiving__title" fontFamily="Anton, Impact, Roboto">
@@ -362,7 +362,7 @@ const ReceivingTable = (props) => {
             <Divider />
           </Stack>
 
-          <Divider orientation="vertical" variant="middle" flexItem sx={{ ml: "10px" }} />
+          <Divider orientation="vertical" variant="middle" flexItem />
 
           <Stack gap={2} pl={2} pt={isSmallScreen ? 2 : 0} width={isSmallScreen ? "100%" : "inherit"}>
             <Typography className="assetReceiving__title" fontFamily="Anton, Impact, Roboto">

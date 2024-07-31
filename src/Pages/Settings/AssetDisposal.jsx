@@ -22,6 +22,7 @@ import {
   Button,
   Chip,
   Dialog,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -29,9 +30,10 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Help, Report, ReportProblem, Warning } from "@mui/icons-material";
+import { Help, Report, ReportProblem, Visibility, Warning } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ViewTagged from "../../Components/Reusable/ViewTagged";
@@ -199,7 +201,7 @@ const AssetDisposal = () => {
           try {
             dispatch(onLoading());
             let result = await deleteAssetDisposalApi({ id: id, subunit_id: id }).unwrap();
-            console.log(result);
+            // console.log(result);
             setPage(1);
             dispatch(
               openToast({
@@ -301,25 +303,8 @@ const AssetDisposal = () => {
                         },
                       }}
                     >
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `subunit_name`}
-                          direction={orderBy === `subunit_name` ? order : `asc`}
-                          onClick={() => onSort(`subunit_name`)}
-                        >
-                          Sub Unit
-                        </TableSortLabel>
-                      </TableCell>
-
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `unit_name`}
-                          direction={orderBy === `unit_name` ? order : `asc`}
-                          onClick={() => onSort(`unit_name`)}
-                        >
-                          Unit
-                        </TableSortLabel>
-                      </TableCell>
+                      <TableCell className="tbl-cell">Index</TableCell>
+                      <TableCell className="tbl-cell">Sub Unit</TableCell>
 
                       <TableCell align="center" className="tbl-cell">
                         Approvers
@@ -358,23 +343,21 @@ const AssetDisposal = () => {
                                 },
                               }}
                             >
-                              <TableCell className="tbl-cell capitalized">{data?.subunit?.subunit_name}</TableCell>
-
-                              <TableCell className="tbl-cell capitalized">{data?.unit?.unit_name}</TableCell>
-
+                              <TableCell className="tbl-cell capitalized">{index + 1}</TableCell>
+                              <TableCell className="tbl-cell capitalized">
+                                <Typography fontSize={14} fontWeight={600} color="secondary">
+                                  {data?.subunit?.subunit_code} - {data?.subunit?.subunit_name}
+                                </Typography>
+                                <Typography fontSize={12} color="secondary.light">
+                                  {data?.unit?.unit_code} - {data?.unit?.unit_name}
+                                </Typography>
+                              </TableCell>
                               <TableCell align="center" className="tbl-cell text-weight capitalized">
-                                <Button
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    textDecoration: "underline",
-                                  }}
-                                  variant="text"
-                                  size="small"
-                                  color="link"
-                                  onClick={() => handleViewApprovers(data)}
-                                >
-                                  <Typography fontSize={13}>View</Typography>
-                                </Button>
+                                <Tooltip title="View Role" placement="top" arrow>
+                                  <IconButton size="small" onClick={() => handleViewApprovers(data)}>
+                                    <Visibility />
+                                  </IconButton>
+                                </Tooltip>
                               </TableCell>
 
                               <TableCell className="tbl-cell tr-cen-pad45">
