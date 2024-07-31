@@ -339,7 +339,15 @@ const ReceivingTable = (props) => {
                               }}
                             >
                               <TableCell className="tbl-cell">{data.transaction_number}</TableCell>
-                              <TableCell className="tbl-cell text-weight">{data.acquisition_details}</TableCell>
+                              <TableCell className="tbl-cell text-weight">
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  {data.acquisition_details}
+                                </Typography>
+
+                                <Typography fontSize={12} color="secondary.light">
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
+                                </Typography>
+                              </TableCell>
                               <TableCell className="tbl-cell ">
                                 <Typography fontSize="12px" color="secondary.main">
                                   {`PR - ${data.pr_number}`}
