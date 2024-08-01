@@ -601,6 +601,21 @@ const MasterlistToolbar = (props) => {
                       />
                     </MenuItem>
 
+                    <MenuItem dense>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            onChange={() => handleFaFilterChange("Small Tools")}
+                            checked={faFilter.includes("Small Tools")}
+                            // disabled={faFilter.includes("With Voucher")}
+                            disabled
+                          />
+                        }
+                        label="Small Tools"
+                      />
+                    </MenuItem>
+
                     <Divider />
 
                     <MenuItem dense>
