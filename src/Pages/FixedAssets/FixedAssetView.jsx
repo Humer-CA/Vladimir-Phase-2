@@ -486,7 +486,7 @@ const FixedAssetView = (props) => {
   const handleDepreciation = () => {
     const newDate = {
       ...data,
-      date: moment(new Date(currentDate)).format("YYYY-MM"),
+      date: moment(new Date(currentDate)).format("YYYY-MM-DD"),
     };
     dataApi.data?.is_additional_cost === 1 ? postCalcDepreAddCostApi(newDate) : postCalcDepreApi(newDate);
     // console.log(newDate);
@@ -1341,7 +1341,11 @@ const FixedAssetView = (props) => {
           },
         }}
       >
-        <Depreciation calcDepreApi={calcDepreApi || calcDepreAddCostApi} setViewDepre={setViewDepre} />
+        <Depreciation
+          calcDepreApi={calcDepreApi || calcDepreAddCostApi}
+          setViewDepre={setViewDepre}
+          vladimirTag={dataApi?.data?.vladimir_tag_number}
+        />
       </Dialog>
 
       {/* <Dialog
