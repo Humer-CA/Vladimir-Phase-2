@@ -3,12 +3,11 @@
 .assetReceiving {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 4;
-  overflow: auto;
+  justify-content: center;
+  gap: 20px;
   max-height: 600px;
-  padding-top: 10px;
+  padding-top: 20px;
+  overflow: auto;
 
   &__title {
     color: index.$secondary;
