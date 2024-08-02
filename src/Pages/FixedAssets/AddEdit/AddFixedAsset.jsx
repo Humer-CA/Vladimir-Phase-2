@@ -1452,7 +1452,6 @@ const AddFixedAsset = (props) => {
 
           <Box className="addFixedAsset__status">
             <CustomNumberField
-              autoComplete="off"
               control={control}
               name="quantity"
               label="Quantity"
