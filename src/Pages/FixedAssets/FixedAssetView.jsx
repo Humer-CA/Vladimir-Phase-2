@@ -35,12 +35,14 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
   Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import {
+  AddBoxRounded,
   ArrowBackIosRounded,
   Circle,
   CircleTwoTone,
@@ -79,6 +81,8 @@ import useScanDetection from "use-scan-detection-react18";
 import { useGetIpApiQuery } from "../../Redux/Query/IpAddressSetup";
 import { useReactToPrint } from "react-to-print";
 import AssignmentMemo from "./AssignmentMemo";
+import { closeDialog1, openDialog } from "../../Redux/StateManagement/booleanStateSlice";
+import AddInclusion from "../Asset Requisition/Receiving of Asset/AddInclusion";
 
 const FixedAssetView = (props) => {
   const [search, setSearch] = useState(null);
@@ -154,6 +158,7 @@ const FixedAssetView = (props) => {
   const dispatch = useDispatch();
 
   const drawer = useSelector((state) => state.booleanState.drawer);
+  const dialog = useSelector((state) => state.booleanState.dialog);
 
   const {
     data: dataApi,
@@ -506,6 +511,10 @@ const FixedAssetView = (props) => {
 
   const onBackHandler = () => {
     dataApi.data?.is_additional_cost === 0 ? navigate("/fixed-assets") : navigate(-1);
+  };
+
+  const handleOpenInclusion = () => {
+    dispatch(openDialog());
   };
 
   return (
@@ -995,6 +1004,7 @@ const FixedAssetView = (props) => {
                     </Box>
                   </AccordionDetails>
                 </Accordion>
+
                 {inclusionData && (
                   <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
@@ -1008,57 +1018,76 @@ const FixedAssetView = (props) => {
                     <AccordionDetails>
                       <TableContainer>
                         <Table>
-                          {inclusionData?.map((data) => (
-                            <TableBody
+                          <TableHead>
+                            <TableRow
                               sx={{
-                                overflow: "auto",
+                                "& > *": {
+                                  fontWeight: "bold",
+                                  whiteSpace: "nowrap",
+                                },
                               }}
-                              colSpan={9}
                             >
-                              <TableRow>
+                              <TableCell className="tbl-cell">Index</TableCell>
+                              <TableCell className="tbl-cell">Description</TableCell>
+                              <TableCell className="tbl-cell" align="center">
+                                Quantity
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+
+                          <TableBody
+                            sx={{
+                              overflow: "auto",
+                            }}
+                            colSpan={9}
+                          >
+                            {inclusionData?.map((data, index) => (
+                              <TableRow key={index}>
                                 <TableCell>
-                                  <Typography fontSize="10px" color="gray">
+                                  {/* <Typography fontSize="10px" color="gray">
                                     Index
-                                  </Typography>
-                                  <Typography fontSize="14px" fontWeight="bold" color="quaternary.main">
+                                  </Typography> */}
+                                  <Typography fontSize="14px" fontWeight="bold" color="tertiary.light">
                                     {dataApi?.data?.vladimir_tag_number}-{data?.id}
                                   </Typography>
                                 </TableCell>
 
                                 <TableCell>
-                                  <Typography fontSize="10px" color="gray">
+                                  {/* <Typography fontSize="10px" color="gray">
                                     Description
-                                  </Typography>
-                                  <Typography fontSize="14px" noWrap>
+                                  </Typography> */}
+                                  <Typography fontSize="14px" fontWeight="bold" noWrap color="secondary.main">
                                     {data?.description}
                                   </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                  <Typography fontSize="10px" color="gray">
-                                    Specification
-                                  </Typography>
-                                  <Typography fontSize="14px" noWrap>
+                                  <Typography fontSize="12px" color="secondary.light" noWrap>
                                     {data?.specification}
                                   </Typography>
                                 </TableCell>
 
-                                <TableCell>
-                                  <Typography fontSize="10px" color="gray">
+                                <TableCell align="center">
+                                  {/* <Typography fontSize="10px" color="gray">
                                     Quantity
-                                  </Typography>
-                                  <Typography fontSize="14px" noWrap>
-                                    {data?.quantity}
-                                  </Typography>
+                                  </Typography> */}
+                                  <Typography fontSize="14px">{data?.quantity}</Typography>
                                 </TableCell>
                               </TableRow>
-                            </TableBody>
-                          ))}
+                            ))}
+                          </TableBody>
                         </Table>
                       </TableContainer>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<AddBoxRounded />}
+                        onClick={handleOpenInclusion}
+                        sx={{ mt: 2 }}
+                      >
+                        Add Item
+                      </Button>
                     </AccordionDetails>
                   </Accordion>
                 )}
+
                 {dataApi.data?.is_additional_cost === 0 ? (
                   <Accordion
                   // expanded={expanded}
@@ -1092,129 +1121,125 @@ const FixedAssetView = (props) => {
                         </Stack>
                       </AccordionDetails>
                     ) : (
-                      <>
-                        <TableContainer>
-                          <Table>
-                            <TableBody>
-                              {dataApi.data.additional_cost?.map((mapData, index) => {
-                                return (
-                                  <TableRow
-                                    key={index}
-                                    sx={{
-                                      ":hover": {
-                                        backgroundColor: "background.light",
-                                        cursor: "pointer",
-                                      },
-                                    }}
-                                    colSpan={9}
-                                    onClick={() => handleTableData(mapData)}
-                                  >
-                                    <TableCell width={80} align="center">
-                                      <DescriptionRounded color="primary" />
-                                    </TableCell>
+                      <TableContainer>
+                        <Table>
+                          <TableBody>
+                            {dataApi.data.additional_cost?.map((mapData, index) => {
+                              return (
+                                <TableRow
+                                  key={index}
+                                  sx={{
+                                    ":hover": {
+                                      backgroundColor: "background.light",
+                                      cursor: "pointer",
+                                    },
+                                  }}
+                                  colSpan={9}
+                                  onClick={() => handleTableData(mapData)}
+                                >
+                                  <TableCell width={80} align="center">
+                                    <DescriptionRounded color="primary" />
+                                  </TableCell>
 
-                                    <TableCell align="left">
-                                      <Typography fontSize="14px" fontWeight="bold" noWrap align="left">
-                                        {mapData.asset_description}
-                                      </Typography>
+                                  <TableCell align="left">
+                                    <Typography fontSize="14px" fontWeight="bold" noWrap align="left">
+                                      {mapData.asset_description}
+                                    </Typography>
 
-                                      <Typography fontSize="10px" color="text.light" noWrap>
-                                        {mapData.asset_specification}
-                                      </Typography>
-                                    </TableCell>
+                                    <Typography fontSize="10px" color="text.light" noWrap>
+                                      {mapData.asset_specification}
+                                    </Typography>
+                                  </TableCell>
 
-                                    <TableCell>
-                                      <Typography fontSize="12px" fontWeight="bold" noWrap>
-                                        {`₱${
-                                          mapData?.data?.acquisition_cost === (0 || null)
-                                            ? 0
-                                            : mapData?.acquisition_cost.toLocaleString()
-                                        }`}
-                                      </Typography>
-                                      <Typography fontSize="10px" color="gray" noWrap>
-                                        Acquisition Cost
-                                      </Typography>
-                                    </TableCell>
+                                  <TableCell>
+                                    <Typography fontSize="12px" fontWeight="bold" noWrap>
+                                      {`₱${
+                                        mapData?.data?.acquisition_cost === (0 || null)
+                                          ? 0
+                                          : mapData?.acquisition_cost.toLocaleString()
+                                      }`}
+                                    </Typography>
+                                    <Typography fontSize="10px" color="gray" noWrap>
+                                      Acquisition Cost
+                                    </Typography>
+                                  </TableCell>
 
-                                    <TableCell>
-                                      <Typography fontSize="12px" fontWeight="bold" noWrap>
-                                        {mapData.type_of_request?.type_of_request_name}
-                                      </Typography>
-                                      <Typography fontSize="10px" color="gray" noWrap>
-                                        Asset Classification
-                                      </Typography>
-                                    </TableCell>
+                                  <TableCell>
+                                    <Typography fontSize="12px" fontWeight="bold" noWrap>
+                                      {mapData.type_of_request?.type_of_request_name}
+                                    </Typography>
+                                    <Typography fontSize="10px" color="gray" noWrap>
+                                      Asset Classification
+                                    </Typography>
+                                  </TableCell>
 
-                                    <TableCell align="center">
-                                      <FaStatusChange
-                                        faStatus={mapData.asset_status.asset_status_name}
-                                        data={mapData.asset_status.asset_status_name}
-                                      />
-                                    </TableCell>
-                                  </TableRow>
-                                );
-                              })}
-                            </TableBody>
-                          </Table>
+                                  <TableCell align="center">
+                                    <FaStatusChange
+                                      faStatus={mapData.asset_status.asset_status_name}
+                                      data={mapData.asset_status.asset_status_name}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
 
-                          <Stack
-                            flexDirection="column"
-                            alignItems="center"
-                            sx={{
-                              px: 2,
-                              py: 0.5,
-                            }}
-                          >
-                            <Stack flexDirection="row" alignItems="center" justifyContent="center" gap={1}>
-                              <Typography fontSize="14px" fontWeight="bold" color="secondary.light">
-                                Main Cost :
-                              </Typography>
-                              <Typography color="secondary.light">
-                                ₱
-                                {dataApi?.data?.acquisition_cost === (0 || null)
-                                  ? 0
-                                  : dataApi?.data?.acquisition_cost.toLocaleString()}
-                              </Typography>
-                            </Stack>
-                            {`+`}
-                            <Stack flexDirection="row" alignItems="center" justifyContent="center" gap={1}>
-                              <Typography fontSize="14px" fontWeight="bold" color="secondary.light">
-                                Total Additional Cost :
-                              </Typography>
-                              <Typography color="secondary.light">
-                                ₱
-                                {dataApi?.data?.total_adcost === (0 || null)
-                                  ? 0
-                                  : dataApi?.data?.total_adcost.toLocaleString()}
-                              </Typography>
-                            </Stack>
-                          </Stack>
-
-                          <Stack
-                            flexDirection="row"
-                            alignItems="center"
-                            justifyContent="center"
-                            gap={1}
-                            width="100%"
-                            sx={{
-                              px: 2,
-                              py: 1,
-                              pb: 2,
-                              borderTop: "1px solid lightgray",
-                            }}
-                          >
-                            <Typography fontSize="16px" fontFamily="Anton, Poppins, Sans Serif" color="secondary.main">
-                              TOTAL COST :
+                        <Stack
+                          flexDirection="column"
+                          alignItems="center"
+                          sx={{
+                            px: 2,
+                            py: 0.5,
+                          }}
+                        >
+                          <Stack flexDirection="row" alignItems="center" justifyContent="center" gap={1}>
+                            <Typography fontSize="14px" fontWeight="bold" color="secondary.light">
+                              Main Cost :
                             </Typography>
-                            <Typography fontWeight="bold" color="secondary.main">
+                            <Typography color="secondary.light">
                               ₱
-                              {dataApi?.data?.total_cost === (0 || null)
+                              {dataApi?.data?.acquisition_cost === (0 || null)
                                 ? 0
-                                : dataApi?.data?.total_cost.toLocaleString()}
+                                : dataApi?.data?.acquisition_cost.toLocaleString()}
                             </Typography>
                           </Stack>
-                        </TableContainer>
-                      </>
+                          {`+`}
+                          <Stack flexDirection="row" alignItems="center" justifyContent="center" gap={1}>
+                            <Typography fontSize="14px" fontWeight="bold" color="secondary.light">
+                              Total Additional Cost :
+                            </Typography>
+                            <Typography color="secondary.light">
+                              ₱
+                              {dataApi?.data?.total_adcost === (0 || null)
+                                ? 0
+                                : dataApi?.data?.total_adcost.toLocaleString()}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+
+                        <Stack
+                          flexDirection="row"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap={1}
+                          width="100%"
+                          sx={{
+                            px: 2,
+                            py: 1,
+                            pb: 2,
+                            borderTop: "1px solid lightgray",
+                          }}
+                        >
+                          <Typography fontSize="16px" fontFamily="Anton, Poppins, Sans Serif" color="secondary.main">
+                            TOTAL COST :
+                          </Typography>
+                          <Typography fontWeight="bold" color="secondary.main">
+                            ₱
+                            {dataApi?.data?.total_cost === (0 || null) ? 0 : dataApi?.data?.total_cost.toLocaleString()}
+                          </Typography>
+                        </Stack>
+                      </TableContainer>
                     )}
                   </Accordion>
                 ) : (
@@ -1359,6 +1384,25 @@ const FixedAssetView = (props) => {
           />
         )}
       </Drawer>
+
+      <Dialog
+        open={dialog}
+        onClose={() => dispatch(closeDialog1())}
+        sx={{
+          ".MuiPaper-root": {
+            padding: "20px",
+            margin: 0,
+            gap: "5px",
+            // minWidth: "700px",
+            maxWidth: "900px",
+            borderRadius: "10px",
+            width: "90%",
+          },
+        }}
+      >
+        <AddInclusion data={inclusionData} fixedAsset={true} />
+      </Dialog>
+      {console.log(inclusionData)}
     </>
   );
 };
