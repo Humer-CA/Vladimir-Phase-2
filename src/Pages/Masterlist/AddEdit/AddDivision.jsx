@@ -255,11 +255,12 @@ const AddDivision = (props) => {
           </LoadingButton>
 
           <Button
-            variant="outlined"
+            variant={data.action === "view" ? "contained" : "outlined"}
             color="secondary"
             size="small"
             onClick={handleCloseDrawer}
             disabled={(isPostLoading || isUpdateLoading) === true}
+            fullWidth={data.action === "view" ? true : false}
           >
             {data.action === "view" ? "Close" : "Cancel"}
           </Button>
