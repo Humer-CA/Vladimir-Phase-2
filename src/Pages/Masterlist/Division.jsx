@@ -18,6 +18,7 @@ import {
   Button,
   Chip,
   Dialog,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -25,9 +26,10 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Help, ReportProblem } from "@mui/icons-material";
+import { Help, ReportProblem, Visibility } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import ErrorFetching from "../ErrorFetching";
 import AddDivision from "./AddEdit/AddDivision";
@@ -302,18 +304,11 @@ const Division = () => {
                             <TableCell className="tbl-cell text-weight">{data.division_name}</TableCell>
 
                             <TableCell className="tbl-cell text-weight text-center">
-                              <Button
-                                sx={{
-                                  textTransform: "capitalize",
-                                  textDecoration: "underline",
-                                }}
-                                variant="text"
-                                size="small"
-                                color="link"
-                                onClick={() => handleViewDepartment(data)}
-                              >
-                                <Typography fontSize={13}>View</Typography>
-                              </Button>
+                              <Tooltip title="View Role" placement="top" arrow>
+                                <IconButton size="small" onClick={() => handleViewDepartment(data)}>
+                                  <Visibility />
+                                </IconButton>
+                              </Tooltip>
                             </TableCell>
 
                             <TableCell className="tbl-cell text-center">
