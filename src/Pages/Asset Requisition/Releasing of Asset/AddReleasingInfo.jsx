@@ -39,7 +39,6 @@ import CustomImgAttachment from "../../../Components/Reusable/CustomImgAttachmen
 import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
 
 const schema = yup.object().shape({
-  warehouse_number_id: yup.array(),
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
   company_id: yup.object().required().label("Company").typeError("Company is a required field"),
   business_unit_id: yup.object().required().label("Business Unit").typeError("Business Unit is a required field"),
@@ -108,6 +107,7 @@ const AddReleasingInfo = (props) => {
     mode: "onChange",
     resolver: yupResolver(currentSchema),
     defaultValues: {
+      warehouse_number_id: warehouseNumber?.warehouse_number_id,
       department_id: null,
       company_id: null,
       business_unit_id: null,
@@ -248,7 +248,7 @@ const AddReleasingInfo = (props) => {
     if (isPostSuccess) {
       reset();
       handleCloseDialog();
-      // refetch();
+      refetch();
       dispatch(
         openToast({
           message: postData?.message,
@@ -257,10 +257,6 @@ const AddReleasingInfo = (props) => {
       );
     }
   }, [isPostSuccess]);
-
-  useEffect(() => {
-    setValue("warehouse_number_id", warehouseNumber?.warehouse_number_id);
-  }, [warehouseNumber]);
 
   // console.log(watch("warehouse_number_id"));
 
@@ -309,14 +305,12 @@ const AddReleasingInfo = (props) => {
       formData?.authorization_memo_img && (await fileToBase64(formData.authorization_memo_img));
 
     const saveFormData = {
-      warehouse_number_id: warehouseNumber ? formData?.warehouse_number_id : [data?.warehouse_number?.id],
       accountability: formData.accountability,
       accountable: formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
     };
 
     const newFormData = {
       ...formData,
-      warehouse_number_id: warehouseNumber ? formData?.warehouse_number_id : [data?.warehouse_number?.id],
       department_id: handleSaveValidation() ? null : formData?.department_id?.id?.toString(),
       company_id: handleSaveValidation() ? null : formData.company_id?.id?.toString(),
       business_unit_id: handleSaveValidation() ? null : formData.business_unit_id?.id?.toString(),
@@ -331,6 +325,8 @@ const AddReleasingInfo = (props) => {
       assignment_memo_img: assignmentMemoImgBase64,
       authorization_memo_img: authorizationLetterImgBase64,
     };
+
+    console.log(formData);
 
     dispatch(
       openConfirm({
@@ -474,7 +470,7 @@ const AddReleasingInfo = (props) => {
 
   const RemoveFile = ({ title, value }) => {
     return (
-      <Tooltip title={`Remove ${title}`} arrow>
+      <Tooltip title={`Remove ${title}`} placement="top" arrow>
         <IconButton
           onClick={() => {
             setValue(value, null);
