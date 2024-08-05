@@ -25,7 +25,11 @@ import { createFilterOptions } from "@mui/material/Autocomplete";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch } from "react-redux";
-import { usePostUserApiMutation, useUpdateUserApiMutation } from "../../../Redux/Query/UserManagement/UserAccountsApi";
+import {
+  usePostUserApiMutation,
+  userAccountsApi,
+  useUpdateUserApiMutation,
+} from "../../../Redux/Query/UserManagement/UserAccountsApi";
 import { useGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 import { useGetRoleAllApiQuery } from "../../../Redux/Query/UserManagement/RoleManagementApi";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
@@ -289,6 +293,7 @@ const AddUserAccount = (props) => {
       return updateUser(newFormData);
     }
     postUser(newFormData);
+    dispatch(userAccountsApi.util.invalidateTags(["User"]));
   };
 
   const handleCloseDrawer = () => {
