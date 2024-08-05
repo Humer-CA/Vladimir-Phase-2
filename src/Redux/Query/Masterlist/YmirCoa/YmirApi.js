@@ -52,6 +52,7 @@ export const ymirApi = createApi({
 
     postPrYmirApi: builder.mutation({
       query: (data) => ({
+        // url: "http://10.10.10.17:8000/api/asset_sync",
         url: `/asset_sync`,
         method: "POST",
         body: data,
