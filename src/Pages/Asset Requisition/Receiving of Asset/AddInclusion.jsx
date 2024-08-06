@@ -57,7 +57,6 @@ const schema = yup.object().shape({
 const AddInclusion = (props) => {
   const { data, fixedAsset } = props;
   const isSmallScreen = useMediaQuery("(max-width: 720px)");
-
   const [edit, setEdit] = useState(false);
   const [selectedInclusion, setSelectedApprovers] = useState(null);
   const [updateRequest, setUpdateRequest] = useState({
@@ -76,14 +75,16 @@ const AddInclusion = (props) => {
     formState: { errors, isDirty, isValid },
     setError,
     reset,
+    clearErrors,
     watch,
     setValue,
     register,
   } = useForm({
+    mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
       vladimir_tag_number: fixedAsset ? data?.vladimir_tag_number : null,
-      reference_number: data?.reference_number,
+      reference_number: fixedAsset ? fixedAsset?.reference_number : data?.reference_number,
       inclusion: [{ id: null, description: "", specification: "", quantity: null }],
     },
   });
@@ -145,8 +146,10 @@ const AddInclusion = (props) => {
     }
   }, [data]);
 
-  console.log("watch", watch("inclusion"));
-  console.log("data", data);
+  const watchedFields = watch(); // Watching all fields
+
+  // console.log("watch", watch("inclusion"));
+  // console.log("data", data);
 
   const onSubmitHandler = (formData) => {
     const data = {
@@ -282,7 +285,7 @@ const AddInclusion = (props) => {
         <Stack mt={2} gap={2}>
           <Stack gap={1}>
             <Typography color="secondary.main" fontFamily="Roboto" fontSize="large" alignSelf="center">
-              REFERENCE NUMBER: {data?.reference_number}
+              REFERENCE NUMBER: {data?.reference_number || fixedAsset?.reference_number}
             </Typography>
 
             <Stack className="request__table">
@@ -386,6 +389,11 @@ const AddInclusion = (props) => {
                                 color: "red",
                               },
                             }}
+                            onKeyDown={(e) => {
+                              if (e.key === "e" || e.key === "E" || e.key === ".") {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </TableCell>
 
@@ -412,6 +420,10 @@ const AddInclusion = (props) => {
                             size="small"
                             startIcon={<Add />}
                             onClick={() => handleAppendItem()}
+                            disabled={watch(`inclusion`)?.some(
+                              (item) =>
+                                item?.description === "" || item?.specification === "" || item?.quantity === null
+                            )}
                           >
                             Add Row
                           </Button>
