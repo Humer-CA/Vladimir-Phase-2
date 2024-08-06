@@ -1848,7 +1848,7 @@ const AddRequisition = (props) => {
           <Box className="request request__wrapper" p={2}>
             {/* FORM */}
             {/* {transactionData ? (transactionData?.process_count === 1 ? formInputs() : null) : formInputs()} */}
-            {transactionData?.can_edit === 1 && formInputs()}
+            {!transactionData ? formInputs() : transactionData?.can_edit === 1 && formInputs()}
 
             {/* TABLE */}
             <Box className="request__table">
@@ -1928,7 +1928,7 @@ const AddRequisition = (props) => {
                     {(updateRequest && isTransactionLoading) || isRequestLoading ? (
                       <LoadingData />
                     ) : (transactionData ? transactionDataApi?.length === 0 : addRequestAllApi?.length === 0) ? (
-                      <NoRecordsFound heightData="small" />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {(transactionData ? transactionDataApi : addRequestAllApi)?.map((data, index) => (
