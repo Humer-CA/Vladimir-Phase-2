@@ -608,8 +608,7 @@ const MasterlistToolbar = (props) => {
                             size="small"
                             onChange={() => handleFaFilterChange("Small Tools")}
                             checked={faFilter.includes("Small Tools")}
-                            // disabled={faFilter.includes("With Voucher")}
-                            disabled
+                            disabled={faFilter.includes("With Voucher")}
                           />
                         }
                         label="Small Tools"
