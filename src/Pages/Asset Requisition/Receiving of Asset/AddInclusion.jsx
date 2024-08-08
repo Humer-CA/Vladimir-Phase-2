@@ -46,7 +46,6 @@ const schema = yup.object().shape({
   reference_number: yup.string().required().label("Reference Number"),
   inclusion: yup.array().of(
     yup.object().shape({
-      reference_number: yup.string(),
       description: yup.string().required("Description is a Required Field"),
       specification: yup.string().required("Specification is a Required Field"),
       quantity: yup.number().required("Quantity is a Required Field"),
@@ -154,12 +153,14 @@ const AddInclusion = (props) => {
   const onSubmitHandler = (formData) => {
     const data = {
       reference_number: formData?.reference_number,
-      inclusion: formData?.inclusionValue?.map((item) => ({
+      inclusion: formData?.inclusion?.map((item) => ({
         description: item.description,
         specification: item.specification,
         quantity: item.quantity,
       })),
     };
+
+    console.log(formData);
 
     dispatch(
       openConfirm({
@@ -216,39 +217,6 @@ const AddInclusion = (props) => {
           }
         },
       })
-    );
-  };
-
-  const TextFieldInclusion = ({ register, name, error, helperText, label }) => {
-    return (
-      <TextField
-        {...register}
-        autoComplete="off"
-        name={name}
-        type="text"
-        size="small"
-        color="secondary"
-        label={label}
-        error={error}
-        helperText={helperText}
-        fullWidth
-        sx={{
-          ".MuiInputBase-root": {
-            borderRadius: "12px",
-            minWidth: "180px",
-          },
-
-          ".MuiInputLabel-root.Mui-disabled": {
-            backgroundColor: "transparent",
-          },
-
-          ".Mui-disabled": {
-            backgroundColor: "background.light",
-            borderRadius: "12px",
-          },
-        }}
-        inputProps={{ color: "red" }}
-      />
     );
   };
 
