@@ -1,0 +1,79 @@
+@use "../../index.scss";
+
+.AddFa {
+  // display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+
+  &__container {
+    padding: 20px;
+    max-height: 500px;
+    overflow: auto;
+  }
+
+  &__columns {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 30px;
+
+    @media (max-width: 900px) {
+      display: block;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  &__title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: relative;
+    gap: 5px;
+    padding-bottom: 10px;
+    justify-content: space-between;
+  }
+
+  &__textFieldSpacing {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__thirdColumn {
+    padding-right: 10px;
+
+    @media (max-width: 900px) {
+      padding-right: 0;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 10px;
+    width: 100%;
+
+    @media (max-width: 900px) {
+      gap: 5px;
+      margin-top: 10px;
+    }
+  }
+
+  &__vr {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    border: 0.25px solid #a6a6a625;
+    height: 100vh;
+    height: 100svh;
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+}
