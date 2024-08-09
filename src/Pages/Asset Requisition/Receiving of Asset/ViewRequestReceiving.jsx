@@ -3,13 +3,17 @@ import "../../../index.scss";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import ErrorFetching from "../../ErrorFetching";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-// import AddReceivingInfo from "../../../Pages/Asset Requisition/Receiving of Asset/AddReceivingInfo";
+import AddReceivingInfo from "../../../Pages/Asset Requisition/Receiving of Asset/AddReceivingInfo";
 
 import {
   Box,
   Button,
   Dialog,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   Table,
   TableBody,
@@ -22,7 +26,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Add, ArrowBackIosRounded, MoreVert, RemoveCircle, Report } from "@mui/icons-material";
+import { Add, AddBox, ArrowBackIosRounded, Info, MoreVert, RemoveCircle, Report, Warning } from "@mui/icons-material";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
@@ -33,15 +37,16 @@ import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanS
 import {
   useGetItemPerTransactionApiQuery,
   useCancelAssetReceivingApiMutation,
+  useRemoveInclusionApiMutation,
 } from "../../../Redux/Query/Request/AssetReceiving";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
+import AddInclusion from "./AddInclusion";
 
 const ViewRequestReceiving = () => {
   const { state: transactionData } = useLocation();
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [viewData, setViewData] = useState("");
-
+  const [mainData, setMainData] = useState(null);
   const isSmallScreen = useMediaQuery("(max-width: 1375px)");
 
   const dispatch = useDispatch();
@@ -65,10 +70,17 @@ const ViewRequestReceiving = () => {
     { refetchOnMountOrArgChange: true }
   );
 
+  const [removeInclusionData] = useRemoveInclusionApiMutation();
   const [cancelPo] = useCancelAssetReceivingApiMutation();
 
   // console.log("receivingData:", receivingData);
   // console.log("transactionData:", transactionData);
+
+  // useEffect(() => {
+  //   if (receivingData?.total_remaining === 0) {
+  //     navigate(-1);
+  //   }
+  // }, [receivingData]);
 
   // Table Sorting --------------------------------
   const [order, setOrder] = useState("desc");
@@ -83,6 +95,7 @@ const ViewRequestReceiving = () => {
     }
     return 0;
   };
+
   const comparator = (order, orderBy) => {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -104,15 +117,55 @@ const ViewRequestReceiving = () => {
     // console.log(page + 1);
     setPage(page + 1);
   };
-  const handleTableData = (data) => {
-    transactionData?.received || data?.remaining === 0 ? null : dispatch(openDialog());
-    setViewData(data);
-  };
-  const onCancelHandler = async (data) => {
+
+  const handleOpenDialog = (data) => {
     // console.log("data", data);
+    setMainData(data);
+    dispatch(openDialog());
+    handleClose();
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const MenuItems = (data) => (
+    <Menu
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+    >
+      <MenuItem onClick={() => handleOpenDialog(data)} dense>
+        <ListItemIcon>
+          <AddBox />
+        </ListItemIcon>
+        <ListItemText disableTypography align="left">
+          {transactionData?.data?.inclusion ? "Edit Info" : "Add Info"}
+        </ListItemText>
+      </MenuItem>
+      <MenuItem onClick={() => removeInclusion(data)} dense disabled={transactionData?.data?.inclusion === null}>
+        <ListItemIcon>
+          <RemoveCircle />
+        </ListItemIcon>
+        <ListItemText>Remove Info</ListItemText>
+      </MenuItem>
+    </Menu>
+  );
+
+  const removeInclusion = (data) => {
+    handleClose();
     dispatch(
       openConfirm({
-        icon: Report,
+        icon: Warning,
         iconColor: "warning",
         message: (
           <Box>
@@ -124,38 +177,36 @@ const ViewRequestReceiving = () => {
                 fontWeight: "bold",
               }}
             >
-              CANCEL
+              REMOVE
             </Typography>{" "}
-            {data?.delivered !== 0 ? "remaining Items?" : "this Item?"}
+            this Data?
           </Box>
         ),
-        remarks: true,
-
-        onConfirm: async (remarks) => {
+        onConfirm: async () => {
           try {
             dispatch(onLoading());
-            let result = await cancelPo({ id: data?.id, remarks: remarks }).unwrap();
+            const res = await removeInclusionData({
+              reference_number: data?.data?.reference_number,
+            }).unwrap();
+            // console.log(res);
+            dispatch(closeDialog());
             dispatch(
               openToast({
-                message: result?.message,
+                message: "Transfer Request Successfully Added",
                 duration: 5000,
               })
             );
-
-            dispatch(closeConfirm());
-            // console.log(result);
-            result?.data?.total_remaining === 0 && navigate(-1);
           } catch (err) {
-            console.error(err);
             if (err?.status === 422) {
               dispatch(
                 openToast({
-                  message: err.data.errors?.detail,
+                  message: err?.data?.errors?.detail || err.data.message,
                   duration: 5000,
                   variant: "error",
                 })
               );
             } else if (err?.status !== 422) {
+              console.error(err);
               dispatch(
                 openToast({
                   message: "Something went wrong. Please try again.",
@@ -169,12 +220,6 @@ const ViewRequestReceiving = () => {
       })
     );
   };
-
-  useEffect(() => {
-    if (receivingData?.total_remaining === 0) {
-      navigate(-1);
-    }
-  }, [receivingData]);
 
   return (
     <>
@@ -262,10 +307,11 @@ const ViewRequestReceiving = () => {
                           Item Status
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell className="tbl-cell" align="center">
-                        Action
-                      </TableCell>
-
+                      {transactionData?.received && (
+                        <TableCell className="tbl-cell" align="center">
+                          Action
+                        </TableCell>
+                      )}
                       {/* {!transactionData?.received && <TableCell className="tbl-cell text-center">Action</TableCell>} */}
                     </TableRow>
                   </TableHead>
@@ -300,32 +346,28 @@ const ViewRequestReceiving = () => {
                                 "*": { color: data?.is_removed === 1 ? "black!important" : null },
                               }}
                             >
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                {data.reference_number}
-                              </TableCell>
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell text-weight">
+                              <TableCell className="tbl-cell">{data.reference_number}</TableCell>
+                              <TableCell className="tbl-cell text-weight">
                                 <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
                                 <Typography fontSize="12px" fontWeight="bold" color="quaternary.light">
                                   {data.attachment_type}
                                 </Typography>
                               </TableCell>
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                              <TableCell className="tbl-cell">
                                 <Typography fontSize={12}>PR - {data.pr_number}</Typography>
                                 <Typography fontSize={12}>PO - {data.po_number}</Typography>
                                 <Typography fontSize={12}>RR - {data.rr_number}</Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                {data.acquisition_details}
-                              </TableCell>
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                              <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
+                              <TableCell className="tbl-cell">
                                 <Typography fontSize="14px" fontWeight="bold">
                                   {data.asset_description}
                                 </Typography>
                                 <Typography fontSize="12px">{data.asset_specification}</Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                              <TableCell className="tbl-cell">
                                 <Typography fontSize={10} color="gray">
                                   {`(${data.company?.company_code}) - ${data.company?.company_name}`}
                                 </Typography>
@@ -349,7 +391,7 @@ const ViewRequestReceiving = () => {
                                 </Typography>
                               </TableCell>
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
+                              <TableCell className="tbl-cell">
                                 <Typography fontSize={12}>Ordered - {data.ordered}</Typography>
                                 <Typography fontSize={12}>Received - {data.delivered}</Typography>
                                 <Typography fontSize={12}>Remaining - {data.remaining}</Typography>
@@ -375,13 +417,19 @@ const ViewRequestReceiving = () => {
                                 </TableCell>
                               )} */}
 
-                              <TableCell onClick={() => handleTableData(data)} className="tbl-cell" align="center">
-                                <Tooltip title="Add Information" placement="top" arrow>
-                                  <IconButton>
-                                    <MoreVert />
-                                  </IconButton>
-                                </Tooltip>
-                              </TableCell>
+                              {/* <TableCell  className="tbl-cell" align="center"> */}
+                              {data?.type_of_request?.type_of_request_name === "Small Tools" && (
+                                <TableCell className="tbl-cell" align="center">
+                                  <Stack alignItems="center" justifyContent="center">
+                                    <Tooltip title="Add Information" placement="top" arrow>
+                                      <IconButton onClick={handleOpen}>
+                                        <MoreVert />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <MenuItems data={data} />
+                                  </Stack>
+                                </TableCell>
+                              )}
                             </TableRow>
                             // </Tooltip>
                           ))}
@@ -410,23 +458,24 @@ const ViewRequestReceiving = () => {
             </Box>
           </Box>
 
-          {/* <Dialog
+          <Dialog
             open={dialog}
-            // onClose={() => dispatch(closeDialog())}
+            onClose={() => dispatch(closeDialog())}
             sx={{
               ".MuiPaper-root": {
                 padding: "20px",
                 margin: 0,
                 gap: "5px",
-                minWidth: "250px",
-                maxWidth: "750px",
+                // minWidth: "700px",
+                maxWidth: "900px",
                 borderRadius: "10px",
                 width: "90%",
               },
             }}
           >
-            <AddReceivingInfo data={viewData} />
-          </Dialog> */}
+            {/* <AddReceivingInfo data={mainData} /> */}
+            <AddInclusion data={mainData?.data} receivingData={receivingData?.data} />
+          </Dialog>
         </Box>
       )}
     </>
