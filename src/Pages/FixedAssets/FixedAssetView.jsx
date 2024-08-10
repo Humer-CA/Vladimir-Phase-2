@@ -1400,9 +1400,8 @@ const FixedAssetView = (props) => {
           },
         }}
       >
-        <AddInclusion data={inclusionData} fixedAsset={true} />
+        <AddInclusion data={inclusionData} fixedAsset={dataApi?.data} />
       </Dialog>
-      {console.log(inclusionData)}
     </>
   );
 };
