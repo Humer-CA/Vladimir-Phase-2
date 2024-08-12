@@ -41,7 +41,7 @@ const AssetRequisition = () => {
 
     {
       icon: <OpenInBrowserOutlined />,
-      label: "Receiving of Asset",
+      label: "Received Asset",
       description: "Input of additional info and Purchase Order Number",
       path: "/asset-requisition/requisition-receiving",
       permission: "requisition-receiving",
