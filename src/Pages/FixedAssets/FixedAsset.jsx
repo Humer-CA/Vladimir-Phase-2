@@ -67,6 +67,7 @@ import ImportCost from "./ImportCost";
 import useScanDetection from "use-scan-detection-react18";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 import AssignmentMemoReprint from "./AssignmentMemoReprint";
+import AddFA from "./AddEdit/AddFA";
 
 const FixedAsset = (props) => {
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ const FixedAsset = (props) => {
   const [status, setStatus] = useState("active");
   const [faFilter, setFaFilter] = useState([]);
   const [isRequest, setIsRequest] = useState(0);
+  const [steps, setSteps] = useState(0);
   // const [scanAsset, setScanAsset] = useState(false);
   // const [faStatus, setFaStatus] = useState("");
   const [updateFixedAsset, setUpdateFixedAsset] = useState({
@@ -130,14 +132,14 @@ const FixedAsset = (props) => {
 
   const drawer = useSelector((state) => state.booleanState.drawer);
   const drawer1 = useSelector((state) => state.booleanState.drawerMultiple.drawer1);
-
   const dialog = useSelector((state) => state.booleanState.dialog);
-
   const add = useSelector((state) => state.booleanState.add);
   const importFile = useSelector((state) => state.booleanState.importFile);
   const print = useSelector((state) => state.booleanState.print);
   const exportFile = useSelector((state) => state.booleanState.exportFile);
   const scanFile = useSelector((state) => state.booleanState.scanFile);
+
+  const dispatch = useDispatch();
 
   // Table Sorting --------------------------------
   const [order, setOrder] = useState("desc");
@@ -194,8 +196,6 @@ const FixedAsset = (props) => {
     },
     { refetchOnMountOrArgChange: true }
   );
-
-  const dispatch = useDispatch();
 
   const onUpdateResetHandler = () => {
     setUpdateFixedAsset({
@@ -273,12 +273,10 @@ const FixedAsset = (props) => {
     setPage(1);
   };
 
-  // console.log(faFilter);
-
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
-        Fixed Assets
+        Fixed Asset
       </Typography>
       {fixedAssetLoading && <MasterlistSkeleton onAdd={true} onImport={true} onPrint={true} />}
       {fixedAssetError && <ErrorFetching refetch={fixedAssetRefetch} error={errorData} />}
@@ -543,8 +541,9 @@ const FixedAsset = (props) => {
           </Box>
         </Box>
       )}
+
       {/* Add FA */}
-      <Drawer
+      {/* <Dialog
         open={drawer}
         // onClose={() => dispatch(closeDrawer())}
         anchor="right"
@@ -557,7 +556,26 @@ const FixedAsset = (props) => {
         }}
       >
         <AddFixedAsset status={status} data={updateFixedAsset} onUpdateResetHandler={onUpdateResetHandler} />
-      </Drawer>
+      </Dialog> */}
+
+      <Dialog
+        open={drawer}
+        // onClose={() => dispatch(closeDrawer())}
+        anchor="right"
+        PaperProps={{
+          sx: {
+            borderRadius: "10px",
+            padding: "10px 20px",
+            width: "800px",
+            maxWidth: "1200px",
+            // height: "90%",
+            maxHeight: "800px",
+          },
+        }}
+      >
+        <AddFA status={status} data={updateFixedAsset} onUpdateResetHandler={onUpdateResetHandler} />
+      </Dialog>
+
       {/* Add Cost */}
       <Drawer
         open={add}
