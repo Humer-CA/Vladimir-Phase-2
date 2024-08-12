@@ -32,13 +32,20 @@ import {
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Add, AddBoxRounded, Close, DragIndicator, Info, Remove, RemoveCircle, Update } from "@mui/icons-material";
+import {
+  Add,
+  AddBoxRounded,
+  Close,
+  DragIndicator,
+  Info,
+  Remove,
+  RemoveCircle,
+  Update,
+  Warning,
+} from "@mui/icons-material";
 import { closeDialog } from "../../../Redux/StateManagement/booleanStateSlice";
-import { useNavigate } from "react-router-dom";
-import { ReactSortable } from "react-sortablejs";
-import CustomTextField from "../../../Components/Reusable/CustomTextField";
-import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import { usePutInclusionApiMutation } from "../../../Redux/Query/Request/AssetReceiving";
+import { fixedAssetApi } from "../../../Redux/Query/FixedAsset/FixedAssets";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -57,7 +64,6 @@ const AddInclusion = (props) => {
   const { data, fixedAsset } = props;
   const isSmallScreen = useMediaQuery("(max-width: 720px)");
   const [edit, setEdit] = useState(false);
-  const [selectedInclusion, setSelectedApprovers] = useState(null);
   const [updateRequest, setUpdateRequest] = useState({
     reference_number: "",
     inclusion: [{ id: null, description: "", specification: "", quantity: null }],
@@ -65,7 +71,6 @@ const AddInclusion = (props) => {
 
   const [updateInclusion] = usePutInclusionApiMutation();
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const {
@@ -145,10 +150,9 @@ const AddInclusion = (props) => {
     }
   }, [data]);
 
-  const watchedFields = watch(); // Watching all fields
-
-  // console.log("watch", watch("inclusion"));
-  // console.log("data", data);
+  const disableBtn = watch(`inclusion`)?.some(
+    (item) => item?.description === "" || item?.specification === "" || item?.quantity === null
+  );
 
   const onSubmitHandler = (formData) => {
     const data = {
@@ -187,6 +191,7 @@ const AddInclusion = (props) => {
             const res = await updateInclusion(data).unwrap();
             console.log(res);
             dispatch(closeDialog());
+            dispatch(fixedAssetApi.util.invalidateTags(["FixedAsset"]));
             dispatch(
               openToast({
                 message: "Transfer Request Successfully Added",
@@ -215,6 +220,40 @@ const AddInclusion = (props) => {
               );
             }
           }
+        },
+      })
+    );
+  };
+
+  const handleRemoveItem = (index) => {
+    dispatch(
+      openConfirm({
+        icon: Warning,
+        iconColor: "alert",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              REMOVE
+            </Typography>{" "}
+            this item?
+          </Box>
+        ),
+        onConfirm: async () => {
+          dispatch(onLoading());
+          remove(index);
+          dispatch(
+            openToast({
+              message: "Successfully Removed",
+              duration: 5000,
+            })
+          );
         },
       })
     );
@@ -367,7 +406,7 @@ const AddInclusion = (props) => {
 
                         <TableCell align="center">
                           <IconButton
-                            onClick={() => remove(index)}
+                            onClick={() => handleRemoveItem(index)}
                             disabled={edit ? false : fields?.length === 1 || data?.view}
                           >
                             <Tooltip title="Delete Row" placement="top" arrow>
@@ -386,12 +425,10 @@ const AddInclusion = (props) => {
                           <Button
                             variant="contained"
                             size="small"
-                            startIcon={<Add />}
+                            color="secondary"
                             onClick={() => handleAppendItem()}
-                            disabled={watch(`inclusion`)?.some(
-                              (item) =>
-                                item?.description === "" || item?.specification === "" || item?.quantity === null
-                            )}
+                            disabled={disableBtn}
+                            startIcon={<Add color={disableBtn ? "gray" : "primary"} />}
                           >
                             Add Row
                           </Button>
