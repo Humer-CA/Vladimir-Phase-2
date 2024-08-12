@@ -646,178 +646,87 @@ const AddFa = (props) => {
 
   const steps = ["Type of Asset", "Chart of Accounts", "Asset Information", "Depreciation"];
 
-  const FirstStep = () => {
-    const firstStepValidation = () => {
-      if (
-        getValues("type_of_request_id") !== null &&
-        getValues("major_category_id") !== null &&
-        getValues("minor_category_id") !== null
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    const handleDisableNext = () => {
-      let disableButton = disableNext;
-      switch (disableButton) {
-        case "FirstStep":
-          disableButton = "true";
-          break;
-        case "SecondStep":
-          disableButton = "true";
-          break;
-        case "3rdStep":
-          disableButton = "true";
-          break;
-        default:
-          disableButton = "false";
-      }
-    };
-
-    return (
-      <Stack gap={3}>
-        <Box className="addFixedAsset__type">
-          <Stack flexDirection="column" gap={2} width="100%">
-            <Typography sx={sxSubtitle}>Type of Asset</Typography>
-            <CustomAutoComplete
-              control={control}
-              name="type_of_request_id"
-              options={typeOfRequestData}
-              loading={isTypeOfRequestLoading}
-              size="small"
-              onOpen={() => (isTypeOfRequestSuccess ? false : typeOfRequestTrigger())}
-              getOptionLabel={(option) => option.type_of_request_name}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderInput={(params) => (
-                <TextField
-                  color="secondary"
-                  {...params}
-                  label="Type of Request"
-                  error={!!errors?.type_of_request_id}
-                  helperText={errors?.type_of_request_id?.message}
-                />
-              )}
-              onChange={(_, value) => {
-                setValue("sub_capex_id", null);
-                return value;
-              }}
-            />
-
-            {watch("type_of_request_id")?.type_of_request_name === "Capex" && (
-              <CustomAutoComplete
-                control={control}
-                name="sub_capex_id"
-                options={subCapexData}
-                onOpen={() => (isSubCapexSuccess ? null : subCapexTrigger())}
-                loading={isSubCapexLoading}
-                size="small"
-                getOptionLabel={(option) => `${option.sub_capex}  (${option.sub_project})`}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                renderInput={(params) => (
-                  <TextField
-                    color="secondary"
-                    {...params}
-                    label="CAPEX"
-                    error={!!errors?.sub_capex_id}
-                    helperText={errors?.sub_capex_id?.message}
-                  />
-                )}
-              />
-            )}
-          </Stack>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-            width: "100%",
-          }}
-        >
-          <Typography sx={sxSubtitle}>Set the Category</Typography>
-
-          <CustomAutoComplete
-            autoComplete
-            required
-            disableClearable
-            name="major_category_id"
-            control={control}
-            options={majorCategoryData}
-            onOpen={() => (isMajorCategorySuccess ? null : majorCategoryTrigger())}
-            loading={isMajorCategoryLoading}
-            size="small"
-            getOptionLabel={(option) => option.major_category_name}
-            isOptionEqualToValue={(option, value) => option.major_category_name === value.major_category_name}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Major Category  "
-                error={!!errors?.major_category_id}
-                helperText={errors?.major_category_id?.message}
-              />
-            )}
-            onChange={(_, value) => {
-              const filteredMajorCategoryData = majorCategoryData?.filter((obj) => {
-                return obj.major_category_name === value.major_category_name;
-              });
-              const isIncluded = filteredMajorCategoryData[0]?.minor_category.some((category) => {
-                return category.id === data.minor_category?.minor_category_id;
-              });
-
-              if (!isIncluded) {
-                setValue("minor_category_id", null);
-                setValue("account_title_id", null);
-              }
-
-              setValue("est_useful_life", value.est_useful_life);
-              return value;
-            }}
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            required
-            name="minor_category_id"
-            control={control}
-            options={
-              majorCategoryData?.filter((obj) => {
-                return obj?.id === watch("major_category_id")?.id;
-              })[0]?.minor_category || []
-            }
-            onOpen={() => (isMinorCategorySuccess ? null : minorCategoryTrigger())}
-            loading={isMinorCategoryLoading}
-            size="small"
-            getOptionLabel={(option) => option.minor_category_name}
-            isOptionEqualToValue={(option, value) => option.minor_category_name === value.minor_category_name}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Minor Category  "
-                error={!!errors?.minor_category_id}
-                helperText={errors?.minor_category_id?.message}
-              />
-            )}
-            onChange={(_, value) => {
-              setValue("account_title_id", value ? value.account_title : null);
-              return value;
-            }}
-          />
-        </Box>
-      </Stack>
-    );
-  };
-
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  // const handleDisableNext = () => {
+  //   let disableButton = activeStep;
+  //   switch (disableButton) {
+  //     case 0:
+  //       if (!(watch("type_of_request_id") && watch("major_category_id") && watch("minor_category_id"))) {
+  //         return true;
+  //       } else return false;
+
+  //     case 1:
+  //       if (!(watch("department_id") && watch("unit_id") && watch("subunit_id") && watch("location_id"))) {
+  //         return true;
+  //       } else return false;
+  //     case 2:
+  //       if (
+  //         !(
+  //           watch("asset_description") &&
+  //           watch("asset_specification") &&
+  //           watch("acquisition_date") &&
+  //           (watch("accountability") && watch("accountability") === "Common" ? true : watch("accountable")) &&
+  //           watch("po_number") &&
+  //           watch("asset_status_id") &&
+  //           watch("cycle_count_status_id") &&
+  //           watch("movement_status_id")
+  //         )
+  //       ) {
+  //         return true;
+  //       } else return false;
+  //     case 3:
+  //       if (
+  //         !(
+  //           watch("depreciation_method") &&
+  //           watch("depreciation_status") &&
+  //           watch("months_depreciated") &&
+  //           watch("acquisition_cost") &&
+  //           watch("scrap_value")
+  //         )
+  //       ) {
+  //         return true;
+  //       } else return false;
+  //     default:
+  //       return false;
+  //   }
+  // };
+
+  const handleDisableNext = () => {
+    const stepsConditions = [
+      // Case 0: Check type_of_request_id, major_category_id, and minor_category_id
+      ["type_of_request_id", "major_category_id", "minor_category_id"],
+
+      // Case 1: Check department_id, unit_id, subunit_id, and location_id
+      ["department_id", "unit_id", "subunit_id", "location_id"],
+
+      // Case 2: Check various fields including conditional logic for accountability
+      [
+        "asset_description",
+        "asset_specification",
+        "acquisition_date",
+        "po_number",
+        "asset_status_id",
+        "cycle_count_status_id",
+        "movement_status_id",
+        () => watch("accountability") === "Common" || watch("accountable"),
+      ],
+
+      // Case 3: Check depreciation fields
+      ["depreciation_method", "depreciation_status", "months_depreciated", "acquisition_cost", "scrap_value"],
+    ];
+
+    const conditions = stepsConditions[activeStep];
+
+    if (!conditions) return false; // Default case
+
+    return conditions.some((condition) => (typeof condition === "function" ? !condition() : !watch(condition)));
   };
 
   return (
@@ -839,7 +748,7 @@ const AddFa = (props) => {
           const labelProps = {};
 
           return (
-            <Step key={label} {...stepProps}>
+            <Step key={label} {...stepProps} sx={{ ".Mui-completed > svg": { color: "success.main" } }}>
               <StepLabel {...labelProps}>{label}</StepLabel>
             </Step>
           );
@@ -849,7 +758,142 @@ const AddFa = (props) => {
       <Divider />
 
       <Box className="AddFa__container">
-        {activeStep === 0 && <FirstStep />}
+        {activeStep === 0 && (
+          <Stack gap={3}>
+            <Box className="addFixedAsset__type">
+              <Stack flexDirection="column" gap={2} width="100%">
+                <Typography sx={sxSubtitle}>Type of Asset</Typography>
+                <CustomAutoComplete
+                  control={control}
+                  name="type_of_request_id"
+                  options={typeOfRequestData}
+                  loading={isTypeOfRequestLoading}
+                  disableClearable
+                  size="small"
+                  onOpen={() => (isTypeOfRequestSuccess ? false : typeOfRequestTrigger())}
+                  getOptionLabel={(option) => option.type_of_request_name}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Type of Request"
+                      error={!!errors?.type_of_request_id}
+                      helperText={errors?.type_of_request_id?.message}
+                    />
+                  )}
+                  onChange={(_, value) => {
+                    setValue("sub_capex_id", null);
+                    return value;
+                  }}
+                />
+
+                {watch("type_of_request_id")?.type_of_request_name === "Capex" && (
+                  <CustomAutoComplete
+                    control={control}
+                    name="sub_capex_id"
+                    options={subCapexData}
+                    onOpen={() => (isSubCapexSuccess ? null : subCapexTrigger())}
+                    loading={isSubCapexLoading}
+                    size="small"
+                    getOptionLabel={(option) => `${option.sub_capex}  (${option.sub_project})`}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    renderInput={(params) => (
+                      <TextField
+                        color="secondary"
+                        {...params}
+                        label="CAPEX"
+                        error={!!errors?.sub_capex_id}
+                        helperText={errors?.sub_capex_id?.message}
+                      />
+                    )}
+                  />
+                )}
+              </Stack>
+            </Box>
+            <Divider />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+                width: "100%",
+              }}
+            >
+              <Typography sx={sxSubtitle}>Set the Category</Typography>
+
+              <CustomAutoComplete
+                autoComplete
+                required
+                name="major_category_id"
+                control={control}
+                options={majorCategoryData}
+                onOpen={() => (isMajorCategorySuccess ? null : majorCategoryTrigger())}
+                loading={isMajorCategoryLoading}
+                disableClearable
+                size="small"
+                getOptionLabel={(option) => option.major_category_name}
+                isOptionEqualToValue={(option, value) => option.major_category_name === value.major_category_name}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Major Category  "
+                    error={!!errors?.major_category_id}
+                    helperText={errors?.major_category_id?.message}
+                  />
+                )}
+                onChange={(_, value) => {
+                  const filteredMajorCategoryData = majorCategoryData?.filter((obj) => {
+                    return obj.major_category_name === value.major_category_name;
+                  });
+                  const isIncluded = filteredMajorCategoryData[0]?.minor_category.some((category) => {
+                    return category.id === data.minor_category?.minor_category_id;
+                  });
+
+                  if (!isIncluded) {
+                    setValue("minor_category_id", null);
+                    setValue("account_title_id", null);
+                  }
+
+                  setValue("est_useful_life", value.est_useful_life);
+                  return value;
+                }}
+              />
+
+              <CustomAutoComplete
+                autoComplete
+                required
+                name="minor_category_id"
+                disableClearable
+                control={control}
+                options={
+                  majorCategoryData?.filter((obj) => {
+                    return obj?.id === watch("major_category_id")?.id;
+                  })[0]?.minor_category || []
+                }
+                onOpen={() => (isMinorCategorySuccess ? null : minorCategoryTrigger())}
+                loading={isMinorCategoryLoading}
+                size="small"
+                getOptionLabel={(option) => option.minor_category_name}
+                isOptionEqualToValue={(option, value) => option.minor_category_name === value.minor_category_name}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Minor Category  "
+                    error={!!errors?.minor_category_id}
+                    helperText={errors?.minor_category_id?.message}
+                  />
+                )}
+                onChange={(_, value) => {
+                  setValue("account_title_id", value ? value.account_title : null);
+                  return value;
+                }}
+              />
+            </Box>
+          </Stack>
+        )}
 
         {activeStep === 1 && (
           <Box
@@ -1093,8 +1137,8 @@ const AddFa = (props) => {
               name="acquisition_date"
               label="Acquisition Date"
               size="small"
-              views={["year", "month", "day"]}
-              openTo="year"
+              // views={["year", "month", "day"]}
+              // openTo="year"
               error={!!errors?.acquisition_date}
               helperText={errors?.acquisition_date?.message}
               fullWidth={isFullWidth ? true : false}
@@ -1119,6 +1163,10 @@ const AddFa = (props) => {
                     helperText={errors?.accountability?.message}
                   />
                 )}
+                onChange={(_, value) => {
+                  setValue("accountable", null);
+                  return value;
+                }}
                 fullWidth
               />
 
@@ -1553,7 +1601,9 @@ const AddFa = (props) => {
           </Box>
         )}
       </Box>
+
       <Divider />
+
       <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
         <Button
           variant="outlined"
@@ -1577,7 +1627,7 @@ const AddFa = (props) => {
             {data.status ? "Update" : "Create"}
           </LoadingButton>
         ) : (
-          <Button variant="contained" size="small" onClick={handleNext} disabled={handleDisableNext}>
+          <Button variant="contained" size="small" onClick={handleNext} disabled={handleDisableNext()}>
             Next
           </Button>
         )}
