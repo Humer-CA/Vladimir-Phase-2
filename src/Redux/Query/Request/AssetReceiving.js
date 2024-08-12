@@ -75,6 +75,15 @@ export const assetReceivingApi = createApi({
       }),
       invalidatesTags: ["AssetReceiving"],
     }),
+
+    removeInclusionApi: builder.mutation({
+      query: (body) => ({
+        url: `/remove-inclusion`,
+        method: "PATCH",
+        body: body,
+      }),
+      invalidatesTags: ["AssetReceiving"],
+    }),
   }),
 });
 
@@ -89,4 +98,5 @@ export const {
   useCancelAssetReceivingApiMutation,
   usePostReceivingSyncApiMutation,
   usePutInclusionApiMutation,
+  useRemoveInclusionApiMutation,
 } = assetReceivingApi;
