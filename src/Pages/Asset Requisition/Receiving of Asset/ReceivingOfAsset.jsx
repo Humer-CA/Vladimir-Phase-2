@@ -32,22 +32,22 @@ const ReceivingOfAsset = () => {
             <Tab
               label={
                 <Badge color="error" badgeContent={notifData?.toReceive}>
-                  Pending
+                  Received
                 </Badge>
               }
               value="1"
               className={value === "1" ? "tab__background" : null}
             />
 
-            <Tab label="Received" value="2" className={value === "2" ? "tab__background" : null} />
+            <Tab label="Pending" value="2" className={value === "2" ? "tab__background" : null} />
           </Tabs>
 
           <TabPanel sx={{ p: 0 }} value="1" index="1">
-            <ReceivingTable />
+            <ReceivingTable received />
           </TabPanel>
 
           <TabPanel sx={{ p: 0 }} value="2" index="2">
-            <ReceivingTable received />
+            <ReceivingTable />
           </TabPanel>
         </TabContext>
       </Box>
