@@ -217,7 +217,8 @@ const FixedAssetView = (props) => {
 
   useEffect(() => {
     setInclusionData(dataApi?.data?.inclusion?.map((data) => data));
-  }, [dataApiSuccess]);
+  }, [dataApiSuccess, dataApi]);
+  // console.log(dataApi);
 
   // const onPrintHandler = () => {
   //   printAsset({
