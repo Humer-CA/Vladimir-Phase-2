@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { TextField } from "@mui/material";
 import { PatternFormat } from "react-number-format";
 
-const CustomPatternField = ({ name, control, keepPrefix = false, ...patternfield }) => {
+const CustomPatternField = ({ name, control, keepPrefix = false, optional, ...patternfield }) => {
   return (
     <Controller
       name={name}
@@ -28,14 +28,20 @@ const CustomPatternField = ({ name, control, keepPrefix = false, ...patternfield
             size="small"
             color="secondary"
             sx={{
-              ".MuiInputBase-root": { borderRadius: "12px" },
+              ".MuiInputBase-root": { borderRadius: "10px" },
+
               ".MuiInputLabel-root.Mui-disabled": {
                 backgroundColor: "transparent",
               },
 
+              ".MuiOutlinedInput-notchedOutline": {
+                // bgcolor: optional ? null : "#ff9d4c0c",
+                border: optional ? "1px dashed lightgray" : null,
+              },
+
               ".Mui-disabled": {
                 backgroundColor: "background.light",
-                borderRadius: "12px",
+                borderRadius: "10px",
               },
             }}
           />

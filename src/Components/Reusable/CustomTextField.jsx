@@ -1,8 +1,19 @@
-import { TextField as MuiTextField, Typography } from "@mui/material";
+import { PlayArrowRounded } from "@mui/icons-material";
+import { Box, InputAdornment, TextField as MuiTextField, Stack, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
 
 const CustomTextField = (props) => {
-  const { name, control, onChange: onValueChange, onBlur, errors, validateText = true, ...textfield } = props;
+  const {
+    name,
+    control,
+    onChange: onValueChange,
+    onBlur,
+    optional,
+    errors,
+    validateText,
+
+    ...textfield
+  } = props;
 
   const validateInput = (value) => {
     const regex = /^[a-zA-Z0-9-\s+&,]*$/g;
@@ -37,8 +48,13 @@ const CustomTextField = (props) => {
               onBlur={onBlur}
               sx={{
                 ".MuiInputBase-root": {
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                   minWidth: "180px",
+                },
+
+                ".MuiOutlinedInput-notchedOutline": {
+                  // bgcolor: optional ? null : "#ff9d4c0c",
+                  border: optional ? "1px dashed lightgray" : null,
                 },
 
                 ".MuiInputLabel-root.Mui-disabled": {
@@ -47,7 +63,7 @@ const CustomTextField = (props) => {
 
                 ".Mui-disabled": {
                   backgroundColor: "background.light",
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                 },
               }}
             />

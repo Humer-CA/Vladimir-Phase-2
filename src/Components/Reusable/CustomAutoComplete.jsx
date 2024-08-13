@@ -1,7 +1,7 @@
 import { Controller } from "react-hook-form";
-import { Autocomplete as MuiAutocomplete, TextField } from "@mui/material";
+import { InputAdornment, Autocomplete as MuiAutocomplete, Stack, TextField } from "@mui/material";
 
-const CustomAutoComplete = ({ name, control, onChange: onValueChange, onOpen, ...autocomplete }) => {
+const CustomAutoComplete = ({ name, control, optional, onChange: onValueChange, onOpen, ...autocomplete }) => {
   return (
     <Controller
       name={name}
@@ -22,8 +22,13 @@ const CustomAutoComplete = ({ name, control, onChange: onValueChange, onOpen, ..
             onOpen={onOpen}
             sx={{
               ".MuiInputBase-root": {
-                borderRadius: "12px",
+                borderRadius: "10px",
                 // backgroundColor: "white",
+              },
+
+              ".MuiOutlinedInput-notchedOutline": {
+                // bgcolor: optional ? null : "#ff9d4c0c",
+                border: optional ? "1px dashed #c7c7c742" : null,
               },
 
               ".MuiInputLabel-root.Mui-disabled": {

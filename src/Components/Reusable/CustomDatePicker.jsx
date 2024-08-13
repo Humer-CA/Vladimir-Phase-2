@@ -3,7 +3,16 @@ import moment from "moment";
 import { Controller } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-const CustomDatePicker = ({ name, control, onChange: onValueChange, error, helperText, fullWidth, ...datepicker }) => {
+const CustomDatePicker = ({
+  name,
+  control,
+  onChange: onValueChange,
+  optional,
+  error,
+  helperText,
+  fullWidth,
+  ...datepicker
+}) => {
   return (
     <Controller
       name={name}
@@ -38,10 +47,12 @@ const CustomDatePicker = ({ name, control, onChange: onValueChange, error, helpe
                   },
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderRadius: "10px",
+                    border: optional ? "1px dashed #c7c7c742" : null,
                   },
+
                   ".Mui-disabled": {
                     backgroundColor: "background.light",
-                    borderRadius: "12px",
+                    borderRadius: "10px",
                   },
                   "& .MuiInputLabel-root.Mui-disabled": {
                     backgroundColor: "transparent",
