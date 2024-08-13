@@ -782,6 +782,13 @@ const AddRequisition = (props) => {
               const res = await postRequisition(addRequestAllApi).unwrap();
               deleteAllRequest();
               reset({
+                company_id: userCoa?.company,
+                business_unit_id: userCoa?.business_unit,
+                department_id: userCoa?.department,
+                unit_id: userCoa?.unit,
+                subunit_id: userCoa?.subunit,
+                location_id: userCoa?.location,
+
                 letter_of_request: null,
                 quotation: null,
                 specification_form: null,
@@ -992,7 +999,7 @@ const AddRequisition = (props) => {
           }}
           sx={{
             ".MuiInputBase-root": {
-              borderRadius: "12px",
+              borderRadius: "10px",
               // color: "#636363",
             },
 
@@ -1003,7 +1010,7 @@ const AddRequisition = (props) => {
 
             ".Mui-disabled": {
               backgroundColor: "background.light",
-              borderRadius: "12px",
+              borderRadius: "10px",
               color: "text.main",
             },
           }}
