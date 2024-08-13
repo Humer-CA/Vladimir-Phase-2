@@ -446,7 +446,7 @@ const AddReleasingInfo = (props) => {
             sx={{
               input: { cursor: "pointer" },
               ".MuiInputBase-root": {
-                borderRadius: "12px",
+                borderRadius: "10px",
                 // color: "#636363",
               },
 
@@ -457,7 +457,7 @@ const AddReleasingInfo = (props) => {
 
               ".Mui-disabled": {
                 backgroundColor: "background.light",
-                borderRadius: "12px",
+                borderRadius: "10px",
                 color: "text.main",
               },
             }}

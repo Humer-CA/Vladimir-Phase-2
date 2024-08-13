@@ -1124,7 +1124,7 @@ const AdditionalCostRequest = (props) => {
           }}
           sx={{
             ".MuiInputBase-root": {
-              borderRadius: "12px",
+              borderRadius: "10px",
               // color: "#636363",
             },
 
@@ -1135,7 +1135,7 @@ const AdditionalCostRequest = (props) => {
 
             ".Mui-disabled": {
               backgroundColor: "background.light",
-              borderRadius: "12px",
+              borderRadius: "10px",
               color: "text.main",
             },
           }}

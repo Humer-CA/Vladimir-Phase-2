@@ -219,7 +219,7 @@ const AddCategoryList = (props) => {
                 </>
               }
               sx={{
-                ".MuiInputBase-root": { borderRadius: "12px" },
+                ".MuiInputBase-root": { borderRadius: "10px" },
               }}
               error={!!errors?.service_provider_id?.message}
               helperText={errors?.service_provider_id?.message}
@@ -247,7 +247,7 @@ const AddCategoryList = (props) => {
                 </>
               }
               sx={{
-                ".MuiInputBase-root": { borderRadius: "12px" },
+                ".MuiInputBase-root": { borderRadius: "10px" },
               }}
               error={!!errors?.major_category_id?.message}
               helperText={errors?.major_category_id?.message}
@@ -276,7 +276,7 @@ const AddCategoryList = (props) => {
                 </>
               }
               sx={{
-                ".MuiInputBase-root": { borderRadius: "12px" },
+                ".MuiInputBase-root": { borderRadius: "10px" },
               }}
               error={!!errors?.minor_category_id?.message}
               helperText={errors?.minor_category_id?.message}

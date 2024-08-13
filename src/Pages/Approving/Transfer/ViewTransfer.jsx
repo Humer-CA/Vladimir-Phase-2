@@ -577,7 +577,7 @@ const AddTransfer = (props) => {
           }}
           sx={{
             ".MuiInputBase-root": {
-              borderRadius: "12px",
+              borderRadius: "10px",
               // color: "#636363",
             },
 
@@ -588,7 +588,7 @@ const AddTransfer = (props) => {
 
             ".Mui-disabled": {
               backgroundColor: "background.light",
-              borderRadius: "12px",
+              borderRadius: "10px",
               color: "text.main",
             },
           }}
@@ -1153,7 +1153,7 @@ const AddTransfer = (props) => {
                               }}
                               sx={{
                                 ".MuiInputBase-root": {
-                                  borderRadius: "12px",
+                                  borderRadius: "10px",
                                 },
                                 ".MuiInputLabel-root.Mui-disabled": {
                                   backgroundColor: "transparent",

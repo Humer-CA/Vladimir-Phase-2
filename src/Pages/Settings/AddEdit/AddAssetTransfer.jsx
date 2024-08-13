@@ -280,7 +280,7 @@ const AddAssetTransfer = (props) => {
         <Stack
           sx={{
             outline: "1px solid lightgray",
-            borderRadius: "12px",
+            borderRadius: "10px",
             p: 2,
           }}
         >

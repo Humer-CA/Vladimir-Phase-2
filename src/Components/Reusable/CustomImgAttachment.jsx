@@ -54,7 +54,7 @@ const CustomImgAttachment = (props) => {
               sx={{
                 input: { cursor: "pointer" },
                 ".MuiInputBase-root": {
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                   color: textfield.error ? "red" : "#636363",
                 },
                 ".MuiInputLabel-root.Mui-disabled": {
@@ -63,7 +63,7 @@ const CustomImgAttachment = (props) => {
 
                 ".Mui-disabled": {
                   backgroundColor: "background.light",
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                 },
               }}
             />

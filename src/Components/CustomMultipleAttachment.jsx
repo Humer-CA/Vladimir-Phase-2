@@ -73,7 +73,7 @@ const CustomMultipleAttachment = (props) => {
               }}
               sx={{
                 ".MuiInputBase-root": {
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                   color: textfield.error ? "red" : "#636363",
                 },
                 ".MuiInputLabel-root.Mui-disabled": {
@@ -82,7 +82,7 @@ const CustomMultipleAttachment = (props) => {
 
                 ".Mui-disabled": {
                   backgroundColor: "background.light",
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                 },
               }}
             />

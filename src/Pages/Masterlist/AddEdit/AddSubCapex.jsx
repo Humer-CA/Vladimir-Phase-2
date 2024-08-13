@@ -170,7 +170,7 @@ const AddSubCapex = (props) => {
             sx={{
               width: "120px",
               ".MuiInputBase-root": {
-                borderRadius: "12px",
+                borderRadius: "10px",
                 // backgroundColor: "white",
               },
 
@@ -180,7 +180,7 @@ const AddSubCapex = (props) => {
 
               ".Mui-disabled": {
                 backgroundColor: "background.light",
-                borderRadius: "12px",
+                borderRadius: "10px",
               },
             }}
           />

@@ -29,10 +29,10 @@ const CustomNumberField = ({ name, control, keepPrefix = false, ...numberfield }
             }}
             sx={{
               ".MuiInputBase-root": {
-                borderRadius: "12px",
+                borderRadius: "10px",
                 ".Mui-disabled": {
                   backgroundColor: "background.light",
-                  borderRadius: "12px",
+                  borderRadius: "10px",
                 },
               },
             }}

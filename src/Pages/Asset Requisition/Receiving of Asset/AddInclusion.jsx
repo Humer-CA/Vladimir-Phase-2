@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../../Style/Request/receiving.scss";
 import moment from "moment";
+import { TransitionGroup } from "react-transition-group";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +30,7 @@ import {
   useMediaQuery,
   Zoom,
 } from "@mui/material";
+import Collapse from "@mui/material/Collapse";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -261,7 +263,7 @@ const AddInclusion = (props) => {
 
   const customTextSx = {
     ".MuiInputBase-root": {
-      borderRadius: "12px",
+      borderRadius: "10px",
       minWidth: "180px",
     },
 
@@ -271,7 +273,7 @@ const AddInclusion = (props) => {
 
     ".Mui-disabled": {
       backgroundColor: "background.light",
-      borderRadius: "12px",
+      borderRadius: "10px",
     },
   };
 
@@ -386,7 +388,7 @@ const AddInclusion = (props) => {
                             helperText={errors?.quantity?.message}
                             sx={{
                               ".MuiInputBase-root": {
-                                borderRadius: "12px",
+                                borderRadius: "10px",
                                 minWidth: "120px",
                               },
                               "& .MuiInputBase-input": {

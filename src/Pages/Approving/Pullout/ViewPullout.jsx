@@ -577,7 +577,7 @@ const ViewPullout = (props) => {
           }}
           sx={{
             ".MuiInputBase-root": {
-              borderRadius: "12px",
+              borderRadius: "10px",
               // color: "#636363",
             },
 
@@ -588,7 +588,7 @@ const ViewPullout = (props) => {
 
             ".Mui-disabled": {
               backgroundColor: "background.light",
-              borderRadius: "12px",
+              borderRadius: "10px",
               color: "text.main",
             },
           }}
@@ -1058,6 +1058,7 @@ const ViewPullout = (props) => {
                     name="remarks"
                     disabled={edit ? false : view}
                     label="Remarks (Optional)"
+                    optional
                     type="text"
                     error={!!errors?.remarks}
                     helperText={errors?.remarks?.message}
@@ -1159,7 +1160,7 @@ const ViewPullout = (props) => {
                               }}
                               sx={{
                                 ".MuiInputBase-root": {
-                                  borderRadius: "12px",
+                                  borderRadius: "10px",
                                 },
                                 ".MuiInputLabel-root.Mui-disabled": {
                                   backgroundColor: "transparent",
