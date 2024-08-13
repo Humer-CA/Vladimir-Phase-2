@@ -297,13 +297,9 @@ const MasterlistToolbar = (props) => {
             color="secondary"
             variant="contained"
             size="small"
-            sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
+            // sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
           >
-            {isSmallScreen ? (
-              <QrCodeScannerRounded color="primary" sx={{ fontSize: "20px" }} />
-            ) : (
-              <Typography>Scan</Typography>
-            )}
+            {isSmallScreen ? <QrCodeScannerRounded color="primary" sx={{ fontSize: "20px" }} /> : "Scan"}
           </Button>
         )}
 
