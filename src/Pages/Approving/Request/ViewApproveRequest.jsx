@@ -120,6 +120,7 @@ const ViewApproveRequest = (props) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
   const onApprovalApproveHandler = (transaction_number) => {
     dispatch(
       openConfirm({
@@ -149,8 +150,9 @@ const ViewApproveRequest = (props) => {
               action: "Approve",
               transaction_number: transaction_number,
             }).unwrap();
-
-            approveRequestData?.data?.map((data) => data?.fa_approval === 1) && postPr(ymirData);
+            if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
+              return postPr(ymirData);
+            }
             dispatch(
               openToast({
                 message: result.message,
