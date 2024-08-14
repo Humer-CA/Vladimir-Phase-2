@@ -434,7 +434,7 @@ const PrintFixedAsset = (props) => {
                 fontFamily: "Anton",
               }}
             >
-              {isRequest ? "Print Request" : "Print Assets"}
+              {isRequest ? "Print Request" : "Print asset"}
             </Typography>
           </Stack>
 

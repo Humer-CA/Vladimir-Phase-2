@@ -49,7 +49,7 @@ const ErrorFetchFA = () => {
             </Typography>
             <Button
               variant="contained"
-              onClick={() => navigate("/fixed-assets")}
+              onClick={() => navigate("/fixed-asset")}
               color="black"
               sx={{ fontWeight: "bold", color: "primary.main" }}
             >

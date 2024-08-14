@@ -59,7 +59,7 @@ import { ymirPrApi } from "../Query/Masterlist/YmirCoa/YmirPr";
 import { userAccountsApi } from "../Query/UserManagement/UserAccountsApi";
 import { roleManagementApi } from "../Query/UserManagement/RoleManagementApi";
 
-// Fixed Assets
+// Fixed Asset
 import { fixedAssetApi } from "../Query/FixedAsset/FixedAssets";
 import { additionalCostApi } from "../Query/FixedAsset/AdditionalCost";
 import { printOfflineFaApi } from "../Query/FixedAsset/OfflinePrintingFA";
@@ -154,7 +154,7 @@ export const store = configureStore({
     [sedarUsersApi.reducerPath]: sedarUsersApi.reducer,
     [roleManagementApi.reducerPath]: roleManagementApi.reducer,
 
-    // Fixed Assets
+    // Fixed Asset
     [fixedAssetApi.reducerPath]: fixedAssetApi.reducer,
     [additionalCostApi.reducerPath]: additionalCostApi.reducer,
     [printOfflineFaApi.reducerPath]: printOfflineFaApi.reducer,
@@ -236,7 +236,7 @@ export const store = configureStore({
       sedarUsersApi.middleware,
       roleManagementApi.middleware,
 
-      // Fixed Assets
+      // Fixed Asset
       fixedAssetApi.middleware,
       additionalCostApi.middleware,
       assetStatusApi.middleware,

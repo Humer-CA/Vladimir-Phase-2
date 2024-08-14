@@ -3,7 +3,6 @@ import "../../../index.scss";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import ErrorFetching from "../../ErrorFetching";
 import { LoadingData } from "../../../Components/LottieFiles/LottieComponents";
-import AddReceivingInfo from "../../../Pages/Asset Requisition/Receiving of Asset/AddReceivingInfo";
 
 import {
   Box,

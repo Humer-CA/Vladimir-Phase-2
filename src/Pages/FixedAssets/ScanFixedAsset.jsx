@@ -62,7 +62,7 @@ const ScanFixedAsset = () => {
             maxWidth={400}
             onUpdate={(err, result) => {
               if (result)
-                navigate(`/fixed-assets/asset`, {
+                navigate(`/fixed-asset/asset`, {
                   state: { vladimir_tag_number: result.text },
                 });
               // else setData("Not Found");

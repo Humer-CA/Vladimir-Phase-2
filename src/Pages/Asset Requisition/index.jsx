@@ -25,7 +25,7 @@ const AssetRequisition = () => {
     {
       icon: <AssignmentTurnedIn />,
       label: "Requisition",
-      description: "Requesting of Fixed Assets",
+      description: "Requesting of Fixed asset",
       path: "/asset-requisition/requisition",
       permission: "requisition",
     },
@@ -43,8 +43,8 @@ const AssetRequisition = () => {
       icon: <OpenInBrowserOutlined />,
       label: "Received Asset",
       description: "Input of additional info and Purchase Order Number",
-      path: "/asset-requisition/requisition-receiving",
-      permission: "requisition-receiving",
+      path: "/asset-requisition/requisition-received-asset",
+      permission: "requisition-received-asset",
       notification: notifData?.toReceive,
     },
 

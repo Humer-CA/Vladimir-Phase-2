@@ -249,7 +249,7 @@ const FixedAsset = (props) => {
   };
 
   const handleTableData = (data) => {
-    navigate(`/fixed-assets/${data.vladimir_tag_number}`, {
+    navigate(`/fixed-asset/${data.vladimir_tag_number}`, {
       state: { ...data, status },
     });
   };

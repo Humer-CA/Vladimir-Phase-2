@@ -35,7 +35,7 @@ export const assetReleasingApi = createApi({
 
     putAssetReleasing: builder.mutation({
       query: (data) => ({
-        url: `/release-assets`,
+        url: `/release-asset`,
         method: "PUT",
         body: data,
       }),

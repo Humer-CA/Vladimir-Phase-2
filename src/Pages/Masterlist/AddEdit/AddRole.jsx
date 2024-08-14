@@ -129,7 +129,7 @@ const AddRole = (props) => {
     "dashboard",
     "masterlist",
     "user-management",
-    "fixed-assets",
+    "fixed-asset",
     "print-fa",
     "settings",
     "asset-requisition",
@@ -173,7 +173,7 @@ const AddRole = (props) => {
     // Asset Requisition
     "requisition",
     "purchase-request",
-    "requisition-receiving",
+    "requisition-received-asset",
     "requisition-releasing",
 
     //Asset Movement
@@ -209,7 +209,7 @@ const AddRole = (props) => {
   ];
   const userManagement = ["user-accounts", "role-management"];
   const settings = ["approver-settings", "form-settings"];
-  const assetRequisition = ["requisition", "purchase-request", "requisition-receiving", "requisition-releasing"];
+  const assetRequisition = ["requisition", "purchase-request", "requisition-received-asset", "requisition-releasing"];
   const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
   const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
 
@@ -295,7 +295,7 @@ const AddRole = (props) => {
       { label: "Dashboard", value: "dashboard" },
       { label: "Masterlist", value: "masterlist" },
       { label: "User Management", value: "user-management" },
-      { label: "Fixed Assets", value: "fixed-assets" },
+      { label: "Fixed asset", value: "fixed-asset" },
       { label: "Printing of Tag", value: "print-fa" },
       { label: "Settings", value: "settings" },
       { label: "Request Monitoring", value: "request-monitoring" },
@@ -407,7 +407,7 @@ const AddRole = (props) => {
   const AssetRequisition = () => {
     const assetRequisition1 = [
       { label: "Requisition", value: "requisition" },
-      { label: "Received Asset", value: "requisition-receiving" },
+      { label: "Received Asset", value: "requisition-received-asset" },
       { label: "Releasing", value: "requisition-releasing" },
     ];
 
@@ -786,7 +786,7 @@ const AddRole = (props) => {
                                   ...new Set([
                                     ...watch("access_permission"),
                                     "requisition",
-                                    "requisition-receiving",
+                                    "requisition-received-asset",
                                     "requisition-releasing",
                                   ]),
                                 ]);

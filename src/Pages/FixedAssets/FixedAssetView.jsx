@@ -82,7 +82,7 @@ import { useGetIpApiQuery } from "../../Redux/Query/IpAddressSetup";
 import { useReactToPrint } from "react-to-print";
 import AssignmentMemo from "./AssignmentMemo";
 import { closeDialog1, openDialog } from "../../Redux/StateManagement/booleanStateSlice";
-import AddInclusion from "../Asset Requisition/Receiving of Asset/AddInclusion";
+import AddInclusion from "../Asset Requisition/Received Asset/AddInclusion";
 
 const FixedAssetView = (props) => {
   const [search, setSearch] = useState(null);
@@ -493,7 +493,7 @@ const FixedAssetView = (props) => {
   };
 
   const handleTableData = (data) => {
-    navigate(`/fixed-assets/${data.vladimir_tag_number}`, {
+    navigate(`/fixed-asset/${data.vladimir_tag_number}`, {
       // state: { ...data, status },
       state: { ...data },
     });
@@ -511,7 +511,7 @@ const FixedAssetView = (props) => {
   });
 
   const onBackHandler = () => {
-    dataApi.data?.is_additional_cost === 0 ? navigate("/fixed-assets") : navigate(-1);
+    dataApi.data?.is_additional_cost === 0 ? navigate("/fixed-asset") : navigate(-1);
   };
 
   const handleOpenInclusion = () => {

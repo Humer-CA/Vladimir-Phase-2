@@ -208,7 +208,7 @@ const ExportFixedAsset = () => {
         }}
       >
         <Typography variant="h5" color="secondary" sx={{ fontFamily: "Anton" }}>
-          Export Assets
+          Export asset
         </Typography>
 
         <Box
