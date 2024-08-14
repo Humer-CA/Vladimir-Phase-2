@@ -211,10 +211,7 @@ const AssignmentMemo = (props) => {
           variant="contained"
           color="secondary"
           size="small"
-          onClick={() => {
-            handlePrintAssignmentMemo(null, () => contentToPrint.current);
-            fixedAssetRefetch();
-          }}
+          onClick={() => handlePrintAssignmentMemo(null, () => contentToPrint.current)}
         >
           Print
         </Button>

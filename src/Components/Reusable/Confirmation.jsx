@@ -148,11 +148,19 @@ const Confirmation = (props) => {
           loading={loading}
           type="submit"
           variant="contained"
+          size="small"
         >
           Yes
         </LoadingButton>
 
-        <Button autoFocus variant="outlined" color="secondary" onClick={handleClose} disabled={loading === true}>
+        <Button
+          autoFocus
+          variant="outlined"
+          color="secondary"
+          onClick={handleClose}
+          disabled={loading === true}
+          size="small"
+        >
           No
         </Button>
       </Stack>

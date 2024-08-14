@@ -220,7 +220,7 @@ const ApproverSettings = () => {
                         },
                       }}
                     >
-                      <TableCell className="tbl-cell text-center">
+                      <TableCell className="tbl-cell">
                         <TableSortLabel
                           active={orderBy === `id`}
                           direction={orderBy === `id` ? order : `asc`}
@@ -271,7 +271,7 @@ const ApproverSettings = () => {
                                 },
                               }}
                             >
-                              <TableCell className="tbl-cell tr-cen-pad45">{data.id}</TableCell>
+                              <TableCell className="tbl-cell">{data.id}</TableCell>
 
                               <TableCell className="tbl-cell text-weight">
                                 {data.approver?.firstname} {data.approver?.lastname}

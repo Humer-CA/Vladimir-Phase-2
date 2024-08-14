@@ -250,8 +250,6 @@ const AssignmentMemoReprint = (props) => {
   }, [isPostError]);
 
   const onPrintMemoHandler = async (data) => {
-    // console.log(formData);
-
     setFaData(fixedAssetData);
     setSelectedMemo(data?.vladimir_tag_number);
     setPrintAssignmentMemo(true);

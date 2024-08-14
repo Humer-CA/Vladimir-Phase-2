@@ -25,7 +25,7 @@ const AssetRequisition = () => {
     {
       icon: <AssignmentTurnedIn />,
       label: "Requisition",
-      description: "Requesting of Fixed asset",
+      description: "Requesting of Fixed Asset",
       path: "/asset-requisition/requisition",
       permission: "requisition",
     },
