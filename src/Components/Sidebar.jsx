@@ -359,10 +359,10 @@ const Sidebar = () => {
     },
 
     {
-      label: "Fixed Assets",
+      label: "Fixed asset",
       icon: InventoryRounded,
-      path: "/fixed-assets",
-      permission: "fixed-assets",
+      path: "/fixed-asset",
+      permission: "fixed-asset",
       notification: notifData?.toTagCount,
       setter: closeCollapse,
     },
@@ -426,8 +426,8 @@ const Sidebar = () => {
         {
           label: "Received Asset",
           icon: OpenInBrowserOutlined,
-          path: "/asset-requisition/requisition-receiving",
-          permission: "requisition-receiving",
+          path: "/asset-requisition/requisition-received-asset",
+          permission: "requisition-received-asset",
           notification: notifData?.toReceive,
           setter: closeCollapse,
         },
