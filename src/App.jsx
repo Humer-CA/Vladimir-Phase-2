@@ -55,8 +55,8 @@ import RequestMonitoring from "./Pages/Asset Requisition/RequestMonitoring";
 
 import AssetRequisition from "./Pages/Asset Requisition";
 
-import ReceivingOfAsset from "./Pages/Asset Requisition/Receiving of Asset/ReceivingOfAsset";
-import ViewRequestReceiving from "./Pages/Asset Requisition/Receiving of Asset/ViewRequestReceiving";
+import ReceivedAsset from "./Pages/Asset Requisition/Received Asset/ReceivedAsset";
+import ViewRequestReceiving from "./Pages/Asset Requisition/Received Asset/ViewRequestReceiving";
 
 import PageNotFound from "./Pages/PageNotFound";
 import Confirmation from "./Components/Reusable/Confirmation";
@@ -207,14 +207,14 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "fixed-assets",
+            path: "fixed-asset",
             index: false,
             element: <FixedAsset />,
             children: [],
           },
 
           {
-            path: "fixed-assets/:tag_number",
+            path: "fixed-asset/:tag_number",
             element: <FixedAssetView />,
           },
 
@@ -280,11 +280,11 @@ const router = createBrowserRouter([
                 element: <ViewRequestPr />,
               },
               {
-                path: "requisition-receiving",
-                element: <ReceivingOfAsset />,
+                path: "requisition-received-asset",
+                element: <ReceivedAsset />,
               },
               {
-                path: "requisition-receiving/:transaction_number",
+                path: "requisition-received-asset/:transaction_number",
                 element: <ViewRequestReceiving />,
               },
               {
@@ -467,6 +467,12 @@ const theme = createTheme({
       dark: "#1e2527",
     },
 
+    ymir: {
+      light: "#8ea04f",
+      main: "#728923",
+      dark: "#4f5f18",
+    },
+
     link: {
       light: "#35baf6",
       main: "#03a9f4",
@@ -571,12 +577,11 @@ function App() {
               alignItems: "center",
               padding: "20px",
               margin: 0,
-              gap: "5px",
               minWidth: "250px",
-              maxWidth: "350px",
+              maxWidth: "400px",
               width: "50%",
               textAlign: "center",
-              borderRadius: "10px",
+              borderRadius: "15px",
             },
           }}
         >
