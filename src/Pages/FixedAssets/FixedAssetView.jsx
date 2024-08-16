@@ -1006,88 +1006,88 @@ const FixedAssetView = (props) => {
                   </AccordionDetails>
                 </Accordion>
 
-                {inclusionData && (
-                  <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
-                        SMALL TOOLS
-                      </Typography>
-                    </AccordionSummary>
+                {/* {inclusionData && ( */}
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+                      SMALL TOOLS
+                    </Typography>
+                  </AccordionSummary>
 
-                    <Divider />
+                  <Divider />
 
-                    <AccordionDetails>
-                      <TableContainer>
-                        <Table>
-                          <TableHead>
-                            <TableRow
-                              sx={{
-                                "& > *": {
-                                  fontWeight: "bold",
-                                  whiteSpace: "nowrap",
-                                },
-                              }}
-                            >
-                              <TableCell className="tbl-cell">Index</TableCell>
-                              <TableCell className="tbl-cell">Description</TableCell>
-                              <TableCell className="tbl-cell" align="center">
-                                Quantity
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-
-                          <TableBody
+                  <AccordionDetails>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow
                             sx={{
-                              overflow: "auto",
+                              "& > *": {
+                                fontWeight: "bold",
+                                whiteSpace: "nowrap",
+                              },
                             }}
-                            colSpan={9}
                           >
-                            {inclusionData?.map((data, index) => (
-                              <TableRow key={index}>
-                                <TableCell>
-                                  {/* <Typography fontSize="10px" color="gray">
+                            <TableCell className="tbl-cell">Index</TableCell>
+                            <TableCell className="tbl-cell">Description</TableCell>
+                            <TableCell className="tbl-cell" align="center">
+                              Quantity
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+
+                        <TableBody
+                          sx={{
+                            overflow: "auto",
+                          }}
+                          colSpan={9}
+                        >
+                          {inclusionData?.map((data, index) => (
+                            <TableRow key={index}>
+                              <TableCell>
+                                {/* <Typography fontSize="10px" color="gray">
                                     Index
                                   </Typography> */}
-                                  <Typography fontSize="14px" fontWeight="bold" color="tertiary.light">
-                                    {dataApi?.data?.vladimir_tag_number}-{data?.id}
-                                  </Typography>
-                                </TableCell>
+                                <Typography fontSize="14px" fontWeight="bold" color="tertiary.light">
+                                  {dataApi?.data?.vladimir_tag_number}-{data?.id}
+                                </Typography>
+                              </TableCell>
 
-                                <TableCell>
-                                  {/* <Typography fontSize="10px" color="gray">
+                              <TableCell>
+                                {/* <Typography fontSize="10px" color="gray">
                                     Description
                                   </Typography> */}
-                                  <Typography fontSize="14px" fontWeight="bold" noWrap color="secondary.main">
-                                    {data?.description}
-                                  </Typography>
-                                  <Typography fontSize="12px" color="secondary.light" noWrap>
-                                    {data?.specification}
-                                  </Typography>
-                                </TableCell>
+                                <Typography fontSize="14px" fontWeight="bold" noWrap color="secondary.main">
+                                  {data?.description}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.light" noWrap>
+                                  {data?.specification}
+                                </Typography>
+                              </TableCell>
 
-                                <TableCell align="center">
-                                  {/* <Typography fontSize="10px" color="gray">
+                              <TableCell align="center">
+                                {/* <Typography fontSize="10px" color="gray">
                                     Quantity
                                   </Typography> */}
-                                  <Typography fontSize="14px">{data?.quantity}</Typography>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={<AddBoxRounded />}
-                        onClick={handleOpenInclusion}
-                        sx={{ mt: 2 }}
-                      >
-                        Add Item
-                      </Button>
-                    </AccordionDetails>
-                  </Accordion>
-                )}
+                                <Typography fontSize="14px">{data?.quantity}</Typography>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<AddBoxRounded />}
+                      onClick={handleOpenInclusion}
+                      sx={{ mt: 2 }}
+                    >
+                      Add Item
+                    </Button>
+                  </AccordionDetails>
+                </Accordion>
+                {/* )} */}
 
                 {dataApi.data?.is_additional_cost === 0 ? (
                   <Accordion

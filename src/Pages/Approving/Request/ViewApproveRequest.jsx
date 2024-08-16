@@ -85,8 +85,8 @@ const ViewApproveRequest = (props) => {
 
   const {
     data: ymirData,
-    isLoading: isYmirDatading,
-    refetch: isYmirDataetch,
+    isLoading: isYmirDataLoading,
+    refetch: isYmirDataRefetch,
   } = useGetYmirPrApiQuery(
     // { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
     { transaction_number: transactionData?.transaction_number },

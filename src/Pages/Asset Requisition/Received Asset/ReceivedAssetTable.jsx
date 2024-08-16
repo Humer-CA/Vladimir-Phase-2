@@ -8,15 +8,9 @@ import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 
 // RTK
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { openConfirm, closeConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
-import {
-  useGetByTransactionApiQuery,
-  useGetRequisitionApiQuery,
-  usePatchRequisitionStatusApiMutation,
-  useVoidRequisitionApiMutation,
-} from "../../../Redux/Query/Request/Requisition";
 
 // MUI
 import {
@@ -35,7 +29,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Help, SyncOutlined, Visibility } from "@mui/icons-material";
+import { Help, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
   useGetAssetReceivingApiQuery,
@@ -184,51 +178,6 @@ const ReceivingTable = (props) => {
     });
   };
 
-  const handleSync = () => {
-    dispatch(
-      openConfirm({
-        icon: Help,
-        iconColor: "info",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              SYNC
-            </Typography>{" "}
-            the data?
-          </Box>
-        ),
-        autoClose: true,
-
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            await syncTrigger().unwrap;
-            refetch();
-          } catch (err) {
-            if (err?.status === 404) {
-              dispatch(
-                openToast({
-                  message: postData?.message,
-                  duration: 5000,
-                })
-              );
-            }
-            console.log(err.message);
-
-            dispatch(closeConfirm());
-          }
-        },
-      })
-    );
-  };
-
   return (
     <Stack sx={{ height: "calc(100vh - 250px)" }}>
       {receivingLoading && <MasterlistSkeleton onAdd={true} category />}
@@ -237,19 +186,6 @@ const ReceivingTable = (props) => {
         <>
           <Box className="mcontainer__wrapper">
             <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
-
-            {/* <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
-              <Button
-                variant="contained"
-                startIcon={isSmallScreen ? null : <SyncOutlined color="primary" />}
-                size="small"
-                color="secondary"
-                sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
-                onClick={() => handleSync()}
-              >
-                {isSmallScreen ? <SyncOutlined color="primary" /> : "SYNC"}
-              </Button>
-            </Box> */}
 
             <Box>
               <TableContainer className="mcontainer__th-body-category">
@@ -273,7 +209,7 @@ const ReceivingTable = (props) => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell">Aqcuisition Details</TableCell>
+                      <TableCell className="tbl-cell">Acquisition Details</TableCell>
 
                       <TableCell className="tbl-cell">
                         <TableSortLabel
@@ -317,7 +253,7 @@ const ReceivingTable = (props) => {
                           direction={orderBy === `created_at` ? order : `asc`}
                           onClick={() => onSort(`created_at`)}
                         >
-                          Date Approved
+                          Date Received
                         </TableSortLabel>
                       </TableCell>
                     </TableRow>

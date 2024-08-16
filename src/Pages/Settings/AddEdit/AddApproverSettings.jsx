@@ -150,7 +150,7 @@ const AddApproverSettings = (props) => {
           control={control}
           size="small"
           required
-          includeInputInList
+          // includeInputInList
           fullWidth
           filterOptions={filterOptions}
           options={userData}
