@@ -79,6 +79,7 @@ import DisposalApproving from "./Pages/Approving/Disposal/DisposalApproving";
 import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
 import Warehouse from "./Pages/Masterlist/Warehouse";
 import ViewPullout from "./Pages/Approving/Pullout/ViewPullout";
+import RrSummary from "./Pages/Asset Requisition/RrSummary";
 
 const router = createBrowserRouter([
   {
@@ -286,6 +287,10 @@ const router = createBrowserRouter([
               {
                 path: "requisition-received-asset/:transaction_number",
                 element: <ViewRequestReceiving />,
+              },
+              {
+                path: "requisition-rr-summary",
+                element: <RrSummary />,
               },
               {
                 path: "requisition-releasing",
