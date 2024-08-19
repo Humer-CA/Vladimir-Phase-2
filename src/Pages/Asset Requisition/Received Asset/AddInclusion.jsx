@@ -56,7 +56,7 @@ const schema = yup.object().shape({
   inclusion: yup.array().of(
     yup.object().shape({
       description: yup.string().required("Description is a Required Field"),
-      specification: yup.string().required("Specification is a Required Field"),
+      // specification: yup.string().required("Specification is a Required Field"),
       quantity: yup.number().required("Quantity is a Required Field"),
     })
   ),
@@ -68,7 +68,14 @@ const AddInclusion = (props) => {
   const [edit, setEdit] = useState(false);
   const [updateRequest, setUpdateRequest] = useState({
     reference_number: "",
-    inclusion: [{ id: null, description: "", specification: "", quantity: null }],
+    inclusion: [
+      {
+        id: null,
+        description: "",
+        //  specification: "",
+        quantity: null,
+      },
+    ],
   });
 
   const [updateInclusion] = usePutInclusionApiMutation();
@@ -91,7 +98,14 @@ const AddInclusion = (props) => {
     defaultValues: {
       vladimir_tag_number: fixedAsset ? data?.vladimir_tag_number : null,
       reference_number: fixedAsset ? fixedAsset?.reference_number : data?.reference_number,
-      inclusion: [{ id: null, description: "", specification: "", quantity: null }],
+      inclusion: [
+        {
+          id: null,
+          description: "",
+          //  specification: "",
+          quantity: null,
+        },
+      ],
     },
   });
 
@@ -101,7 +115,13 @@ const AddInclusion = (props) => {
     name: "inclusion",
   });
 
-  const handleAppendItem = () => append({ id: null, description: "", specification: "", quantity: null });
+  const handleAppendItem = () =>
+    append({
+      id: null,
+      description: "",
+      //  specification: "",
+      quantity: null,
+    });
 
   // * Success and Error Handler
   // useEffect(() => {
@@ -145,7 +165,7 @@ const AddInclusion = (props) => {
         inclusionValue?.map((items) => ({
           id: items?.id,
           description: items?.description,
-          specification: items?.specification,
+          // specification: items?.specification,
           quantity: items?.quantity,
         }))
       );
@@ -153,7 +173,10 @@ const AddInclusion = (props) => {
   }, [data]);
 
   const disableBtn = watch(`inclusion`)?.some(
-    (item) => item?.description === "" || item?.specification === "" || item?.quantity === null
+    (item) =>
+      item?.description === "" ||
+      // item?.specification === "" ||
+      item?.quantity === null
   );
 
   const onSubmitHandler = (formData) => {
@@ -161,7 +184,7 @@ const AddInclusion = (props) => {
       reference_number: formData?.reference_number,
       inclusion: formData?.inclusion?.map((item) => ({
         description: item.description,
-        specification: item.specification,
+        // specification: item.specification,
         quantity: item.quantity,
       })),
     };
@@ -311,7 +334,7 @@ const AddInclusion = (props) => {
                     >
                       <TableCell className="tbl-cell">Index</TableCell>
                       <TableCell className="tbl-cell">Description</TableCell>
-                      <TableCell className="tbl-cell">Specification</TableCell>
+                      {/* <TableCell className="tbl-cell">Specification</TableCell> */}
                       <TableCell className="tbl-cell">Quantity</TableCell>
                       <TableCell className="tbl-cell" align="center">
                         Action
@@ -357,7 +380,7 @@ const AddInclusion = (props) => {
                           /> */}
                         </TableCell>
 
-                        <TableCell>
+                        {/* <TableCell>
                           <TextField
                             {...register(`inclusion.${index}.specification`)}
                             autoComplete="off"
@@ -372,7 +395,7 @@ const AddInclusion = (props) => {
                             sx={customTextSx}
                             inputProps={{ color: "red" }}
                           />
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell width="120px">
                           <TextField
