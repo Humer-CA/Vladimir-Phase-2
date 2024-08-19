@@ -114,7 +114,7 @@ const schema = yup.object().shape({
 
   remarks: yup.string().label("Remarks"),
   attachments: yup.mixed().required().label("Attachments"),
-  assets: yup.array().of(
+  asset: yup.array().of(
     yup.object().shape({
       asset_id: yup.string(),
       fixed_asset_id: yup.object().required("Fixed Asset is a Required Field"),
@@ -155,7 +155,7 @@ const AddTransfer = (props) => {
     remarks: "",
     attachments: null,
 
-    assets: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
+    asset: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
   });
 
   const [
@@ -319,14 +319,14 @@ const AddTransfer = (props) => {
       remarks: "",
       attachments: null,
 
-      assets: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
+      asset: [{ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null }],
     },
   });
 
   //* Append Table ---------------------------------------------------------------
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "assets",
+    name: "asset",
   });
   const handleAppendItem = () => append({ id: null, fixed_asset_id: null, asset_accountable: "", created_at: null });
 
@@ -379,8 +379,8 @@ const AddTransfer = (props) => {
       setValue("remarks", transferNumberData?.remarks);
       setValue("attachments", attachmentFormat);
       setValue(
-        "assets",
-        transferNumberData?.assets.map((asset) => ({
+        "asset",
+        transferNumberData?.asset.map((asset) => ({
           id: asset.id,
           // fixed_asset_id: {
           //   id: asset?.vladimir_tag_number.id,
@@ -395,8 +395,8 @@ const AddTransfer = (props) => {
     }
   }, [transferData, edit]);
 
-  // console.log("assets", watch("assets"));
-  // console.log("assets", data?.assets);
+  // console.log("asset", watch("asset"));
+  // console.log("asset", data?.asset);
 
   //* Table Sorting ----------------------------------------------------------------
   const [order, setOrder] = useState("desc");
@@ -447,7 +447,7 @@ const AddTransfer = (props) => {
       accountable: accountableFormat,
       attachments: formData?.attachments,
 
-      assets: formData?.assets?.map((item) => ({
+      asset: formData?.asset?.map((item) => ({
         fixed_asset_id: item.fixed_asset_id.id,
       })),
     };
@@ -1115,7 +1115,7 @@ const AddTransfer = (props) => {
                       <TableCell>
                         <Controller
                           control={control}
-                          name={`assets.${index}.fixed_asset_id`}
+                          name={`asset.${index}.fixed_asset_id`}
                           render={({ field: { ref, value, onChange } }) => (
                             <Autocomplete
                               options={vTagNumberData}
@@ -1141,14 +1141,14 @@ const AddTransfer = (props) => {
                                   // onChange(newValue.id);
                                   onChange(newValue);
                                   setValue(
-                                    `assets.${index}.asset_accountable`,
+                                    `asset.${index}.asset_accountable`,
                                     newValue.accountable === "-" ? "Common" : newValue.accountable
                                   );
-                                  setValue(`assets.${index}.created_at`, newValue.created_at);
+                                  setValue(`asset.${index}.created_at`, newValue.created_at);
                                 } else {
                                   onChange(null);
-                                  setValue(`assets.${index}.asset_accountable`, "");
-                                  setValue(`assets.${index}.created_at`, null);
+                                  setValue(`asset.${index}.asset_accountable`, "");
+                                  setValue(`asset.${index}.created_at`, null);
                                 }
                               }}
                               sx={{
@@ -1171,7 +1171,7 @@ const AddTransfer = (props) => {
 
                       <TableCell>
                         <TextField
-                          {...register(`assets.${index}.asset_accountable`)}
+                          {...register(`asset.${index}.asset_accountable`)}
                           variant="outlined"
                           disabled
                           type="text"
@@ -1198,7 +1198,7 @@ const AddTransfer = (props) => {
 
                       <TableCell>
                         <TextField
-                          {...register(`assets.${index}.created_at`)}
+                          {...register(`asset.${index}.created_at`)}
                           variant="outlined"
                           disabled
                           type="date"
