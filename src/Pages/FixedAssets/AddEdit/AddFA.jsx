@@ -23,6 +23,7 @@ import {
   StepLabel,
   Stepper,
   TextField,
+  Tooltip,
   Typography,
   createFilterOptions,
   useMediaQuery,
@@ -702,10 +703,8 @@ const AddFa = (props) => {
     const stepsConditions = [
       // Case 0: Check type_of_request_id, major_category_id, and minor_category_id
       ["type_of_request_id", "major_category_id", "minor_category_id"],
-
       // Case 1: Check department_id, unit_id, subunit_id, and location_id
       ["department_id", "unit_id", "subunit_id", "location_id"],
-
       // Case 2: Check various fields including conditional logic for accountability
       [
         "asset_description",
@@ -717,15 +716,12 @@ const AddFa = (props) => {
         "movement_status_id",
         () => watch("accountability") === "Common" || watch("accountable"),
       ],
-
       // Case 3: Check depreciation fields
       ["depreciation_method", "depreciation_status", "months_depreciated", "acquisition_cost", "scrap_value"],
     ];
 
     const conditions = stepsConditions[activeStep];
-
     if (!conditions) return false; // Default case
-
     return conditions.some((condition) => (typeof condition === "function" ? !condition() : !watch(condition)));
   };
 
@@ -735,14 +731,16 @@ const AddFa = (props) => {
         <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", ml: 1 }}>
           {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
         </Typography>
-        <IconButton variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
-          <Close />
-        </IconButton>
+        <Tooltip title="Close" placement="right" arrow>
+          <IconButton variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
+            <Close />
+          </IconButton>
+        </Tooltip>
       </Box>
 
       <Divider />
 
-      <Stepper activeStep={activeStep} sx={{ py: 2 }}>
+      <Stepper activeStep={activeStep} sx={{ py: 3 }}>
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
@@ -816,7 +814,7 @@ const AddFa = (props) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "15px",
+                gap: "20px",
                 width: "100%",
               }}
             >
@@ -900,7 +898,7 @@ const AddFa = (props) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "15px",
+              gap: "20px",
               width: "100%",
             }}
           >
@@ -1099,7 +1097,7 @@ const AddFa = (props) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "15px",
+              gap: "20px",
               width: "100%",
             }}
           >
@@ -1203,6 +1201,7 @@ const AddFa = (props) => {
               color="secondary"
               name="cellphone_number"
               label="Cellphone # (Optional)"
+              optional
               type="text"
               size="small"
               error={!!errors?.cellphone_number}
@@ -1218,6 +1217,7 @@ const AddFa = (props) => {
               control={control}
               name="brand"
               label="Brand (Optional)"
+              optional
               type="text"
               color="secondary"
               size="small"
@@ -1231,6 +1231,7 @@ const AddFa = (props) => {
               control={control}
               name="care_of"
               label="Care of (Optional)"
+              optional
               type="text"
               color="secondary"
               size="small"
@@ -1275,6 +1276,7 @@ const AddFa = (props) => {
               control={control}
               name="receipt"
               label="Receipt (Optional)"
+              optional
               type="text"
               color="secondary"
               size="small"
@@ -1389,7 +1391,7 @@ const AddFa = (props) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "15px",
+                gap: "20px",
                 width: "100%",
                 mb: "5px",
               }}
