@@ -82,7 +82,6 @@ const Requisition = () => {
   const [deleteAllRequest, { data: deleteAllRequestData }] = useDeleteRequestContainerAllApiMutation();
 
   // Table Sorting --------------------------------
-
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
 
@@ -236,6 +235,71 @@ const Requisition = () => {
   };
 
   const isAdditionalCost = requisitionData?.data.map((item) => item.is_addcost);
+
+  const transactionStatus = (data) => {
+    let statusColor, hoverColor, textColor, variant;
+
+    switch (data.status) {
+      case "Approved":
+        statusColor = "success.light";
+        hoverColor = "success.main";
+        textColor = "white";
+        variant = "filled";
+        break;
+
+      case "Claimed":
+        statusColor = "success.dark";
+        hoverColor = "success.dark";
+        variant = "filled";
+        break;
+
+      case "Sent to ymir for PO":
+        statusColor = "ymir.light";
+        hoverColor = "ymir.main";
+        variant = "filled";
+        break;
+
+      case "Returned":
+      case "Cancelled":
+      case "Returned From Ymir":
+        statusColor = "error.light";
+        hoverColor = "error.main";
+        variant = "filled";
+        break;
+
+      default:
+        statusColor = "success.main";
+        hoverColor = "none";
+        textColor = "success.main";
+        variant = "outlined";
+    }
+
+    return (
+      <Chip
+        placement="top"
+        onClick={() => handleViewTimeline(data)}
+        size="small"
+        variant={variant}
+        sx={{
+          ...(variant === "filled" && {
+            backgroundColor: statusColor,
+            color: "white",
+          }),
+          ...(variant === "outlined" && {
+            borderColor: statusColor,
+            color: textColor,
+          }),
+          fontSize: "11px",
+          px: 1,
+          ":hover": {
+            ...(variant === "filled" && { backgroundColor: hoverColor }),
+            ...(variant === "outlined" && { borderColor: hoverColor, color: textColor }),
+          },
+        }}
+        label={data.status}
+      />
+    );
+  };
 
   return (
     <Box className="mcontainer">
@@ -415,74 +479,7 @@ const Requisition = () => {
                                   </IconButton>
                                 </Tooltip>
                               </TableCell>
-                              <TableCell className="tbl-cell tr-cen-pad45">
-                                {data.status === "Returned" || data.status === "Cancelled" ? (
-                                  <Chip
-                                    placement="top"
-                                    onClick={() => handleViewTimeline(data)}
-                                    size="small"
-                                    variant="filled"
-                                    sx={{
-                                      backgroundColor: "error.light",
-                                      color: "white",
-                                      fontSize: "0.7rem",
-                                      px: 1,
-                                      ":hover": { backgroundColor: "error.dark" },
-                                    }}
-                                    label={`${data.status}`}
-                                  />
-                                ) : data.status === "Claimed" ? (
-                                  <Tooltip
-                                    placement="top"
-                                    title={`${data?.current_approver?.firstname} 
-                                      ${data?.current_approver?.lastname}`}
-                                    arrow
-                                  >
-                                    <Chip
-                                      onClick={() => handleViewTimeline(data)}
-                                      size="small"
-                                      variant="filled"
-                                      sx={{
-                                        borderColor: "primary.main",
-                                        color: "white",
-                                        fontSize: "0.7rem",
-                                        px: 1,
-                                        cursor: "pointer",
-                                        backgroundColor: "success.dark",
-                                        ":hover": {
-                                          backgroundColor: "success.dark",
-                                        },
-                                      }}
-                                      label={`${data.status}`}
-                                    />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip
-                                    placement="top"
-                                    title={`${data?.current_approver?.firstname} 
-                                        ${data?.current_approver?.lastname}`}
-                                    arrow
-                                  >
-                                    <Chip
-                                      onClick={() => handleViewTimeline(data)}
-                                      size="small"
-                                      variant={data.status === "Approved" ? "filled" : "outlined"}
-                                      sx={{
-                                        borderColor: "active.dark",
-                                        color: data?.status === "Approved" ? "white" : "active.dark",
-                                        fontSize: "0.7rem",
-                                        px: 1,
-                                        cursor: "pointer",
-                                        backgroundColor: data?.status === "Approved" && "success.main",
-                                        ":hover": {
-                                          backgroundColor: data?.status === "Approved" ? "success.dark" : "red",
-                                        },
-                                      }}
-                                      label={`${data.status}`}
-                                    />
-                                  </Tooltip>
-                                )}
-                              </TableCell>
+                              <TableCell className="tbl-cell tr-cen-pad45">{transactionStatus(data)}</TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">
                                 {data.status === "Cancelled"
                                   ? Moment(data.deleted_at).format("MMM DD, YYYY")
