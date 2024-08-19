@@ -25,6 +25,7 @@ const ActionMenu = (props) => {
 
   const {
     data,
+    index,
     onArchiveRestoreHandler,
     onApprovalApproveHandler,
     onSubCapexArchiveRestoreHandler,
@@ -60,6 +61,7 @@ const ActionMenu = (props) => {
 
     // Transfer Request
     onArchiveHandler,
+    setSelectedId,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -150,6 +152,7 @@ const ActionMenu = (props) => {
     setUpdateToggle(false);
     handleClose();
     setDisable(false);
+    setSelectedId(index);
   };
 
   const handleEditTransfer = () => {
