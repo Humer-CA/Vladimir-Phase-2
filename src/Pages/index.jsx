@@ -14,6 +14,7 @@ import {
 } from "@mui/icons-material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { LineChart } from "@mui/x-charts";
 
 const dashboardItems = [
   {
@@ -41,6 +42,10 @@ const dashboardItems = [
     color: "lightYellow",
   },
 ];
+
+const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
+const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
+const xLabels = ["Page A", "Page B", "Page C", "Page D", "Page E", "Page F", "Page G"];
 
 const Dashboard = () => {
   const isSmallScreen = useMediaQuery("(max-width: 1400px)");
@@ -172,9 +177,9 @@ const Dashboard = () => {
       <Stack
         backgroundColor="#ff9900"
         sx={{
+          flexDirection: "column",
           height: "200px",
-          width: isMobileScreen ? "90%" : "30%",
-          maxWidth: isMobileScreen ? "90%" : "350px",
+          width: "min(90%, 550px)",
           p: "20px",
           borderRadius: "10px",
           boxShadow: "10px 10px 20px #dfdfdf,-10px -15px 40px #ffffff",
@@ -183,6 +188,16 @@ const Dashboard = () => {
         <Typography fontWeight={600} color="white">
           Reports
         </Typography>
+
+        <LineChart
+          // width={400}
+          height={150}
+          series={[
+            { data: pData, label: "pv", color: "#358a8c" },
+            { data: uData, label: "uv", color: "#024c4e" },
+          ]}
+          xAxis={[{ scaleType: "point", data: xLabels }]}
+        />
       </Stack>
     </Box>
   );
