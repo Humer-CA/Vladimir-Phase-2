@@ -71,6 +71,7 @@ import {
   usePostResubmitRequisitionApiMutation,
   useUpdateRequisitionApiMutation,
   useDeleteRequisitionReferenceApiMutation,
+  useLazyGetByTransactionApiQuery,
 } from "../../../Redux/Query/Request/Requisition";
 
 import { useLazyGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
@@ -93,6 +94,8 @@ import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import moment from "moment";
 import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetWarehouseAllApiQuery } from "../../../Redux/Query/Masterlist/Warehouse";
+import { useLazyGetMinorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
+import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -104,6 +107,7 @@ const schema = yup.object().shape({
   cip_number: yup.string().nullable(),
   attachment_type: yup.string().required().label("Attachment Type").typeError("Attachment Type is a required field"),
   receiving_warehouse_id: yup.object().required().label("Warehouse").typeError("Warehouse is a required field"),
+  minor_category_id: yup.object().required().label("Minor Category").typeError("Minor Category is a required field"),
 
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
   company_id: yup.object().required().label("Company").typeError("Company is a required field"),
@@ -120,7 +124,6 @@ const schema = yup.object().shape({
       is: (value) => value === "Personal Issued",
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
-
   acquisition_details: yup.string().required().label("Acquisition Details"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
@@ -130,7 +133,6 @@ const schema = yup.object().shape({
   uom_id: yup.object().required().label("UOM").typeError("UOM is a required field"),
   cellphone_number: yup.string().nullable().label("Cellphone Number"),
   additional_info: yup.string().nullable().label("Additional Info"),
-
   letter_of_request: yup
     .mixed()
     .label("Letter of Request")
@@ -157,6 +159,8 @@ const AddRequisition = (props) => {
     cip_number: "",
     attachment_type: null,
     receiving_warehouse_id: null,
+    major_category_id: null,
+    minor_category_id: null,
 
     department_id: null,
     company_id: null,
@@ -190,6 +194,7 @@ const AddRequisition = (props) => {
   const [disable, setDisable] = useState(true);
   const [itemData, setItemData] = useState(null);
   const [editRequest, setEditRequest] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   const { state: transactionData } = useLocation();
   const dialog = useSelector((state) => state.booleanState.dialog);
@@ -241,6 +246,27 @@ const AddRequisition = (props) => {
       refetch: isTypeOfRequestRefetch,
     },
   ] = useLazyGetTypeOfRequestAllApiQuery();
+
+  const [
+    majorCategoryTrigger,
+    {
+      data: majorCategoryData = [],
+      isLoading: isMajorCategoryLoading,
+      isSuccess: isMajorCategorySuccess,
+      isError: isMajorCategoryError,
+      refetch: isMajorCategoryRefetch,
+    },
+  ] = useLazyGetMajorCategoryAllApiQuery();
+
+  const [
+    minorCategoryTrigger,
+    {
+      data: minorCategoryData = [],
+      isLoading: isMinorCategoryLoading,
+      isSuccess: isMinorCategorySuccess,
+      isError: isMinorCategoryError,
+    },
+  ] = useLazyGetMinorCategoryAllApiQuery();
 
   const [
     warehouseTrigger,
@@ -392,6 +418,8 @@ const AddRequisition = (props) => {
       cip_number: "",
       attachment_type: null,
       receiving_warehouse_id: null,
+      major_category_id: null,
+      minor_category_id: null,
 
       company_id: null,
       business_unit_id: null,
@@ -439,7 +467,9 @@ const AddRequisition = (props) => {
       setValue("location_id", userCoa?.location);
     }
   }, [transactionData]);
-
+  {
+    // console.log(updateRequest?.major_category);
+  }
   useEffect(() => {
     if (updateRequest.id) {
       const accountable = {
@@ -455,6 +485,10 @@ const AddRequisition = (props) => {
       setValue("cip_number", updateRequest?.cip_number);
       setValue("attachment_type", updateRequest?.attachment_type);
       setValue("receiving_warehouse_id", updateRequest?.warehouse);
+
+      setValue("major_category_id", updateRequest?.major_category?.id);
+      setValue("minor_category_id", updateRequest?.minor_category);
+
       setValue("department_id", updateRequest?.department);
       setValue("company_id", updateRequest?.company);
       setValue("business_unit_id", updateRequest?.business_unit);
@@ -528,6 +562,10 @@ const AddRequisition = (props) => {
       cip_number: cipNumberFormat,
       attachment_type: formData?.attachment_type?.toString(),
       receiving_warehouse_id: formData?.receiving_warehouse_id?.id?.toString(),
+      major_category_id: !transactionData
+        ? formData?.minor_category_id?.major_category?.id?.toString()
+        : formData?.major_category_id?.toString(),
+      minor_category_id: formData?.minor_category_id?.id?.toString(),
 
       department_id: formData?.department_id.id?.toString(),
       company_id: updatingCoa("company_id", "company"),
@@ -633,6 +671,7 @@ const AddRequisition = (props) => {
                 cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
                 receiving_warehouse_id: formData?.receiving_warehouse_id,
+                minor_category_id: formData?.minor_category_id,
 
                 company_id: formData?.company_id,
                 business_unit_id: formData?.business_unit_id,
@@ -725,6 +764,8 @@ const AddRequisition = (props) => {
       : validation()
       ? addConfirmation()
       : submitData();
+
+    setSelectedId(null);
   };
 
   const onSubmitHandler = () => {
@@ -1028,6 +1069,9 @@ const AddRequisition = (props) => {
       cip_number,
       attachment_type,
       warehouse,
+      major_category,
+      minor_category,
+
       company,
       business_unit,
       department,
@@ -1048,6 +1092,7 @@ const AddRequisition = (props) => {
       additional_info,
       attachments,
     } = props;
+
     setUpdateRequest({
       id,
       can_resubmit,
@@ -1056,6 +1101,8 @@ const AddRequisition = (props) => {
       cip_number,
       attachment_type,
       warehouse,
+      major_category,
+      minor_category,
 
       company,
       business_unit,
@@ -1092,6 +1139,7 @@ const AddRequisition = (props) => {
       cip_number: "",
       attachment_type: null,
       receiving_warehouse_id: null,
+      minor_category_id: null,
 
       company_id: null,
       department_id: null,
@@ -1201,7 +1249,9 @@ const AddRequisition = (props) => {
                 label="Acquisition Details"
                 type="text"
                 disabled={updateRequest && disable}
-                onBlur={() => handleAcquisitionDetails()}
+                onBlur={() =>
+                  handleInputValidation("acquisition_details", "acquisition_details", "acquisition_details")
+                }
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 error={!!errors?.acquisition_details}
                 helperText={errors?.acquisition_details?.message}
@@ -1231,7 +1281,7 @@ const AddRequisition = (props) => {
                 name="receiving_warehouse_id"
                 options={warehouseData}
                 onOpen={() => (isWarehouseSuccess ? null : warehouseTrigger())}
-                onBlur={() => handleWarehouse()}
+                onBlur={() => handleInputValidation("receiving_warehouse_id", "warehouse?.id", "warehouse")}
                 loading={isWarehouseLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
@@ -1244,6 +1294,32 @@ const AddRequisition = (props) => {
                     label="Warehouse"
                     error={!!errors?.receiving_warehouse_id}
                     helperText={errors?.receiving_warehouse_id?.message}
+                  />
+                )}
+              />
+            </Box>
+
+            <Divider />
+
+            <Box sx={BoxStyle}>
+              <Typography sx={sxSubtitle}>Category Information</Typography>
+              <CustomAutoComplete
+                name="minor_category_id"
+                control={control}
+                options={minorCategoryData}
+                onOpen={() => (isMinorCategorySuccess ? null : minorCategoryTrigger())}
+                loading={isMinorCategoryLoading}
+                disabled={updateRequest && disable}
+                size="small"
+                getOptionLabel={(option) => `${option.id} - ${option.minor_category_name}`}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    color="secondary"
+                    {...params}
+                    label="Minor Category  "
+                    error={!!errors?.minor_category_id}
+                    helperText={errors?.minor_category_id?.message}
                   />
                 )}
               />
@@ -1728,47 +1804,19 @@ const AddRequisition = (props) => {
     );
   };
 
-  const handleAcquisitionDetails = () => {
-    if (watch("acquisition_details") === "" || addRequestAllApi.length === 0) {
-      return null;
-    } else if (updateRequest?.acquisition_details !== watch("acquisition_details")) {
-      return dispatch(
-        openConfirm({
-          icon: Warning,
-          iconColor: "alert",
-          message: (
-            <Box>
-              <Typography>Are you sure you want to change</Typography>
-              <Typography
-                sx={{
-                  display: "inline-block",
-                  color: "secondary.main",
-                  fontWeight: "bold",
-                }}
-              >
-                ACQUISITION DETAILS?
-              </Typography>
-              <Typography>
-                it will apply to all Items after clicking {transactionData ? "Update" : editRequest ? "Update" : "Add"}
-              </Typography>
-            </Box>
-          ),
+  const handleInputValidation = (watchItem, data, name) => {
+    const watchData = watch(`${watchItem}`);
+    const isWatchDataEmpty = watchItem === "";
+    const isTransactionData = Boolean(transactionData);
+    const isDataAvailable = isTransactionData ? transactionDataApi.length > 0 : addRequestAllApi.length > 0;
+    const currentData = isTransactionData ? updateRequest?.[data] : addRequestAllApi[0]?.[data];
+    const newData = isTransactionData ? updateRequest?.[name] : addRequestAllApi[0]?.[name];
 
-          onConfirm: () => {
-            dispatch(closeConfirm());
-          },
-          onDismiss: () => {
-            setValue("acquisition_details", updateRequest?.acquisition_details);
-          },
-        })
-      );
+    if (isWatchDataEmpty || !isDataAvailable) {
+      return null;
     }
-  };
 
-  const handleWarehouse = () => {
-    if (watch("receiving_warehouse_id") === "" || addRequestAllApi.length === 0) {
-      return null;
-    } else if (updateRequest?.receiving_warehouse_id !== watch("receiving_warehouse_id")) {
+    if (currentData !== (watchData || watchData?.id)) {
       return dispatch(
         openConfirm({
           icon: Warning,
@@ -1783,24 +1831,20 @@ const AddRequisition = (props) => {
                   fontWeight: "bold",
                 }}
               >
-                WAREHOUSE?
+                {name.toUpperCase().replace(/_/g, " ")}?
               </Typography>
               <Typography>
                 it will apply to all Items after clicking {transactionData ? "Update" : editRequest ? "Update" : "Add"}
               </Typography>
             </Box>
           ),
-
           onConfirm: () => {
             dispatch(closeConfirm());
           },
           onDismiss: () => {
-            setValue(
-              "receiving_warehouse_id",
-              addRequestAllApi?.warehouse?.warehouse_name !== watch("receiving_warehouse_id")
-                ? null
-                : updateRequest?.receiving_warehouse_id
-            );
+            if (currentData !== data) {
+              setValue(`${watchItem}`, newData);
+            }
           },
         })
       );
@@ -1893,6 +1937,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
                       {/* <TableCell className="tbl-cell">Attachment Type</TableCell> */}
                       <TableCell className="tbl-cell">Warehouse</TableCell>
+                      <TableCell className="tbl-cell">Minor Category</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
@@ -1941,14 +1986,17 @@ const AddRequisition = (props) => {
                       <>
                         {(transactionData ? transactionDataApi : addRequestAllApi)?.map((data, index) => (
                           <TableRow
+                            hover={Boolean(selectedId === null)}
                             key={index}
                             sx={{
                               "&:last-child td, &:last-child th": {
                                 borderBottom: 0,
                               },
-                              bgcolor: data?.is_removed === 1 ? "#ff00002f" : null,
+                              bgcolor:
+                                data?.is_removed === 1 ? "#ff00002f" : selectedId === index ? "#f0f0f0" : "transparent",
                               "*": { color: data?.is_removed === 1 ? "black!important" : null },
                               cursor: transactionData && transactionDataApi[0]?.po_number ? "pointer" : null,
+                              // "&:hover": { backgroundColor: selectedId === index ? "#f5f5f5" : "#f0f0f0" },
                             }}
                           >
                             <TableCell
@@ -1977,6 +2025,10 @@ const AddRequisition = (props) => {
                             </TableCell> */}
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
                               {data.warehouse?.warehouse_name}
+                            </TableCell>
+
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.minor_category?.minor_category_name}
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
@@ -2139,6 +2191,7 @@ const AddRequisition = (props) => {
                                 <ActionMenu
                                   // DATA
                                   data={data}
+                                  index={index}
                                   status={data?.status}
                                   hideArchive
                                   addRequestAllApi
@@ -2151,6 +2204,7 @@ const AddRequisition = (props) => {
                                   onUpdateHandler={onUpdateHandler}
                                   onUpdateResetHandler={onUpdateResetHandler}
                                   setUpdateToggle={setUpdateToggle}
+                                  setSelectedId={setSelectedId}
                                   //DELETE request
                                   onDeleteHandler={
                                     (transactionData && addRequestAllApi?.length === 0) ||
