@@ -174,6 +174,7 @@ const AddRole = (props) => {
     "requisition",
     "purchase-request",
     "requisition-received-asset",
+    "requisition-rr-summary",
     "requisition-releasing",
 
     //Asset Movement
@@ -408,6 +409,7 @@ const AddRole = (props) => {
     const assetRequisition1 = [
       { label: "Requisition", value: "requisition" },
       { label: "Received Asset", value: "requisition-received-asset" },
+      { label: "RR Summary", value: "requisition-rr-summary" },
       { label: "Releasing", value: "requisition-releasing" },
     ];
 
@@ -787,6 +789,7 @@ const AddRole = (props) => {
                                     ...watch("access_permission"),
                                     "requisition",
                                     "requisition-received-asset",
+                                    "requisition-rr-summary",
                                     "requisition-releasing",
                                   ]),
                                 ]);
