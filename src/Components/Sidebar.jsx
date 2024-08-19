@@ -87,6 +87,7 @@ import {
   HomeRepairService,
   PlaylistRemove,
   Warehouse,
+  TableRows,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../Redux/Query/Notification";
 
@@ -429,6 +430,13 @@ const Sidebar = () => {
           path: "/asset-requisition/requisition-received-asset",
           permission: "requisition-received-asset",
           notification: notifData?.toReceive,
+          setter: closeCollapse,
+        },
+        {
+          label: "RR Summary",
+          icon: TableRows,
+          path: "/asset-requisition/requisition-rr-summary",
+          permission: "requisition-rr-summary",
           setter: closeCollapse,
         },
         {

@@ -8,6 +8,7 @@ import AddReceivingInfo from "../../../Pages/Asset Requisition/Received Asset/Ad
 import {
   Box,
   Button,
+  Card,
   Dialog,
   IconButton,
   ListItemIcon,
@@ -26,14 +27,24 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Add, AddBox, ArrowBackIosRounded, Info, MoreVert, RemoveCircle, Report, Warning } from "@mui/icons-material";
+import {
+  Add,
+  AddBox,
+  ArrowBackIosRounded,
+  Info,
+  MoreVert,
+  RemoveCircle,
+  Report,
+  Visibility,
+  Warning,
+} from "@mui/icons-material";
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
+import { closeDialog, closeDialog1, openDialog, openDialog1 } from "../../../Redux/StateManagement/booleanStateSlice";
 import {
   useGetItemPerTransactionApiQuery,
   useCancelAssetReceivingApiMutation,
@@ -41,18 +52,21 @@ import {
 } from "../../../Redux/Query/Request/AssetReceiving";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
 import AddInclusion from "./AddInclusion";
+import ViewReceivedReceipt from "./ViewReceivedReceipt";
 
 const ViewRequestReceiving = () => {
   const { state: transactionData } = useLocation();
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [mainData, setMainData] = useState(null);
+  const [cardData, setCardData] = useState(null);
   const isSmallScreen = useMediaQuery("(max-width: 1375px)");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const dialog = useSelector((state) => state.booleanState.dialog);
+  const dialog1 = useSelector((state) => state.booleanState.dialogMultiple.dialog1);
 
   const {
     data: receivingData,
@@ -123,6 +137,11 @@ const ViewRequestReceiving = () => {
     setMainData(data);
     dispatch(openDialog());
     handleClose();
+  };
+
+  const handleOpenReceipt = (data) => {
+    dispatch(openDialog1());
+    setCardData(data);
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -289,6 +308,15 @@ const ViewRequestReceiving = () => {
                       </TableCell>
                       <TableCell className="tbl-cell">
                         <TableSortLabel
+                          active={orderBy === `pr_number`}
+                          direction={orderBy === `pr_number` ? order : `asc`}
+                          onClick={() => onSort(`pr_number`)}
+                        >
+                          View RR
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
                           active={orderBy === `reference_number`}
                           direction={orderBy === `reference_number` ? order : `asc`}
                           onClick={() => onSort(`reference_number`)}
@@ -359,6 +387,14 @@ const ViewRequestReceiving = () => {
                                 <Typography fontSize={12}>RR - {data.rr_number}</Typography>
                               </TableCell>
 
+                              <TableCell className="tbl-cell">
+                                <IconButton onClick={() => handleOpenReceipt(data?.rr_received)}>
+                                  <Visibility />
+                                </IconButton>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell">{data.acquisition_cost}</TableCell>
+
                               <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
                               <TableCell className="tbl-cell">
                                 <Typography fontSize="14px" fontWeight="bold">
@@ -418,18 +454,18 @@ const ViewRequestReceiving = () => {
                               )} */}
 
                               {/* <TableCell  className="tbl-cell" align="center"> */}
-                              {data?.type_of_request?.type_of_request_name === "Small Tools" && (
-                                <TableCell className="tbl-cell" align="center">
-                                  <Stack alignItems="center" justifyContent="center">
-                                    <Tooltip title="Add Information" placement="top" arrow>
-                                      <IconButton onClick={handleOpen}>
-                                        <MoreVert />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <MenuItems data={data} />
-                                  </Stack>
-                                </TableCell>
-                              )}
+                              {/* {data?.type_of_request?.type_of_request_name === "Small Tools" && ( */}
+                              <TableCell className="tbl-cell" align="center">
+                                <Stack alignItems="center" justifyContent="center">
+                                  <Tooltip title="Add Information" placement="top" arrow>
+                                    <IconButton onClick={handleOpen}>
+                                      <MoreVert />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <MenuItems data={data} />
+                                </Stack>
+                              </TableCell>
+                              {/* )} */}
                             </TableRow>
                             // </Tooltip>
                           ))}
@@ -475,6 +511,21 @@ const ViewRequestReceiving = () => {
           >
             {/* <AddReceivingInfo data={mainData} /> */}
             <AddInclusion data={mainData?.data} receivingData={receivingData?.data} />
+          </Dialog>
+
+          <Dialog
+            open={dialog1}
+            onClose={() => dispatch(closeDialog1())}
+            sx={{
+              ".MuiPaper-root": {
+                padding: "20px",
+                margin: 0,
+                maxWidth: "800px",
+                borderRadius: "10px",
+              },
+            }}
+          >
+            <ViewReceivedReceipt data={cardData} />
           </Dialog>
         </Box>
       )}

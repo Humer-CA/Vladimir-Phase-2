@@ -6,7 +6,7 @@ import { Outlet } from "react-router";
 import { useLocation } from "react-router-dom";
 
 import { Box, Typography, useMediaQuery } from "@mui/material";
-import { AssignmentTurnedIn, OpenInBrowserOutlined, Output, ShoppingBasket } from "@mui/icons-material";
+import { AssignmentTurnedIn, OpenInBrowserOutlined, Output, ShoppingBasket, TableRows } from "@mui/icons-material";
 import Cards from "../../Components/Reusable/Cards";
 import { useSelector } from "react-redux";
 import { useGetNotificationApiQuery } from "../../Redux/Query/Notification";
@@ -30,14 +30,14 @@ const AssetRequisition = () => {
       permission: "requisition",
     },
 
-    // {
-    //   icon: <ShoppingBasket />,
-    //   label: "Purchase Request",
-    //   description: "Matching of Purchase Request",
-    //   path: "/asset-requisition/purchase-request",
-    //   permission: "purchase-request",
-    //   notification: notifData?.toPR,
-    // },
+    {
+      icon: <TableRows />,
+      label: "RR Summary",
+      description: "Viewing of Received Receipt List",
+      path: "/asset-requisition/requisition-rr-summary",
+      permission: "requisition-rr-summary",
+      notification: notifData?.toPR,
+    },
 
     {
       icon: <OpenInBrowserOutlined />,
