@@ -22,6 +22,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -400,6 +401,7 @@ const AssetTransfer = () => {
 
       <Dialog
         open={drawer}
+        TransitionComponent={Grow}
         PaperProps={{
           sx: { borderRadius: "10px", maxWidth: "1200px" },
         }}

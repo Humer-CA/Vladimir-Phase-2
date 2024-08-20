@@ -26,6 +26,7 @@ import {
   Chip,
   Dialog,
   Divider,
+  Grow,
   IconButton,
   InputAdornment,
   Stack,
@@ -74,7 +75,7 @@ import {
 import {
   useGetAccountTitleAllApiQuery,
   useLazyGetAccountTitleAllApiQuery,
-} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+} from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   useGetByTransactionApiQuery,
   usePostRequisitionApiMutation,
@@ -2379,6 +2380,7 @@ const AdditionalCostRequest = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{
           sx: { borderRadius: "10px", width: "100%", maxWidth: "80%", p: 2, pb: 0 },

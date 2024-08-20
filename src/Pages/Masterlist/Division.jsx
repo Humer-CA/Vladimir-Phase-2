@@ -18,6 +18,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -371,7 +372,7 @@ const Division = () => {
         </Box>
       )}
 
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddDivision data={updateDivision} refetch={refetch} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </Box>

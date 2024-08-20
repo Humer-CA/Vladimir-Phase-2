@@ -22,6 +22,7 @@ import {
   Box,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -339,7 +340,7 @@ const DepreciationStatus = () => {
           />
         </Box>
       )}
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddDepreciationStatus data={updateDepreciationStatus} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </>

@@ -12,6 +12,7 @@ import {
   Fade,
   FormControlLabel,
   FormGroup,
+  Grow,
   IconButton,
   Menu,
   MenuItem,
@@ -511,7 +512,7 @@ const PrintFixedAsset = (props) => {
                 name="endDate"
                 label="End Date"
                 size="small"
-                views={["year", "month", "day"]}
+                // views={["year", "month", "day"]}
                 fullWidth
                 disableFuture
                 reduceAnimations
@@ -776,6 +777,7 @@ const PrintFixedAsset = (props) => {
 
         <Dialog
           open={printAssignmentMemo}
+          TransitionComponent={Grow}
           PaperProps={{
             sx: {
               borderRadius: "10px",

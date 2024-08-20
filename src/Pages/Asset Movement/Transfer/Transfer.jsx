@@ -16,6 +16,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -538,6 +539,7 @@ const Transfer = () => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{ sx: { borderRadius: "10px", maxWidth: "700px" } }}
       >

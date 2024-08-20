@@ -41,6 +41,7 @@ import {
   Tooltip,
   Zoom,
   Dialog,
+  Grow,
 } from "@mui/material";
 
 function ListItemLink(props) {
@@ -176,20 +177,20 @@ const Navbar = () => {
             </Tooltip>
 
             {/* Account --------------------------------------------- */}
-            <Tooltip title="Account" TransitionComponent={Zoom} arrow>
-              <IconButton onClick={handleOpen}>
-                <Avatar
-                  sx={{
-                    cursor: "pointer",
-                    height: "30px",
-                    width: "30px",
-                    bgcolor: "primary.main",
-                  }}
-                >
-                  {userDetails?.user.username.charAt(0).toUpperCase()}
-                </Avatar>
-              </IconButton>
-            </Tooltip>
+            {/* <Tooltip title="Account" TransitionComponent={Zoom} arrow> */}
+            <IconButton onClick={handleOpen}>
+              <Avatar
+                sx={{
+                  cursor: "pointer",
+                  height: "30px",
+                  width: "30px",
+                  bgcolor: "primary.main",
+                }}
+              >
+                {userDetails?.user.username.charAt(0).toUpperCase()}
+              </Avatar>
+            </IconButton>
+            {/* </Tooltip> */}
           </Box>
         </Box>
 
@@ -254,7 +255,7 @@ const Navbar = () => {
       </Menu>
 
       {/* Account --------------------------------------------- */}
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} TransitionComponent={Fade} disablePortal>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} TransitionComponent={Grow} disablePortal>
         <Box className="navbar__menu-settings">
           <Avatar
             sx={{

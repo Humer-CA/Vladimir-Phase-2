@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { openChangePassword } from "../Redux/StateManagement/changePasswordSlice";
 
-import { Box, Dialog, IconButton, InputAdornment, Typography } from "@mui/material";
+import { Box, Dialog, Grow, IconButton, InputAdornment, Typography } from "@mui/material";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -275,7 +275,7 @@ const LoginPage = () => {
         </Box>
       </Box>
 
-      <Dialog open={changePassword} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={changePassword} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <ChangePassword resetLogin={reset} />
       </Dialog>
     </Box>

@@ -49,6 +49,7 @@ import {
   Chip,
   Dialog,
   Drawer,
+  Grow,
   Stack,
   Table,
   TableBody,
@@ -560,6 +561,7 @@ const FixedAsset = (props) => {
 
       <Dialog
         open={drawer}
+        TransitionComponent={Grow}
         // onClose={() => dispatch(closeDrawer())}
         anchor="right"
         PaperProps={{
@@ -579,6 +581,7 @@ const FixedAsset = (props) => {
       {/* Add Cost */}
       <Drawer
         open={add}
+        TransitionComponent={Grow}
         // onClose={() => dispatch(closeDrawer())}
         anchor="right"
         PaperProps={{
@@ -593,6 +596,7 @@ const FixedAsset = (props) => {
       </Drawer>
       <Dialog
         open={importFile}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeImport())}
         PaperProps={{
           sx: {
@@ -608,6 +612,7 @@ const FixedAsset = (props) => {
       </Dialog>
       <Dialog
         open={drawer1}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDrawer1())}
         PaperProps={{
           sx: {
@@ -624,6 +629,7 @@ const FixedAsset = (props) => {
 
       <Dialog
         open={print}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closePrint())}
         PaperProps={{
           sx: {
@@ -642,6 +648,7 @@ const FixedAsset = (props) => {
 
       <Dialog
         open={exportFile}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeExport())}
         PaperProps={{
           sx: {
@@ -658,6 +665,7 @@ const FixedAsset = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{
           sx: {
@@ -676,6 +684,7 @@ const FixedAsset = (props) => {
 
       <Dialog
         open={scanFile}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeScan())}
         PaperProps={{
           sx: {

@@ -18,6 +18,7 @@ import {
   Box,
   Chip,
   Dialog,
+  Grow,
   Stack,
   Table,
   TableBody,
@@ -416,7 +417,7 @@ const MinorCategory = () => {
             onRowsPerPageChange={perPageHandler}
           />
 
-          <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+          <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
             <AddMinorCategory data={updateMinorCategory} onUpdateResetHandler={onUpdateResetHandler} />
           </Dialog>
         </Box>

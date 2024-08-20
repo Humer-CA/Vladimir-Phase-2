@@ -21,6 +21,7 @@ import {
   Box,
   Button,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -399,6 +400,7 @@ const UnitApprovers = () => {
 
       <Dialog
         open={drawer}
+        TransitionComponent={Grow}
         PaperProps={{
           sx: { borderRadius: "10px", maxWidth: "1200px" },
         }}

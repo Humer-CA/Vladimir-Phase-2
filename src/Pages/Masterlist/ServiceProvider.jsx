@@ -19,6 +19,7 @@ import {
   Box,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -322,7 +323,7 @@ const ServiceProvider = () => {
           />
         </Box>
       )}
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddServiceProvider data={updateServiceProvider} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </Box>

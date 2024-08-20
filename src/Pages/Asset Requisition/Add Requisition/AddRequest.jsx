@@ -25,6 +25,7 @@ import {
   Chip,
   Dialog,
   Divider,
+  Grow,
   IconButton,
   InputAdornment,
   Stack,
@@ -64,7 +65,7 @@ import { useLazyGetUnitOfMeasurementAllApiQuery } from "../../../Redux/Query/Mas
 
 import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
 import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
-import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   useGetByTransactionApiQuery,
   usePostRequisitionApiMutation,
@@ -607,7 +608,7 @@ const AddRequisition = (props) => {
 
     const validation = () => {
       const coaValidation = (name, value) => {
-        transactionData && transactionDataApi.every((item) => item?.[name]?.id !== watch(value)?.id);
+        transactionData && transactionDataApi?.every((item) => item?.[name]?.id !== watch(value)?.id);
       };
       if (transactionData) {
         return (
@@ -2302,6 +2303,7 @@ const AddRequisition = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{
           sx: { borderRadius: "10px", width: "100%", maxWidth: "80%", p: 2, pb: 0 },

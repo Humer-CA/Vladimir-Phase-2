@@ -25,11 +25,13 @@ import {
   Chip,
   Dialog,
   Fade,
+  Grow,
   IconButton,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -40,6 +42,7 @@ import {
   Tooltip,
   Typography,
   useMediaQuery,
+  Zoom,
 } from "@mui/material";
 import {
   AddBox,
@@ -318,6 +321,7 @@ const Requisition = () => {
               setRequestFilter={setRequestFilter}
               requestFilter={requestFilter}
             />
+
             <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
               <Button
                 onClick={handleOpenAdd}
@@ -518,6 +522,7 @@ const Requisition = () => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{ sx: { borderRadius: "10px", maxWidth: "700px" } }}
       >

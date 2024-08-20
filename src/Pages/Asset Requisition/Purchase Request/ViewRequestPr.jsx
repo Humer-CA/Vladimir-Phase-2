@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Dialog,
+  Grow,
   IconButton,
   Stack,
   Table,
@@ -394,6 +395,7 @@ const ViewRequestPr = () => {
 
           <Dialog
             open={dialog}
+            TransitionComponent={Grow}
             // onClose={() => dispatch(closeDialog())}
             sx={{
               ".MuiPaper-root": {

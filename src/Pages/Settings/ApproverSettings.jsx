@@ -19,6 +19,7 @@ import {
   Box,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -258,7 +259,7 @@ const ApproverSettings = () => {
 
                   <TableBody>
                     {approverSettingsData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {approverSettingsSuccess &&
@@ -343,7 +344,7 @@ const ApproverSettings = () => {
           </Box>
         </>
       )}
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddApproverSettings data={updateApproverSettings} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </Box>

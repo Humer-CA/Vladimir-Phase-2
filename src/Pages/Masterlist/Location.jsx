@@ -18,6 +18,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -407,7 +408,12 @@ const Location = () => {
           </Box>
         </>
       )}
-      <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog
+        open={dialog}
+        TransitionComponent={Grow}
+        onClose={() => dispatch(closeDialog())}
+        PaperProps={{ sx: { borderRadius: "10px" } }}
+      >
         <ViewTagged data={viewSubUnit} mapData={mapDepartmentData} setViewSubUnit={setViewSubUnit} name="Sub-Unit" />
       </Dialog>
     </Box>

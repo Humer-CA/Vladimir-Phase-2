@@ -18,6 +18,7 @@ import {
 import {
   Box,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -228,7 +229,7 @@ const CategoryList = () => {
             onRowsPerPageChange={perPageHandler}
           />
 
-          <Dialog open={drawer} onClose={() => {}}>
+          <Dialog open={drawer} TransitionComponent={Grow} onClose={() => {}}>
             <AddCategoryList data={updateCategoryList} onUpdateResetHandler={onUpdateResetHandler} />
           </Dialog>
         </Box>

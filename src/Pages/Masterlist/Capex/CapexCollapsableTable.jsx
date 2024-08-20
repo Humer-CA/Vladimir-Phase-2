@@ -12,6 +12,7 @@ import {
   Chip,
   Collapse,
   Dialog,
+  Grow,
   IconButton,
   Stack,
   Table,
@@ -526,7 +527,7 @@ const CustomTableCollapse = (props) => {
         </TableCell>
       </TableRow>
 
-      <Dialog open={subCapexDialog} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={subCapexDialog} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddSubCapex
           data={updateSubCapex}
           capexId={data?.id}

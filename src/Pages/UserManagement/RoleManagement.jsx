@@ -21,6 +21,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -368,7 +369,7 @@ const Role = () => {
           />
         </Box>
       )}
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddRole data={updateRole} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </Box>

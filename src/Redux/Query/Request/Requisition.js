@@ -128,6 +128,7 @@ export const {
   useLazyGetRequisitionAllApiQuery,
   useGetRequisitionIdApiQuery,
   useGetByTransactionApiQuery,
+  useLazyGetByTransactionApiQuery,
   useGetByTransactionPageApiQuery,
   usePatchRequisitionStatusApiMutation,
   usePostRequisitionApiMutation,

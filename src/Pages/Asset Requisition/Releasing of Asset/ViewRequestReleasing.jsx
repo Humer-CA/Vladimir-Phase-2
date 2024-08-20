@@ -23,6 +23,7 @@ import {
   Dialog,
   Divider,
   Drawer,
+  Grow,
   IconButton,
   List,
   ListItemButton,
@@ -789,6 +790,7 @@ const ViewRequestReleasing = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{
           sx: {

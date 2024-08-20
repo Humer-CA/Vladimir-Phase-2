@@ -22,6 +22,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -399,6 +400,7 @@ const AssetPullout = () => {
 
       <Dialog
         open={drawer}
+        TransitionComponent={Grow}
         PaperProps={{
           sx: { borderRadius: "10px", maxWidth: "1200px" },
         }}

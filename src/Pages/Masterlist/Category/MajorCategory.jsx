@@ -21,6 +21,7 @@ import {
   Box,
   Chip,
   Dialog,
+  Grow,
   Stack,
   Table,
   TableBody,
@@ -368,7 +369,7 @@ const MajorCategory = () => {
             onRowsPerPageChange={perPageHandler}
           />
 
-          <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+          <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
             <AddMajorCategory data={updateMajorCategory} onUpdateResetHandler={onUpdateResetHandler} />
           </Dialog>
         </Box>

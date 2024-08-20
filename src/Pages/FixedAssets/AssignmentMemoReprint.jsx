@@ -13,6 +13,7 @@ import {
   Fade,
   FormControlLabel,
   FormGroup,
+  Grow,
   IconButton,
   Menu,
   MenuItem,
@@ -528,6 +529,7 @@ const AssignmentMemoReprint = (props) => {
         </Box>
         <Dialog
           open={printAssignmentMemo}
+          TransitionComponent={Grow}
           PaperProps={{
             sx: {
               borderRadius: "10px",

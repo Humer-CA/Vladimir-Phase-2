@@ -21,6 +21,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   IconButton,
   Table,
   TableBody,
@@ -409,7 +410,12 @@ const RequestMonitoring = () => {
           </Box>
         </>
       )}
-      <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog
+        open={dialog}
+        TransitionComponent={Grow}
+        onClose={() => dispatch(closeDialog())}
+        PaperProps={{ sx: { borderRadius: "10px" } }}
+      >
         <RequestTimeline data={transactionIdData} />
       </Dialog>
     </Box>

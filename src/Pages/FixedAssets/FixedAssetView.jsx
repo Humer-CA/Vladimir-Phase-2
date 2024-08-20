@@ -25,6 +25,7 @@ import {
   Dialog,
   Divider,
   Drawer,
+  Grow,
   IconButton,
   List,
   ListItemButton,
@@ -1328,6 +1329,7 @@ const FixedAssetView = (props) => {
 
       <Dialog
         open={viewDepre}
+        TransitionComponent={Grow}
         PaperProps={{
           sx: {
             borderRadius: "10px",
@@ -1388,6 +1390,7 @@ const FixedAssetView = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog1())}
         sx={{
           ".MuiPaper-root": {

@@ -18,6 +18,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -358,7 +359,7 @@ const Warehouse = () => {
         </Box>
       )}
 
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddWarehouse data={updateWarehouse} refetch={refetch} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
     </Box>

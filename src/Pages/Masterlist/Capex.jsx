@@ -28,6 +28,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -411,12 +412,13 @@ const Capex = () => {
         </>
       )}
 
-      <Dialog open={drawer} PaperProps={{ sx: { borderRadius: "10px" } }}>
+      <Dialog open={drawer} TransitionComponent={Grow} PaperProps={{ sx: { borderRadius: "10px" } }}>
         <AddCapex data={updateCapex} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
 
       <Dialog
         open={importFile}
+        TransitionComponent={Grow}
         onClose={handleCloseImport}
         PaperProps={{
           sx: {
