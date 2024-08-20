@@ -66,7 +66,7 @@ const Confirmation = (props) => {
 
   const handleClose = () => {
     dispatch(closeConfirm());
-    onDismiss();
+    onDismiss && onDismiss();
   };
 
   // WORKING --------------------------
