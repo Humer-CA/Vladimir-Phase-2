@@ -23,6 +23,8 @@ import {
 } from "../../Redux/StateManagement/booleanStateSlice";
 
 import { LoadingButton } from "@mui/lab";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import {
   Badge,
   Box,
@@ -33,6 +35,7 @@ import {
   Fade,
   FormControlLabel,
   FormGroup,
+  Grow,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -49,11 +52,13 @@ import {
   AddCard,
   Archive,
   CheckBox,
+  DateRange,
   FileCopy,
   Filter,
   FilterAlt,
   FilterList,
   LibraryAdd,
+  MoreVert,
   PostAdd,
   Print,
   PrintOutlined,
@@ -64,6 +69,7 @@ import {
   TransferWithinAStation,
 } from "@mui/icons-material";
 import { useGetNotificationApiQuery } from "../../Redux/Query/Notification";
+import moment from "moment";
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 
 const MasterlistToolbar = (props) => {
@@ -92,6 +98,11 @@ const MasterlistToolbar = (props) => {
     hideSearch,
     isRequest,
     setIsRequest,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
+    showDateFilter,
   } = props;
 
   const dispatch = useDispatch();
@@ -103,6 +114,8 @@ const MasterlistToolbar = (props) => {
   const openImportFa = Boolean(anchorElImportFa);
   const [anchorElPrintFa, setAnchorElPrintFa] = useState(null);
   const openPrintFa = Boolean(anchorElPrintFa);
+  const [anchorElDateFilter, setAnchorElDateFilter] = useState(null);
+  const openDateFilter = Boolean(anchorElDateFilter);
   const [anchorElRequestFilter, setAnchorElRequestFilter] = useState(null);
   const openRequestFilter = Boolean(anchorElRequestFilter);
   const [anchorElFaFilter, setAnchorElFaFilter] = useState(null);
@@ -112,6 +125,7 @@ const MasterlistToolbar = (props) => {
     setAnchorEl(null) ||
       setAnchorElImportFa(null) ||
       setAnchorElPrintFa(null) ||
+      setAnchorElDateFilter(null) ||
       setAnchorElRequestFilter(null) ||
       setAnchorElFaFilter(null);
   };
@@ -210,6 +224,10 @@ const MasterlistToolbar = (props) => {
     setAnchorElPrintFa(!e.currentTarget);
   };
 
+  const handleOpenDateFilter = (e) => {
+    setAnchorElDateFilter(e.currentTarget);
+  };
+
   const handleOpenPrintRequest = (e) => {
     setIsRequest(1);
     dispatch(openPrint());
@@ -253,8 +271,6 @@ const MasterlistToolbar = (props) => {
       }
     }
   };
-
-  const handleVoucherFilterChange = (value) => {};
 
   return (
     <Box className="masterlist-toolbar">
@@ -307,7 +323,6 @@ const MasterlistToolbar = (props) => {
         <Box className="masterlist-toolbar__addBtn">
           {onPrint && permissions?.split(", ").includes("print-fa") && (
             <Badge color="error" badgeContent={notifData?.toTagCount} variant="dot">
-              {" "}
               <Button
                 component={Link}
                 variant="outlined"
@@ -323,7 +338,7 @@ const MasterlistToolbar = (props) => {
             </Badge>
           )}
 
-          {onPrint && (
+          {onPrint && permissions?.split(", ").includes("print-fa") && (
             <Menu
               anchorEl={anchorElPrintFa}
               open={openPrintFa}
@@ -643,7 +658,7 @@ const MasterlistToolbar = (props) => {
               anchorEl={anchorElRequestFilter}
               open={openRequestFilter}
               onClose={handleClose}
-              TransitionComponent={Fade}
+              TransitionComponent={Grow}
               disablePortal
               transformOrigin={{ horizontal: "left", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "top" }}
@@ -771,6 +786,86 @@ const MasterlistToolbar = (props) => {
               }}
               onKeyDown={searchHandler}
             />
+          )}
+
+          {showDateFilter && (
+            <>
+              <Tooltip title="Filter" placement="top" arrow>
+                <IconButton onClick={handleOpenDateFilter}>
+                  <DateRange />
+                </IconButton>
+              </Tooltip>
+
+              {Boolean(showDateFilter) && (
+                <Menu
+                  anchorEl={anchorElDateFilter}
+                  open={openDateFilter}
+                  onClose={handleClose}
+                  TransitionComponent={Grow}
+                  disablePortal
+                  // transformOrigin={{ horizontal: "right", vertical: "top" }}
+                  // anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                >
+                  <MenuItem
+                    disableRipple
+                    sx={{
+                      ":focus-within": {
+                        background: "transparent",
+                      },
+                    }}
+                  >
+                    <Stack gap={2}>
+                      <Typography fontFamily="Anton" color="secondary.main">
+                        Date Filter
+                      </Typography>
+
+                      <DatePicker
+                        name="from"
+                        label="From"
+                        disableFuture
+                        value={dateFrom ? new Date(dateFrom) : null}
+                        onChange={(value) => {
+                          if (value === null) {
+                            setDateFrom(null);
+                            setDateTo(null);
+                          } else {
+                            setDateFrom(moment(value).format("YYYY-MM-DD"));
+                          }
+                        }}
+                        maxDate={dateTo ? new Date(dateTo) : null}
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            color: "secondary",
+                          },
+                        }}
+                        reduceAnimations
+                      />
+
+                      <DatePicker
+                        name="to"
+                        label="To"
+                        value={dateTo ? new Date(dateTo) : null}
+                        disableFuture
+                        minDate={dateFrom ? new Date(dateFrom) : null}
+                        onChange={(value) => {
+                          setDateTo(moment(value).format("YYYY-MM-DD"));
+                        }}
+                        disabled={!dateFrom}
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            color: "secondary",
+                          },
+                        }}
+                        reduceAnimations
+                      />
+                      {/* <Button>Search</Button> */}
+                    </Stack>
+                  </MenuItem>
+                </Menu>
+              )}
+            </>
           )}
         </Box>
       </Box>
