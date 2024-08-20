@@ -23,7 +23,9 @@ const CustomDatePicker = ({
         return (
           <DatePicker
             {...datepicker}
+            reduceAnimations
             value={value}
+            size="small"
             onChange={(value) => {
               // if (!moment(value).isValid()) return;
 
