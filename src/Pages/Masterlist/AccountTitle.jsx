@@ -9,13 +9,6 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 
 import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
 
-import { useLazyGetFistoAccountTitleAllApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/FistoAccountTitle";
-import {
-  usePostAccountTitleApiMutation,
-  useGetAccountTitleApiQuery,
-  usePatchAccountTitleStatusApiMutation,
-} from "../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
-
 // MUI
 import {
   Box,
@@ -35,6 +28,12 @@ import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ActionMenu from "../../Components/Reusable/ActionMenu";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
+import { useLazyGetYmirAccountTitleAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import {
+  useGetAccountTitleApiQuery,
+  usePatchAccountTitleStatusApiMutation,
+  usePostAccountTitleApiMutation,
+} from "../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 
 const AccountTitle = () => {
   const [search, setSearch] = useState("");
@@ -84,14 +83,14 @@ const AccountTitle = () => {
   const [
     trigger,
     {
-      data: fistoAccountTitleApi,
-      isLoading: fistoAccountTitleApiLoading,
-      isSuccess: fistoAccountTitleApiSuccess,
-      isFetching: fistoAccountTitleApiFetching,
-      isError: fistoAccountTitleApiError,
-      refetch: fistoAccountTitleApiRefetch,
+      data: ymirAccountTitleApi,
+      isLoading: ymirAccountTitleApiLoading,
+      isSuccess: ymirAccountTitleApiSuccess,
+      isFetching: ymirAccountTitleApiFetching,
+      isError: ymirAccountTitleApiError,
+      refetch: ymirAccountTitleApiRefetch,
     },
-  ] = useLazyGetFistoAccountTitleAllApiQuery();
+  ] = useLazyGetYmirAccountTitleAllApiQuery();
 
   const {
     data: accountTitleApiData,
@@ -119,10 +118,10 @@ const AccountTitle = () => {
   const [patchAccountTitleStatus, { isLoading }] = usePatchAccountTitleStatusApiMutation();
 
   useEffect(() => {
-    if (fistoAccountTitleApiSuccess) {
-      postAccountTitle(fistoAccountTitleApi);
+    if (ymirAccountTitleApiSuccess) {
+      postAccountTitle(ymirAccountTitleApi);
     }
-  }, [fistoAccountTitleApiSuccess, fistoAccountTitleApiFetching]);
+  }, [ymirAccountTitleApiSuccess, ymirAccountTitleApiFetching]);
 
   const dispatch = useDispatch();
 

@@ -40,7 +40,7 @@ import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
 import { useGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
 import { useGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   usePostRequisitionApiMutation,
   useUpdateRequisitionApiMutation,

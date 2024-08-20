@@ -41,7 +41,7 @@ import { useLazyGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist
 import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
-import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   useLazyGetVoucherFaApiQuery,
   usePostFixedAssetApiMutation,

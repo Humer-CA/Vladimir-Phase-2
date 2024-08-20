@@ -31,7 +31,7 @@ import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/
 
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
-import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 
 const schema = yup.object().shape({
   id: yup.string(),

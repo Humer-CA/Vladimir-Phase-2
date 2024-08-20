@@ -69,7 +69,7 @@ import {
 import {
   useGetAccountTitleAllApiQuery,
   useLazyGetAccountTitleAllApiQuery,
-} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+} from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import { useGetByTransactionApiQuery, useUpdateRequisitionApiMutation } from "../../../Redux/Query/Request/Requisition";
 
 import { useLocation, useNavigate } from "react-router-dom";

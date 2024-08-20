@@ -9,9 +9,6 @@ import { openToast } from "../../Redux/StateManagement/toastSlice";
 
 import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagement/confirmSlice";
 
-import { useLazyGetFistoSupplierAllApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/FistoSupplier";
-import { usePostSupplierApiMutation, useGetSupplierApiQuery } from "../../Redux/Query/Masterlist/FistoCoa/Supplier";
-
 // MUI
 import {
   Box,
@@ -31,6 +28,8 @@ import { Help } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
+import { useGetSupplierApiQuery, usePostSupplierApiMutation } from "../../Redux/Query/Masterlist/YmirCoa/Supplier";
+import { useLazyGetYmirSupplierAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 
 const Supplier = () => {
   const [search, setSearch] = useState("");
@@ -82,15 +81,15 @@ const Supplier = () => {
   const [
     trigger,
     {
-      data: fistoSupplierApi,
-      isLoading: fistoSupplierApiLoading,
-      isSuccess: fistoSupplierApiSuccess,
-      isFetching: fistoSupplierApiFetching,
-      isError: fistoSupplierApiError,
+      data: ymirSupplierApi,
+      isLoading: ymirSupplierApiLoading,
+      isSuccess: ymirSupplierApiSuccess,
+      isFetching: ymirSupplierApiFetching,
+      isError: ymirSupplierApiError,
 
-      refetch: fistoSupplierApiRefetch,
+      refetch: ymirSupplierApiRefetch,
     },
-  ] = useLazyGetFistoSupplierAllApiQuery();
+  ] = useLazyGetYmirSupplierAllApiQuery();
 
   const {
     data: supplierApiData,
@@ -116,10 +115,10 @@ const Supplier = () => {
   ] = usePostSupplierApiMutation();
 
   useEffect(() => {
-    if (fistoSupplierApiSuccess) {
-      postSupplier(fistoSupplierApi);
+    if (ymirSupplierApiSuccess) {
+      postSupplier(ymirSupplierApi);
     }
-  }, [fistoSupplierApiSuccess, fistoSupplierApiFetching]);
+  }, [ymirSupplierApiSuccess, ymirSupplierApiFetching]);
 
   useEffect(() => {
     if (isPostError) {

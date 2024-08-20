@@ -65,7 +65,7 @@ import {
 import {
   useGetAccountTitleAllApiQuery,
   useLazyGetAccountTitleAllApiQuery,
-} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+} from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   useLazyGetVoucherFaApiQuery,
   usePostFixedAssetApiMutation,
@@ -957,8 +957,6 @@ const AddFixedAsset = (props) => {
           </Box>
         </Box>
 
-        <Divider />
-
         <Box
           sx={{
             display: "flex",
@@ -967,6 +965,8 @@ const AddFixedAsset = (props) => {
             width: "100%",
           }}
         >
+          <Divider flexItem sx={{ color: "red" }} />
+
           <Typography sx={sxSubtitle}>Set the Category</Typography>
 
           <CustomAutoComplete
@@ -1039,8 +1039,6 @@ const AddFixedAsset = (props) => {
           />
         </Box>
 
-        <Divider />
-
         <Box
           sx={{
             display: "flex",
@@ -1049,6 +1047,7 @@ const AddFixedAsset = (props) => {
             width: "100%",
           }}
         >
+          <Divider flexItem />
           <Typography sx={sxSubtitle}>Chart of Accounts (COA)</Typography>
 
           {/* OLD Departments */}
@@ -1221,7 +1220,6 @@ const AddFixedAsset = (props) => {
             options={accountTitleData}
             loading={isAccountTitleLoading}
             size="small"
-            // disabled
             getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
             isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
             renderInput={(params) => (
@@ -1236,8 +1234,6 @@ const AddFixedAsset = (props) => {
           />
         </Box>
 
-        <Divider />
-
         <Box
           sx={{
             display: "flex",
@@ -1246,6 +1242,7 @@ const AddFixedAsset = (props) => {
             width: "100%",
           }}
         >
+          <Divider flexItem />
           <Typography sx={sxSubtitle}>Asset Information</Typography>
 
           <CustomTextField
@@ -1280,13 +1277,12 @@ const AddFixedAsset = (props) => {
             name="acquisition_date"
             label="Acquisition Date"
             size="small"
-            views={["year", "month", "day"]}
-            openTo="year"
+            // views={["year", "month", "day"]}
+            // openTo="year"
             error={!!errors?.acquisition_date}
             helperText={errors?.acquisition_date?.message}
             fullWidth={isFullWidth ? true : false}
             maxDate={new Date()}
-            reduceAnimations
           />
 
           <CustomAutoComplete
@@ -1355,6 +1351,7 @@ const AddFixedAsset = (props) => {
             color="secondary"
             name="cellphone_number"
             label="Cellphone # (Optional)"
+            optional
             type="text"
             size="small"
             error={!!errors?.cellphone_number}
@@ -1370,6 +1367,7 @@ const AddFixedAsset = (props) => {
             control={control}
             name="brand"
             label="Brand (Optional)"
+            optional
             type="text"
             color="secondary"
             size="small"
@@ -1383,6 +1381,7 @@ const AddFixedAsset = (props) => {
             control={control}
             name="care_of"
             label="Care of (Optional)"
+            optional
             type="text"
             color="secondary"
             size="small"
@@ -1396,7 +1395,7 @@ const AddFixedAsset = (props) => {
               autoComplete="off"
               control={control}
               name="voucher"
-              label="Voucher (Optional)"
+              label="Voucher"
               type="text"
               color="secondary"
               size="small"
@@ -1426,7 +1425,7 @@ const AddFixedAsset = (props) => {
             autoComplete="off"
             control={control}
             name="receipt"
-            label="Receipt (Optional)"
+            label="Receipt"
             type="text"
             color="secondary"
             size="small"
@@ -1586,8 +1585,6 @@ const AddFixedAsset = (props) => {
           </Box> */}
         </Box>
 
-        <Divider />
-
         <Box>
           <Box
             sx={{
@@ -1598,6 +1595,8 @@ const AddFixedAsset = (props) => {
               mb: "5px",
             }}
           >
+            <Divider flexItem />
+
             <Typography sx={sxSubtitle}>Depreciation</Typography>
 
             <CustomAutoComplete
@@ -1662,8 +1661,8 @@ const AddFixedAsset = (props) => {
                 label="Release Date"
                 size="small"
                 disabled
-                views={["year", "month", "day"]}
-                openTo="year"
+                // views={["year", "month", "day"]}
+                // openTo="year"
                 error={!!errors?.release_date}
                 helperText={errors?.release_date?.message}
                 fullWidth={isFullWidth ? true : false}

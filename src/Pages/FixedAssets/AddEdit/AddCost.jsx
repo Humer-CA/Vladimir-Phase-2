@@ -62,7 +62,7 @@ import {
 import {
   useGetAccountTitleAllApiQuery,
   useLazyGetAccountTitleAllApiQuery,
-} from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+} from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import {
   useGetFixedAssetAllApiQuery,
   useLazyGetFixedAssetAllApiQuery,
