@@ -11,13 +11,13 @@ const NoRecordsFound = (props) => {
       heightVh = "calc(100vh - 860px)";
       break;
     case "small":
-      heightVh = "calc(100vh - 500px)";
+      heightVh = "calc(100vh - 450px)";
       break;
     case "medium":
       heightVh = "calc(100vh - 400px)";
       break;
     default:
-      heightVh = "calc(100vh - 390px)";
+      heightVh = "100%";
   }
 
   return (
