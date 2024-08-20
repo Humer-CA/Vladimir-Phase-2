@@ -15,6 +15,7 @@ import {
   DoneOutline,
   Cancel,
   Undo,
+  CancelRounded,
 } from "@mui/icons-material";
 
 const ActionMenu = (props) => {
@@ -62,6 +63,10 @@ const ActionMenu = (props) => {
     // Transfer Request
     onArchiveHandler,
     setSelectedId,
+
+    // RR
+    showCancelRr,
+    handleCancelRR,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -181,6 +186,10 @@ const ActionMenu = (props) => {
       </ListItemText>
     </MenuItem>
   );
+
+  const handleCancelRr = () => {
+    handleCancelRR(data);
+  };
 
   return (
     <Box>
@@ -326,7 +335,7 @@ const ActionMenu = (props) => {
           TransitionComponent={Fade}
           disablePortal
         >
-          {faStatus !== "Disposed" && (
+          {faStatus !== "Disposed" && !hideEdit && (
             <MenuItem onClick={handleEdit} dense>
               <ListItemIcon>
                 <BorderColor />
@@ -396,6 +405,33 @@ const ActionMenu = (props) => {
             </ListItemIcon>
             <ListItemText disableTypography align="left">
               Return
+            </ListItemText>
+          </MenuItem>
+        </Menu>
+      )}
+
+      {showCancelRr && (
+        <Menu
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          TransitionComponent={Fade}
+          disablePortal
+        >
+          <MenuItem onClick={handleCancelRr} dense>
+            <ListItemIcon>
+              <CancelRounded />
+            </ListItemIcon>
+            <ListItemText disableTypography align="left">
+              Cancel
             </ListItemText>
           </MenuItem>
         </Menu>
