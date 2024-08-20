@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardActionArea, CardContent, Typography, IconButton, Badge, Stack, useMediaQuery } from "@mui/material";
+import { Card, CardActionArea, CardContent, Typography, Badge, Stack, useMediaQuery, Box } from "@mui/material";
 import { ArrowForward } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -22,12 +22,12 @@ const Cards = (props) => {
         <CardContent className="parentSidebar__content">
           {!isSmallScreen && (
             <Badge color="error" badgeContent={data?.notification}>
-              <IconButton className="parentSidebar__icon">{data.icon}</IconButton>
+              <Stack className="parentSidebar__icon">{data.icon}</Stack>
             </Badge>
           )}
           <Stack flexDirection="column" gap={0.2} alignItems="flex-start">
             <Stack flexDirection="row" alignItems="center" gap={2}>
-              {isSmallScreen && <IconButton className="parentSidebar__icon">{data.icon}</IconButton>}
+              {isSmallScreen && <Stack className="parentSidebar__icon">{data.icon}</Stack>}
               <Stack>
                 <Typography component="div" fontWeight="bold" color="secondary">
                   {data.label}
@@ -47,20 +47,24 @@ const Cards = (props) => {
           </Stack>
 
           {!isSmallScreen && (
-            <IconButton
-              size="small"
+            <Box
               sx={{
                 alignSelf: "flex-end",
-                ":hover": {
-                  backgroundColor: "secondary.main",
-                  color: "white",
-                },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
                 backgroundColor: "secondary.main",
                 color: "white",
+                ":hover": {
+                  backgroundColor: "secondary.dark",
+                },
               }}
             >
               <ArrowForward />
-            </IconButton>
+            </Box>
           )}
         </CardContent>
       </CardActionArea>
