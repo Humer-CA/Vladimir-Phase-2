@@ -31,6 +31,8 @@ import {
 } from "@mui/material";
 import { Help, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
 import {
   useGetAssetReceivingApiQuery,
   useGetAssetReceivedApiQuery,
@@ -42,6 +44,8 @@ const ReceivingTable = (props) => {
   const { received } = props;
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("active");
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
 
@@ -168,13 +172,16 @@ const ReceivingTable = (props) => {
       per_page: perPage,
       status: status,
       search: search,
+      from: dateFrom,
+      to: dateTo,
     },
     { refetchOnMountOrArgChange: true }
   );
 
   const handleViewData = (data) => {
-    navigate(`/asset-requisition/requisition-received-asset/${data.transaction_number}`, {
-      state: { ...data, received },
+    const receivedData = received ? received : null;
+    navigate(`/asset-requisition/requisition-received-asset/${data?.transaction_number}`, {
+      state: { ...data, receivedData },
     });
   };
 
@@ -185,7 +192,17 @@ const ReceivingTable = (props) => {
       {receivingData && !receivingError && (
         <>
           <Box className="mcontainer__wrapper">
-            <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
+            <MasterlistToolbar
+              onStatusChange={setStatus}
+              onSearchChange={setSearch}
+              onSetPage={setPage}
+              dateFrom={dateFrom}
+              setDateFrom={setDateFrom}
+              dateTo={dateTo}
+              setDateTo={setDateTo}
+              showDateFilter
+              hideArchive
+            />
 
             <Box>
               <TableContainer className="mcontainer__th-body-category">
@@ -267,36 +284,37 @@ const ReceivingTable = (props) => {
                         {receivingSuccess &&
                           [...receivingData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
                             <TableRow
-                              key={data.id}
+                              key={data?.id}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   borderBottom: 0,
                                 },
                               }}
                             >
-                              <TableCell className="tbl-cell">{data.transaction_number}</TableCell>
+                              <TableCell className="tbl-cell">{data?.transaction_number}</TableCell>
                               <TableCell className="tbl-cell text-weight">
                                 <Typography fontSize={14} fontWeight={600} color="secondary.main">
-                                  {data.acquisition_details}
+                                  {data?.acquisition_details}
                                 </Typography>
 
                                 <Typography fontSize={12} color="secondary.light">
-                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
+                                  ({data?.warehouse?.id}) - {data?.warehouse?.warehouse_name}
+                                </Typography>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell">
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PR - ${data?.pr_number}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PO - ${data?.po_number.replace(/,/g, ", ")}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main" width="200px" noWrap>
+                                  {`RR - ${data?.rr_number.replace(/,/g, ", ")}`}
                                 </Typography>
                               </TableCell>
                               <TableCell className="tbl-cell ">
-                                <Typography fontSize="12px" color="secondary.main">
-                                  {`PR - ${data.pr_number.replace(/,/g, ", ")}`}
-                                </Typography>
-                                <Typography fontSize="12px" color="secondary.main">
-                                  {`PO - ${data.po_number.replace(/,/g, ", ")}`}
-                                </Typography>
-                                <Typography fontSize="12px" color="secondary.main">
-                                  {`RR - ${data.rr_number.replace(/,/g, ", ")}`}
-                                </Typography>
-                              </TableCell>
-                              <TableCell className="tbl-cell ">
-                                {`(${data.requestor?.employee_id}) - ${data.requestor?.firstname} ${data.requestor?.lastname}`}
+                                {`(${data?.requestor?.employee_id}) - ${data?.requestor?.firstname} ${data?.requestor?.lastname}`}
                               </TableCell>
 
                               <TableCell className="tbl-cell text-center">
@@ -307,24 +325,24 @@ const ReceivingTable = (props) => {
                                 </Tooltip>
                               </TableCell>
 
-                              <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
+                              <TableCell className="tbl-cell tr-cen-pad45">{data?.item_count}</TableCell>
                               <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
                                 <Typography fontSize="12px" color="secondary.main">
                                   {`Ordered - ${data?.ordered}`}
                                 </Typography>
                                 <Typography fontSize="12px" color="secondary.main">
-                                  {`Received - ${data.delivered}`}
+                                  {`Received - ${data?.delivered}`}
                                 </Typography>
                                 <Typography fontSize="12px" color="secondary.main">
-                                  {`Remaining - ${data.remaining}`}
+                                  {`Remaining - ${data?.remaining}`}
                                 </Typography>
                                 <Typography fontSize="12px" color="secondary.main">
-                                  {`Cancelled - ${data.cancelled}`}
+                                  {`Cancelled - ${data?.cancelled}`}
                                 </Typography>
                               </TableCell>
 
                               <TableCell className="tbl-cell tr-cen-pad45">
-                                {Moment(data.created_at).format("MMM DD, YYYY")}
+                                {Moment(data?.date_received).format("MMM DD, YYYY")}
                               </TableCell>
                             </TableRow>
                           ))}
