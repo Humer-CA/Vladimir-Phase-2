@@ -41,6 +41,8 @@ import { fistoLocationApi } from "../Query/Masterlist/FistoCoa/FistoLocation";
 import { fistoAccountTitleApi } from "../Query/Masterlist/FistoCoa/FistoAccountTitle";
 import { fistoSupplierApi } from "../Query/Masterlist/FistoCoa/FistoSupplier";
 
+import { elixirApi } from "../Query/Systems/Elixir";
+
 import { companyApi } from "../Query/Masterlist/YmirCoa/Company";
 import { businessUnitApi } from "../Query/Masterlist/YmirCoa/BusinessUnit";
 import { departmentApi } from "../Query/Masterlist/YmirCoa/Department";
@@ -133,6 +135,8 @@ export const store = configureStore({
     [fistoAccountTitleApi.reducerPath]: fistoAccountTitleApi.reducer,
     [fistoSupplierApi.reducerPath]: fistoSupplierApi.reducer,
 
+    [elixirApi.reducerPath]: elixirApi.reducer,
+
     [ymirApi.reducerPath]: ymirApi.reducer,
     [ymirPrApi.reducerPath]: ymirPrApi.reducer,
 
@@ -214,6 +218,8 @@ export const store = configureStore({
       fistoLocationApi.middleware,
       fistoAccountTitleApi.middleware,
       fistoSupplierApi.middleware,
+
+      elixirApi.middleware,
 
       ymirApi.middleware,
       ymirPrApi.middleware,
