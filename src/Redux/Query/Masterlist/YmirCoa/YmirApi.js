@@ -42,6 +42,14 @@ export const ymirApi = createApi({
       query: () => `/locations?status=active&pagination=none&vladimir=sync`,
     }),
 
+    getYmirAccountTitleAllApi: builder.query({
+      query: () => `/account_titles?status=active&pagination=none&vladimir=sync`,
+    }),
+
+    getYmirSupplierAllApi: builder.query({
+      query: () => `/suppliers?status=active&pagination=none&vladimir=sync`,
+    }),
+
     getYmirUnitOfMeasurementAllApi: builder.query({
       query: () => `/uoms?status=active&pagination=none&vladimir=sync`,
     }),
@@ -73,9 +81,13 @@ export const {
   useLazyGetYmirUnitAllApiQuery,
   useGetYmirSubUnitAllApiQuery,
   useLazyGetYmirSubUnitAllApiQuery,
+  useGetYmirAccountTitleAllApiQuery,
+  useLazyGetYmirAccountTitleAllApiQuery,
   useGetYmirLocationAllApiQuery,
   useLazyGetYmirLocationAllApiQuery,
   useGetYmirUnitOfMeasurementAllApiQuery,
+  useGetYmirSupplierAllApiQuery,
+  useLazyGetYmirSupplierAllApiQuery,
   useLazyGetYmirUnitOfMeasurementAllApiQuery,
   useLazyGetYmirReceivingAllApiQuery,
   usePostPrYmirApiMutation,

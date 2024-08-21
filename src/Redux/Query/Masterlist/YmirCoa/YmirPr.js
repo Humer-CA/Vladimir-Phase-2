@@ -26,4 +26,4 @@ export const ymirPrApi = createApi({
   }),
 });
 
-export const { useGetYmirPrApiQuery } = ymirPrApi;
+export const { useGetYmirPrApiQuery, useLazyGetYmirPrApiQuery } = ymirPrApi;
