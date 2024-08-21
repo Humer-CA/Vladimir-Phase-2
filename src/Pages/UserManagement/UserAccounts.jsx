@@ -23,7 +23,9 @@ import {
   Box,
   Button,
   Chip,
+  Dialog,
   Drawer,
+  Grow,
   Table,
   TableBody,
   TableCell,
@@ -475,7 +477,7 @@ const UserAccounts = () => {
                                 {users.firstname}
                               </Typography>
                               <Typography fontSize={12}>{users.lastname}</Typography>
-                              <Typography fontSize={12} fontWeight={500} color="primary.main">
+                              <Typography fontSize={12} fontWeight={500} color="quaternary.main">
                                 {users.employee_id}
                               </Typography>
                             </TableCell>
@@ -589,9 +591,17 @@ const UserAccounts = () => {
         </Box>
       )}
 
-      <Drawer anchor="right" open={drawer} onClose={() => {}}>
+      {/* <Drawer anchor="right" open={drawer} onClose={() => {}}>
         <AddUserAccounts data={updateUser} onUpdateResetHandler={onUpdateResetHandler} />
-      </Drawer>
+      </Drawer> */}
+      <Dialog
+        open={drawer}
+        TransitionComponent={Grow}
+        onClose={() => {}}
+        sx={{ ".MuiPaper-root": { borderRadius: "12px" } }}
+      >
+        <AddUserAccounts data={updateUser} onUpdateResetHandler={onUpdateResetHandler} />
+      </Dialog>
     </Box>
   );
 };
