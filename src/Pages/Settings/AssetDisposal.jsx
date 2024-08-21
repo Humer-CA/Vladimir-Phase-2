@@ -331,7 +331,7 @@ const AssetDisposal = () => {
 
                   <TableBody>
                     {assetDisposalData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {assetDisposalSuccess &&

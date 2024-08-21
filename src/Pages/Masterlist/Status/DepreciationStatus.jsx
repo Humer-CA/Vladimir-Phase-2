@@ -262,7 +262,7 @@ const DepreciationStatus = () => {
 
                 <TableBody>
                   {depreciationStatusData.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="small" />
                   ) : (
                     <>
                       {depreciationStatusSuccess &&

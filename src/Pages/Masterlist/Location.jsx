@@ -322,7 +322,7 @@ const Location = () => {
 
                   <TableBody>
                     {locationApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {locationApiSuccess &&

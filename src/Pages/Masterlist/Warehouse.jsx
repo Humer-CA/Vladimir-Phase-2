@@ -280,7 +280,7 @@ const Warehouse = () => {
 
                 <TableBody>
                   {warehouseData.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {warehouseSuccess &&

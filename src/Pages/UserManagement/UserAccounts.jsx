@@ -457,7 +457,7 @@ const UserAccounts = () => {
                 </TableHead>
                 <TableBody>
                   {users.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {usersSuccess &&

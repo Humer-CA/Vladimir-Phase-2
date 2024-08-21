@@ -274,7 +274,7 @@ const Supplier = () => {
 
                   <TableBody>
                     {supplierApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {supplierApiSuccess &&

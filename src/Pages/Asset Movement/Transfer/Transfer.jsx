@@ -390,7 +390,7 @@ const Transfer = () => {
 
                   <TableBody>
                     {transferData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {transferSuccess &&

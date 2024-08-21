@@ -289,7 +289,7 @@ const Role = () => {
 
                 <TableBody>
                   {roleData.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {roleSuccess &&

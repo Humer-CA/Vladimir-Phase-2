@@ -336,7 +336,7 @@ const AccountTitle = () => {
 
                   <TableBody>
                     {accountTitleApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {accountTitleApiSuccess &&

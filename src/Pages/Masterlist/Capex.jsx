@@ -360,7 +360,7 @@ const Capex = () => {
 
                   <TableBody>
                     {capexData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {capexData &&

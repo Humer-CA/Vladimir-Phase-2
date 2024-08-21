@@ -258,7 +258,7 @@ const TypeOfRequest = () => {
 
                   <TableBody>
                     {typeOfRequestData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {typeOfRequestSuccess &&

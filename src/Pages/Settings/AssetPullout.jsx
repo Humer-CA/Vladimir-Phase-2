@@ -332,7 +332,7 @@ const AssetPullout = () => {
 
                   <TableBody>
                     {assetPulloutData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {assetPulloutSuccess &&

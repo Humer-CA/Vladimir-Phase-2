@@ -327,7 +327,7 @@ const SubUnit = () => {
 
                 <TableBody>
                   {subUnitData?.data?.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {subUnitSuccess &&

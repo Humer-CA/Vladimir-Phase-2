@@ -331,7 +331,7 @@ const UnitApprovers = () => {
 
                   <TableBody>
                     {unitApproversData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {unitApproversSuccess &&

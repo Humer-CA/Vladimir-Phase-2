@@ -286,7 +286,7 @@ const Division = () => {
 
                 <TableBody>
                   {divisionData.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {divisionSuccess &&

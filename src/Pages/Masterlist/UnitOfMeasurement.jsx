@@ -315,7 +315,7 @@ const UnitOfMeasurement = () => {
 
                 <TableBody>
                   {unitOfMeasurementData?.data?.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {unitOfMeasurementSuccess &&

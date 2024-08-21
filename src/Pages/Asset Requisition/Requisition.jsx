@@ -446,7 +446,7 @@ const Requisition = () => {
 
                   <TableBody>
                     {requisitionData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {requisitionSuccess &&

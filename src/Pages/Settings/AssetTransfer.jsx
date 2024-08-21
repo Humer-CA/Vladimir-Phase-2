@@ -332,7 +332,7 @@ const AssetTransfer = () => {
 
                   <TableBody>
                     {assetTransferData?.data?.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {assetTransferSuccess &&
