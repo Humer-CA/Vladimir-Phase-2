@@ -34,7 +34,7 @@ import { useLazyGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist
 import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
-import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/AccountTitle";
+import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import CustomImgAttachment from "../../../Components/Reusable/CustomImgAttachment";
 import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
 
@@ -57,12 +57,24 @@ const schema = yup.object().shape({
   received_by: yup.object().required().typeError("Received By is a required field"),
 
   receiver_img: yup.mixed().required().label("Receiver Image").typeError("Receiver Image is a required field"),
-  assignment_memo_img: yup.mixed().required().label("Assignment Memo").typeError("Assignment Memo is a required field"),
+  assignment_memo_img: yup
+    .mixed()
+    .nullable()
+    .label("Assignment Memo")
+    .typeError("Assignment Memo is a required field")
+    .when("accountability", {
+      is: (value) => value === "Personal Issued",
+      then: (yup) => yup.label("Accountable").required().typeError("Assignment Memo is a required field"),
+    }),
   authorization_memo_img: yup
     .mixed()
-    .required()
+    .nullable()
     .label("Authorization Letter")
-    .typeError("Authorization Letter is a required field"),
+    .typeError("Authorization Letter is a required field")
+    .when("accountability", {
+      is: (value) => value === "Personal Issued",
+      then: (yup) => yup.label("Accountable").required().typeError("Authorization Letter is a required field"),
+    }),
 });
 
 const schemaSave = yup.object().shape({
@@ -258,8 +270,6 @@ const AddReleasingInfo = (props) => {
     }
   }, [isPostSuccess]);
 
-  // console.log(watch("warehouse_number_id"));
-
   const handleCloseDialog = () => {
     dispatch(closeDialog());
   };
@@ -284,8 +294,23 @@ const AddReleasingInfo = (props) => {
     fontSize: "16px",
   };
 
+  // console.log(
+  //   "data",
+  //   data.map((item) => item?.warehouse_number)
+  // );
+  // console.log("warehouseNumber", warehouseNumber);
+
+  const warehouseNumberData = data?.filter((item) =>
+    warehouseNumber?.warehouse_number_id?.includes(item.warehouse_number?.warehouse_number)
+  );
+
+  console.log(
+    "warehouseNumberData",
+    warehouseNumberData.map((data) => data.warehouse_number?.id)
+  );
+
   const onSubmitHandler = async (formData) => {
-    // console.log(formData);
+    console.log(formData);
     // fileToBase64
     const fileToBase64 = (file) => {
       return new Promise((resolve, reject) => {
@@ -311,6 +336,7 @@ const AddReleasingInfo = (props) => {
 
     const newFormData = {
       ...formData,
+      warehouse_number_id: warehouseNumberData.map((data) => data.warehouse_number?.id),
       department_id: handleSaveValidation() ? null : formData?.department_id?.id?.toString(),
       company_id: handleSaveValidation() ? null : formData.company_id?.id?.toString(),
       business_unit_id: handleSaveValidation() ? null : formData.business_unit_id?.id?.toString(),
@@ -326,7 +352,7 @@ const AddReleasingInfo = (props) => {
       authorization_memo_img: authorizationLetterImgBase64,
     };
 
-    console.log(formData);
+    console.log(newFormData);
 
     dispatch(
       openConfirm({
@@ -411,6 +437,7 @@ const AddReleasingInfo = (props) => {
   // };
 
   // Images
+
   const handleCloseSignature = () => {
     dispatch(closeDialog1());
   };
@@ -925,7 +952,6 @@ const AddReleasingInfo = (props) => {
           Cancel
         </Button>
       </Stack>
-
       {/* <Dialog open={dialog} onClose={handleCloseSignature}>
         <Box p={2}>
           <Typography fontFamily="Anton, Impact, Roboto" fontSize={20} color="secondary.main" p={1}>
