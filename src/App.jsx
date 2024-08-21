@@ -216,14 +216,13 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "fixed-asset/additional-cost",
-            index: false,
-            element: <AdditionalCost />,
+            path: "fixed-asset/:tag_number",
+            element: <FixedAssetView />,
           },
 
           {
-            path: "fixed-asset/:tag_number",
-            element: <FixedAssetView />,
+            path: "fixed-asset/additional-cost",
+            element: <AdditionalCost />,
           },
 
           {
