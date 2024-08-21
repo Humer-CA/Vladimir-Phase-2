@@ -20,8 +20,12 @@ import {
 
 // MUI
 import {
+  Autocomplete,
   Box,
   Button,
+  Chip,
+  Dialog,
+  Grow,
   IconButton,
   Stack,
   Table,
@@ -31,18 +35,21 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TextField,
   Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Help, SyncOutlined, Visibility } from "@mui/icons-material";
+import { Close, Help, Report, SyncOutlined, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
   useGetAssetReceivingApiQuery,
   useGetAssetReceivedApiQuery,
   usePostReceivingSyncApiMutation,
+  useGetRrSummaryApiQuery,
 } from "../../Redux/Query/Request/AssetReceiving";
-import { useLazyGetYmirReceivingAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import { closeDialog, openDialog } from "../../Redux/StateManagement/booleanStateSlice";
+import { useCancelRrVladimirApiMutation, useCancelRrYmirApiMutation } from "../../Redux/Query/Request/ReceivedReceipt";
 
 const RrSummary = (props) => {
   const { received } = props;
@@ -51,78 +58,15 @@ const RrSummary = (props) => {
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
 
+  const [vladimirTag, setVladimirTag] = useState([]);
+  const [reference, setReference] = useState([]);
+  const [isVladimirTag, setIsVladimirTag] = useState(true);
+
+  const dialog = useSelector((state) => state.booleanState.dialog);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
-
-  const [
-    syncTrigger,
-    {
-      data: ymirReceivingApi,
-      isLoading: ymirReceivingApiLoading,
-      isSuccess: ymirReceivingApiSuccess,
-      isFetching: ymirReceivingApiFetching,
-      isError: ymirReceivingApiError,
-      error: syncError,
-    },
-  ] = useLazyGetYmirReceivingAllApiQuery();
-
-  const [
-    postSyncData,
-    { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
-  ] = usePostReceivingSyncApiMutation();
-
-  useEffect(() => {
-    if (ymirReceivingApiSuccess) {
-      postSyncData(ymirReceivingApi);
-    }
-  }, [ymirReceivingApiSuccess, ymirReceivingApiFetching]);
-
-  useEffect(() => {
-    if (isPostError || ymirReceivingApiError) {
-      let message = "Something went wrong. Please try again.";
-      let variant = "error";
-
-      if (postError?.status === 404 || postError?.status === 422) {
-        message = postError?.data?.errors.detail || postError?.data?.message;
-        if (postError?.status === 422) {
-          console.log(postError);
-          dispatch(closeConfirm());
-        }
-      }
-
-      dispatch(openToast({ message, duration: 5000, variant }));
-    }
-  }, [isPostError]);
-
-  useEffect(() => {
-    if (ymirReceivingApiError) {
-      let message = "Something went wrong. Please try again.";
-      let variant = "error";
-
-      if (syncError?.status === 404 || syncError?.status === 422) {
-        message = syncError?.data?.message;
-        if (syncError?.status === 404) {
-          // console.log(syncError);
-          dispatch(closeConfirm());
-        }
-      }
-
-      dispatch(openToast({ message, duration: 5000, variant }));
-    }
-  }, [ymirReceivingApiError]);
-
-  useEffect(() => {
-    if (isPostSuccess && !isPostLoading) {
-      dispatch(
-        openToast({
-          message: postData?.message,
-          duration: 5000,
-        })
-      );
-      dispatch(closeConfirm());
-    }
-  }, [isPostSuccess, isPostLoading]);
 
   //* Table Sorting -------------------------------------------------------
   const [order, setOrder] = useState("desc");
@@ -162,13 +106,13 @@ const RrSummary = (props) => {
   };
 
   const {
-    data: receivingData,
-    isLoading: receivingLoading,
-    isSuccess: receivingSuccess,
-    isError: receivingError,
+    data: receivedReceiptData,
+    isLoading: receivedReceiptLoading,
+    isSuccess: receivedReceiptSuccess,
+    isError: receivedReceiptError,
     error: errorData,
     refetch,
-  } = (received ? useGetAssetReceivedApiQuery : useGetAssetReceivingApiQuery)(
+  } = useGetRrSummaryApiQuery(
     {
       page: page,
       per_page: perPage,
@@ -178,17 +122,20 @@ const RrSummary = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
+  const [cancelVladimirRr, {}] = useCancelRrVladimirApiMutation();
+  const [cancelYmirRr, {}] = useCancelRrYmirApiMutation();
+
   const handleViewData = (data) => {
-    navigate(`/asset-requisition/requisition-received-asset/${data.transaction_number}`, {
-      state: { ...data, received },
-    });
+    dispatch(openDialog());
+    setVladimirTag(data);
+    setReference(data);
   };
 
-  const handleSync = () => {
+  const handleCancelRR = (data) => {
     dispatch(
       openConfirm({
-        icon: Help,
-        iconColor: "info",
+        icon: Report,
+        iconColor: "warning",
         message: (
           <Box>
             <Typography> Are you sure you want to</Typography>
@@ -199,30 +146,51 @@ const RrSummary = (props) => {
                 fontWeight: "bold",
               }}
             >
-              SYNC
+              CANCEL
             </Typography>{" "}
-            the data?
+            this RR Data?
           </Box>
         ),
-        autoClose: true,
 
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            await syncTrigger().unwrap;
-            refetch();
+            let vladimirCancel = await cancelVladimirRr({
+              rr_number: data,
+            }).unwrap();
+            // console.log(vladimirCancel);
+
+            let ymirCancel = await cancelYmirRr({
+              rr_number: data,
+            }).unwrap();
+            // console.log(ymirCancel);
+
+            dispatch(
+              openToast({
+                message: (vladimirCancel || ymirCancel).message,
+                duration: 5000,
+              })
+            );
+            dispatch(closeConfirm());
           } catch (err) {
-            if (err?.status === 404) {
+            console.log(err);
+            if (err?.status === 422) {
               dispatch(
                 openToast({
-                  message: postData?.message,
+                  message: err.errors.detail || err.data.message,
                   duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
                 })
               );
             }
-            console.log(err.message);
-
-            dispatch(closeConfirm());
           }
         },
       })
@@ -235,10 +203,9 @@ const RrSummary = (props) => {
         RR Summary
       </Typography>
       <Stack>
-        {receivingLoading && <MasterlistSkeleton onAdd={true} category />}
-        {receivingError && <ErrorFetching refetch={refetch} error={errorData} />}
-
-        {receivingData && !receivingError && (
+        {receivedReceiptLoading && <MasterlistSkeleton onAdd={true} />}
+        {receivedReceiptError && <ErrorFetching refetch={refetch} error={errorData} />}
+        {receivedReceiptData && !receivedReceiptError && (
           <>
             <Box className="mcontainer__wrapper">
               <MasterlistToolbar
@@ -247,19 +214,6 @@ const RrSummary = (props) => {
                 onSetPage={setPage}
                 hideArchive
               />
-
-              {/* <Box className="masterlist-toolbar__addBtn" sx={{ mt: "4px", mr: "10px" }}>
-              <Button
-                variant="contained"
-                startIcon={isSmallScreen ? null : <SyncOutlined color="primary" />}
-                size="small"
-                color="secondary"
-                sx={isSmallScreen ? { minWidth: "50px", px: 0 } : null}
-                onClick={() => handleSync()}
-              >
-                {isSmallScreen ? <SyncOutlined color="primary" /> : "SYNC"}
-              </Button>
-            </Box> */}
 
               <Box>
                 <TableContainer className="mcontainer__th-body">
@@ -279,11 +233,11 @@ const RrSummary = (props) => {
                             direction={orderBy === `transaction_number` ? order : `asc`}
                             onClick={() => onSort(`transaction_number`)}
                           >
-                            Transaction No.
+                            RR No.
                           </TableSortLabel>
                         </TableCell>
 
-                        <TableCell className="tbl-cell">Aqcuisition Details</TableCell>
+                        <TableCell className="tbl-cell">Transaction Number</TableCell>
 
                         <TableCell className="tbl-cell">
                           <TableSortLabel
@@ -295,30 +249,8 @@ const RrSummary = (props) => {
                           </TableSortLabel>
                         </TableCell>
 
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel>Requestor</TableSortLabel>
-                        </TableCell>
-
-                        <TableCell className="tbl-cell text-center">View Information</TableCell>
-
-                        <TableCell className="tbl-cell text-center">
-                          <TableSortLabel
-                            active={orderBy === `item_count`}
-                            direction={orderBy === `item_count` ? order : `asc`}
-                            onClick={() => onSort(`item_count`)}
-                          >
-                            No. of Items
-                          </TableSortLabel>
-                        </TableCell>
-
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `received`}
-                            direction={orderBy === `received` ? order : `asc`}
-                            onClick={() => onSort(`received`)}
-                          >
-                            Item Status
-                          </TableSortLabel>
+                        <TableCell className="tbl-cell" align="center">
+                          View Tagged
                         </TableCell>
 
                         <TableCell className="tbl-cell text-center">
@@ -330,75 +262,77 @@ const RrSummary = (props) => {
                             Date Approved
                           </TableSortLabel>
                         </TableCell>
+
+                        <TableCell className="tbl-cell">Action</TableCell>
                       </TableRow>
                     </TableHead>
 
                     <TableBody>
-                      {receivingData?.data?.length === 0 ? (
+                      {receivedReceiptData?.data?.length === 0 ? (
                         <NoRecordsFound heightData="small" />
                       ) : (
                         <>
-                          {receivingSuccess &&
-                            [...receivingData?.data]?.sort(comparator(order, orderBy))?.map((data) => (
+                          {receivedReceiptSuccess &&
+                            [...receivedReceiptData?.data]?.sort(comparator(order, orderBy))?.map((data, index) => (
                               <TableRow
-                                key={data.id}
+                                key={index}
                                 sx={{
                                   "&:last-child td, &:last-child th": {
                                     borderBottom: 0,
                                   },
                                 }}
                               >
-                                <TableCell className="tbl-cell">{data.transaction_number}</TableCell>
-                                <TableCell className="tbl-cell text-weight">
-                                  <Typography fontSize={14} fontWeight={600} color="secondary.main">
-                                    {data.acquisition_details}
-                                  </Typography>
-
-                                  <Typography fontSize={12} color="secondary.light">
-                                    ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
-                                  </Typography>
+                                <TableCell className="tbl-cell">
+                                  <Chip
+                                    size="small"
+                                    color="primary"
+                                    label={
+                                      <Typography fontWeight={600} fontSize="12px">
+                                        {data.rr_number}
+                                      </Typography>
+                                    }
+                                  />
                                 </TableCell>
+
+                                <TableCell className="tbl-cell">{data?.transaction_number}</TableCell>
+
                                 <TableCell className="tbl-cell ">
                                   <Typography fontSize="12px" color="secondary.main">
-                                    {`PR - ${data.pr_number.replace(/,/g, ", ")}`}
+                                    {`PR - ${data.pr_number}`}
                                   </Typography>
                                   <Typography fontSize="12px" color="secondary.main">
                                     {`PO - ${data.po_number.replace(/,/g, ", ")}`}
                                   </Typography>
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`RR - ${data.rr_number.replace(/,/g, ", ")}`}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell className="tbl-cell ">
-                                  {`(${data.requestor?.employee_id}) - ${data.requestor?.firstname} ${data.requestor?.lastname}`}
                                 </TableCell>
 
-                                <TableCell className="tbl-cell text-center">
-                                  <Tooltip placement="top" title="View Request Information" arrow>
-                                    <IconButton onClick={() => handleViewData(data)}>
+                                <TableCell className="tbl-cell" align="center">
+                                  <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        handleViewData();
+                                        setVladimirTag(data.vladimir_tag_number);
+                                        setReference(data.reference_number);
+                                      }}
+                                    >
                                       <Visibility />
                                     </IconButton>
-                                  </Tooltip>
-                                </TableCell>
-
-                                <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
-                                <TableCell onClick={() => handleTableData(data)} className="tbl-cell">
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`Ordered - ${data?.ordered}`}
-                                  </Typography>
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`Received - ${data.delivered}`}
-                                  </Typography>
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`Remaining - ${data.remaining}`}
-                                  </Typography>
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`Cancelled - ${data.cancelled}`}
                                   </Typography>
                                 </TableCell>
 
                                 <TableCell className="tbl-cell tr-cen-pad45">
                                   {Moment(data.created_at).format("MMM DD, YYYY")}
+                                </TableCell>
+
+                                <TableCell className="tbl-cell">
+                                  {data?.can_cancel === 1 && (
+                                    <ActionMenu
+                                      hideEdit
+                                      data={data?.rr_number}
+                                      showCancelRr={true}
+                                      handleCancelRR={handleCancelRR}
+                                    />
+                                  )}
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -409,10 +343,10 @@ const RrSummary = (props) => {
                 </TableContainer>
               </Box>
               <CustomTablePagination
-                total={receivingData?.total}
-                success={receivingSuccess}
-                current_page={receivingData?.current_page}
-                per_page={receivingData?.per_page}
+                total={receivedReceiptData?.total}
+                success={receivedReceiptSuccess}
+                current_page={receivedReceiptData?.current_page}
+                per_page={receivedReceiptData?.per_page}
                 onPageChange={pageHandler}
                 onRowsPerPageChange={perPageHandler}
               />
@@ -420,6 +354,79 @@ const RrSummary = (props) => {
           </>
         )}
       </Stack>
+
+      <Dialog
+        open={dialog}
+        TransitionComponent={Grow}
+        onClose={() => dispatch(closeDialog())}
+        PaperProps={{ sx: { borderRadius: "10px", width: "min(450px, 800px)", p: 3 } }}
+      >
+        <Stack maxWidth="450px" gap={2}>
+          <Typography fontSize={24} fontFamily="Anton" color="secondary" align="center">
+            Tagged Items
+          </Typography>
+
+          <Stack gap={3}>
+            <Stack gap={1}>
+              <Typography fontFamily="Anton" color="secondary.light">
+                Vladimir Tag
+              </Typography>
+              <Autocomplete
+                readOnly
+                multiple
+                name="vladimir_tag_number"
+                options={vladimirTag}
+                value={vladimirTag}
+                size="small"
+                PaperComponent={{ maxHeight: "350px" }}
+                renderInput={(params) => (
+                  <TextField
+                    // label="Vladimir Tag"
+                    color="secondary"
+                    sx={{
+                      ".MuiInputBase-root ": { borderRadius: "10px" },
+                      maxHeight: "150px",
+                      overflow: "auto",
+                    }}
+                    {...params}
+                  />
+                )}
+              />
+            </Stack>
+
+            <Stack gap={1}>
+              <Typography fontFamily="Anton" color="secondary.light">
+                Reference No.
+              </Typography>
+              <Autocomplete
+                readOnly
+                multiple
+                name="reference_number"
+                options={reference}
+                value={reference}
+                size="small"
+                renderInput={(params) => (
+                  <TextField
+                    // label="Reference No."
+                    color="secondary"
+                    sx={{
+                      ".MuiInputBase-root ": { borderRadius: "10px" },
+                      pointer: "default",
+                      maxHeight: "150px",
+                      overflow: "auto",
+                    }}
+                    {...params}
+                  />
+                )}
+              />
+            </Stack>
+          </Stack>
+
+          <Button variant="contained" size="small" color="secondary" onClick={() => dispatch(closeDialog())}>
+            Close
+          </Button>
+        </Stack>
+      </Dialog>
     </Box>
   );
 };
