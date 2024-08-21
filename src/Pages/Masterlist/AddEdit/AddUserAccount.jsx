@@ -708,7 +708,7 @@ const AddUserAccount = (props) => {
     //     </Stack>
     //   </Box>
     // </Box>
-    <Box className="add-userAccount" p={3}>
+    <Box className="add-userAccount" p={2.5}>
       <Box className="add-userAccount__title" gap={1}>
         {/* <IconButton onClick={handleCloseDrawer}>
           <ArrowForwardIosRounded color="secondary" />
