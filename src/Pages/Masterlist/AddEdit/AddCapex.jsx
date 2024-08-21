@@ -58,23 +58,18 @@ const AddCapex = (props) => {
   });
 
   useEffect(() => {
-    if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
-      setError("capex", {
-        type: "validate",
-        message: postError?.data?.errors.capex || updateError?.data?.errors.capex,
-      });
-      setError("project_name", {
-        type: "validate",
-        message: postError?.data?.errors.project_name || updateError?.data?.errors.project_name,
-      });
-    } else if ((isPostError && postError?.status !== 422) || (isUpdateError && updateError?.status !== 422)) {
-      dispatch(
-        openToast({
-          message: "Something went wrong. Please try again.",
-          duration: 5000,
-          variant: "error",
-        })
-      );
+    if (isPostError || isUpdateError) {
+      let message = "Something went wrong. Please try again.";
+      let variant = "error";
+
+      if ((postError || updateError)?.status === 404 || (postError || updateError)?.status === 422) {
+        message = (postError || updateError)?.data?.errors.detail || (postError || updateError)?.data?.errors.capex[0];
+        if ((postError || updateError)?.status === 422) {
+          console.log(postError || updateError);
+        }
+      }
+
+      dispatch(openToast({ message, duration: 5000, variant }));
     }
   }, [isPostError, isUpdateError]);
 
