@@ -37,7 +37,7 @@ import { LoadingButton } from "@mui/lab";
 
 // RTK
 import { useDispatch } from "react-redux";
-import { closeAdd, closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
+import { closeAdd, closeDialog, closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import {
   useGetMinorCategoryAllApiQuery,
   useLazyGetMinorCategoryAllApiQuery,
@@ -642,22 +642,22 @@ const AddCost = (props) => {
         })
       );
 
-      setTimeout(() => {
-        onUpdateResetHandler();
-      }, 500);
+      // setTimeout(() => {
+      //   onUpdateResetHandler();
+      // }, 500);
     }
   }, [isPostSuccess, isUpdateSuccess]);
 
   useEffect(() => {
     setPoNumber(data?.po_number);
     setRrNumber(data?.receipt);
-    const acquisitionDateFormat = new Date(data.acquisition_date);
-    const releaseDateFormat = new Date(data.release_date);
-    const voucherDateFormat = new Date(data.voucher_date);
-    const startDepreciationFormat = new Date(data.start_depreciation);
-    const endDepreciationFormat = new Date(data.end_depreciation);
+    const acquisitionDateFormat = new Date(data?.acquisition_date);
+    const releaseDateFormat = new Date(data?.release_date);
+    const voucherDateFormat = new Date(data?.voucher_date);
+    const startDepreciationFormat = new Date(data?.start_depreciation);
+    const endDepreciationFormat = new Date(data?.end_depreciation);
 
-    if (data.status) {
+    if (data?.status) {
       setValue("id", data.id);
       setValue("fixed_asset_id", data.fixed_asset);
       setValue("type_of_request_id", data.type_of_request);
@@ -761,7 +761,7 @@ const AddCost = (props) => {
       depreciable_basis: formData.depreciable_basis === null ? 0 : formData.depreciable_basis,
     };
 
-    if (data.status) {
+    if (data?.status) {
       updateAddCost(newObj);
       return;
     }
@@ -769,11 +769,12 @@ const AddCost = (props) => {
   };
 
   const handleCloseDrawer = () => {
-    setTimeout(() => {
-      onUpdateResetHandler();
-    }, 500);
+    // setTimeout(() => {
+    //   onUpdateResetHandler();
+    // }, 500);
 
     dispatch(closeAdd()) && dispatch(closeDrawer());
+    dispatch(closeDialog());
   };
 
   const handleGetVoucher = (data) => {
@@ -857,14 +858,14 @@ const AddCost = (props) => {
   });
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="addFixedAsset">
+    <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="addFixedAsset" p={2}>
       <Box className="addFixedAsset__title">
         <Stack flexDirection="row" alignItems="center">
           <IconButton onClick={handleCloseDrawer}>
             <ArrowForwardIosRounded color="secondary" />
           </IconButton>
           <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-            {data.status ? "Edit Additional Cost" : "Additional Cost"}
+            {data?.status ? "Edit Additional Cost" : "Additional Cost"}
           </Typography>
         </Stack>
         {voucher && (
@@ -1790,7 +1791,7 @@ const AddCost = (props) => {
           loading={isUpdateLoading || isPostLoading}
           disabled={!isValid && !isVoucherSuccess}
         >
-          {data.status ? "Update" : "Create"}
+          {data?.status ? "Update" : "Create"}
         </LoadingButton>
 
         <Button variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
