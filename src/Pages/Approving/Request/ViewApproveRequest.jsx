@@ -167,20 +167,23 @@ const ViewApproveRequest = (props) => {
               const postYmirData = await postPr(getYmirDataApi).unwrap();
               const next = await getNextRequest().unwrap();
 
-              return (
-                navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true }),
-                dispatch(
-                  openToast({
-                    message: result.message,
-                    duration: 5000,
-                  })
-                )
-              );
+              return navigate(`/approving/request/${next?.[0].transaction_number}`, {
+                state: next?.[0],
+                replace: true,
+              });
+              // dispatch(
+              //   openToast({
+              //     message: message,
+              //     // message: postYmirData.message,
+              //     duration: 5000,
+              //   })
+              // )
             }
 
             const next = await getNextRequest().unwrap();
             navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
           } catch (err) {
+            console.log(err);
             if (err?.status === 404) {
               navigate(`/approving/request`);
             } else if (err?.status === 422) {
