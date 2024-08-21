@@ -119,140 +119,140 @@ const PendingRequest = (props) => {
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
 
   // CONFIRMATION
-  const onApprovalApproveHandler = (id) => {
-    // return console.log(id);
-    dispatch(
-      openConfirm({
-        icon: Help,
-        iconColor: "info",
-        message: (
-          <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-                fontFamily: "Raleway",
-              }}
-            >
-              APPROVE
-            </Typography>{" "}
-            this request?
-          </Box>
-        ),
+  // const onApprovalApproveHandler = (id) => {
+  //   // return console.log(id);
+  //   dispatch(
+  //     openConfirm({
+  //       icon: Help,
+  //       iconColor: "info",
+  //       message: (
+  //         <Box>
+  //           <Typography> Are you sure you want to</Typography>
+  //           <Typography
+  //             sx={{
+  //               display: "inline-block",
+  //               color: "secondary.main",
+  //               fontWeight: "bold",
+  //               fontFamily: "Raleway",
+  //             }}
+  //           >
+  //             APPROVE
+  //           </Typography>{" "}
+  //           this request?
+  //         </Box>
+  //       ),
 
-        onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-            const result = await patchApprovalStatus({
-              action: "Approve",
-              asset_approval_id: id,
-            }).unwrap();
+  //       onConfirm: async () => {
+  //         try {
+  //           dispatch(onLoading());
+  //           const result = await patchApprovalStatus({
+  //             action: "Approve",
+  //             asset_approval_id: id,
+  //           }).unwrap();
 
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
+  //           dispatch(
+  //             openToast({
+  //               message: result.message,
+  //               duration: 5000,
+  //             })
+  //           );
 
-            dispatch(closeConfirm());
-            // notifRefetch();
-            // dispatch(notificationApi.util.resetApiState());
-            dispatch(notificationApi.util.invalidateTags(["Notif"]));
-          } catch (err) {
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  // message: err.message,
-                  message: err.errors?.detail,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
+  //           dispatch(closeConfirm());
+  //           // notifRefetch();
+  //           // dispatch(notificationApi.util.resetApiState());
+  //           dispatch(notificationApi.util.invalidateTags(["Notif"]));
+  //         } catch (err) {
+  //           if (err?.status === 422) {
+  //             dispatch(
+  //               openToast({
+  //                 // message: err.message,
+  //                 message: err.errors?.detail,
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           } else if (err?.status !== 422) {
+  //             dispatch(
+  //               openToast({
+  //                 message: "Something went wrong. Please try again.",
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           }
+  //         }
+  //       },
+  //     })
+  //   );
+  // };
 
-  const onApprovalReturnHandler = (id) => {
-    dispatch(
-      openConfirm({
-        icon: Report,
-        iconColor: "warning",
-        message: (
-          <Stack gap={2}>
-            <Box>
-              <Typography> Are you sure you want to</Typography>
-              <Typography
-                sx={{
-                  display: "inline-block",
-                  color: "secondary.main",
-                  fontWeight: "bold",
-                  fontFamily: "Raleway",
-                }}
-              >
-                RETURN
-              </Typography>{" "}
-              this request?
-            </Box>
-          </Stack>
-        ),
-        remarks: true,
+  // const onApprovalReturnHandler = (id) => {
+  //   dispatch(
+  //     openConfirm({
+  //       icon: Report,
+  //       iconColor: "warning",
+  //       message: (
+  //         <Stack gap={2}>
+  //           <Box>
+  //             <Typography> Are you sure you want to</Typography>
+  //             <Typography
+  //               sx={{
+  //                 display: "inline-block",
+  //                 color: "secondary.main",
+  //                 fontWeight: "bold",
+  //                 fontFamily: "Raleway",
+  //               }}
+  //             >
+  //               RETURN
+  //             </Typography>{" "}
+  //             this request?
+  //           </Box>
+  //         </Stack>
+  //       ),
+  //       remarks: true,
 
-        onConfirm: async (data) => {
-          try {
-            dispatch(onLoading());
-            const result = await patchApprovalStatus({
-              action: "Return",
-              asset_approval_id: id,
-              remarks: data,
-            }).unwrap();
+  //       onConfirm: async (data) => {
+  //         try {
+  //           dispatch(onLoading());
+  //           const result = await patchApprovalStatus({
+  //             action: "Return",
+  //             asset_approval_id: id,
+  //             remarks: data,
+  //           }).unwrap();
 
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
+  //           dispatch(
+  //             openToast({
+  //               message: result.message,
+  //               duration: 5000,
+  //             })
+  //           );
 
-            dispatch(closeConfirm());
-          } catch (err) {
-            if (err?.status === 422) {
-              dispatch(
-                openToast({
-                  // message: err.message,
-                  message: err?.errors?.detail,
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            } else if (err?.status !== 422) {
-              console.log(err);
-              dispatch(
-                openToast({
-                  message: "Something went wrong. Please try again.",
-                  duration: 5000,
-                  variant: "error",
-                })
-              );
-            }
-          }
-        },
-      })
-    );
-  };
+  //           dispatch(closeConfirm());
+  //         } catch (err) {
+  //           if (err?.status === 422) {
+  //             dispatch(
+  //               openToast({
+  //                 // message: err.message,
+  //                 message: err?.errors?.detail,
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           } else if (err?.status !== 422) {
+  //             console.log(err);
+  //             dispatch(
+  //               openToast({
+  //                 message: "Something went wrong. Please try again.",
+  //                 duration: 5000,
+  //                 variant: "error",
+  //               })
+  //             );
+  //           }
+  //         }
+  //       },
+  //     })
+  //   );
+  // };
 
   const handleViewRequisition = (data) => {
     navigate(`/approving/request/${data.transaction_number}`, {
