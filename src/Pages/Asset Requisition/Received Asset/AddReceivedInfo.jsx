@@ -20,7 +20,7 @@ import { closeDialog } from "../../../Redux/StateManagement/booleanStateSlice";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
-import { useGetSupplierAllApiQuery } from "../../../Redux/Query/Masterlist/FistoCoa/Supplier";
+import { useGetSupplierAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Supplier";
 import { notificationApi } from "../../../Redux/Query/Notification";
 import { useNavigate } from "react-router-dom";
 

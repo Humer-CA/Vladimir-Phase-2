@@ -9,7 +9,7 @@ import { LoginRoutes, PrivateRoutes } from "./Routes/PrivateRoutes";
 
 // MUI
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Alert, AlertTitle, Dialog, Snackbar } from "@mui/material";
+import { Alert, AlertTitle, Dialog, Grow, Slide, Snackbar, Zoom } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 // REDUX
@@ -80,6 +80,7 @@ import ViewTransfer from "./Pages/Approving/Transfer/ViewTransfer";
 import Warehouse from "./Pages/Masterlist/Warehouse";
 import ViewPullout from "./Pages/Approving/Pullout/ViewPullout";
 import RrSummary from "./Pages/Asset Requisition/RrSummary";
+import AdditionalCost from "./Pages/FixedAssets/Additional Cost/AdditionalCost";
 
 const router = createBrowserRouter([
   {
@@ -212,6 +213,12 @@ const router = createBrowserRouter([
             index: false,
             element: <FixedAsset />,
             children: [],
+          },
+
+          {
+            path: "fixed-asset/additional-cost",
+            index: false,
+            element: <AdditionalCost />,
           },
 
           {
@@ -561,6 +568,7 @@ function App() {
           open={toastOpen}
           autoHideDuration={toastDuration}
           onClose={handleClose}
+          TransitionComponent={Slide}
           // message={toastMessage}
           anchorOrigin={{
             vertical: "bottom",
@@ -569,12 +577,12 @@ function App() {
         >
           <Alert onClose={handleClose} severity={toastVariant}>
             <AlertTitle sx={{ textTransform: "capitalize", fontWeight: "bold" }}>{toastVariant}!</AlertTitle>
-
             {toastMessage}
           </Alert>
         </Snackbar>
 
         <Dialog
+          TransitionComponent={Zoom}
           open={confirmOpen}
           onClose={handleCloseConfirm}
           sx={{

@@ -31,21 +31,21 @@ const AssetRequisition = () => {
     },
 
     {
-      icon: <TableRows />,
-      label: "RR Summary",
-      description: "Viewing of Received Receipt List",
-      path: "/asset-requisition/requisition-rr-summary",
-      permission: "requisition-rr-summary",
-      notification: notifData?.toPR,
-    },
-
-    {
       icon: <OpenInBrowserOutlined />,
       label: "Received Asset",
       description: "Input of additional info and Purchase Order Number",
       path: "/asset-requisition/requisition-received-asset",
       permission: "requisition-received-asset",
       notification: notifData?.toReceive,
+    },
+
+    {
+      icon: <TableRows />,
+      label: "RR Summary",
+      description: "Viewing of Received Receipt List",
+      path: "/asset-requisition/requisition-rr-summary",
+      permission: "requisition-rr-summary",
+      notification: notifData?.toPR,
     },
 
     {

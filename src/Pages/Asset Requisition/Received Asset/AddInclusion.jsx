@@ -17,6 +17,7 @@ import {
   Dialog,
   Divider,
   IconButton,
+  Slide,
   Stack,
   Table,
   TableBody,
@@ -342,6 +343,7 @@ const AddInclusion = (props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                    {/* <Slide direction="bottom" mountOnEnter unmountOnExit> */}
                     {fields?.map((item, index) => (
                       <TableRow key={item.id} id="appendedRow">
                         <TableCell sx={{ pl: "20px" }}>
@@ -443,6 +445,7 @@ const AddInclusion = (props) => {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {/* </Slide> */}
 
                     <TableRow>
                       <TableCell colSpan={99}>

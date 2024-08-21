@@ -27,7 +27,7 @@ const MasterlistList = [
   {
     icon: <Apartment />,
     label: "Company",
-    description: "Synching of Company Masterlist from Fisto to Vladimir",
+    description: "Synching of Company Masterlist from Ymir to Vladimir",
     path: "/masterlist/company",
   },
 
@@ -41,7 +41,7 @@ const MasterlistList = [
   {
     icon: <Schema />,
     label: "Department",
-    description: "Synching of Department Masterlist from Fisto to Vladimir",
+    description: "Synching of Department Masterlist from Ymir to Vladimir",
     path: "/masterlist/department",
   },
 
@@ -55,21 +55,22 @@ const MasterlistList = [
   {
     icon: <Segment />,
     label: "Sub Unit",
-    description: "Adding, editing and archiving of Sub Unit masterlist",
+    // description: "Adding, editing and archiving of Sub Unit masterlist",
+    description: "Synching of Sub Unit Masterlist from Ymir to Vladimir",
     path: "/masterlist/sub-unit",
   },
 
   {
     icon: <LocationOn />,
     label: "Location",
-    description: "Synching of Location Masterlist from Fisto to Vladimir",
+    description: "Synching of Location Masterlist from Ymir to Vladimir",
     path: "/masterlist/location",
   },
 
   {
     icon: <Badge />,
     label: "Account Title",
-    description: "Synching of Account Title Masterlist from Fisto to Vladimir",
+    description: "Synching of Account Title Masterlist from Ymir to Vladimir",
     path: "/masterlist/account-title",
   },
 

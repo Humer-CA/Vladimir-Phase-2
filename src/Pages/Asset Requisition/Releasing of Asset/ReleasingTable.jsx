@@ -20,6 +20,7 @@ import {
   Chip,
   Dialog,
   FormControlLabel,
+  Grow,
   IconButton,
   Stack,
   Table,
@@ -300,7 +301,7 @@ const ReleasingTable = (props) => {
 
                   <TableBody>
                     {releasingData?.data?.length === 0 ? (
-                      <NoRecordsFound heightData="xs" />
+                      <NoRecordsFound heightData="small" />
                     ) : (
                       <>
                         {releasingSuccess &&
@@ -317,7 +318,7 @@ const ReleasingTable = (props) => {
                               }}
                             >
                               {!released && (
-                                <TableCell align="center">
+                                <TableCell className="tbl-cell" size="small" align="center">
                                   <FormControlLabel
                                     value={data.warehouse_number?.warehouse_number}
                                     sx={{ margin: "auto" }}
@@ -455,6 +456,7 @@ const ReleasingTable = (props) => {
 
       <Dialog
         open={dialog}
+        TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
         PaperProps={{
           sx: {
@@ -469,7 +471,7 @@ const ReleasingTable = (props) => {
         }}
       >
         <AddReleasingInfo
-          data={releasingData}
+          data={releasingData?.data}
           warehouseNumber={wNumber}
           commonData={commonData}
           personalData={personalData}

@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   Dialog,
+  Grow,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -315,15 +316,7 @@ const ViewRequestReceiving = () => {
                           View RR
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell className="tbl-cell">
-                        <TableSortLabel
-                          active={orderBy === `reference_number`}
-                          direction={orderBy === `reference_number` ? order : `asc`}
-                          onClick={() => onSort(`reference_number`)}
-                        >
-                          Acquisition Details
-                        </TableSortLabel>
-                      </TableCell>
+
                       <TableCell className="tbl-cell">Asset Information</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">
@@ -335,11 +328,9 @@ const ViewRequestReceiving = () => {
                           Item Status
                         </TableSortLabel>
                       </TableCell>
-                      {transactionData?.received && (
-                        <TableCell className="tbl-cell" align="center">
-                          Action
-                        </TableCell>
-                      )}
+                      <TableCell className="tbl-cell" align="center">
+                        Action
+                      </TableCell>
                       {/* {!transactionData?.received && <TableCell className="tbl-cell text-center">Action</TableCell>} */}
                     </TableRow>
                   </TableHead>
@@ -393,9 +384,6 @@ const ViewRequestReceiving = () => {
                                 </IconButton>
                               </TableCell>
 
-                              <TableCell className="tbl-cell">{data.acquisition_cost}</TableCell>
-
-                              <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
                               <TableCell className="tbl-cell">
                                 <Typography fontSize="14px" fontWeight="bold">
                                   {data.asset_description}
@@ -431,6 +419,7 @@ const ViewRequestReceiving = () => {
                                 <Typography fontSize={12}>Ordered - {data.ordered}</Typography>
                                 <Typography fontSize={12}>Received - {data.delivered}</Typography>
                                 <Typography fontSize={12}>Remaining - {data.remaining}</Typography>
+                                <Typography fontSize={12}>Cancelled - {data.cancelled}</Typography>
                               </TableCell>
 
                               {/* {!transactionData?.received && (
@@ -496,6 +485,7 @@ const ViewRequestReceiving = () => {
 
           <Dialog
             open={dialog}
+            TransitionComponent={Grow}
             onClose={() => dispatch(closeDialog())}
             sx={{
               ".MuiPaper-root": {
