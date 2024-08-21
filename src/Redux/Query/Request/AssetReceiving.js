@@ -18,8 +18,15 @@ export const assetReceivingApi = createApi({
 
   endpoints: (builder) => ({
     getAssetReceivingApi: builder.query({
-      query: (params) =>
-        `adding-po?toPo=1&search=${params.search}&per_page=${params.per_page}&status=${params.status}&page=${params.page}`,
+      query: (params) => {
+        const queryParams = [`search=${params.search}`, `per_page=${params.per_page}`, `page=${params.page}`];
+
+        if (params.from) queryParams.push(`from=${params.from}`);
+        if (params.to) queryParams.push(`to=${params.to}`);
+
+        const queryString = queryParams.join("&");
+        return `/adding-po?toPo=1${queryString}`;
+      },
       providesTags: ["AssetReceiving"],
     }),
 
