@@ -50,7 +50,7 @@ import { useRemovePurchaseRequestApiMutation } from "../../../Redux/Query/Reques
 import ErrorFetching from "../../ErrorFetching";
 import { useDownloadAttachment } from "../../../Hooks/useDownloadAttachment";
 import { usePostPrYmirApiMutation } from "../../../Redux/Query/Masterlist/YmirCoa/YmirApi";
-import { useGetYmirPrApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/YmirPr";
+import { useGetYmirPrApiQuery, useLazyGetYmirPrApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/YmirPr";
 
 const ViewApproveRequest = (props) => {
   const { approving } = props;
@@ -66,7 +66,7 @@ const ViewApproveRequest = (props) => {
   const dialog1 = useSelector((state) => state.booleanState.dialogMultiple.dialog1);
 
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
-  const [postPr, { isLoading: isPostYmirLoading }] = usePostPrYmirApiMutation();
+  const [postPr, { data: postedYmirData, isLoading: isPostYmirLoading }] = usePostPrYmirApiMutation();
   const [getNextRequest, { data: nextData, isLoading: isNextRequestLoading }] = useLazyGetNextRequestQuery();
   const [removePrNumber] = useRemovePurchaseRequestApiMutation();
 
@@ -83,15 +83,18 @@ const ViewApproveRequest = (props) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const {
-    data: ymirData,
-    isLoading: isYmirDataLoading,
-    refetch: isYmirDataRefetch,
-  } = useGetYmirPrApiQuery(
-    // { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
-    { transaction_number: transactionData?.transaction_number },
-    { refetchOnMountOrArgChange: true }
-  );
+  // const {
+  //   data: ymirData,
+  //   isLoading: isYmirDataLoading,
+  //   isSuccess: isYmirDataSuccess,
+  //   refetch: isYmirDataRefetch,
+  // } = useGetYmirPrApiQuery(
+  //   // { page: page, per_page: perPage, transaction_number: transactionData?.transaction_number },
+  //   { transaction_number: transactionData?.transaction_number },
+  //   { refetchOnMountOrArgChange: true }
+  // );
+
+  const [getYmirData, {}] = useLazyGetYmirPrApiQuery();
 
   const [downloadAttachment] = useLazyDlAttachmentQuery({ attachment: attachment, id: approveRequestData?.id });
 
@@ -146,20 +149,35 @@ const ViewApproveRequest = (props) => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
+            const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
+
             const result = await patchApprovalStatus({
               action: "Approve",
               transaction_number: transaction_number,
             }).unwrap();
-            if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
-              return postPr(ymirData);
-            }
+
             dispatch(
               openToast({
                 message: result.message,
                 duration: 5000,
               })
             );
-            // console.log(result);
+
+            if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
+              const postYmirData = await postPr(getYmirDataApi).unwrap();
+              const next = await getNextRequest().unwrap();
+
+              return (
+                navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true }),
+                dispatch(
+                  openToast({
+                    message: result.message,
+                    duration: 5000,
+                  })
+                )
+              );
+            }
+
             const next = await getNextRequest().unwrap();
             navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
           } catch (err) {
