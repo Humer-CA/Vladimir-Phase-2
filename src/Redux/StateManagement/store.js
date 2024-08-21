@@ -47,8 +47,8 @@ import { departmentApi } from "../Query/Masterlist/YmirCoa/Department";
 import { unitApi } from "../Query/Masterlist/YmirCoa/Unit";
 import { subUnitApi } from "../Query/Masterlist/YmirCoa/SubUnit";
 import { locationApi } from "../Query/Masterlist/YmirCoa/Location";
-import { accountTitleApi } from "../Query/Masterlist/FistoCoa/AccountTitle";
-import { supplierApi } from "../Query/Masterlist/FistoCoa/Supplier";
+import { accountTitleApi } from "../Query/Masterlist/YmirCoa/AccountTitle";
+import { supplierApi } from "../Query/Masterlist/YmirCoa/Supplier";
 import { divisionApi } from "../Query/Masterlist/Division";
 import { unitOfMeasurementApi } from "../Query/Masterlist/YmirCoa/UnitOfMeasurement";
 
@@ -91,6 +91,7 @@ import { pulloutApprovalApi } from "../Query/Approving/PulloutApproval";
 import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
 
 import { assetReceivingApi } from "../Query/Request/AssetReceiving";
+import { receivedReceiptApi } from "../Query/Request/ReceivedReceipt";
 import { assetReleasingApi } from "../Query/Request/AssetReleasing";
 
 export const store = configureStore({
@@ -185,6 +186,7 @@ export const store = configureStore({
     [pulloutApprovalApi.reducerPath]: pulloutApprovalApi.reducer,
 
     [assetReceivingApi.reducerPath]: assetReceivingApi.reducer,
+    [receivedReceiptApi.reducerPath]: receivedReceiptApi.reducer,
     [assetReleasingApi.reducerPath]: assetReleasingApi.reducer,
 
     [notificationApi.reducerPath]: notificationApi.reducer,
@@ -266,6 +268,7 @@ export const store = configureStore({
       transferApprovalApi.middleware,
 
       assetReceivingApi.middleware,
+      receivedReceiptApi.middleware,
       assetReleasingApi.middleware,
 
       notificationApi.middleware,
