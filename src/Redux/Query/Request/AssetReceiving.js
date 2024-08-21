@@ -24,8 +24,16 @@ export const assetReceivingApi = createApi({
     }),
 
     getAssetReceivedApi: builder.query({
-      query: (params) =>
-        `adding-po?toPo=0&search=${params.search}&per_page=${params.per_page}&status=${params.status}&page=${params.page}`,
+      query: (params) => {
+        const queryParams = [`search=${params.search}`, `per_page=${params.per_page}`, `page=${params.page}`];
+
+        if (params.from) queryParams.push(`from=${params.from}`);
+        if (params.to) queryParams.push(`to=${params.to}`);
+
+        const queryString = queryParams.join("&");
+        return `/adding-po?toPo=0${queryString}`;
+      },
+
       providesTags: ["AssetReceiving"],
     }),
 
@@ -84,6 +92,14 @@ export const assetReceivingApi = createApi({
       }),
       invalidatesTags: ["AssetReceiving"],
     }),
+
+    getRrSummaryApi: builder.query({
+      query: (params) => ({
+        url: `/rr-summary?${params?.search}&per_page=${params.per_page}&page=${params.page}`,
+        transformResponse: (res) => res.data,
+      }),
+      invalidatesTags: ["AssetReceiving"],
+    }),
   }),
 });
 
@@ -99,4 +115,5 @@ export const {
   usePostReceivingSyncApiMutation,
   usePutInclusionApiMutation,
   useRemoveInclusionApiMutation,
+  useGetRrSummaryApiQuery,
 } = assetReceivingApi;
