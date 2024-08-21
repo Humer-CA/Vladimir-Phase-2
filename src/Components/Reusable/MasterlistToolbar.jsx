@@ -193,7 +193,8 @@ const MasterlistToolbar = (props) => {
   };
 
   const handleOpenAddCost = (e) => {
-    dispatch(openAdd());
+    // dispatch(openAdd());
+    navigate(`additional-cost`);
     setAnchorEl(!e.currentTarget);
   };
 
@@ -276,12 +277,20 @@ const MasterlistToolbar = (props) => {
     <Box className="masterlist-toolbar">
       <Box className="masterlist-toolbar__container">
         {!hideArchive && (
-          <Box>
+          <Button size="small" color="secondary" variant="text" sx={{ borderRadius: "12px", p: 0.2, ml: -1.5 }}>
             <FormControlLabel
-              control={<Checkbox size="small" onClick={statusHandler} />}
-              label={isSmallScreen ? <Archive sx={{ mt: "5px" }} /> : "ARCHIVED"}
+              control={<Checkbox size="small" onClick={statusHandler} sx={{ ml: 1.5 }} />}
+              label={
+                isSmallScreen ? (
+                  <Archive sx={{ mt: "5px" }} />
+                ) : (
+                  <Typography fontFamily="Roboto" fontSize="14px" fontWeight={500} pt={0.15}>
+                    ARCHIVE
+                  </Typography>
+                )
+              }
             />
-          </Box>
+          </Button>
         )}
 
         {scanAsset && (
@@ -343,7 +352,7 @@ const MasterlistToolbar = (props) => {
               anchorEl={anchorElPrintFa}
               open={openPrintFa}
               onClose={handleClose}
-              TransitionComponent={Fade}
+              TransitionComponent={Grow}
               disablePortal
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -398,7 +407,7 @@ const MasterlistToolbar = (props) => {
               anchorEl={anchorElImportFa}
               open={openImportFa}
               onClose={handleClose}
-              TransitionComponent={Fade}
+              TransitionComponent={Grow}
               disablePortal
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -441,7 +450,7 @@ const MasterlistToolbar = (props) => {
               anchorEl={anchorEl}
               open={openAddFa}
               onClose={handleClose}
-              TransitionComponent={Fade}
+              TransitionComponent={Grow}
               disablePortal
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -455,11 +464,11 @@ const MasterlistToolbar = (props) => {
 
               <Divider sx={{ mx: 2 }} />
 
-              <MenuItem onClick={handleOpenAddCost} dense disabled>
+              <MenuItem onClick={handleOpenAddCost} dense>
                 <ListItemIcon>
                   <AddCard />
                 </ListItemIcon>
-                <ListItemText>Additional Cost (TBA)</ListItemText>
+                <ListItemText>Additional Cost</ListItemText>
               </MenuItem>
             </Menu>
           )}
@@ -543,7 +552,7 @@ const MasterlistToolbar = (props) => {
                   anchorEl={anchorElFaFilter}
                   open={openFaFilter}
                   onClose={handleClose}
-                  TransitionComponent={Fade}
+                  TransitionComponent={Grow}
                   disablePortal
                   transformOrigin={{ horizontal: "left", vertical: "top" }}
                   anchorOrigin={{ horizontal: "right", vertical: "top" }}
