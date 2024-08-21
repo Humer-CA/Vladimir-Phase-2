@@ -20,7 +20,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Add, ArrowBackIosNewRounded, ArrowForwardIosRounded } from "@mui/icons-material";
+import {
+  AccountBox,
+  AccountBoxRounded,
+  Add,
+  AddBox,
+  ArrowBackIosNewRounded,
+  ArrowForwardIosRounded,
+} from "@mui/icons-material";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
@@ -310,396 +317,753 @@ const AddUserAccount = (props) => {
   });
 
   return (
-    <Box className="add-userAccount">
-      <Box className="add-userAccount__title">
-        <IconButton onClick={handleCloseDrawer}>
+    // <Box className="add-userAccount">
+    //   <Box className="add-userAccount__title">
+    //     <IconButton onClick={handleCloseDrawer}>
+    //       <ArrowForwardIosRounded color="secondary" />
+    //     </IconButton>
+
+    //     <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+    //       {data.status ? "EDIT USER" : "ADD USER"}
+    //     </Typography>
+    //   </Box>
+
+    //   <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-userAccount__wrapper">
+    //     <Stack className="add-userAccount__employee">
+    //       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+    //         EMPLOYEE DETAILS
+    //       </Typography>
+
+    //       {data.status ? (
+    //         <CustomTextField
+    //           control={control}
+    //           name="employee_id"
+    //           label="Employee ID"
+    //           type="text"
+    //           color="secondary"
+    //           size="small"
+    //           fullWidth
+    //           disabled
+    //         />
+    //       ) : (
+    //         <CustomAutoComplete
+    //           name="sedar_employee"
+    //           control={control}
+    //           size="small"
+    //           disabled={!!data.status}
+    //           required
+    //           includeInputInList
+    //           disablePortal
+    //           fullWidth
+    //           filterOptions={filterOptions}
+    //           options={sedarData}
+    //           loading={isSedarLoading}
+    //           getOptionLabel={(option) => option?.general_info?.full_id_number_full_name}
+    //           isOptionEqualToValue={(option, value) =>
+    //             option?.general_info?.full_id_number === value?.general_info?.full_id_number
+    //           }
+    //           onChange={(_, value) => {
+    //             if (value) {
+    //               setValue("employee_id", value?.general_info?.full_id_number);
+    //               setValue("firstname", value?.general_info?.first_name);
+    //               setValue("lastname", value?.general_info?.last_name);
+    //               // setValue("unit_id", value.unit_info.unit_id);
+    //               // setValue("subunit_id", value.unit_info.subunit_id);
+    //               // setValue("position", value.position_info.position_name);
+    //               setValue(
+    //                 "username",
+    //                 value?.general_info?.first_name
+    //                   .split(" ")
+    //                   ?.map((name) => {
+    //                     return name.charAt(0);
+    //                   })
+    //                   .toString()
+    //                   .replace(",", "")
+    //                   .toLowerCase() + value?.general_info?.last_name.toLowerCase().replace(/ /gm, "")
+    //               );
+    //             } else {
+    //               setValue("employee_id", null);
+    //               setValue("firstname", "");
+    //               setValue("lastname", "");
+    //               // setValue("unit_id", "");
+    //               // setValue("subunit_id", "");
+    //               setValue("username", "");
+    //             }
+
+    //             return value;
+    //           }}
+    //           renderInput={(params) => (
+    //             <TextField
+    //               {...params}
+    //               label="Employee ID"
+    //               color="secondary"
+    //               error={!!errors?.sedar_employee?.message || !!errors?.employee_id?.message}
+    //               helperText={errors?.sedar_employee?.message || errors?.employee_id?.message}
+    //             />
+    //           )}
+    //         />
+    //       )}
+
+    //       <CustomTextField
+    //         control={control}
+    //         name="firstname"
+    //         label="Firstname"
+    //         type="text"
+    //         color="secondary"
+    //         size="small"
+    //         fullWidth
+    //         disabled
+    //       />
+
+    //       <CustomTextField
+    //         control={control}
+    //         name="lastname"
+    //         label="Last Name"
+    //         type="text"
+    //         color="secondary"
+    //         size="small"
+    //         fullWidth
+    //         disabled
+    //       />
+
+    //       <Divider sx={{ py: 0.5 }} />
+
+    //       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+    //         CHARGING
+    //       </Typography>
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="department_id"
+    //         control={control}
+    //         options={departmentData}
+    //         onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
+    //         loading={isDepartmentLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.department_code + " - " + option.department_name}
+    //         isOptionEqualToValue={(option, value) => option.id === value.id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Department"
+    //             error={!!errors?.department_id}
+    //             helperText={errors?.department_id?.message}
+    //           />
+    //         )}
+    //         onChange={(_, value) => {
+    //           const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+    //           const businessUnitID = businessUnitData?.find(
+    //             (item) => item.sync_id === value.business_unit.business_unit_sync_id
+    //           );
+
+    //           if (value) {
+    //             setValue("company_id", companyID);
+    //             setValue("business_unit_id", businessUnitID);
+    //           } else {
+    //             setValue("company_id", null);
+    //             setValue("business_unit_id", null);
+    //           }
+    //           setValue("unit_id", null);
+    //           setValue("subunit_id", null);
+    //           setValue("location_id", null);
+    //           return value;
+    //         }}
+    //       />
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="company_id"
+    //         control={control}
+    //         options={companyData}
+    //         onOpen={() => (isCompanySuccess ? null : companyTrigger())}
+    //         loading={isCompanyLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+    //         isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Company"
+    //             error={!!errors?.company_id}
+    //             helperText={errors?.company_id?.message}
+    //           />
+    //         )}
+    //         disabled
+    //       />
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="business_unit_id"
+    //         control={control}
+    //         options={businessUnitData}
+    //         onOpen={() => (isBusinessUnitSuccess ? null : businessUnitTrigger())}
+    //         loading={isBusinessUnitLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+    //         isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Business Unit"
+    //             error={!!errors?.business_unit_id}
+    //             helperText={errors?.business_unit_id?.message}
+    //           />
+    //         )}
+    //         disabled
+    //       />
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="unit_id"
+    //         control={control}
+    //         options={
+    //           departmentData?.filter((obj) => {
+    //             return obj?.id === watch("department_id")?.id;
+    //           })[0]?.unit || []
+    //         }
+    //         onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+    //         loading={isUnitLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+    //         isOptionEqualToValue={(option, value) => option.id === value.id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Unit"
+    //             error={!!errors?.unit_id}
+    //             helperText={errors?.unit_id?.message}
+    //           />
+    //         )}
+    //         onChange={(_, value) => {
+    //           setValue("subunit_id", null);
+    //           setValue("location_id", null);
+    //           return value;
+    //         }}
+    //       />
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="subunit_id"
+    //         control={control}
+    //         options={
+    //           unitData?.filter((obj) => {
+    //             return obj?.id === watch("unit_id")?.id;
+    //           })[0]?.subunit || []
+    //         }
+    //         loading={isSubUnitLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
+    //         isOptionEqualToValue={(option, value) => option.id === value.id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Sub Unit"
+    //             error={!!errors?.subunit_id}
+    //             helperText={errors?.subunit_id?.message}
+    //           />
+    //         )}
+    //       />
+
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="location_id"
+    //         control={control}
+    //         options={locationData?.filter((item) => {
+    //           return item.subunit.some((subunit) => {
+    //             return subunit?.id === watch("subunit_id")?.id;
+    //           });
+    //         })}
+    //         loading={isLocationLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.location_code + " - " + option.location_name}
+    //         isOptionEqualToValue={(option, value) => option.id === value.id}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="Location"
+    //             error={!!errors?.location_id}
+    //             helperText={errors?.location_id?.message}
+    //           />
+    //         )}
+    //       />
+
+    //       <Divider sx={{ py: 0.5 }} />
+
+    //       <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+    //         USERNAME AND PERMISSION
+    //       </Typography>
+    //       <CustomTextField
+    //         control={control}
+    //         name="username"
+    //         label="Username"
+    //         type="text"
+    //         color="secondary"
+    //         size="small"
+    //         error={!!errors?.username?.message}
+    //         helperText={errors?.username?.message}
+    //         fullWidth
+    //         disabled={data.status}
+    //       />
+    //       <CustomAutoComplete
+    //         autoComplete
+    //         name="role_id"
+    //         control={control}
+    //         options={roleData}
+    //         loading={isRoleLoading}
+    //         size="small"
+    //         getOptionLabel={(option) => option.role_name}
+    //         isOptionEqualToValue={(option, value) => option.role_name === value.role_name}
+    //         renderInput={(params) => (
+    //           <TextField
+    //             color="secondary"
+    //             {...params}
+    //             label="User Permission"
+    //             error={!!errors?.role_id?.message}
+    //             helperText={errors?.role_id?.message}
+    //           />
+    //         )}
+    //         disablePortal
+    //         fullWidth
+    //       />
+    //       {/* <Box>
+    //         <FormControl
+    //           fullWidth
+    //           component="fieldset"
+    //           sx={{
+    //             border: "1px solid #a6a6a6 ",
+    //             borderRadius: "10px",
+    //             py: "12px",
+    //             px: "10px",
+    //             gap: "10px",
+    //           }}
+    //         >
+    //           <FormLabel component="legend" sx={{ px: "5px" }}>
+    //             List of Approvers
+    //           </FormLabel>
+
+    //           <Box
+    //             sx={{
+    //               display: "flex",
+    //             }}
+    //           >
+    //             <CustomAutoComplete
+    //               autoComplete
+    //               name="approver"
+    //               control={control}
+    //               options={["Approver", "Requestor"]}
+    //               loading={isRoleLoading}
+    //               size="small"
+    //               // getOptionLabel={(option) => option.role_name}
+    //               // isOptionEqualToValue={(option, value) =>
+    //               //   option.role_name === value.role_name
+    //               // }
+    //               renderInput={(params) => (
+    //                 <TextField
+    //                   color="secondary"
+    //                   {...params}
+    //                   label="Head Approver"
+    //                   error={!!errors?.role_id?.message}
+    //                   helperText={errors?.role_id?.message}
+    //                 />
+    //               )}
+    //               fullWidth
+    //             />
+
+    //             <IconButton size="small" color="primary" sx={{ ml: "5px" }}>
+    //               <Add />
+    //             </IconButton>
+    //           </Box>
+    //         </FormControl>
+    //       </Box> */}
+    //     </Stack>
+    //     <Stack gap={2} pt={2}>
+    //       <Divider sx={{ pb: 0.5 }} />
+    //       <Box className="add-userAccount__buttons">
+    //         <LoadingButton
+    //           type="submit"
+    //           variant="contained"
+    //           size="small"
+    //           loading={isUpdateLoading || isPostLoading}
+    //           disabled={!isValid}
+    //         >
+    //           {data.status ? "Update" : "Create"}
+    //         </LoadingButton>
+
+    //         <Button
+    //           size="small"
+    //           variant="outlined"
+    //           color="secondary"
+    //           onClick={handleCloseDrawer}
+    //           disabled={(isPostLoading || isUpdateLoading) === true}
+    //         >
+    //           Cancel
+    //         </Button>
+    //       </Box>
+    //     </Stack>
+    //   </Box>
+    // </Box>
+    <Box className="add-userAccount" p={3}>
+      <Box className="add-userAccount__title" gap={1}>
+        {/* <IconButton onClick={handleCloseDrawer}>
           <ArrowForwardIosRounded color="secondary" />
-        </IconButton>
+        </IconButton> */}
+        <AddBox color="secondary" sx={{ fontSize: "30px" }} />
 
         <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
           {data.status ? "EDIT USER" : "ADD USER"}
         </Typography>
       </Box>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-userAccount__wrapper">
-        <Stack className="add-userAccount__employee">
-          <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
-            EMPLOYEE DETAILS
-          </Typography>
+      <Divider flexItem />
 
-          {data.status ? (
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmitHandler)}
+        className="add-userAccount__wrapper"
+        sx={{ flexDirection: "row" }}
+      >
+        <Stack flexDirection="row" width="600px">
+          <Stack className="add-userAccount__employee">
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+              EMPLOYEE DETAILS
+            </Typography>
+
+            {data.status ? (
+              <CustomTextField
+                control={control}
+                name="employee_id"
+                label="Employee ID"
+                type="text"
+                color="secondary"
+                size="small"
+                fullWidth
+                disabled
+              />
+            ) : (
+              <CustomAutoComplete
+                name="sedar_employee"
+                control={control}
+                size="small"
+                disabled={!!data.status}
+                required
+                includeInputInList
+                disablePortal
+                fullWidth
+                filterOptions={filterOptions}
+                options={sedarData}
+                loading={isSedarLoading}
+                getOptionLabel={(option) => option?.general_info?.full_id_number_full_name}
+                isOptionEqualToValue={(option, value) =>
+                  option?.general_info?.full_id_number === value?.general_info?.full_id_number
+                }
+                onChange={(_, value) => {
+                  if (value) {
+                    setValue("employee_id", value?.general_info?.full_id_number);
+                    setValue("firstname", value?.general_info?.first_name);
+                    setValue("lastname", value?.general_info?.last_name);
+                    // setValue("unit_id", value.unit_info.unit_id);
+                    // setValue("subunit_id", value.unit_info.subunit_id);
+                    // setValue("position", value.position_info.position_name);
+                    setValue(
+                      "username",
+                      value?.general_info?.first_name
+                        .split(" ")
+                        ?.map((name) => {
+                          return name.charAt(0);
+                        })
+                        .toString()
+                        .replace(",", "")
+                        .toLowerCase() + value?.general_info?.last_name.toLowerCase().replace(/ /gm, "")
+                    );
+                  } else {
+                    setValue("employee_id", null);
+                    setValue("firstname", "");
+                    setValue("lastname", "");
+                    // setValue("unit_id", "");
+                    // setValue("subunit_id", "");
+                    setValue("username", "");
+                  }
+
+                  return value;
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Employee ID"
+                    color="secondary"
+                    error={!!errors?.sedar_employee?.message || !!errors?.employee_id?.message}
+                    helperText={errors?.sedar_employee?.message || errors?.employee_id?.message}
+                  />
+                )}
+              />
+            )}
+
             <CustomTextField
               control={control}
-              name="employee_id"
-              label="Employee ID"
+              name="firstname"
+              label="Firstname"
               type="text"
               color="secondary"
               size="small"
               fullWidth
               disabled
             />
-          ) : (
-            <CustomAutoComplete
-              name="sedar_employee"
-              control={control}
-              size="small"
-              disabled={!!data.status}
-              required
-              includeInputInList
-              disablePortal
-              fullWidth
-              filterOptions={filterOptions}
-              options={sedarData}
-              loading={isSedarLoading}
-              getOptionLabel={(option) => option?.general_info?.full_id_number_full_name}
-              isOptionEqualToValue={(option, value) =>
-                option?.general_info?.full_id_number === value?.general_info?.full_id_number
-              }
-              onChange={(_, value) => {
-                if (value) {
-                  setValue("employee_id", value?.general_info?.full_id_number);
-                  setValue("firstname", value?.general_info?.first_name);
-                  setValue("lastname", value?.general_info?.last_name);
-                  // setValue("unit_id", value.unit_info.unit_id);
-                  // setValue("subunit_id", value.unit_info.subunit_id);
-                  // setValue("position", value.position_info.position_name);
-                  setValue(
-                    "username",
-                    value?.general_info?.first_name
-                      .split(" ")
-                      ?.map((name) => {
-                        return name.charAt(0);
-                      })
-                      .toString()
-                      .replace(",", "")
-                      .toLowerCase() + value?.general_info?.last_name.toLowerCase().replace(/ /gm, "")
-                  );
-                } else {
-                  setValue("employee_id", null);
-                  setValue("firstname", "");
-                  setValue("lastname", "");
-                  // setValue("unit_id", "");
-                  // setValue("subunit_id", "");
-                  setValue("username", "");
-                }
 
-                return value;
-              }}
+            <CustomTextField
+              control={control}
+              name="lastname"
+              label="Last Name"
+              type="text"
+              color="secondary"
+              size="small"
+              fullWidth
+              disabled
+            />
+
+            <Divider sx={{ py: 0.5 }} />
+
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+              USERNAME AND PERMISSION
+            </Typography>
+            <CustomTextField
+              control={control}
+              name="username"
+              label="Username"
+              type="text"
+              color="secondary"
+              size="small"
+              error={!!errors?.username?.message}
+              helperText={errors?.username?.message}
+              fullWidth
+              disabled={data.status}
+            />
+            <CustomAutoComplete
+              autoComplete
+              name="role_id"
+              control={control}
+              options={roleData}
+              loading={isRoleLoading}
+              size="small"
+              getOptionLabel={(option) => option.role_name}
+              isOptionEqualToValue={(option, value) => option.role_name === value.role_name}
               renderInput={(params) => (
                 <TextField
-                  {...params}
-                  label="Employee ID"
                   color="secondary"
-                  error={!!errors?.sedar_employee?.message || !!errors?.employee_id?.message}
-                  helperText={errors?.sedar_employee?.message || errors?.employee_id?.message}
+                  {...params}
+                  label="User Permission"
+                  error={!!errors?.role_id?.message}
+                  helperText={errors?.role_id?.message}
+                />
+              )}
+              disablePortal
+              fullWidth
+            />
+          </Stack>
+
+          <Divider flexItem orientation="vertical" sx={{ mx: 2.5, mt: 5 }} />
+
+          <Stack className="add-userAccount__employee">
+            <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+              CHARGING
+            </Typography>
+
+            <CustomAutoComplete
+              autoComplete
+              name="department_id"
+              control={control}
+              options={departmentData}
+              onOpen={() =>
+                isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger())
+              }
+              loading={isDepartmentLoading}
+              size="small"
+              getOptionLabel={(option) => option.department_code + " - " + option.department_name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Department"
+                  error={!!errors?.department_id}
+                  helperText={errors?.department_id?.message}
+                />
+              )}
+              onChange={(_, value) => {
+                const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
+                const businessUnitID = businessUnitData?.find(
+                  (item) => item.sync_id === value.business_unit.business_unit_sync_id
+                );
+
+                if (value) {
+                  setValue("company_id", companyID);
+                  setValue("business_unit_id", businessUnitID);
+                } else {
+                  setValue("company_id", null);
+                  setValue("business_unit_id", null);
+                }
+                setValue("unit_id", null);
+                setValue("subunit_id", null);
+                setValue("location_id", null);
+                return value;
+              }}
+            />
+
+            <CustomAutoComplete
+              autoComplete
+              name="company_id"
+              control={control}
+              options={companyData}
+              onOpen={() => (isCompanySuccess ? null : companyTrigger())}
+              loading={isCompanyLoading}
+              size="small"
+              getOptionLabel={(option) => option.company_code + " - " + option.company_name}
+              isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Company"
+                  error={!!errors?.company_id}
+                  helperText={errors?.company_id?.message}
+                />
+              )}
+              disabled
+            />
+
+            <CustomAutoComplete
+              autoComplete
+              name="business_unit_id"
+              control={control}
+              options={businessUnitData}
+              onOpen={() => (isBusinessUnitSuccess ? null : businessUnitTrigger())}
+              loading={isBusinessUnitLoading}
+              size="small"
+              getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
+              isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Business Unit"
+                  error={!!errors?.business_unit_id}
+                  helperText={errors?.business_unit_id?.message}
+                />
+              )}
+              disabled
+            />
+
+            <CustomAutoComplete
+              autoComplete
+              name="unit_id"
+              control={control}
+              options={
+                departmentData?.filter((obj) => {
+                  return obj?.id === watch("department_id")?.id;
+                })[0]?.unit || []
+              }
+              onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
+              loading={isUnitLoading}
+              size="small"
+              getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Unit"
+                  error={!!errors?.unit_id}
+                  helperText={errors?.unit_id?.message}
+                />
+              )}
+              onChange={(_, value) => {
+                setValue("subunit_id", null);
+                setValue("location_id", null);
+                return value;
+              }}
+            />
+
+            <CustomAutoComplete
+              autoComplete
+              name="subunit_id"
+              control={control}
+              options={
+                unitData?.filter((obj) => {
+                  return obj?.id === watch("unit_id")?.id;
+                })[0]?.subunit || []
+              }
+              loading={isSubUnitLoading}
+              size="small"
+              getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Sub Unit"
+                  error={!!errors?.subunit_id}
+                  helperText={errors?.subunit_id?.message}
                 />
               )}
             />
-          )}
 
-          <CustomTextField
-            control={control}
-            name="firstname"
-            label="Firstname"
-            type="text"
-            color="secondary"
-            size="small"
-            fullWidth
-            disabled
-          />
-
-          <CustomTextField
-            control={control}
-            name="lastname"
-            label="Last Name"
-            type="text"
-            color="secondary"
-            size="small"
-            fullWidth
-            disabled
-          />
-
-          <Divider sx={{ py: 0.5 }} />
-
-          <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
-            CHARGING
-          </Typography>
-
-          <CustomAutoComplete
-            autoComplete
-            name="department_id"
-            control={control}
-            options={departmentData}
-            onOpen={() => (isDepartmentSuccess ? null : (departmentTrigger(), companyTrigger(), businessUnitTrigger()))}
-            loading={isDepartmentLoading}
-            size="small"
-            getOptionLabel={(option) => option.department_code + " - " + option.department_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Department"
-                error={!!errors?.department_id}
-                helperText={errors?.department_id?.message}
-              />
-            )}
-            onChange={(_, value) => {
-              const companyID = companyData?.find((item) => item.sync_id === value.company.company_sync_id);
-              const businessUnitID = businessUnitData?.find(
-                (item) => item.sync_id === value.business_unit.business_unit_sync_id
-              );
-
-              if (value) {
-                setValue("company_id", companyID);
-                setValue("business_unit_id", businessUnitID);
-              } else {
-                setValue("company_id", null);
-                setValue("business_unit_id", null);
-              }
-              setValue("unit_id", null);
-              setValue("subunit_id", null);
-              setValue("location_id", null);
-              return value;
-            }}
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            name="company_id"
-            control={control}
-            options={companyData}
-            onOpen={() => (isCompanySuccess ? null : companyTrigger())}
-            loading={isCompanyLoading}
-            size="small"
-            getOptionLabel={(option) => option.company_code + " - " + option.company_name}
-            isOptionEqualToValue={(option, value) => option.company_id === value.company_id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Company"
-                error={!!errors?.company_id}
-                helperText={errors?.company_id?.message}
-              />
-            )}
-            disabled
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            name="business_unit_id"
-            control={control}
-            options={businessUnitData}
-            onOpen={() => (isBusinessUnitSuccess ? null : businessUnitTrigger())}
-            loading={isBusinessUnitLoading}
-            size="small"
-            getOptionLabel={(option) => option.business_unit_code + " - " + option.business_unit_name}
-            isOptionEqualToValue={(option, value) => option.business_unit_id === value.business_unit_id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Business Unit"
-                error={!!errors?.business_unit_id}
-                helperText={errors?.business_unit_id?.message}
-              />
-            )}
-            disabled
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            name="unit_id"
-            control={control}
-            options={
-              departmentData?.filter((obj) => {
-                return obj?.id === watch("department_id")?.id;
-              })[0]?.unit || []
-            }
-            onOpen={() => (isUnitSuccess ? null : (unitTrigger(), subunitTrigger(), locationTrigger()))}
-            loading={isUnitLoading}
-            size="small"
-            getOptionLabel={(option) => option.unit_code + " - " + option.unit_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Unit"
-                error={!!errors?.unit_id}
-                helperText={errors?.unit_id?.message}
-              />
-            )}
-            onChange={(_, value) => {
-              setValue("subunit_id", null);
-              setValue("location_id", null);
-              return value;
-            }}
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            name="subunit_id"
-            control={control}
-            options={
-              unitData?.filter((obj) => {
-                return obj?.id === watch("unit_id")?.id;
-              })[0]?.subunit || []
-            }
-            loading={isSubUnitLoading}
-            size="small"
-            getOptionLabel={(option) => option.subunit_code + " - " + option.subunit_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Sub Unit"
-                error={!!errors?.subunit_id}
-                helperText={errors?.subunit_id?.message}
-              />
-            )}
-          />
-
-          <CustomAutoComplete
-            autoComplete
-            name="location_id"
-            control={control}
-            options={locationData?.filter((item) => {
-              return item.subunit.some((subunit) => {
-                return subunit?.id === watch("subunit_id")?.id;
-              });
-            })}
-            loading={isLocationLoading}
-            size="small"
-            getOptionLabel={(option) => option.location_code + " - " + option.location_name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Location"
-                error={!!errors?.location_id}
-                helperText={errors?.location_id?.message}
-              />
-            )}
-          />
-
-          <Divider sx={{ py: 0.5 }} />
-
-          <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
-            USERNAME AND PERMISSION
-          </Typography>
-          <CustomTextField
-            control={control}
-            name="username"
-            label="Username"
-            type="text"
-            color="secondary"
-            size="small"
-            error={!!errors?.username?.message}
-            helperText={errors?.username?.message}
-            fullWidth
-            disabled={data.status}
-          />
-          <CustomAutoComplete
-            autoComplete
-            name="role_id"
-            control={control}
-            options={roleData}
-            loading={isRoleLoading}
-            size="small"
-            getOptionLabel={(option) => option.role_name}
-            isOptionEqualToValue={(option, value) => option.role_name === value.role_name}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="User Permission"
-                error={!!errors?.role_id?.message}
-                helperText={errors?.role_id?.message}
-              />
-            )}
-            disablePortal
-            fullWidth
-          />
-          {/* <Box>
-            <FormControl
-              fullWidth
-              component="fieldset"
-              sx={{
-                border: "1px solid #a6a6a6 ",
-                borderRadius: "10px",
-                py: "12px",
-                px: "10px",
-                gap: "10px",
-              }}
-            >
-              <FormLabel component="legend" sx={{ px: "5px" }}>
-                List of Approvers
-              </FormLabel>
-
-              <Box
-                sx={{
-                  display: "flex",
-                }}
-              >
-                <CustomAutoComplete
-                  autoComplete
-                  name="approver"
-                  control={control}
-                  options={["Approver", "Requestor"]}
-                  loading={isRoleLoading}
-                  size="small"
-                  // getOptionLabel={(option) => option.role_name}
-                  // isOptionEqualToValue={(option, value) =>
-                  //   option.role_name === value.role_name
-                  // }
-                  renderInput={(params) => (
-                    <TextField
-                      color="secondary"
-                      {...params}
-                      label="Head Approver"
-                      error={!!errors?.role_id?.message}
-                      helperText={errors?.role_id?.message}
-                    />
-                  )}
-                  fullWidth
+            <CustomAutoComplete
+              autoComplete
+              name="location_id"
+              control={control}
+              options={locationData?.filter((item) => {
+                return item.subunit.some((subunit) => {
+                  return subunit?.id === watch("subunit_id")?.id;
+                });
+              })}
+              loading={isLocationLoading}
+              size="small"
+              getOptionLabel={(option) => option.location_code + " - " + option.location_name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  color="secondary"
+                  {...params}
+                  label="Location"
+                  error={!!errors?.location_id}
+                  helperText={errors?.location_id?.message}
                 />
-
-                <IconButton size="small" color="primary" sx={{ ml: "5px" }}>
-                  <Add />
-                </IconButton>
-              </Box>
-            </FormControl>
-          </Box> */}
-        </Stack>
-        <Stack gap={2} pt={2}>
-          <Divider sx={{ pb: 0.5 }} />
-          <Box className="add-userAccount__buttons">
-            <LoadingButton
-              type="submit"
-              variant="contained"
-              size="small"
-              loading={isUpdateLoading || isPostLoading}
-              disabled={!isValid}
-            >
-              {data.status ? "Update" : "Create"}
-            </LoadingButton>
-
-            <Button
-              size="small"
-              variant="outlined"
-              color="secondary"
-              onClick={handleCloseDrawer}
-              disabled={(isPostLoading || isUpdateLoading) === true}
-            >
-              Cancel
-            </Button>
-          </Box>
+              )}
+            />
+          </Stack>
         </Stack>
       </Box>
+
+      <Divider flexItem sx={{ pb: 1 }} />
+
+      <Stack gap={2} width="100%">
+        <Box className="add-userAccount__buttons">
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            size="small"
+            loading={isUpdateLoading || isPostLoading}
+            disabled={!isValid}
+          >
+            {data.status ? "Update" : "Create"}
+          </LoadingButton>
+
+          <Button
+            size="small"
+            variant="outlined"
+            color="secondary"
+            onClick={handleCloseDrawer}
+            disabled={(isPostLoading || isUpdateLoading) === true}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </Stack>
     </Box>
   );
 };
