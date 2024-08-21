@@ -388,7 +388,7 @@ const FixedAsset = (props) => {
 
                 <TableBody>
                   {fixedAssetData.data.length === 0 ? (
-                    <NoRecordsFound />
+                    <NoRecordsFound heightData="medium" />
                   ) : (
                     <>
                       {fixedAssetSuccess &&

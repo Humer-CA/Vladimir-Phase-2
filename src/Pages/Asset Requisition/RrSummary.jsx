@@ -202,156 +202,149 @@ const RrSummary = (props) => {
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "1.6rem" }}>
         RR Summary
       </Typography>
-      <Stack>
+      <Stack height="100%">
         {receivedReceiptLoading && <MasterlistSkeleton onAdd={true} />}
         {receivedReceiptError && <ErrorFetching refetch={refetch} error={errorData} />}
         {receivedReceiptData && !receivedReceiptError && (
-          <>
-            <Box className="mcontainer__wrapper">
-              <MasterlistToolbar
-                onStatusChange={setStatus}
-                onSearchChange={setSearch}
-                onSetPage={setPage}
-                hideArchive
-              />
+          <Box className="mcontainer__wrapper">
+            <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
 
-              <Box>
-                <TableContainer className="mcontainer__th-body">
-                  <Table className="mcontainer__table" stickyHeader>
-                    <TableHead>
-                      <TableRow
-                        sx={{
-                          "& > *": {
-                            fontWeight: "bold!important",
-                            whiteSpace: "nowrap",
-                          },
-                        }}
-                      >
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `transaction_number`}
-                            direction={orderBy === `transaction_number` ? order : `asc`}
-                            onClick={() => onSort(`transaction_number`)}
-                          >
-                            RR No.
-                          </TableSortLabel>
-                        </TableCell>
+            <Box>
+              <TableContainer className="mcontainer__th-body">
+                <Table className="mcontainer__table" stickyHeader>
+                  <TableHead>
+                    <TableRow
+                      sx={{
+                        "& > *": {
+                          fontWeight: "bold!important",
+                          whiteSpace: "nowrap",
+                        },
+                      }}
+                    >
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `transaction_number`}
+                          direction={orderBy === `transaction_number` ? order : `asc`}
+                          onClick={() => onSort(`transaction_number`)}
+                        >
+                          RR No.
+                        </TableSortLabel>
+                      </TableCell>
 
-                        <TableCell className="tbl-cell">Transaction Number</TableCell>
+                      <TableCell className="tbl-cell">Transaction Number</TableCell>
 
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `po_number`}
-                            direction={orderBy === `po_number` ? order : `asc`}
-                            onClick={() => onSort(`po_number`)}
-                          >
-                            PR/PO Number
-                          </TableSortLabel>
-                        </TableCell>
+                      <TableCell className="tbl-cell">
+                        <TableSortLabel
+                          active={orderBy === `po_number`}
+                          direction={orderBy === `po_number` ? order : `asc`}
+                          onClick={() => onSort(`po_number`)}
+                        >
+                          PR/PO Number
+                        </TableSortLabel>
+                      </TableCell>
 
-                        <TableCell className="tbl-cell" align="center">
-                          View Tagged
-                        </TableCell>
+                      <TableCell className="tbl-cell" align="center">
+                        View Tagged
+                      </TableCell>
 
-                        <TableCell className="tbl-cell text-center">
-                          <TableSortLabel
-                            active={orderBy === `created_at`}
-                            direction={orderBy === `created_at` ? order : `asc`}
-                            onClick={() => onSort(`created_at`)}
-                          >
-                            Date Approved
-                          </TableSortLabel>
-                        </TableCell>
+                      <TableCell className="tbl-cell text-center">
+                        <TableSortLabel
+                          active={orderBy === `created_at`}
+                          direction={orderBy === `created_at` ? order : `asc`}
+                          onClick={() => onSort(`created_at`)}
+                        >
+                          Date Approved
+                        </TableSortLabel>
+                      </TableCell>
 
-                        <TableCell className="tbl-cell">Action</TableCell>
-                      </TableRow>
-                    </TableHead>
+                      <TableCell className="tbl-cell">Action</TableCell>
+                    </TableRow>
+                  </TableHead>
 
-                    <TableBody>
-                      {receivedReceiptData?.data?.length === 0 ? (
-                        <NoRecordsFound heightData="small" />
-                      ) : (
-                        <>
-                          {receivedReceiptSuccess &&
-                            [...receivedReceiptData?.data]?.sort(comparator(order, orderBy))?.map((data, index) => (
-                              <TableRow
-                                key={index}
-                                sx={{
-                                  "&:last-child td, &:last-child th": {
-                                    borderBottom: 0,
-                                  },
-                                }}
-                              >
-                                <TableCell className="tbl-cell">
-                                  <Chip
+                  <TableBody>
+                    {receivedReceiptData?.data?.length === 0 ? (
+                      <NoRecordsFound heightData="small" />
+                    ) : (
+                      <>
+                        {receivedReceiptSuccess &&
+                          [...receivedReceiptData?.data]?.sort(comparator(order, orderBy))?.map((data, index) => (
+                            <TableRow
+                              key={index}
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  borderBottom: 0,
+                                },
+                              }}
+                            >
+                              <TableCell className="tbl-cell">
+                                <Chip
+                                  size="small"
+                                  color="primary"
+                                  label={
+                                    <Typography fontWeight={600} fontSize="12px">
+                                      {data.rr_number}
+                                    </Typography>
+                                  }
+                                />
+                              </TableCell>
+
+                              <TableCell className="tbl-cell">{data?.transaction_number}</TableCell>
+
+                              <TableCell className="tbl-cell ">
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PR - ${data.pr_number}`}
+                                </Typography>
+                                <Typography fontSize="12px" color="secondary.main">
+                                  {`PO - ${data.po_number.replace(/,/g, ", ")}`}
+                                </Typography>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell" align="center">
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  <IconButton
                                     size="small"
-                                    color="primary"
-                                    label={
-                                      <Typography fontWeight={600} fontSize="12px">
-                                        {data.rr_number}
-                                      </Typography>
-                                    }
+                                    onClick={() => {
+                                      handleViewData();
+                                      setVladimirTag(data.vladimir_tag_number);
+                                      setReference(data.reference_number);
+                                    }}
+                                  >
+                                    <Visibility />
+                                  </IconButton>
+                                </Typography>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell tr-cen-pad45">
+                                {Moment(data.created_at).format("MMM DD, YYYY")}
+                              </TableCell>
+
+                              <TableCell className="tbl-cell">
+                                {data?.can_cancel === 1 && (
+                                  <ActionMenu
+                                    hideEdit
+                                    data={data?.rr_number}
+                                    showCancelRr={true}
+                                    handleCancelRR={handleCancelRR}
                                   />
-                                </TableCell>
-
-                                <TableCell className="tbl-cell">{data?.transaction_number}</TableCell>
-
-                                <TableCell className="tbl-cell ">
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`PR - ${data.pr_number}`}
-                                  </Typography>
-                                  <Typography fontSize="12px" color="secondary.main">
-                                    {`PO - ${data.po_number.replace(/,/g, ", ")}`}
-                                  </Typography>
-                                </TableCell>
-
-                                <TableCell className="tbl-cell" align="center">
-                                  <Typography fontSize={14} fontWeight={600} color="secondary.main">
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => {
-                                        handleViewData();
-                                        setVladimirTag(data.vladimir_tag_number);
-                                        setReference(data.reference_number);
-                                      }}
-                                    >
-                                      <Visibility />
-                                    </IconButton>
-                                  </Typography>
-                                </TableCell>
-
-                                <TableCell className="tbl-cell tr-cen-pad45">
-                                  {Moment(data.created_at).format("MMM DD, YYYY")}
-                                </TableCell>
-
-                                <TableCell className="tbl-cell">
-                                  {data?.can_cancel === 1 && (
-                                    <ActionMenu
-                                      hideEdit
-                                      data={data?.rr_number}
-                                      showCancelRr={true}
-                                      handleCancelRR={handleCancelRR}
-                                    />
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-              <CustomTablePagination
-                total={receivedReceiptData?.total}
-                success={receivedReceiptSuccess}
-                current_page={receivedReceiptData?.current_page}
-                per_page={receivedReceiptData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Box>
-          </>
+            <CustomTablePagination
+              total={receivedReceiptData?.total}
+              success={receivedReceiptSuccess}
+              current_page={receivedReceiptData?.current_page}
+              per_page={receivedReceiptData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
+          </Box>
         )}
       </Stack>
 
@@ -378,7 +371,7 @@ const RrSummary = (props) => {
                 options={vladimirTag}
                 value={vladimirTag}
                 size="small"
-                PaperComponent={{ maxHeight: "350px" }}
+                // PaperComponent={{ maxHeight: "350px" }}
                 renderInput={(params) => (
                   <TextField
                     // label="Vladimir Tag"

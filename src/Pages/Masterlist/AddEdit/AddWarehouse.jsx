@@ -163,7 +163,7 @@ const AddWarehouse = (props) => {
           loading={isLocationLoading}
           size="small"
           getOptionLabel={(option) => option.location_code + " - " + option.location_name}
-          isOptionEqualToValue={(option, value) => option.location_id === value.location_id}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
             <TextField
               color="secondary"
@@ -174,6 +174,7 @@ const AddWarehouse = (props) => {
             />
           )}
         />
+        {console.log(locationData)}
 
         <CustomTextField
           disabled={data.action === "view"}

@@ -20,13 +20,15 @@ const Cards = (props) => {
         }}
       >
         <CardContent className="parentSidebar__content">
-          {!isSmallScreen && (
-            <Badge color="error" badgeContent={data?.notification}>
-              <Stack className="parentSidebar__icon">{data.icon}</Stack>
-            </Badge>
-          )}
-          <Stack flexDirection="column" gap={0.2} alignItems="flex-start">
-            <Stack flexDirection="row" alignItems="center" gap={2}>
+          <Stack gap={3}>
+            {!isSmallScreen && (
+              <Stack className="parentSidebar__icon">
+                <Badge color="error" badgeContent={data?.notification}>
+                  {data.icon}
+                </Badge>
+              </Stack>
+            )}
+            <Stack flexDirection={isSmallScreen ? "row" : "column"} gap={isSmallScreen ? 2 : 0.4}>
               {isSmallScreen && <Stack className="parentSidebar__icon">{data.icon}</Stack>}
               <Stack>
                 <Typography component="div" fontWeight="bold" color="secondary">
@@ -38,14 +40,13 @@ const Cards = (props) => {
                   </Typography>
                 )}
               </Stack>
+              {!isSmallScreen && (
+                <Typography variant="body2" color="text.secondary" fontSize="12px">
+                  {data.description}
+                </Typography>
+              )}
             </Stack>
-            {!isSmallScreen && (
-              <Typography variant="body2" color="text.secondary" fontSize="12px">
-                {data.description}
-              </Typography>
-            )}
           </Stack>
-
           {!isSmallScreen && (
             <Box
               sx={{

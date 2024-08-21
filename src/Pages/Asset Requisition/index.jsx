@@ -33,7 +33,7 @@ const AssetRequisition = () => {
     {
       icon: <OpenInBrowserOutlined />,
       label: "Received Asset",
-      description: "Input of additional info and Purchase Order Number",
+      description: "Viewing of Received Asset and Cancellation of RR",
       path: "/asset-requisition/requisition-received-asset",
       permission: "requisition-received-asset",
       notification: notifData?.toReceive,

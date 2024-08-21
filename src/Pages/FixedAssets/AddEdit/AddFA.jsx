@@ -55,7 +55,7 @@ import { useLazyGetAssetStatusAllApiQuery } from "../../../Redux/Query/Masterlis
 import { useLazyGetAssetMovementStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/AssetMovementStatus";
 import { useLazyGetCycleCountStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
 import { useLazyGetDepreciationStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
-import { Close } from "@mui/icons-material";
+import { AddBox, Close } from "@mui/icons-material";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -728,9 +728,13 @@ const AddFa = (props) => {
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="AddFa">
       <Box className="AddFa__title">
-        <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", ml: 1 }}>
-          {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
-        </Typography>
+        <Stack flexDirection="row" alignItems="center">
+          <AddBox color="secondary" sx={{ fontSize: "30px" }} />
+          <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem", ml: 1 }}>
+            {data.status ? "Edit Fixed Asset" : "Add Fixed Asset"}
+          </Typography>
+        </Stack>
+
         <Tooltip title="Close" placement="right" arrow>
           <IconButton variant="outlined" color="secondary" size="small" onClick={handleCloseDrawer}>
             <Close />

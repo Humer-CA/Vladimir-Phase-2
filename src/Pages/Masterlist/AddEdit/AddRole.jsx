@@ -27,6 +27,7 @@ import {
 } from "../../../Redux/Query/UserManagement/RoleManagementApi";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
+import { AddBox } from "@mui/icons-material";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -517,9 +518,12 @@ const AddRole = (props) => {
 
   return (
     <Box className="add-role">
-      <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
-        {!data.status ? "Add Role" : data.action === "view" ? "Permissions" : "Edit Role"}
-      </Typography>
+      <Stack flexDirection="row" alignItems="center" gap={1} alignSelf="flex-start" pb={1}>
+        {!data.status ? <AddBox color="secondary" sx={{ fontSize: "30px" }} /> : null}
+        <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
+          {!data.status ? "Add Role" : data.action === "view" ? "Permissions" : "Edit Role"}
+        </Typography>
+      </Stack>
 
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} sx={{ mx: "10px" }}>
         <CustomTextField

@@ -349,7 +349,7 @@ const Department = () => {
                     }}
                   >
                     {departmentApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {departmentApiSuccess &&
