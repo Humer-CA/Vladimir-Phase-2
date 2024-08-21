@@ -260,7 +260,7 @@ const AddReleasingInfo = (props) => {
     if (isPostSuccess) {
       reset();
       handleCloseDialog();
-      refetch();
+      // refetch();
       dispatch(
         openToast({
           message: postData?.message,
@@ -294,20 +294,12 @@ const AddReleasingInfo = (props) => {
     fontSize: "16px",
   };
 
-  // console.log(
-  //   "data",
-  //   data.map((item) => item?.warehouse_number)
-  // );
-  // console.log("warehouseNumber", warehouseNumber);
+  const warehouseNumberData =
+    data
+      ?.filter((item) => warehouseNumber?.warehouse_number_id?.includes(item?.warehouse_number?.warehouse_number))
+      ?.map((data) => data?.warehouse_number?.id) || [];
 
-  const warehouseNumberData = data?.filter((item) =>
-    warehouseNumber?.warehouse_number_id?.includes(item.warehouse_number?.warehouse_number)
-  );
-
-  console.log(
-    "warehouseNumberData",
-    warehouseNumberData.map((data) => data.warehouse_number?.id)
-  );
+  console.log(warehouseNumberData);
 
   const onSubmitHandler = async (formData) => {
     console.log(formData);
@@ -336,7 +328,7 @@ const AddReleasingInfo = (props) => {
 
     const newFormData = {
       ...formData,
-      warehouse_number_id: warehouseNumberData.map((data) => data.warehouse_number?.id),
+      warehouse_number_id: warehouseNumberData,
       department_id: handleSaveValidation() ? null : formData?.department_id?.id?.toString(),
       company_id: handleSaveValidation() ? null : formData.company_id?.id?.toString(),
       business_unit_id: handleSaveValidation() ? null : formData.business_unit_id?.id?.toString(),
