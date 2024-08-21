@@ -1876,6 +1876,17 @@ const AddRequisition = (props) => {
     pb: "10px",
   };
 
+  const formatAccountable = (str) => {
+    const [id, lastName, firstName] = str.split(/[\s,]+/);
+    return (
+      <>
+        <Typography fontSize={14} fontWeight={600}>
+          {id}
+        </Typography>
+        <Typography fontSize={12}>{`${firstName} ${lastName}`}</Typography>
+      </>
+    );
+  };
   return (
     <>
       {errorRequest && errorTransaction ? (
@@ -2057,16 +2068,9 @@ const AddRequisition = (props) => {
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.accountability === "Personal Issued" ? (
-                                <>
-                                  <Typography fontSize={12}>
-                                    {data?.accountable?.general_info?.full_id_number || data?.accountable}
-                                  </Typography>
-                                  <Typography fontSize={12}>{data?.accountable?.general_info?.full_name}</Typography>
-                                </>
-                              ) : (
-                                "Common"
-                              )}
+                              {data.accountability === "Personal Issued"
+                                ? formatAccountable(data?.accountable)
+                                : "Common"}
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
