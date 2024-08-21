@@ -61,7 +61,7 @@
 
   &__card:hover {
     // opacity: 100%;
-    background-color: #faba5b98;
+    background-color: #f9d39a;
   }
 
   &__content {
@@ -73,12 +73,15 @@
     height: 100%;
 
     & .parentSidebar__icon {
-      align-self: flex-start;
+      justify-content: center;
+      align-items: center;
       pointer-events: none;
       pointer-events: none;
       color: index.$secondary;
       background-color: #faba5b98;
-      border-radius: 10px;
+      border-radius: 50%;
+      height: 40px;
+      width: 40px;
     }
 
     @media (max-width: 590px) {
