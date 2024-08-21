@@ -149,7 +149,6 @@ const ViewApproveRequest = (props) => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
 
             const result = await patchApprovalStatus({
               action: "Approve",
@@ -164,6 +163,7 @@ const ViewApproveRequest = (props) => {
             );
 
             if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
+              const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
               const postYmirData = await postPr(getYmirDataApi).unwrap();
               const next = await getNextRequest().unwrap();
 
