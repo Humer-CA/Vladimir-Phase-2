@@ -85,8 +85,8 @@ $pending: #f5cc2a2f;
  * ----------------------------------------
  */
 .slide-in-bck-center {
-  -webkit-animation: slide-in-bck-center 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-  animation: slide-in-bck-center 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  -webkit-animation: slide-in-bck-center 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-bck-center 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 @-webkit-keyframes slide-in-bck-center {
@@ -121,8 +121,10 @@ $pending: #f5cc2a2f;
  */
 
 .scale-in-center {
-  -webkit-animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  -webkit-animation: scale-in-center 0.8s cubic-bezier(0.37, 0.43, 0.47, 1.22) both;
+  animation: scale-in-center 0.8s cubic-bezier(0.37, 0.43, 0.47, 1.22) both;
+  // -webkit-animation: scale-in-center 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  // animation: scale-in-center 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 @-webkit-keyframes scale-in-center {
   0% {
