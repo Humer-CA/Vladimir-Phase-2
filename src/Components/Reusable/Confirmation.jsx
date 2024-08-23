@@ -57,8 +57,10 @@ const Confirmation = (props) => {
 
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     control,
+    register,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { remarks: "" },
@@ -86,25 +88,121 @@ const Confirmation = (props) => {
         dispatch(closeConfirm());
       }
     } catch (error) {
-      // Handle form submission errors (if any)
+      console.log(error.errors.remarks[0]);
     }
   };
 
-  // const handleConfirm = async (formData) => {
-  //   try {
-  //     await onConfirm(formData.remarks); // Pass the remarks value to onConfirm
-  //   } catch (error) {
-  //     // Handle form submission errors (if any)
-  //   }
-  // };
+  return remarks ? (
+    <Box className="confirmation" width="100%" component="form" onSubmit={handleSubmit(handleConfirm)}>
+      <Stack flexDirection="row" alignItems="center" gap={1} justifySelf="flex-start">
+        <SvgIcon
+          component={icon}
+          htmlColor={iconColor}
+          // htmlColor="info"
+          sx={{ fontSize: "40px", ...iconProps }}
+        />
+        <DialogTitle
+          className="confirmation__title"
+          color="secondary"
+          sx={{ fontFamily: "Anton", fontSize: "1.5rem", padding: 0 }}
+        >
+          Confirmation
+        </DialogTitle>
+      </Stack>
 
-  return (
+      <DialogContent sx={{ p: 1, px: 0, alignSelf: "flex-start", width: "100%" }}>
+        <DialogContentText component="div" align="left" pl={1}>
+          {message}
+        </DialogContentText>
+      </DialogContent>
+
+      <Stack gap={1.5} pt={1}>
+        <Typography fontFamily="Anton" fontWeight="bold" fontSize={18} color="secondary" align="left">
+          Remarks
+        </Typography>
+
+        <CustomTextField
+          control={control}
+          required
+          name="remarks"
+          label="Remarks"
+          type="text"
+          color="secondary"
+          size="small"
+          fullWidth
+          minRows={4}
+          maxRows={6}
+          multiline
+          sx={{ minHeight: "200px" }}
+          error={!!errors?.remarks}
+          helperText={errors?.remarks?.message}
+        />
+
+        {/* <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="outlined-textarea" color="secondary" sx={{ bgcolor: "white" }}>
+            Remarks*
+          </InputLabel>
+          <OutlinedInput
+            {...register}
+            name="remarks"
+            size="small"
+            color="secondary"
+            required
+            inputComponent={TextareaAutosize}
+            inputProps={{
+              minRows: 4,
+              style: {
+                resize: "none",
+                padding: "12px 16px",
+                height: "20px",
+                maxHeight: "150px",
+                minHeight: "100%",
+                fontSize: "14px",
+                overflow: "auto",
+              },
+            }}
+            label="Remarks*"
+            sx={{
+              borderRadius: "10px",
+            }}
+          />
+        </FormControl> */}
+      </Stack>
+
+      {/* <DialogActions> */}
+      <Stack justifyContent="flex-end" flexDirection="row" gap={2} marginTop={3}>
+        <LoadingButton
+          color="primary"
+          // onClick={handleConfirm}
+          loading={loading}
+          type="submit"
+          variant="contained"
+          size="small"
+          disabled={watch("remarks") === "" || watch("remarks") === " "}
+        >
+          Yes
+        </LoadingButton>
+
+        <Button
+          autoFocus
+          variant="outlined"
+          color="secondary"
+          onClick={handleClose}
+          disabled={loading === true}
+          size="small"
+        >
+          No
+        </Button>
+      </Stack>
+      {/* </DialogActions> */}
+    </Box>
+  ) : (
     <Box className="confirmation" component="form" onSubmit={handleSubmit(handleConfirm)}>
       <SvgIcon
         component={icon}
         htmlColor={iconColor}
         // htmlColor="info"
-        sx={{ fontSize: "50px", ...iconProps }}
+        sx={{ fontSize: "50px", alignSelf: "center", ...iconProps }}
       />
       <DialogTitle
         className="confirmation__title"
@@ -114,31 +212,9 @@ const Confirmation = (props) => {
         Confirmation
       </DialogTitle>
 
-      <DialogContent sx={{ padding: 0, paddingBottom: remarks ? 2 : 0 }}>
+      <DialogContent sx={{ padding: 0 }}>
         <DialogContentText component="div">{message}</DialogContentText>
       </DialogContent>
-
-      {remarks && (
-        <Stack gap={1} width="90%">
-          <Typography fontFamily="Anton" fontWeight="bold" fontSize={20} color="secondary">
-            Remarks
-          </Typography>
-
-          <CustomTextField
-            control={control}
-            required
-            name="remarks"
-            label="Remarks"
-            type="text"
-            color="secondary"
-            size="small"
-            fullWidth
-            multiline
-            error={!!errors?.remarks}
-            helperText={errors?.remarks?.message}
-          />
-        </Stack>
-      )}
 
       {/* <DialogActions> */}
       <Stack alignContent="flex-start" justifyContent="center" flexDirection="row" gap={2} marginTop={3}>
