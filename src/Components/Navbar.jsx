@@ -42,6 +42,7 @@ import {
   Zoom,
   Dialog,
   Grow,
+  Slide,
 } from "@mui/material";
 
 function ListItemLink(props) {
@@ -226,7 +227,7 @@ const Navbar = () => {
         anchorEl={anchorElSettings}
         open={openSettings}
         onClose={handleClose}
-        TransitionComponent={Fade}
+        TransitionComponent={Grow}
         disablePortal
       >
         <Box className="navbar__menu-settings">
@@ -314,6 +315,7 @@ const Navbar = () => {
 
       <Dialog
         open={changePassword}
+        TransitionComponent={Slide}
         onClose={() => dispatch(closeChangePassword())}
         PaperProps={{
           sx: { borderRadius: "10px", width: "100%", maxWidth: "320px" },

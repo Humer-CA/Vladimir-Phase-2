@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { openChangePassword } from "../Redux/StateManagement/changePasswordSlice";
 
-import { Box, Dialog, Grow, IconButton, InputAdornment, Typography } from "@mui/material";
+import { Box, Dialog, Grow, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -42,6 +42,7 @@ const LoginPage = () => {
     control,
     formState: { errors, isValid },
     setError,
+    register,
     reset,
     watch,
   } = useForm({
@@ -154,7 +155,7 @@ const LoginPage = () => {
 
   return (
     <Box className="login">
-      <Box className="login__container">
+      <Box className="login__container slide-in-bck-center">
         <Box className="login__logo-container">
           <Box
             className="login__logo"
@@ -219,9 +220,9 @@ const LoginPage = () => {
               helperText={errors?.username?.message}
             />
 
-            <CustomTextField
+            <TextField
               autoComplete="off"
-              control={control}
+              {...register("password")}
               label="Password"
               name="password"
               type={showPassword ? "text" : "password"}
@@ -245,6 +246,7 @@ const LoginPage = () => {
                   </InputAdornment>
                 ),
               }}
+              sx={{ ".MuiInputBase-root": { borderRadius: "10px" } }}
             />
 
             <LoadingButton
