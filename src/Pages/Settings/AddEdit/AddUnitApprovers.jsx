@@ -20,6 +20,8 @@ import {
   Autocomplete,
   Tooltip,
   Zoom,
+  Grow,
+  Slide,
 } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
@@ -38,7 +40,7 @@ import { useGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/U
 const schema = yup.object().shape({
   id: yup.string(),
 
-  unit_id: yup.object().required().typeError("Sub Unit is required").label("Unit"),
+  unit_id: yup.object().required().typeError("Unit is required").label("Unit"),
   subunit_id: yup.object().required().typeError("Sub Unit is required").label("Sub Unit"),
 
   approver_id: yup.array().required().label("Approver"),
@@ -47,6 +49,7 @@ const schema = yup.object().shape({
 const AddUnitApprovers = (props) => {
   const { data, onUpdateResetHandler } = props;
   const [selectedApprovers, setSelectedApprovers] = useState(null);
+  const [checked, setChecked] = useState(true);
   const dispatch = useDispatch();
 
   const [
@@ -317,6 +320,11 @@ const AddUnitApprovers = (props) => {
                   color="secondary"
                   error={!!errors?.approver_id?.message}
                   helperText={errors?.approver_id?.message}
+                  sx={{
+                    ".MuiInputBase-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
                 />
               )}
               onChange={(_, value) => {
@@ -370,50 +378,52 @@ const AddUnitApprovers = (props) => {
               >
                 {watch("approver_id")?.map((approver, index) => (
                   <Stack key={index} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
-                    <Stack
-                      flexDirection="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      p={1}
-                      sx={{
-                        backgroundColor: "background.light",
-                        width: "100%",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Stack flexDirection="row" alignItems="center" gap={2.5}>
-                        <DragIndicator sx={{ color: "black.light" }} />
-                        <Avatar
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            backgroundColor: data.action === "view" ? "gray" : "primary.main",
-                            fontSize: "16px",
-                          }}
-                        >
-                          {index + 1}
-                        </Avatar>
-                        <Stack>
-                          <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
-                          <Typography fontSize="12px" color="gray" mt="-2px">
-                            {approver?.approver?.employee_id}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                      <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
-                        <span>
-                          <IconButton
-                            aria-label="Delete"
-                            disabled={data.action === "view"}
-                            onClick={() => {
-                              deleteApproverHandler(approver?.id);
+                    <Slide direction="left" in={checked} timeout={500} mountOnEnter unmountOnExit>
+                      <Stack
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        p={1}
+                        sx={{
+                          backgroundColor: "background.light",
+                          width: "100%",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <Stack flexDirection="row" alignItems="center" gap={2.5}>
+                          <DragIndicator sx={{ color: "black.light" }} />
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              backgroundColor: data.action === "view" ? "gray" : "primary.main",
+                              fontSize: "16px",
                             }}
                           >
-                            <Close sx={{ fontSize: "18px" }} />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </Stack>
+                            {index + 1}
+                          </Avatar>
+                          <Stack>
+                            <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
+                            <Typography fontSize="12px" color="gray" mt="-2px">
+                              {approver?.approver?.employee_id}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                        <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
+                          <span>
+                            <IconButton
+                              aria-label="Delete"
+                              disabled={data.action === "view"}
+                              onClick={() => {
+                                deleteApproverHandler(approver?.id);
+                              }}
+                            >
+                              <Close sx={{ fontSize: "18px" }} />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Stack>
+                    </Slide>
                   </Stack>
                 ))}
               </ReactSortable>
