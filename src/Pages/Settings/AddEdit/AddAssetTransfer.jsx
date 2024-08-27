@@ -20,6 +20,7 @@ import {
   Autocomplete,
   Tooltip,
   Zoom,
+  Slide,
 } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
@@ -47,6 +48,8 @@ const schema = yup.object().shape({
 const AddAssetTransfer = (props) => {
   const { data, onUpdateResetHandler } = props;
   const [selectedApprovers, setSelectedApprovers] = useState(null);
+  const [checked, setChecked] = useState(true);
+
   const dispatch = useDispatch();
 
   const [
@@ -97,7 +100,7 @@ const AddAssetTransfer = (props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
     reset,
     watch,
@@ -317,6 +320,11 @@ const AddAssetTransfer = (props) => {
                   color="secondary"
                   error={!!errors?.approver_id?.message}
                   helperText={errors?.approver_id?.message}
+                  sx={{
+                    ".MuiInputBase-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
                 />
               )}
               onChange={(_, value) => {
@@ -370,50 +378,52 @@ const AddAssetTransfer = (props) => {
               >
                 {watch("approver_id")?.map((approver, index) => (
                   <Stack key={index} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
-                    <Stack
-                      flexDirection="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      p={1}
-                      sx={{
-                        backgroundColor: "background.light",
-                        width: "100%",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Stack flexDirection="row" alignItems="center" gap={2.5}>
-                        <DragIndicator sx={{ color: "black.light" }} />
-                        <Avatar
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            backgroundColor: data.action === "view" ? "gray" : "primary.main",
-                            fontSize: "16px",
-                          }}
-                        >
-                          {index + 1}
-                        </Avatar>
-                        <Stack>
-                          <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
-                          <Typography fontSize="12px" color="gray" mt="-2px">
-                            {approver?.approver?.employee_id}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                      <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
-                        <span>
-                          <IconButton
-                            aria-label="Delete"
-                            disabled={data.action === "view"}
-                            onClick={() => {
-                              deleteApproverHandler(approver?.id);
+                    <Slide direction="left" in={checked} timeout={500} mountOnEnter unmountOnExit>
+                      <Stack
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        p={1}
+                        sx={{
+                          backgroundColor: "background.light",
+                          width: "100%",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <Stack flexDirection="row" alignItems="center" gap={2.5}>
+                          <DragIndicator sx={{ color: "black.light" }} />
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              backgroundColor: data.action === "view" ? "gray" : "primary.main",
+                              fontSize: "16px",
                             }}
                           >
-                            <Close sx={{ fontSize: "18px" }} />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </Stack>
+                            {index + 1}
+                          </Avatar>
+                          <Stack>
+                            <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
+                            <Typography fontSize="12px" color="gray" mt="-2px">
+                              {approver?.approver?.employee_id}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                        <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
+                          <span>
+                            <IconButton
+                              aria-label="Delete"
+                              disabled={data.action === "view"}
+                              onClick={() => {
+                                deleteApproverHandler(approver?.id);
+                              }}
+                            >
+                              <Close sx={{ fontSize: "18px" }} />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Stack>
+                    </Slide>
                   </Stack>
                 ))}
               </ReactSortable>
@@ -427,7 +437,13 @@ const AddAssetTransfer = (props) => {
           {data.action === "view" ? (
             ""
           ) : (
-            <LoadingButton type="submit" variant="contained" size="small" loading={isPostLoading || isUpdateLoading}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              size="small"
+              loading={isPostLoading || isUpdateLoading}
+              disabled={!isValid || watch("approver_id").length === 0}
+            >
               {data.status ? "Update" : "Create"}
             </LoadingButton>
           )}
