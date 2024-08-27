@@ -39,14 +39,25 @@ const CustomTextField = (props) => {
               onChange={(e) => {
                 const inputValue = e.target.value;
 
-                if (validateText) {
-                  if (!validateInput(inputValue)) return;
+                // Clean the input value
+                const newValue = inputValue
+                  .replace(/[^a-zA-Z\n\s]/g, "") // Remove unwanted characters
+                  .replace(/\s{2,}/g, " "); // Replace multiple spaces with a single space
+
+                if (validateText && !validateInput(newValue)) {
+                  console.warn("Invalid input");
+                  return;
                 }
-                if (onValueChange) return setValue(onValueChange(inputValue.replace(/\s+/g, " ")));
-                setValue(inputValue.replace(/\s+/g, " "));
+
+                if (onValueChange) {
+                  onValueChange(newValue);
+                }
+
+                setValue(newValue);
               }}
               onBlur={onBlur}
               sx={{
+                overscrollBehavior: "contain",
                 ".MuiInputBase-root": {
                   borderRadius: "10px",
                   minWidth: "180px",
