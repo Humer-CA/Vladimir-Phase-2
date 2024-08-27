@@ -304,7 +304,7 @@ const ReceivingTable = (props) => {
 
                               <TableCell className="tbl-cell">
                                 <Typography fontSize="12px" color="secondary.main">
-                                  {`PR - ${data?.pr_number}`}
+                                  {`PR - ${data?.ymir_pr_number}`}
                                 </Typography>
                                 <Typography fontSize="12px" color="secondary.main">
                                   {`PO - ${data?.po_number.replace(/,/g, ", ")}`}

@@ -474,7 +474,11 @@ const Requisition = () => {
                                   {data.is_addcost === 1 && "Additional Cost"}
                                 </Typography> */}
                               </TableCell>
-                              <TableCell className="tbl-cell tr-cen-pad45">{data.pr_number}</TableCell>
+                              <TableCell className="tbl-cell">
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  {data.ymir_pr_number}
+                                </Typography>
+                              </TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
                               <TableCell className="tbl-cell text-center">
                                 <Tooltip placement="top" title="View Request Information" arrow>
