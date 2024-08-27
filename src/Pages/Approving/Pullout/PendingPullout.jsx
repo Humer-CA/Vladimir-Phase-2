@@ -187,9 +187,10 @@ const PendingPullout = (props) => {
         iconColor: "warning",
         message: (
           <Stack gap={2}>
-            <Box>
-              <Typography> Are you sure you want to</Typography>
+            <Typography>
+              Are you sure you want to{" "}
               <Typography
+                variant="span"
                 sx={{
                   display: "inline-block",
                   color: "secondary.main",
@@ -200,7 +201,7 @@ const PendingPullout = (props) => {
                 RETURN
               </Typography>{" "}
               this request?
-            </Box>
+            </Typography>
           </Stack>
         ),
         remarks: true,
