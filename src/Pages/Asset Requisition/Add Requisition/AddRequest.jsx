@@ -1240,7 +1240,6 @@ const AddRequisition = (props) => {
                   error={!!errors?.cip_number}
                   helperText={errors?.cip_number?.message}
                   fullWidth
-                  multiline
                 />
               )}
 
@@ -1258,6 +1257,8 @@ const AddRequisition = (props) => {
                 helperText={errors?.acquisition_details?.message}
                 fullWidth
                 multiline
+                sx={{ overscrollBehavior: "none" }}
+                maxRows={6}
               />
 
               <CustomAutoComplete
@@ -1572,7 +1573,6 @@ const AddRequisition = (props) => {
                 error={!!errors?.asset_description}
                 helperText={errors?.asset_description?.message}
                 fullWidth
-                multiline
               />
               <CustomTextField
                 control={control}
@@ -1583,7 +1583,9 @@ const AddRequisition = (props) => {
                 error={!!errors?.asset_specification}
                 helperText={errors?.asset_specification?.message}
                 fullWidth
+                sx={{ overscrollBehavior: "none" }}
                 multiline
+                maxRows={6}
               />
 
               <CustomTextField
@@ -1666,7 +1668,10 @@ const AddRequisition = (props) => {
                 type="text"
                 disabled={updateRequest && disable}
                 fullWidth
+                sx={{ overscrollBehavior: "contained" }}
                 multiline
+                minRows={3}
+                maxRows={5}
               />
             </Box>
 
@@ -1887,6 +1892,65 @@ const AddRequisition = (props) => {
       </>
     );
   };
+
+  const transactionStatus = (data) => {
+    let statusColor, hoverColor, textColor, variant;
+    switch (data) {
+      case "Approved":
+        statusColor = "success.light";
+        hoverColor = "success.main";
+        textColor = "white";
+        variant = "filled";
+        break;
+
+      case "Claimed":
+        statusColor = "success.dark";
+        hoverColor = "success.dark";
+        variant = "filled";
+        break;
+
+      case "Sent to ymir for PO":
+        statusColor = "ymir.light";
+        hoverColor = "ymir.main";
+        variant = "filled";
+        break;
+
+      case "Returned":
+      case "Cancelled":
+      case "Returned From Ymir":
+        statusColor = "error.light";
+        hoverColor = "error.main";
+        variant = "filled";
+        break;
+
+      default:
+        statusColor = "success.main";
+        hoverColor = "none";
+        textColor = "success.main";
+        variant = "outlined";
+    }
+
+    return (
+      <Chip
+        placement="top"
+        size="small"
+        variant={variant}
+        sx={{
+          ...(variant === "filled" && {
+            backgroundColor: statusColor,
+            color: "white",
+          }),
+          ...(variant === "outlined" && {
+            borderColor: statusColor,
+            color: textColor,
+          }),
+          fontSize: "11px",
+          px: 1,
+        }}
+        label={data}
+      />
+    );
+  };
   return (
     <>
       {errorRequest && errorTransaction ? (
@@ -1919,18 +1983,7 @@ const AddRequisition = (props) => {
                 <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
                   {`${transactionData ? `TRANSACTION NO. ${transactionData?.transaction_number}` : "FIXED ASSET"}`}
                 </Typography>
-                {transactionData && (
-                  <Chip
-                    size="small"
-                    variant="filled"
-                    sx={{
-                      color: "white",
-                      fontSize: "0.7rem",
-                      backgroundColor: `${transactionData?.status === "Returned" ? "error.light" : "tertiary.light"}`,
-                    }}
-                    label={transactionData?.status}
-                  />
-                )}
+                {transactionData && transactionStatus(transactionData?.status)}
               </Stack>
 
               <TableContainer className="request__th-body  request__wrapper">
