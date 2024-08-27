@@ -149,6 +149,7 @@ const ViewApproveRequest = (props) => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
+            const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
 
             const result = await patchApprovalStatus({
               action: "Approve",
@@ -163,7 +164,6 @@ const ViewApproveRequest = (props) => {
             );
 
             if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
-              const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
               const postYmirData = await postPr(getYmirDataApi).unwrap();
               const next = await getNextRequest().unwrap();
 
@@ -217,9 +217,10 @@ const ViewApproveRequest = (props) => {
         iconColor: "warning",
         message: (
           <Stack gap={2}>
-            <Box>
-              <Typography> Are you sure you want to</Typography>
+            <Typography>
+              Are you sure you want to{" "}
               <Typography
+                variant="span"
                 sx={{
                   display: "inline-block",
                   color: "secondary.main",
@@ -230,7 +231,7 @@ const ViewApproveRequest = (props) => {
                 RETURN
               </Typography>{" "}
               this request?
-            </Box>
+            </Typography>
           </Stack>
         ),
         remarks: true,
