@@ -378,7 +378,13 @@ const AddUnitApprovers = (props) => {
               >
                 {watch("approver_id")?.map((approver, index) => (
                   <Stack key={index} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
-                    <Slide direction="left" in={checked} timeout={500} mountOnEnter unmountOnExit>
+                    <Slide
+                      direction={data?.action === "view" ? "down" : "left"}
+                      in={checked}
+                      timeout={500}
+                      mountOnEnter
+                      unmountOnExit
+                    >
                       <Stack
                         flexDirection="row"
                         alignItems="center"
