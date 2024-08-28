@@ -708,7 +708,7 @@ const AddUserAccount = (props) => {
     //     </Stack>
     //   </Box>
     // </Box>
-    <Box className="add-userAccount" p={2.5}>
+    <Box className="add-userAccount" p={2.5} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
       <Box className="add-userAccount__title" gap={1}>
         {/* <IconButton onClick={handleCloseDrawer}>
           <ArrowForwardIosRounded color="secondary" />
@@ -722,12 +722,7 @@ const AddUserAccount = (props) => {
 
       <Divider flexItem />
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmitHandler)}
-        className="add-userAccount__wrapper"
-        sx={{ flexDirection: "row" }}
-      >
+      <Box className="add-userAccount__wrapper" sx={{ flexDirection: "row" }}>
         <Stack flexDirection="row" width="600px">
           <Stack className="add-userAccount__employee">
             <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
@@ -861,7 +856,6 @@ const AddUserAccount = (props) => {
                   helperText={errors?.role_id?.message}
                 />
               )}
-              disablePortal
               fullWidth
             />
           </Stack>
