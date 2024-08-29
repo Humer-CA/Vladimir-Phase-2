@@ -323,7 +323,7 @@ const Depreciation = (props) => {
                 <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
                   Depreciation
                 </Typography>
-                {console.log(data)}
+
                 <Box>
                   <Box className="tableCard__properties">
                     Debit:

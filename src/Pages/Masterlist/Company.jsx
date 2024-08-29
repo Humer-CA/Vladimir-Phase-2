@@ -275,7 +275,7 @@ const Company = () => {
 
                   <TableBody>
                     {companyApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {companyApiSuccess &&

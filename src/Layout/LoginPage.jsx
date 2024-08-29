@@ -106,7 +106,7 @@ const LoginPage = () => {
 
       const route = access_permission.split(", ")[0] === "dashboard" ? "" : access_permission.split(", ")[0];
 
-      dispatch(addUserDetails(res.data.data));
+      dispatch(addUserDetails(res?.data.data));
       if (res.data.data.user.username === watch("password")) {
         if (watch("username")) {
           dispatch(openChangePassword());
@@ -119,7 +119,7 @@ const LoginPage = () => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      if (err.request.status === 0) {
+      if (err.request?.status === 0) {
         dispatch(
           openToast({
             message: "No Internet Access, Please Try Again.",
@@ -130,11 +130,11 @@ const LoginPage = () => {
         return;
       }
 
-      setLoginErr(err.response.data.message);
+      setLoginErr(err.response?.data.message);
       setTimeout(() => {
         setLoginErr(null);
       }, 4000);
-      setError(err.response.data.message);
+      setError(err.response?.data.message);
 
       // console.log(err.message);
       // console.log(err.request);

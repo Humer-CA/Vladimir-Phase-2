@@ -278,7 +278,7 @@ const BusinessUnit = () => {
 
                   <TableBody>
                     {businessUnitApiData.data.length === 0 ? (
-                      <NoRecordsFound />
+                      <NoRecordsFound heightData="medium" />
                     ) : (
                       <>
                         {businessUnitApiSuccess &&
