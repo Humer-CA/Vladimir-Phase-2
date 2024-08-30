@@ -495,7 +495,9 @@ const Requisition = () => {
                               </TableCell>
                               <TableCell className="tbl-cell ">
                                 <ActionMenu
-                                  disableVoid={data.status !== "For Approval of Approver 1" ? true : false}
+                                  disableVoid={
+                                    data.status !== ("For Approval of Approver 1" && "Returned") ? true : false
+                                  }
                                   status={data.status}
                                   data={data}
                                   showVoid
