@@ -374,7 +374,8 @@ const ReleasingTable = (props) => {
 
                               <TableCell onClick={() => handleViewData(data)} className="tbl-cell">
                                 <Typography fontSize={12} color="text.light">
-                                  PR - {data.pr_number}
+                                  PR - {data.ymir_pr_number}
+                                  {/* PR - {data.pr_number} */}
                                 </Typography>
                                 <Typography fontSize={12} color="text.light">
                                   PO - {data.po_number}

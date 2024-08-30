@@ -300,18 +300,18 @@ const ViewRequestReceiving = () => {
                       </TableCell>
                       <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `pr_number`}
-                          direction={orderBy === `pr_number` ? order : `asc`}
-                          onClick={() => onSort(`pr_number`)}
+                          active={orderBy === `ymir_pr_number`}
+                          direction={orderBy === `ymir_pr_number` ? order : `asc`}
+                          onClick={() => onSort(`ymir_pr_number`)}
                         >
                           PR Number
                         </TableSortLabel>
                       </TableCell>
                       <TableCell className="tbl-cell">
                         <TableSortLabel
-                          active={orderBy === `pr_number`}
-                          direction={orderBy === `pr_number` ? order : `asc`}
-                          onClick={() => onSort(`pr_number`)}
+                          active={orderBy === `rr_number`}
+                          direction={orderBy === `rr_number` ? order : `asc`}
+                          onClick={() => onSort(`rr_number`)}
                         >
                           View RR
                         </TableSortLabel>
@@ -373,7 +373,8 @@ const ViewRequestReceiving = () => {
                                 </Typography>
                               </TableCell>
                               <TableCell className="tbl-cell">
-                                <Typography fontSize={12}>PR - {data.pr_number}</Typography>
+                                {/* <Typography fontSize={12}>PR - {data.pr_number}</Typography> */}
+                                <Typography fontSize={12}>PO - {data.ymir_pr_number}</Typography>
                                 <Typography fontSize={12}>PO - {data.po_number}</Typography>
                                 <Typography fontSize={12}>RR - {data.rr_number}</Typography>
                               </TableCell>

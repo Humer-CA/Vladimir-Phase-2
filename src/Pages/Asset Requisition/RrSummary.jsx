@@ -207,7 +207,7 @@ const RrSummary = (props) => {
         {receivedReceiptError && <ErrorFetching refetch={refetch} error={errorData} />}
         {receivedReceiptData && !receivedReceiptError && (
           <Box className="mcontainer__wrapper">
-            <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} hideArchive />
+            <MasterlistToolbar onStatusChange={setStatus} onSearchChange={setSearch} onSetPage={setPage} />
 
             <Box>
               <TableContainer className="mcontainer__th-body">
@@ -241,6 +241,10 @@ const RrSummary = (props) => {
                         >
                           PR/PO Number
                         </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell className="tbl-cell" align="center">
+                        Quantity
                       </TableCell>
 
                       <TableCell className="tbl-cell" align="center">
@@ -292,11 +296,15 @@ const RrSummary = (props) => {
 
                               <TableCell className="tbl-cell ">
                                 <Typography fontSize="12px" color="secondary.main">
-                                  {`PR - ${data.pr_number}`}
+                                  {`PR - ${data.ymir_pr_number}`}
                                 </Typography>
                                 <Typography fontSize="12px" color="secondary.main">
                                   {`PO - ${data.po_number.replace(/,/g, ", ")}`}
                                 </Typography>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell" align="center">
+                                {data?.item_count}
                               </TableCell>
 
                               <TableCell className="tbl-cell" align="center">
