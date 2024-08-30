@@ -16,7 +16,8 @@ const CustomTextField = (props) => {
   } = props;
 
   const validateInput = (value) => {
-    const regex = /^[a-zA-Z0-9-\s+&,]*$/g;
+    const regex = /^[a-zA-Z0-9-\s+&,.\d]*$/g;
+    // const regex = /^[a-zA-Z0-9-\s+&,]*$/g;
     return regex.test(value);
   };
 
@@ -41,7 +42,8 @@ const CustomTextField = (props) => {
 
                 // Clean the input value
                 const newValue = inputValue
-                  .replace(/[^a-zA-Z\n\s]/g, "") // Remove unwanted characters
+                  .replace(/[^a-zA-Z0-9\s,.&-]/g, "") // Allow letters, numbers, spaces, commas, periods, & and -
+                  // .replace(/[^a-zA-Z\n\s]/g, "")
                   .replace(/\s{2,}/g, " "); // Replace multiple spaces with a single space
 
                 if (validateText && !validateInput(newValue)) {
