@@ -97,6 +97,18 @@ const ViewRequest = (props) => {
     dispatch(closeDialog()) || dispatch(closeDialog1());
   };
 
+  const formatAccountable = (str) => {
+    const [id, lastName, firstName] = str.split(/[\s,]+/);
+    return (
+      <>
+        <Typography fontSize={14} fontWeight={600} color="secondary.main">
+          {id}
+        </Typography>
+        <Typography fontSize={12} color="secondary.light">{`${firstName} ${lastName}`}</Typography>
+      </>
+    );
+  };
+
   return (
     <>
       {isRequestError && <ErrorFetching refetch={isRequestRefetch} error={errorData} />}
@@ -194,15 +206,10 @@ const ViewRequest = (props) => {
                               </Typography>
                             </TableCell>
 
-                            <TableCell className="tbl-cell">
-                              {data.accountability === "Personal Issued" ? (
-                                <>
-                                  <Box>{data?.accountable?.general_info?.full_id_number}</Box>
-                                  <Box>{data?.accountable?.general_info?.full_name}</Box>
-                                </>
-                              ) : (
-                                "Common"
-                              )}
+                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
+                              {data.accountability === "Personal Issued"
+                                ? formatAccountable(data?.accountable)
+                                : "Common"}
                             </TableCell>
 
                             <TableCell className="tbl-cell">

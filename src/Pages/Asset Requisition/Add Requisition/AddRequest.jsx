@@ -1885,10 +1885,10 @@ const AddRequisition = (props) => {
     const [id, lastName, firstName] = str.split(/[\s,]+/);
     return (
       <>
-        <Typography fontSize={14} fontWeight={600}>
+        <Typography fontSize={14} fontWeight={600} color="secondary.main">
           {id}
         </Typography>
-        <Typography fontSize={12}>{`${firstName} ${lastName}`}</Typography>
+        <Typography fontSize={12} color="secondary.light">{`${firstName} ${lastName}`}</Typography>
       </>
     );
   };
