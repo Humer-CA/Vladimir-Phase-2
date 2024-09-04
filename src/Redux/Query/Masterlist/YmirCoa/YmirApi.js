@@ -5,10 +5,9 @@ export const ymirApi = createApi({
   tagTypes: ["ymir"],
 
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://10.10.13.6:8080/api",
+    baseUrl: process.env.YMIR_BASE_URL,
     prepareHeaders: (headers) => {
-      const token = "33|nRbzIxaxXQOnGcnMvUhdp01STUuY3k7bggGX8Xds";
-      // const token = process.env.YMIR_KEY;
+      const token = process.env.YMIR_KEY;
 
       headers.set("Authorization", `Bearer ${token}`);
       headers.set("Accept", `application/json`);
@@ -60,7 +59,7 @@ export const ymirApi = createApi({
 
     postPrYmirApi: builder.mutation({
       query: (data) => ({
-        // url: "http://10.10.10.17:8000/api/asset_sync",
+        // url: "http://10.10.13.6:8080/api/asset_sync",
         url: `/asset_sync`,
         method: "POST",
         body: data,
