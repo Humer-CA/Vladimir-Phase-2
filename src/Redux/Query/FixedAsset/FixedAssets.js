@@ -51,6 +51,12 @@ export const fixedAssetApi = createApi({
       providesTags: ["FixedAsset"],
     }),
 
+    getDepreciationHistoryApi: builder.query({
+      query: (params) => `depreciation_history/${params.vladimir_tag_number}`,
+      // transformResponse: (response) => response.data,
+      providesTags: ["FixedAsset"],
+    }),
+
     archiveFixedAssetStatusApi: builder.mutation({
       query: ({ id, status, remarks }) => ({
         url: `/fixed-asset/archived-fixed-asset/${id}`,
@@ -191,6 +197,8 @@ export const {
   useGetFixedAssetIdApiQuery,
   useLazyGetVoucherFaApiQuery,
   useGetReprintMemoApiQuery,
+  useGetDepreciationHistoryApiQuery,
+  useLazyGetDepreciationHistoryApiQuery,
   useArchiveFixedAssetStatusApiMutation,
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
