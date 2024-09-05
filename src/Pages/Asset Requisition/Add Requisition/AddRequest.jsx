@@ -126,6 +126,7 @@ const schema = yup.object().shape({
       then: (yup) => yup.label("Accountable").required().typeError("Accountable is a required field"),
     }),
   acquisition_details: yup.string().required().label("Acquisition Details"),
+  item_status: yup.string().required().label("Item Status"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
   date_needed: yup.string().required().label("Date Needed").typeError("Date Needed is a required field"),
@@ -171,6 +172,7 @@ const AddRequisition = (props) => {
     location_id: null,
     // account_title_id: null,
 
+    item_status: null,
     asset_description: "",
     asset_specification: "",
     date_needed: null,
@@ -431,6 +433,7 @@ const AddRequisition = (props) => {
       // account_title_id: null,
       acquisition_details: "",
 
+      item_status: "",
       asset_description: "",
       asset_specification: "",
       date_needed: null,
@@ -503,6 +506,7 @@ const AddRequisition = (props) => {
 
       // ASSET INFO
       setValue("asset_description", updateRequest?.asset_description);
+      setValue("item_status", updateRequest?.item_status);
       setValue("asset_specification", updateRequest?.asset_specification);
       setValue("date_needed", dateNeededFormat);
       setValue("quantity", updateRequest?.quantity);
@@ -579,6 +583,7 @@ const AddRequisition = (props) => {
       accountable: accountableFormat,
 
       acquisition_details: formData?.acquisition_details?.toString(),
+      item_status: formData?.item_status?.toString(),
       asset_description: formData?.asset_description?.toString(),
       asset_specification: formData?.asset_specification?.toString(),
       date_needed: dateNeededFormat,
@@ -683,6 +688,7 @@ const AddRequisition = (props) => {
                 // account_title_id: formData?.account_title_id,
                 acquisition_details: formData?.acquisition_details,
 
+                item_status: null,
                 asset_description: "",
                 asset_specification: "",
                 date_needed: null,
@@ -1083,6 +1089,7 @@ const AddRequisition = (props) => {
       accountability,
       accountable,
       acquisition_details,
+      item_status,
       asset_description,
       asset_specification,
       date_needed,
@@ -1116,6 +1123,7 @@ const AddRequisition = (props) => {
       accountable,
       acquisition_details,
 
+      item_status,
       asset_description,
       asset_specification,
       date_needed,
@@ -1149,6 +1157,7 @@ const AddRequisition = (props) => {
       // account_title_id: null,
       acquisition_details: "",
 
+      item_status: null,
       asset_description: "",
       asset_specification: "",
       date_needed: null,
@@ -1564,6 +1573,28 @@ const AddRequisition = (props) => {
             {/* Asset Information */}
             <Box sx={BoxStyle}>
               <Typography sx={sxSubtitle}>Asset Information</Typography>
+
+              <CustomAutoComplete
+                name="item_status"
+                control={control}
+                includeInputInList
+                disablePortal
+                disabled={updateRequest && disable}
+                filterOptions={filterOptions}
+                options={["New", "Replacement", "Additional"]}
+                // getOptionLabel={(option) => option.general_info?.full_id_number_full_name}
+                isOptionEqualToValue={(option, value) => option === value}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    color="secondary"
+                    label="Item Status"
+                    error={!!errors?.item_status?.message}
+                    helperText={errors?.item_status?.message}
+                  />
+                )}
+              />
+
               <CustomTextField
                 control={control}
                 name="asset_description"
@@ -2132,6 +2163,9 @@ const AddRequisition = (props) => {
                               </Typography>
                               <Typography fontSize="12px" color="text.light">
                                 {data.asset_specification}
+                              </Typography>
+                              <Typography fontSize="12px" fontWeight={500} color="secondary.light">
+                                STATUS - {data.item_status}
                               </Typography>
                             </TableCell>
 
