@@ -110,7 +110,7 @@ const PurchaseRequestTable = (props) => {
   };
 
   return (
-    <Stack sx={{ height: "calc(100vh - 255px)" }}>
+    <Stack className="category_height">
       {purchaseRequestLoading && <MasterlistSkeleton onAdd={true} />}
       {purchaseRequestError && <ErrorFetching refetch={refetch} error={errorData} />}
       {purchaseRequestData && !purchaseRequestError && (

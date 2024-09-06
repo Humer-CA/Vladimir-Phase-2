@@ -257,7 +257,7 @@ const PendingPullout = (props) => {
   };
 
   return (
-    <Stack sx={{ height: "calc(100vh - 255px)" }}>
+    <Stack className="category_height">
       {approvalLoading && <MasterlistSkeleton category={true} onAdd={true} />}
       {approvalError && <ErrorFetching refetch={refetch} category={pendingPulloutData} error={errorData} />}
       {pendingPulloutData && !approvalError && (

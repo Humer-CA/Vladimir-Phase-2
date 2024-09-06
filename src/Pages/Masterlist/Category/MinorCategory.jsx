@@ -219,7 +219,7 @@ const MinorCategory = () => {
   // console.log(minorCategoryData);
 
   return (
-    <Stack sx={{ height: "calc(100vh - 255px)" }}>
+    <Stack className="category_height">
       {minorCategoryLoading && <MasterlistSkeleton category onAdd={true} />}
 
       {minorCategoryError && <ErrorFetching refetch={refetch} category={minorCategoryData} error={errorData} />}

@@ -199,7 +199,7 @@ const MajorCategory = () => {
   };
 
   return (
-    <Stack sx={{ height: "calc(100vh - 255px)" }}>
+    <Stack className="category_height">
       {majorCategoryLoading && <MasterlistSkeleton category={true} onAdd={true} />}
 
       {majorCategoryError && <ErrorFetching refetch={refetch} category={majorCategoryData} error={errorData} />}

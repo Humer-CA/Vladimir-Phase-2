@@ -489,6 +489,10 @@ img {
     border-radius: 5px;
     border: 1px solid $background;
   }
+
+  .category_height {
+    height: calc(100vh - 255px);
+  }
 }
 
 .skeleton__height {

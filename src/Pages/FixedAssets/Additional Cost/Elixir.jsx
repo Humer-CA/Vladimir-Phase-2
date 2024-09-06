@@ -350,7 +350,7 @@ const Elixir = () => {
   };
 
   return (
-    <Stack sx={{ height: "calc(100vh - 255px)" }}>
+    <Stack className="category_height">
       {isLoading && <MasterlistSkeleton category={true} onAdd={true} />}
 
       {isError && <ErrorFetching refetch={refetch} category={data} error={error} />}
