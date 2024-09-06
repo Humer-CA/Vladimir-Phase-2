@@ -23,6 +23,7 @@ import {
   Dialog,
   Grow,
   IconButton,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -277,7 +278,7 @@ const UnitApprovers = () => {
   };
 
   return (
-    <>
+    <Stack className="category_height">
       {unitApproversLoading && <MasterlistSkeleton category={true} onAdd={true} />}
       {unitApproversError && <ErrorFetching refetch={refetch} category={unitApproversData} error={errorData} />}
       {unitApproversData && !unitApproversError && (
@@ -366,7 +367,7 @@ const UnitApprovers = () => {
                                 {Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
 
-                              <TableCell className="tbl-cell ">
+                              <TableCell className="tbl-cell">
                                 <ActionMenu
                                   status={status}
                                   data={data}
@@ -407,7 +408,7 @@ const UnitApprovers = () => {
       >
         <AddUnitApprovers data={updateUnitApprovers} onUpdateResetHandler={onUpdateResetHandler} />
       </Dialog>
-    </>
+    </Stack>
   );
 };
 
