@@ -172,6 +172,7 @@ const RrSummary = (props) => {
               })
             );
             dispatch(closeConfirm());
+            refetch();
           } catch (err) {
             console.log(err);
             if (err?.status === 422) {
