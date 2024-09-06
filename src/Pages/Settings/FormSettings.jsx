@@ -5,7 +5,7 @@ import AssetTransfer from "./AssetTransfer";
 import AssetPullout from "./AssetPullout";
 import AssetDisposal from "./AssetDisposal";
 
-const FaStatusCategory = () => {
+const FormSettings = () => {
   const [value, setValue] = useState("option1");
 
   const handleChange = (e) => {
@@ -52,4 +52,4 @@ const FaStatusCategory = () => {
   );
 };
 
-export default FaStatusCategory;
+export default FormSettings;
