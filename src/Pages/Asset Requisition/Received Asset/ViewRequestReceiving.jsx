@@ -374,7 +374,7 @@ const ViewRequestReceiving = () => {
                               </TableCell>
                               <TableCell className="tbl-cell">
                                 {/* <Typography fontSize={12}>PR - {data.pr_number}</Typography> */}
-                                <Typography fontSize={12}>PO - {data.ymir_pr_number}</Typography>
+                                <Typography fontSize={12}>PR - {data.ymir_pr_number}</Typography>
                                 <Typography fontSize={12}>PO - {data.po_number}</Typography>
                                 <Typography fontSize={12}>RR - {data.rr_number}</Typography>
                               </TableCell>
