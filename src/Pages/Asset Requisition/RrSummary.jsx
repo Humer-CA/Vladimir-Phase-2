@@ -62,6 +62,8 @@ const RrSummary = (props) => {
   const [reference, setReference] = useState([]);
   const [isVladimirTag, setIsVladimirTag] = useState(true);
 
+  const userData = JSON.parse(localStorage.getItem("user"));
+
   const dialog = useSelector((state) => state.booleanState.dialog);
 
   const navigate = useNavigate();
@@ -151,17 +153,22 @@ const RrSummary = (props) => {
             this RR Data?
           </Box>
         ),
+        remarks: true,
 
-        onConfirm: async () => {
+        onConfirm: async (remarks) => {
           try {
             dispatch(onLoading());
             let vladimirCancel = await cancelVladimirRr({
               rr_number: data,
+              remarks: remarks,
             }).unwrap();
             // console.log(vladimirCancel);
 
             let ymirCancel = await cancelYmirRr({
               rr_number: data,
+              v_name: `${userData?.firstname} ${userData?.lastname}`,
+              rdf_id: userData?.employee_id,
+              remarks: remarks,
             }).unwrap();
             // console.log(ymirCancel);
 
