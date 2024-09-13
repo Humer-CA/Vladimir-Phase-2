@@ -26,7 +26,7 @@ export const receivedReceiptApi = createApi({
       query: (params) => ({
         url: `/cancel-rr/${params.rr_number}`,
         method: "PATCH",
-        // body: data,
+        body: params,
       }),
       invalidatesTags: ["ReceivedReceipt"],
     }),
@@ -35,6 +35,7 @@ export const receivedReceiptApi = createApi({
       query: (params) => ({
         url: `${process.env.YMIR_BASE_URL}/cancel_rr/${params.rr_number}`,
         method: "PATCH",
+        body: params,
       }),
       invalidatesTags: ["ReceivedReceipt"],
     }),
