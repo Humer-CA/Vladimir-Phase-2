@@ -43,6 +43,7 @@ import {
   Dialog,
   Grow,
   Slide,
+  useMediaQuery,
 } from "@mui/material";
 
 function ListItemLink(props) {
@@ -87,6 +88,8 @@ const Navbar = () => {
   const permissions = useSelector((state) => state.userLogin?.user.role.access_permission);
 
   const pathnames = location.pathname.split("/").filter((x) => x);
+
+  const isSmallScreen = useMediaQuery("(max-width: 600px)");
 
   // Menus
   const [anchorEl, setAnchorEl] = useState(null);
@@ -195,31 +198,33 @@ const Navbar = () => {
           </Box>
         </Box>
 
-        <Breadcrumbs classaria-label="breadcrumb" sx={{ ml: 3, userSelect: "none" }}>
-          {permissions.split(", ").includes("dashboard") && (
-            <LinkRouter underline="hover" color="inherit" to="/">
-              Home
-            </LinkRouter>
-          )}
-          {pathnames?.map((value, index) => {
-            const last = index === pathnames.length - 1;
-            const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-            const breadcrumbName = value.replace(/-/g, " ");
-
-            return last ? (
-              <Typography color="secondary" sx={{ fontWeight: "bold" }} key={to} textTransform="capitalize">
-                {/* {breadcrumbNameMap[to]} */}
-                {breadcrumbName}
-              </Typography>
-            ) : (
-              <LinkRouter underline="hover" color="inherit" textTransform="capitalize" to={to} key={to}>
-                {/* {breadcrumbNameMap[to]} */}
-                {breadcrumbName}
+        {!isSmallScreen && (
+          <Breadcrumbs classaria-label="breadcrumb" sx={{ ml: 3, userSelect: "none" }}>
+            {permissions.split(", ").includes("dashboard") && (
+              <LinkRouter underline="hover" color="inherit" to="/">
+                Home
               </LinkRouter>
-            );
-          })}
-          dispatch(closeIpSetupDialog());
-        </Breadcrumbs>
+            )}
+            {pathnames?.map((value, index) => {
+              const last = index === pathnames.length - 1;
+              const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+              const breadcrumbName = value.replace(/-/g, " ");
+
+              return last ? (
+                <Typography color="secondary" sx={{ fontWeight: "bold" }} key={to} textTransform="capitalize">
+                  {/* {breadcrumbNameMap[to]} */}
+                  {breadcrumbName}
+                </Typography>
+              ) : (
+                <LinkRouter underline="hover" color="inherit" textTransform="capitalize" to={to} key={to}>
+                  {/* {breadcrumbNameMap[to]} */}
+                  {breadcrumbName}
+                </LinkRouter>
+              );
+            })}
+            dispatch(closeIpSetupDialog());
+          </Breadcrumbs>
+        )}
       </Box>
 
       {/* Settings --------------------------------------------- */}
