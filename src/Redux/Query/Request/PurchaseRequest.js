@@ -40,6 +40,32 @@ export const purchaseRequestApi = createApi({
       providesTags: ["PurchaseRequest"],
     }),
 
+    // exportPrApi: builder.query({
+    //   query: (params) =>
+    //     `pr-report?from=${params?.from}&to=${params?.to}&per_page=${params.per_page}&page=${params.page}`,
+    //   providesTags: ["PurchaseRequest"],
+    // }),
+
+    getPrWithExportApi: builder.query({
+      query: (params) => {
+        const queryParams = [`search=${params.search}`, `per_page=${params.per_page}`, `page=${params.page}`];
+
+        if (params.from) {
+          queryParams.push(`from=${params.from}`);
+        }
+        if (params.to) {
+          queryParams.push(`to=${params.to}`);
+        }
+        if (params.export) {
+          queryParams.push(`export=${params.export}`);
+        }
+
+        const queryString = queryParams.join("&");
+        return `/pr-report?${queryString}`;
+      },
+      providesTags: ["PurchaseRequest"],
+    }),
+
     addPurchaseRequestApi: builder.mutation({
       query: (data) => ({
         url: `/adding-pr/${data?.transaction_number}`,
@@ -63,6 +89,8 @@ export const {
   useGetPurchaseRequestApiQuery,
   useGetPurchaseRequestWithPrApiQuery,
   useGetPurchaseRequestAllApiQuery,
+  useGetPrWithExportApiQuery,
+  useLazyGetPrWithExportApiQuery,
   useGetItemPerPrApiQuery,
   useLazyGetPurchaseRequestAllApiQuery,
   useLazyGetPurchaseRequestApiQuery,

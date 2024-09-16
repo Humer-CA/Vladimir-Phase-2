@@ -193,6 +193,10 @@ const AddRole = (props) => {
 
     // Monitoring
     "request-monitoring",
+
+    // Reports
+    "reports",
+    "pr-report",
   ];
 
   const masterlistValue = [
@@ -214,6 +218,7 @@ const AddRole = (props) => {
   const assetRequisition = ["requisition", "purchase-request", "requisition-received-asset", "requisition-releasing"];
   const assetMovement = ["transfer", "evaluation", "pull-out", "disposal"];
   const approving = ["approving-request", "approving-transfer", "approving-pull-out", "approving-disposal"];
+  const reports = ["pr-report"];
 
   const onSubmitHandler = (formData) => {
     if (data.status) {
@@ -508,6 +513,32 @@ const AddRole = (props) => {
               <Checkbox
                 {...register("access_permission")}
                 checked={watch("access_permission")?.includes("approving-disposal")}
+              />
+            }
+          />
+        </FormGroup>
+      </Stack>
+    );
+  };
+
+  const Reports = () => {
+    return (
+      <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={1}>
+        <FormGroup
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            ml: 3,
+          }}
+        >
+          <FormControlLabel
+            disabled={data.action === "view"}
+            label="PR Report"
+            value="pr-report"
+            control={
+              <Checkbox
+                {...register("access_permission")}
+                checked={watch("access_permission")?.includes("pr-report")}
               />
             }
           />
@@ -926,6 +957,58 @@ const AddRole = (props) => {
                       />
                     </FormLabel>
                     <Approving />
+                  </FormControl>
+                </Box>
+              )}
+
+              {watch("access_permission").includes("reports") && (
+                <Box>
+                  <Divider sx={{ mx: "30px" }} />
+                  <FormControl
+                    fullWidth
+                    component="fieldset"
+                    sx={{
+                      border: "1px solid #a6a6a6af ",
+                      borderRadius: "10px",
+                      px: "10px",
+                      mt: "10px",
+                      mb: "15px",
+                    }}
+                  >
+                    <FormLabel component="legend" sx={{ ml: "1px", pl: "5px" }}>
+                      <FormControlLabel
+                        label="Reports"
+                        value="reports"
+                        sx={{ color: "text.main", fontWeight: "bold" }}
+                        disabled={data.action === "view"}
+                        control={
+                          <Checkbox
+                            checked={watch("access_permission").includes("reports")}
+                            // checked={masterlistValue.every((perm) =>
+                            //   watch("access_permission").includes(perm)
+                            // )}
+                            indeterminate={
+                              reports.some((perm) => watch("access_permission").includes(perm)) &&
+                              !reports.every((perm) => watch("access_permission").includes(perm))
+                            }
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setValue("access_permission", [
+                                  ...new Set([...watch("access_permission"), "pr-report"]),
+                                ]);
+                              } else {
+                                const reportsEmptyValue = watch("access_permission").filter(
+                                  (perm) => ![...reports, "reports"].includes(perm)
+                                );
+
+                                setValue("access_permission", reportsEmptyValue);
+                              }
+                            }}
+                          />
+                        }
+                      />
+                    </FormLabel>
+                    <Reports />
                   </FormControl>
                 </Box>
               )}

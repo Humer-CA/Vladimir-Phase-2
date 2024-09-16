@@ -594,41 +594,45 @@ const Sidebar = () => {
     //   setter: closeCollapse,
     // },
 
-    // {
-    //   label: "Reports",
-    //   icon: SummarizeRounded,
-    //   path: "/reports/report1",
-    //   permission: "reports",
-    //   children: [
-    //     {
-    //       label: "Report 1",
-    //       icon: SummarizeRounded,
-    //       path: "/reports/report1",
-    //       permission: [],
-    //     },
-    //     {
-    //       label: "Report 2",
-    //       icon: SummarizeRounded,
-    //       path: "/reports/report2",
-    //       permission: [],
-    //     },
-    //     {
-    //       label: "Report 3",
-    //       icon: SummarizeRounded,
-    //       path: "/reports/report3",
-    //       permission: [],
-    //     },
-    //   ],
-    //   open: reportCollapse,
-    //   setter: () => {
-    //     setReportCollapse(!reportCollapse);
-    //     setMasterListCollapse(false);
-    //     setUserManagementCollapse(false);
-    //     setAssetRequestCollapse(false);
-    //     closeCollapse;
-    //     dispatch(openSidebar());
-    //   },
-    // },
+    {
+      label: "Reports",
+      icon: SummarizeRounded,
+      path: "/reports",
+      permission: "reports",
+      children: [
+        {
+          label: "PR Report",
+          icon: SummarizeRounded,
+          path: "/reports/pr-report",
+          permission: "pr-report",
+        },
+        // {
+        //   label: "Report 2",
+        //   icon: SummarizeRounded,
+        //   path: "/reports/report2",
+        //   permission: [],
+        // },
+        // {
+        //   label: "Report 3",
+        //   icon: SummarizeRounded,
+        //   path: "/reports/report3",
+        //   permission: [],
+        // },
+      ],
+      open: reportCollapse,
+      setter: () => {
+        setReportCollapse(!reportCollapse);
+        setApprovingCollapse(false);
+        setMasterListCollapse(false);
+        setUserManagementCollapse(false);
+        setSettingsCollapse(false);
+        setAssetRequisitionCollapse(false);
+        setAssetMovementCollapse(false);
+        setReportCollapse(false);
+        closeCollapse;
+        dispatch(openSidebar());
+      },
+    },
   ];
 
   return (

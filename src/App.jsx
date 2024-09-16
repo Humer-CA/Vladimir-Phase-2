@@ -81,6 +81,8 @@ import Warehouse from "./Pages/Masterlist/Warehouse";
 import ViewPullout from "./Pages/Approving/Pullout/ViewPullout";
 import RrSummary from "./Pages/Asset Requisition/RrSummary";
 import AdditionalCost from "./Pages/FixedAssets/Additional Cost/AdditionalCost";
+import Reports from "./Pages/Reports/Reports";
+import PurchaseRequestReport from "./Pages/Reports/Requisition/PurchaseRequestReport";
 
 const userData = JSON.parse(localStorage.getItem("user"));
 const userRole = userData.role.access_permission.split(", ");
@@ -477,24 +479,24 @@ const router = createBrowserRouter([
 
           {
             path: "reports",
-            // element: <Reports />,
+            element: <Reports />,
             handle: { permission: "reports" },
             children: [
               {
-                path: "report1",
-                // element: <UserAccounts />,
-                handle: { permission: "report1" },
+                path: "pr-report",
+                element: <PurchaseRequestReport />,
+                handle: { permission: "pr-report" },
               },
-              {
-                path: "report2",
-                // element: <ServiceProvider />,
-                handle: { permission: "report2" },
-              },
-              {
-                path: "report3",
-                // element: <Category />,
-                handle: { permission: "report2" },
-              },
+              // {
+              //   path: "report2",
+              //   // element: <ServiceProvider />,
+              //   handle: { permission: "report2" },
+              // },
+              // {
+              //   path: "report3",
+              //   // element: <Category />,
+              //   handle: { permission: "report2" },
+              // },
             ],
           },
         ],
