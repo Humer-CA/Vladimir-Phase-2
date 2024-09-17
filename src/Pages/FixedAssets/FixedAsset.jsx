@@ -364,6 +364,8 @@ const FixedAsset = (props) => {
                       </TableSortLabel>
                     </TableCell>
 
+                    <TableCell className="tbl-cell">Accounting Entries</TableCell>
+
                     <TableCell className="tbl-cell-fa text-center">
                       <TableSortLabel
                         active={orderBy === `asset_status_name`}
@@ -484,10 +486,29 @@ const FixedAsset = (props) => {
                                   {data.location.location_code} {" - "}
                                   {data.location.location_name}
                                 </Typography>
-                                <Typography fontSize="10px" color="gray">
+                                {/* <Typography fontSize="10px" color="gray">
                                   {data.account_title.account_title_code}
                                   {" - "}
                                   {data.account_title.account_title_name}
+                                </Typography> */}
+                              </TableCell>
+
+                              <TableCell className="tbl-cell-category capitalized">
+                                <Typography fontSize={11} color="secondary.light" noWrap>
+                                  Inital Debit : ({data.initial_debit?.account_title_code})-
+                                  {data.initial_debit?.account_title_name}
+                                </Typography>
+                                <Typography fontSize={11} color="secondary.light" noWrap>
+                                  Inital Credit : ({data.initial_credit?.account_title_code})-{" "}
+                                  {data.initial_credit?.account_title_name}
+                                </Typography>
+                                <Typography fontSize={11} color="secondary.light" noWrap>
+                                  Depreciation Debit : ({data.depreciation_debit?.account_title_code})-
+                                  {data.depreciation_debit?.account_title_name}
+                                </Typography>
+                                <Typography fontSize={11} color="secondary.light" noWrap>
+                                  Depreciation Credit : ({data.depreciation_credit?.account_title_code})-{" "}
+                                  {data.depreciation_credit?.account_title_name}
                                 </Typography>
                               </TableCell>
 

@@ -276,25 +276,7 @@ const MinorCategory = () => {
                       </TableSortLabel>
                     </TableCell>
 
-                    <TableCell className="tbl-cell-category">
-                      <TableSortLabel
-                        active={orderBy === `account_title_code`}
-                        direction={orderBy === `account_title_code` ? order : `asc`}
-                        onClick={() => onSort(`account_title_code`)}
-                      >
-                        Account Title Code
-                      </TableSortLabel>
-                    </TableCell>
-
-                    <TableCell className="tbl-cell-category">
-                      <TableSortLabel
-                        active={orderBy === `account_title_name`}
-                        direction={orderBy === `account_title_name` ? order : `asc`}
-                        onClick={() => onSort(`account_title_name`)}
-                      >
-                        Account Title
-                      </TableSortLabel>
-                    </TableCell>
+                    <TableCell className="tbl-cell-category">Accounting Entries</TableCell>
 
                     {/* <TableCell className="tbl-cell-category">
                       <TableSortLabel
@@ -348,11 +330,22 @@ const MinorCategory = () => {
                             </TableCell>
 
                             <TableCell className="tbl-cell-category capitalized">
-                              {data.account_title?.account_title_code}
-                            </TableCell>
-
-                            <TableCell className="tbl-cell-category capitalized">
-                              {data.account_title?.account_title_name}
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Debit : ({data.initial_debit?.account_title_code})-
+                                {data.initial_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Credit : ({data.initial_credit?.account_title_code})-{" "}
+                                {data.initial_credit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Debit : ({data.depreciation_debit?.account_title_code})-
+                                {data.depreciation_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Credit : ({data.depreciation_credit?.account_title_code})-{" "}
+                                {data.depreciation_credit?.account_title_name}
+                              </Typography>
                             </TableCell>
 
                             {/* <TableCell className="tbl-cell-category capitalized">
