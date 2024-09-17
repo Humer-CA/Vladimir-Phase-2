@@ -433,7 +433,7 @@ const AddRequisition = (props) => {
       // account_title_id: null,
       acquisition_details: "",
 
-      item_status: "",
+      item_status: null,
       asset_description: "",
       asset_specification: "",
       date_needed: null,
