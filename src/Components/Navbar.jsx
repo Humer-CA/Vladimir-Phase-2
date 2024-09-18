@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../Style/navbar.scss";
 import PropTypes from "prop-types";
-import { vladimirAPI } from "../Api/vladimirAPI";
+import { userLogin } from "../Api/userLogin";
 import ChangePassword from "./ChangePassword";
 import IpSetup from "./IpSetup";
 
@@ -130,7 +130,7 @@ const Navbar = () => {
 
   const onLogoutHandler = async () => {
     try {
-      const res = await vladimirAPI.post("/auth/logout");
+      const res = await userLogin.post("/auth/logout");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       dispatch(removeUserDetails());

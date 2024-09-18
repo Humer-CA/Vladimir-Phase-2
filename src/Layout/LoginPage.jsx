@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../Style/login.scss";
-import { vladimirAPI } from "../Api/vladimirAPI";
+import { userLogin } from "../Api/userLogin";
 import CustomTextField from "../Components/Reusable/CustomTextField";
 import VladimirLogo1 from "../Img/VladimirLogo1.svg";
 import MisLogo from "../Img/MIS LOGO.png";
@@ -57,7 +57,7 @@ const LoginPage = () => {
     try {
       setLoading(true);
 
-      const res = await vladimirAPI.post("/auth/login", data);
+      const res = await userLogin.post("/auth/login", data);
       // console.log(res);
 
       localStorage.setItem("token", res.data.data.token);
