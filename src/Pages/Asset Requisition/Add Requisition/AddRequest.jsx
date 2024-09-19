@@ -73,6 +73,8 @@ import {
   useUpdateRequisitionApiMutation,
   useDeleteRequisitionReferenceApiMutation,
   useLazyGetByTransactionApiQuery,
+  requisitionApi,
+  useGetRequisitionIdApiQuery,
 } from "../../../Redux/Query/Request/Requisition";
 
 import { useLazyGetTypeOfRequestAllApiQuery } from "../../../Redux/Query/Masterlist/TypeOfRequest";
@@ -198,6 +200,7 @@ const AddRequisition = (props) => {
   const [itemData, setItemData] = useState(null);
   const [editRequest, setEditRequest] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [transactionStatusId, setTransactionStatusId] = useState(null);
 
   const { state: transactionData } = useLocation();
   const dialog = useSelector((state) => state.booleanState.dialog);
@@ -239,6 +242,19 @@ const AddRequisition = (props) => {
   ] = usePostRequisitionSmsApiMutation();
 
   // QUERY
+  const {
+    data: requisitionData,
+    isLoading: isRequisitionLoading,
+    isSuccess: isRequisitionSuccess,
+    isError: isRequisitionError,
+    refetch: isRequisitionRefetch,
+  } = useGetRequisitionIdApiQuery({ id: transactionData?.transaction_number });
+
+  const requisitionStatus = requisitionData?.data[0]?.status;
+
+  // console.log("requisitionData", requisitionStatus);
+  // console.log(transactionData.transaction_number);
+
   const [
     typeOfRequestTrigger,
     {
@@ -470,10 +486,9 @@ const AddRequisition = (props) => {
       setValue("subunit_id", userCoa?.subunit);
       setValue("location_id", userCoa?.location);
     }
+    isRequisitionRefetch();
   }, [transactionData]);
-  {
-    // console.log(updateRequest?.major_category);
-  }
+
   useEffect(() => {
     if (updateRequest.id) {
       const accountable = {
@@ -712,6 +727,8 @@ const AddRequisition = (props) => {
           setEditRequest(false);
           setUpdateToggle(true);
           isTransactionRefetch();
+          isRequisitionRefetch();
+          dispatch(requisitionApi.util.invalidateTags(["Requisition"]));
           dispatch(requestContainerApi.util.invalidateTags(["RequestContainer"]));
         })
         .catch((err) => {
@@ -1982,6 +1999,7 @@ const AddRequisition = (props) => {
       />
     );
   };
+
   return (
     <>
       {errorRequest && errorTransaction ? (
@@ -2014,7 +2032,7 @@ const AddRequisition = (props) => {
                 <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1.5rem" }}>
                   {`${transactionData ? `TRANSACTION NO. ${transactionData?.transaction_number}` : "FIXED ASSET"}`}
                 </Typography>
-                {transactionData && transactionStatus(transactionData?.status)}
+                {transactionData && transactionStatus(requisitionStatus)}
               </Stack>
 
               <TableContainer className="request__th-body  request__wrapper">
@@ -2033,7 +2051,7 @@ const AddRequisition = (props) => {
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
                       {/* <TableCell className="tbl-cell">Attachment Type</TableCell> */}
                       <TableCell className="tbl-cell">Warehouse</TableCell>
-                      <TableCell className="tbl-cell">Minor Category</TableCell>
+                      <TableCell className="tbl-cell">Accounting Entries</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
@@ -2123,8 +2141,23 @@ const AddRequisition = (props) => {
                               {data.warehouse?.warehouse_name}
                             </TableCell>
 
-                            <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
-                              {data.minor_category?.minor_category_name}
+                            <TableCell className="tbl-cell-category capitalized">
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Debit : ({data.initial_debit?.account_title_code})-
+                                {data.initial_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Credit : ({data.initial_credit?.account_title_code})-{" "}
+                                {data.initial_credit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Debit : ({data.depreciation_debit?.account_title_code})-
+                                {data.depreciation_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Credit : ({data.depreciation_credit?.account_title_code})-{" "}
+                                {data.depreciation_credit?.account_title_name}
+                              </Typography>
                             </TableCell>
 
                             <TableCell onClick={() => handleShowItems(data)} className="tbl-cell">
@@ -2164,7 +2197,7 @@ const AddRequisition = (props) => {
                               <Typography fontSize="12px" color="text.light">
                                 {data.asset_specification}
                               </Typography>
-                              <Typography fontSize="12px" fontWeight={500} color="secondary.light">
+                              <Typography fontSize="12px" fontWeight={600} color="tertiary.light">
                                 STATUS - {data.item_status}
                               </Typography>
                             </TableCell>
