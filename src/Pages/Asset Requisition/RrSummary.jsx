@@ -140,17 +140,19 @@ const RrSummary = (props) => {
         iconColor: "warning",
         message: (
           <Box>
-            <Typography> Are you sure you want to</Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                color: "secondary.main",
-                fontWeight: "bold",
-              }}
-            >
-              CANCEL
-            </Typography>{" "}
-            this RR Data?
+            <Typography>
+              Are you sure you want to{" "}
+              <Typography
+                variant="span"
+                sx={{
+                  color: "secondary.main",
+                  fontWeight: "bold",
+                }}
+              >
+                CANCEL
+              </Typography>{" "}
+              this RR Data?
+            </Typography>
           </Box>
         ),
         remarks: true,
@@ -291,7 +293,7 @@ const RrSummary = (props) => {
                               <TableCell className="tbl-cell">
                                 <Chip
                                   size="small"
-                                  color="primary"
+                                  color={data?.status === "active" ? "primary" : "error"}
                                   label={
                                     <Typography fontWeight={600} fontSize="12px">
                                       {data.rr_number}
