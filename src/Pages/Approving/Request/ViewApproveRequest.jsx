@@ -30,7 +30,7 @@ import {
 
 // RTK
 import { useDispatch, useSelector } from "react-redux";
-import { useGetByTransactionApiQuery } from "../../../Redux/Query/Request/Requisition";
+import { requisitionApi, useGetByTransactionApiQuery } from "../../../Redux/Query/Request/Requisition";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import NoRecordsFound from "../../../Layout/NoRecordsFound";
@@ -94,7 +94,7 @@ const ViewApproveRequest = (props) => {
   //   { refetchOnMountOrArgChange: true }
   // );
 
-  const [getYmirData, {}] = useLazyGetYmirPrApiQuery();
+  const [getYmirData, { isSuccess: isYmirDataSuccess }] = useLazyGetYmirPrApiQuery();
 
   const [downloadAttachment] = useLazyDlAttachmentQuery({ attachment: attachment, id: approveRequestData?.id });
 
@@ -125,7 +125,7 @@ const ViewApproveRequest = (props) => {
   };
 
   const onApprovalApproveHandler = (transaction_number) => {
-    dispatch(
+    const nextData = dispatch(
       openConfirm({
         icon: Help,
         iconColor: "info",
@@ -149,7 +149,6 @@ const ViewApproveRequest = (props) => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            const getYmirDataApi = await getYmirData({ transaction_number: transaction_number }).unwrap();
 
             const result = await patchApprovalStatus({
               action: "Approve",
@@ -162,26 +161,25 @@ const ViewApproveRequest = (props) => {
                 duration: 5000,
               })
             );
+            // console.log(approveRequestData?.data?.map((data) => data?.fa_approval).includes(1));
 
-            if (approveRequestData?.data?.some((data) => data?.fa_approval === 1)) {
-              const postYmirData = await postPr(getYmirDataApi).unwrap();
-              const next = await getNextRequest().unwrap();
+            if (approveRequestData?.data?.map((data) => data.fa_approval).includes(1)) {
+              try {
+                const getYmirDataApi = await getYmirData({ transaction_number }).unwrap();
 
-              return navigate(`/approving/request/${next?.[0].transaction_number}`, {
-                state: next?.[0],
-                replace: true,
-              });
-              // dispatch(
-              //   openToast({
-              //     message: message,
-              //     // message: postYmirData.message,
-              //     duration: 5000,
-              //   })
-              // )
+                const postYmirData = await postPr(getYmirDataApi);
+                // console.log(postYmirData);
+
+                const next = await getNextRequest().unwrap();
+
+                return navigate(`/approving/request/${next?.[0].transaction_number}`, {
+                  state: next?.[0],
+                  replace: true,
+                });
+              } catch (err) {
+                console.error("Error occurred:", err);
+              }
             }
-
-            const next = await getNextRequest().unwrap();
-            navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
           } catch (err) {
             console.log(err);
             if (err?.status === 404) {
@@ -253,6 +251,7 @@ const ViewApproveRequest = (props) => {
             );
             const next = await getNextRequest().unwrap();
             navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
+            dispatch(requisitionApi.util.invalidateTags(["Requisition"]));
           } catch (err) {
             if (err?.status === 404) {
               navigate(`/approving/request`);
@@ -361,7 +360,7 @@ const ViewApproveRequest = (props) => {
                       <TableCell className="tbl-cell">Ref. No.</TableCell>
                       <TableCell className="tbl-cell">Type of Request</TableCell>
                       <TableCell className="tbl-cell">Acquisition Details</TableCell>
-                      <TableCell className="tbl-cell">Attachment Type</TableCell>
+                      <TableCell className="tbl-cell">Accounting Entries</TableCell>
                       <TableCell className="tbl-cell">Chart of Accounts</TableCell>
                       <TableCell className="tbl-cell">Accountability</TableCell>
                       <TableCell className="tbl-cell">Asset Information</TableCell>
@@ -388,9 +387,37 @@ const ViewApproveRequest = (props) => {
                             }}
                           >
                             <TableCell className="tbl-cell tr-cen-pad45 text-weight">{data.reference_number}</TableCell>
-                            <TableCell className="tbl-cell">{data.type_of_request?.type_of_request_name}</TableCell>
+                            <TableCell className="tbl-cell">
+                              <Typography fontWeight={600}>{data.type_of_request?.type_of_request_name}</Typography>
+                              <Typography
+                                fontWeight={400}
+                                fontSize={12}
+                                color={data.attachment_type === "Budgeted" ? "success.main" : "primary.dark"}
+                              >
+                                {data.attachment_type}
+                              </Typography>
+                            </TableCell>
                             <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
-                            <TableCell className="tbl-cell">{data.attachment_type}</TableCell>
+
+                            <TableCell className="tbl-cell-category capitalized">
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Debit : ({data.initial_debit?.account_title_code})-
+                                {data.initial_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Inital Credit : ({data.initial_credit?.account_title_code})-{" "}
+                                {data.initial_credit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Debit : ({data.depreciation_debit?.account_title_code})-
+                                {data.depreciation_debit?.account_title_name}
+                              </Typography>
+                              <Typography fontSize={11} color="secondary.light" noWrap>
+                                Depreciation Credit : ({data.depreciation_credit?.account_title_code})-{" "}
+                                {data.depreciation_credit?.account_title_name}
+                              </Typography>
+                            </TableCell>
+
                             <TableCell className="tbl-cell">
                               <Typography fontSize={10} color="gray">
                                 {`(${data.company?.company_code}) - ${data.company?.company_name}`}
@@ -432,13 +459,9 @@ const ViewApproveRequest = (props) => {
 
                             <TableCell className="tbl-cell text-center">{data.quantity}</TableCell>
 
-                            <TableCell className="tbl-cell">
-                              {data.cellphone_number === null ? "-" : data.cellphone_number}
-                            </TableCell>
+                            <TableCell className="tbl-cell">{data.cellphone_number}</TableCell>
 
-                            <TableCell className="tbl-cell">
-                              {data.remarks === null ? "No Remarks" : data.remarks}
-                            </TableCell>
+                            <TableCell className="tbl-cell">{data.remarks}</TableCell>
 
                             <TableCell className="tbl-cell">
                               {data?.attachments?.letter_of_request && (
