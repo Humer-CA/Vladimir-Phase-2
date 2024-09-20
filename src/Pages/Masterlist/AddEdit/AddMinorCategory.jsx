@@ -16,6 +16,7 @@ import {
   Paper,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -35,12 +36,7 @@ import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/Y
 
 const schema = yup.object().shape({
   id: yup.string(),
-  // division_id: yup
-  //   .string()
-  //   .transform((value) => {
-  //     return value?.id.toString();
-  //   })
-  //   .required(),
+
   major_category_id: yup
     .string()
     .transform((value) => {
@@ -49,32 +45,42 @@ const schema = yup.object().shape({
     .required()
     .label("Major Category"),
 
-  account_title_id: yup
+  minor_category_name: yup.string().required(),
+
+  depreciation_credit_id: yup
     .string()
     .transform((value) => {
       return value?.id.toString();
     })
     .required()
-    .label("Account Title"),
-
-  minor_category_name: yup.string().required(),
-  // urgency_level: yup.string().required(),
-  // personally_assign: yup.boolean().required(),
-  // evaluate_in_every_movement: yup.boolean().required(),
+    .label("Depreciation Credit"),
+  depreciation_debit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Depreciation Debit"),
+  initial_credit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Initial Credit"),
+  initial_debit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Initial Debit"),
 });
 
 const AddMinorCategory = (props) => {
   const { data, onUpdateResetHandler } = props;
   const [filteredMajorCategoryData, setFilteredMajorCategoryData] = useState([]);
   const dispatch = useDispatch();
-
-  // const {
-  //   data: divisionData = [],
-  //   isLoading: isDivisionLoading,
-  //   isSuccess: isDivisionSuccess,
-  //   isError: isDivisionError,
-  //   refetch: isDivisionRefetch,
-  // } = useGetDivisionAllApiQuery();
 
   const {
     data: majorCategoryData = [],
@@ -118,15 +124,16 @@ const AddMinorCategory = (props) => {
     resolver: yupResolver(schema),
     defaultValues: {
       id: "",
-      // division_id: null,
       major_category_id: null,
-      account_title_id: null,
       minor_category_name: "",
-      // urgency_level: null,
-      // personally_assign: null,
-      // evaluate_in_every_movement: null,
+      depreciation_credit_id: null,
+      depreciation_debit_id: null,
+      initial_credit_id: null,
+      initial_debit_id: null,
     },
   });
+
+  console.log(watch("depreciation_debit_id"));
 
   useEffect(() => {
     if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
@@ -170,36 +177,14 @@ const AddMinorCategory = (props) => {
       //   division_name: data.division_name,
       // });
       setValue("major_category_id", data.major_category);
-      setValue("account_title_id", data.account_title);
       setValue("minor_category_name", data.minor_category_name);
-      // setValue("urgency_level", data.urgency_level);
-      // setValue("personally_assign", data.personally_assign);
-      // setValue("evaluate_in_every_movement", data.evaluate_in_every_movement);
+
+      setValue("depreciation_credit_id", data.depreciation_credit);
+      setValue("depreciation_debit_id", data.depreciation_debit);
+      setValue("initial_credit_id", data.initial_credit);
+      setValue("initial_debit_id", data.initial_debit);
     }
   }, [data]);
-
-  // useEffect(() => {
-  //   const division = watch("division_id");
-  //   isDivisionRefetch();
-  //   if (division?.division_name && isDivisionSuccess) {
-  //     const filteredDivisionData = divisionData?.filter((obj) => {
-  //       return obj.division_name === division.division_name;
-  //     });
-  //     // console.log(divisionData);
-
-  //     setFilteredMajorCategoryData(filteredDivisionData[0]?.major_category);
-  //     // console.log(filteredDivisionData[0].major_category);
-
-  //     const isIncluded = filteredDivisionData[0]?.major_category.some(
-  //       (category) => {
-  //         return category.id === data.major_category_id;
-  //       }
-  //     );
-
-  //     if (!isIncluded) setValue("major_category_id", null);
-  //     // console.log(divisionData);
-  //   }
-  // }, [watch("division_id"), isDivisionSuccess]);
 
   const onSubmitHandler = (formData) => {
     if (data.status) {
@@ -224,50 +209,6 @@ const AddMinorCategory = (props) => {
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} className="add-masterlist__content">
-        {/* <CustomAutoComplete
-          autoComplete
-          name="division_id"
-          control={control}
-          options={divisionData}
-          loading={isDivisionLoading}
-          size="small"
-          getOptionLabel={(option) => option.division_name}
-          isOptionEqualToValue={(option, value) =>
-            option.division_name === value.division_name
-          }
-          renderInput={(params) => (
-            <TextField
-              color="secondary"
-              {...params}
-              label="Division"
-              error={!!errors?.division_id?.message}
-              helperText={errors?.division_id?.message}
-            />
-          )}
-        /> */}
-
-        {/* <CustomAutoComplete
-          autoComplete
-          name="major_category_id"
-          control={control}
-          options={filteredMajorCategoryData || []}
-          loading={isMajorCategoryLoading}
-          size="small"
-          getOptionLabel={(option) => option.major_category_name}
-          isOptionEqualToValue={(option, value) =>
-            option.major_category_name === value.major_category_name
-          }
-          renderInput={(params) => (
-            <TextField
-              color="secondary"
-              {...params}
-              label="Major Category"
-              error={!!errors?.major_category_id?.message}
-              helperText={errors?.major_category_id?.message}
-            />
-          )}
-        /> */}
-
         <CustomAutoComplete
           autoComplete
           disabled={data.status}
@@ -289,31 +230,11 @@ const AddMinorCategory = (props) => {
           )}
         />
 
-        <CustomAutoComplete
-          autoComplete
-          name="account_title_id"
-          control={control}
-          options={accountTitleData}
-          loading={isAccountTitleLoading}
-          size="small"
-          getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
-          isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
-          renderInput={(params) => (
-            <TextField
-              color="secondary"
-              {...params}
-              label="Account Title  "
-              error={!!errors?.account_title_id}
-              helperText={errors?.account_title_id?.message}
-            />
-          )}
-        />
-
         <CustomTextField
           autoComplete="off"
           control={control}
           name="minor_category_name"
-          label="Minor Category"
+          label="Minor Category Name"
           type="text"
           color="secondary"
           size="small"
@@ -321,6 +242,92 @@ const AddMinorCategory = (props) => {
           helperText={errors?.minor_category_name?.message}
           fullWidth
         />
+
+        {/* Depreciation Debit and Credit */}
+        <Stack gap={2}>
+          <Typography fontFamily="Anton" color="secondary">
+            Accounting Entries
+          </Typography>
+          <CustomAutoComplete
+            autoComplete
+            name="depreciation_credit_id"
+            control={control}
+            options={accountTitleData}
+            loading={isAccountTitleLoading}
+            size="small"
+            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Depreciation Credit"
+                error={!!errors?.depreciation_credit_id}
+                helperText={errors?.depreciation_credit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="depreciation_debit_id"
+            control={control}
+            options={accountTitleData}
+            loading={isAccountTitleLoading}
+            size="small"
+            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Depreciation Debit"
+                error={!!errors?.depreciation_debit_id}
+                helperText={errors?.depreciation_debit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="initial_credit_id"
+            control={control}
+            options={accountTitleData}
+            loading={isAccountTitleLoading}
+            size="small"
+            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Initial Credit"
+                error={!!errors?.initial_credit_id}
+                helperText={errors?.initial_credit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="initial_debit_id"
+            control={control}
+            options={accountTitleData}
+            loading={isAccountTitleLoading}
+            size="small"
+            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Initial Debit"
+                error={!!errors?.initial_debit_id}
+                helperText={errors?.initial_debit_id?.message}
+              />
+            )}
+          />
+        </Stack>
 
         <Box className="add-masterlist__buttons">
           <LoadingButton
