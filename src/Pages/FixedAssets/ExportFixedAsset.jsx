@@ -140,8 +140,17 @@ const ExportFixedAsset = () => {
           "Location Code": item.location_code,
           Location: item.location_name,
 
-          "Account Title Code": item.account_title_code,
-          "Account Title": item.account_title_name,
+          "Depreciation Credit Code": item?.depreciation_credit_code,
+          "Depreciation Credit Name": item?.depreciation_credit_name,
+
+          "Depreciation Debit Code": item?.depreciation_debit_code,
+          "Depreciation Debit Name": item?.depreciation_debit_name,
+
+          "Initial Credit Code": item?.initial_credit_code,
+          "Initial Credit Name": item?.initial_credit_name,
+
+          "Initial Debit Code": item?.initial_debit_code,
+          "Initial Debit Name": item?.initial_debit_name,
 
           "Asset Description": item.asset_description,
           "Asset Specification": item.asset_specification,
