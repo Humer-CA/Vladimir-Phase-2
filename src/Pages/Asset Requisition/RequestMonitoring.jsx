@@ -21,8 +21,13 @@ import {
   Button,
   Chip,
   Dialog,
+  Fade,
   Grow,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -34,7 +39,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { IosShareRounded, Visibility } from "@mui/icons-material";
+import { AddBox, AddCircleSharp, IosShareRounded, LibraryAdd, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { closeDialog, openDialog } from "../../Redux/StateManagement/booleanStateSlice";
 import RequestTimeline from "./RequestTimeline";
@@ -48,6 +53,9 @@ const RequestMonitoring = () => {
   const [page, setPage] = useState(1);
   const [requestFilter, setRequestFilter] = useState([]);
   const [transactionIdData, setTransactionIdData] = useState();
+  const viewData = true;
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 500px)");
@@ -114,7 +122,67 @@ const RequestMonitoring = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const dispatch = useDispatch();
+  const onVoidHandler = async (id) => {
+    dispatch(
+      openConfirm({
+        icon: Report,
+        iconColor: "warning",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+              }}
+            >
+              VOID
+            </Typography>{" "}
+            this Data?
+          </Box>
+        ),
+
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            let result = await voidRequisitionApi({
+              id: id,
+              transaction_number: id,
+            }).unwrap();
+            console.log(result);
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+
+            dispatch(closeConfirm());
+          } catch (err) {
+            console.log(err);
+            if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  message: err.data.message,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            } else if (err?.status !== 422) {
+              dispatch(
+                openToast({
+                  message: "Something went wrong. Please try again.",
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
 
   const onSetPage = () => {
     setPage(1);
@@ -125,71 +193,116 @@ const RequestMonitoring = () => {
     setTransactionIdData(data);
   };
 
-  const handleExport = async () => {
-    try {
-      const apiParams = {
-        page: page,
-        per_page: perPage,
-        status: status,
-        search: search,
-        filter: filter,
-      };
+  const handleCloseTimeline = () => {
+    dispatch(closeDialog);
+  };
 
-      const res = await requestDataTrigger(apiParams).unwrap();
-      console.log(res);
-      const newObj = res?.data?.map((item) => {
-        return {
-          // ID: item?.id,
-          "Transaction No.": item?.transaction_number,
-          "Acuisition Details": item?.acquisition_details,
-          Quantity: item?.item_count,
-          Status: item?.status,
-          "Current Approver": `${item?.current_approver?.firstname} ${item?.current_approver?.lastname}`,
-          "Date Requested": moment(item?.created_at).format("MMM DD, YYYY"),
-        };
-      });
+  // * Add Button Settings
+  const [anchorElAdd, setAnchorElAdd] = useState(null);
+  const openAdd = Boolean(anchorElAdd);
 
-      const exportTitle = `Vladimir-Request`;
+  const handleOpenAdd = (event) => {
+    deleteAllRequest();
+    setAnchorElAdd(event.currentTarget);
+  };
 
-      await excelExport(newObj, exportTitle);
-    } catch (err) {
-      if (err?.status === 422) {
-        dispatch(
-          openToast({
-            message: err.data.errors?.detail,
-            duration: 5000,
-            variant: "error",
-          })
-        );
-      } else if (err?.status !== 422) {
-        dispatch(
-          openToast({
-            message: "Something went wrong. Please try again.",
-            duration: 5000,
-            variant: "error",
-          })
-        );
-        console.log(err);
-      }
-    }
+  const handleClose = () => {
+    setAnchorElAdd(null);
   };
 
   const handleEditRequisition = (data) => {
-    navigate(`/request-monitoring/${data.transaction_number}`, {
-      state: { ...data },
-    });
+    data?.is_addcost === 1
+      ? navigate(`/request-monitoring/${data.transaction_number}`, {
+          state: { ...data, viewData },
+        })
+      : navigate(`/request-monitoring/${data.transaction_number}`, {
+          state: { ...data, viewData },
+        });
   };
+
+  const isAdditionalCost = requisitionData?.data.map((item) => item.is_addcost);
+
+  const transactionStatus = (data) => {
+    let statusColor, hoverColor, textColor, variant;
+
+    switch (data.status) {
+      case "Approved":
+        statusColor = "success.light";
+        hoverColor = "success.main";
+        textColor = "white";
+        variant = "filled";
+        break;
+
+      case "Claimed":
+        statusColor = "success.dark";
+        hoverColor = "success.dark";
+        variant = "filled";
+        break;
+
+      case "Sent to ymir for PO":
+        statusColor = "ymir.light";
+        hoverColor = "ymir.main";
+        variant = "filled";
+        break;
+
+      case "Returned":
+      case "Cancelled":
+      case "Returned From Ymir":
+        statusColor = "error.light";
+        hoverColor = "error.main";
+        variant = "filled";
+        break;
+
+      default:
+        statusColor = "success.main";
+        hoverColor = "none";
+        textColor = "success.main";
+        variant = "outlined";
+    }
+
+    return (
+      <>
+        <Tooltip title={data?.current_approver} placement="top" arrow>
+          <Chip
+            placement="top"
+            onClick={() => handleViewTimeline(data)}
+            size="small"
+            variant={variant}
+            sx={{
+              ...(variant === "filled" && {
+                backgroundColor: statusColor,
+                color: "white",
+              }),
+              ...(variant === "outlined" && {
+                borderColor: statusColor,
+                color: textColor,
+              }),
+              fontSize: "11px",
+              px: 1,
+              ":hover": {
+                ...(variant === "filled" && { backgroundColor: hoverColor }),
+                ...(variant === "outlined" && { borderColor: hoverColor, color: textColor }),
+              },
+            }}
+            label={data.status}
+          />
+        </Tooltip>
+      </>
+    );
+  };
+
+  const isCancelled = requisitionData?.data?.map((item) => item.status).includes("Cancelled");
 
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
         Request Monitoring
       </Typography>
-      {requisitionLoading && <MasterlistSkeleton onAdd={true} />}
+      {requisitionLoading && <MasterlistSkeleton />}
       {requisitionError && <ErrorFetching refetch={refetch} error={errorData} />}
       {requisitionData && !requisitionError && (
         <>
-          <Box className="mcontainer__wrapper">
+          <Box className="request__wrapper">
             <MasterlistToolbar
               onStatusChange={setStatus}
               onSearchChange={setSearch}
@@ -210,6 +323,16 @@ const RequestMonitoring = () => {
                         },
                       }}
                     >
+                      {/* <TableCell className="tbl-cell text-center">
+                        <TableSortLabel
+                          active={orderBy === `id`}
+                          direction={orderBy === `id` ? order : `asc`}
+                          onClick={() => onSort(`id`)}
+                        >
+                          ID No.
+                        </TableSortLabel>
+                      </TableCell> */}
+
                       <TableCell className="tbl-cell">
                         <TableSortLabel
                           active={orderBy === `transaction_number`}
@@ -230,17 +353,15 @@ const RequestMonitoring = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      {requisitionData?.pr_number !== "-" && (
-                        <TableCell className="tbl-cell">
-                          <TableSortLabel
-                            active={orderBy === `pr_number`}
-                            direction={orderBy === `pr_number` ? order : `asc`}
-                            onClick={() => onSort(`pr_number`)}
-                          >
-                            PR Number
-                          </TableSortLabel>
-                        </TableCell>
-                      )}
+                      <TableCell className="tbl-cell text-center">
+                        <TableSortLabel
+                          active={orderBy === `pr_number`}
+                          direction={orderBy === `pr_number` ? order : `asc`}
+                          onClick={() => onSort(`pr_number`)}
+                        >
+                          PR Number
+                        </TableSortLabel>
+                      </TableCell>
 
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
@@ -254,7 +375,7 @@ const RequestMonitoring = () => {
 
                       <TableCell className="tbl-cell text-center">View Information</TableCell>
 
-                      <TableCell className="tbl-cell" align="center">
+                      <TableCell className="tbl-cell text-center">
                         <TableSortLabel
                           active={orderBy === `status`}
                           direction={orderBy === `status` ? order : `asc`}
@@ -291,87 +412,41 @@ const RequestMonitoring = () => {
                                 },
                               }}
                             >
+                              {/* <TableCell className="tbl-cell tr-cen-pad45">
+                                  {data.id}
+                                </TableCell> */}
                               <TableCell className="tbl-cell text-weight">{data.transaction_number}</TableCell>
-                              <TableCell className="tbl-cell">{data.acquisition_details}</TableCell>
-                              <TableCell className="tbl-cell">{data.pr_number}</TableCell>
-                              <TableCell className="tbl-cell text-weight tr-cen-pad45">{data.item_count}</TableCell>
-                              <TableCell className="tbl-cell text-weight text-center">
+                              <TableCell className="tbl-cell">
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  {data.acquisition_details}
+                                </Typography>
+                                <Typography fontSize={12} color="secondary.light">
+                                  ({data.warehouse?.id}) - {data.warehouse?.warehouse_name}
+                                </Typography>
+                                {/* <Typography fontSize={12} color="primary.main" fontWeight={400}>
+                                  {data.is_addcost === 1 && "Additional Cost"}
+                                </Typography> */}
+                              </TableCell>
+
+                              <TableCell className="tbl-cell">
+                                <Typography fontSize={14} fontWeight={600} color="secondary.main">
+                                  {data.ymir_pr_number}
+                                </Typography>
+                              </TableCell>
+
+                              <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
+                              <TableCell className="tbl-cell text-center">
                                 <Tooltip placement="top" title="View Request Information" arrow>
                                   <IconButton onClick={() => handleEditRequisition(data)}>
                                     <Visibility />
                                   </IconButton>
                                 </Tooltip>
                               </TableCell>
+                              <TableCell className="tbl-cell tr-cen-pad45">{transactionStatus(data)}</TableCell>
                               <TableCell className="tbl-cell tr-cen-pad45">
-                                {data.status === "Returned" || data.status === "Cancelled" ? (
-                                  <Chip
-                                    placement="top"
-                                    onClick={() => handleViewTimeline(data)}
-                                    size="small"
-                                    variant="filled"
-                                    sx={{
-                                      backgroundColor: "error.light",
-                                      color: "white",
-                                      fontSize: "0.7rem",
-                                      px: 1,
-                                      ":hover": { backgroundColor: "error.dark" },
-                                    }}
-                                    label={`${data.status}`}
-                                  />
-                                ) : data.status === "Claimed" ? (
-                                  <Tooltip
-                                    placement="top"
-                                    title={`${data?.current_approver?.firstname} 
-                                      ${data?.current_approver?.lastname}`}
-                                    arrow
-                                  >
-                                    <Chip
-                                      onClick={() => handleViewTimeline(data)}
-                                      size="small"
-                                      variant="filled"
-                                      sx={{
-                                        borderColor: "primary.main",
-                                        color: "white",
-                                        fontSize: "0.7rem",
-                                        px: 1,
-                                        cursor: "pointer",
-                                        backgroundColor: "success.dark",
-                                        ":hover": {
-                                          backgroundColor: "success.dark",
-                                        },
-                                      }}
-                                      label={`${data.status}`}
-                                    />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip
-                                    placement="top"
-                                    title={`${data?.current_approver?.firstname} 
-                                        ${data?.current_approver?.lastname}`}
-                                    arrow
-                                  >
-                                    <Chip
-                                      onClick={() => handleViewTimeline(data)}
-                                      size="small"
-                                      variant={data.status === "Approved" ? "filled" : "outlined"}
-                                      sx={{
-                                        borderColor: "active.dark",
-                                        color: data?.status === "Approved" ? "white" : "active.dark",
-                                        fontSize: "0.7rem",
-                                        px: 1,
-                                        cursor: "pointer",
-                                        backgroundColor: data?.status === "Approved" && "success.main",
-                                        ":hover": {
-                                          backgroundColor: data?.status === "Approved" ? "success.dark" : "red",
-                                        },
-                                      }}
-                                      label={`${data.status}`}
-                                    />
-                                  </Tooltip>
-                                )}
-                              </TableCell>
-                              <TableCell className="tbl-cell tr-cen-pad45">
-                                {Moment(data.created_at).format("MMM DD, YYYY")}
+                                {data.status === "Cancelled"
+                                  ? Moment(data.deleted_at).format("MMM DD, YYYY")
+                                  : Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -381,40 +456,24 @@ const RequestMonitoring = () => {
                 </Table>
               </TableContainer>
             </Box>
-            <Box className="mcontainer__pagination-export">
-              <Button
-                className="mcontainer__export"
-                variant="outlined"
-                size="small"
-                color="text"
-                startIcon={<IosShareRounded color="primary" />}
-                onClick={handleExport}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "10px 20px",
-                }}
-              >
-                EXPORT
-              </Button>
-              <CustomTablePagination
-                total={requisitionData?.total}
-                success={requisitionSuccess}
-                current_page={requisitionData?.current_page}
-                per_page={requisitionData?.per_page}
-                onPageChange={pageHandler}
-                onRowsPerPageChange={perPageHandler}
-              />
-            </Box>
+
+            <CustomTablePagination
+              total={requisitionData?.total}
+              success={requisitionSuccess}
+              current_page={requisitionData?.current_page}
+              per_page={requisitionData?.per_page}
+              onPageChange={pageHandler}
+              onRowsPerPageChange={perPageHandler}
+            />
           </Box>
         </>
       )}
+
       <Dialog
         open={dialog}
         TransitionComponent={Grow}
         onClose={() => dispatch(closeDialog())}
-        PaperProps={{ sx: { borderRadius: "10px" } }}
+        PaperProps={{ sx: { borderRadius: "10px", maxWidth: "700px" } }}
       >
         <RequestTimeline data={transactionIdData} />
       </Dialog>
