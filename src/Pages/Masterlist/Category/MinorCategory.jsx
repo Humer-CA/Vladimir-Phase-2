@@ -43,10 +43,12 @@ const MinorCategory = () => {
   const [updateMinorCategory, setUpdateMinorCategory] = useState({
     status: false,
     id: null,
-    // division_id: "",
     major_category_id: "",
-    account_title_sync_id: null,
     minor_category_name: "",
+    depreciation_credit: null,
+    depreciation_debit: null,
+    initial_credit: null,
+    initial_debit: null,
   });
 
   // Table Sorting --------------------------------
@@ -175,25 +177,26 @@ const MinorCategory = () => {
   const onUpdateHandler = (props) => {
     const {
       id,
-      division,
+
       major_category,
       account_title,
       minor_category_name,
-      // urgency_level,
-      // personally_assign,
-      // evaluate_in_every_movement,
+      depreciation_credit,
+      depreciation_debit,
+      initial_credit,
+      initial_debit,
     } = props;
     setUpdateMinorCategory({
       status: true,
       id: id,
-      // division_id: division?.id,
-      // division_name: division?.division_name,
+
       major_category,
       account_title,
-      minor_category_name: minor_category_name,
-      // urgency_level: urgency_level,
-      // personally_assign: personally_assign,
-      // evaluate_in_every_movement: evaluate_in_every_movement,
+      minor_category_name,
+      depreciation_credit,
+      depreciation_debit,
+      initial_credit,
+      initial_debit,
     });
   };
 
@@ -201,22 +204,19 @@ const MinorCategory = () => {
     setUpdateMinorCategory({
       status: false,
       id: null,
-      // division_id: "",
-      // major_category_id: "",
+
       major_category_id: null,
-      account_title_sync_id: null,
       minor_category_name: "",
-      // urgency_level: "",
-      // personally_assign: null,
-      // evaluate_in_every_movement: null,
+      depreciation_credit: null,
+      depreciation_debit: null,
+      initial_credit: null,
+      initial_debit: null,
     });
   };
 
   const onSetPage = () => {
     setPage(1);
   };
-
-  // console.log(minorCategoryData);
 
   return (
     <Stack className="category_height">
