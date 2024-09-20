@@ -210,10 +210,6 @@ const Requisition = () => {
     setTransactionIdData(data);
   };
 
-  const handleCloseTimelime = () => {
-    dispatch(closeDialog);
-  };
-
   // * Add Button Settings
   const [anchorElAdd, setAnchorElAdd] = useState(null);
   const openAdd = Boolean(anchorElAdd);
@@ -278,31 +274,37 @@ const Requisition = () => {
     }
 
     return (
-      <Chip
-        placement="top"
-        onClick={() => handleViewTimeline(data)}
-        size="small"
-        variant={variant}
-        sx={{
-          ...(variant === "filled" && {
-            backgroundColor: statusColor,
-            color: "white",
-          }),
-          ...(variant === "outlined" && {
-            borderColor: statusColor,
-            color: textColor,
-          }),
-          fontSize: "11px",
-          px: 1,
-          ":hover": {
-            ...(variant === "filled" && { backgroundColor: hoverColor }),
-            ...(variant === "outlined" && { borderColor: hoverColor, color: textColor }),
-          },
-        }}
-        label={data.status}
-      />
+      <>
+        <Tooltip title={data?.current_approver} placement="top" arrow>
+          <Chip
+            placement="top"
+            onClick={() => handleViewTimeline(data)}
+            size="small"
+            variant={variant}
+            sx={{
+              ...(variant === "filled" && {
+                backgroundColor: statusColor,
+                color: "white",
+              }),
+              ...(variant === "outlined" && {
+                borderColor: statusColor,
+                color: textColor,
+              }),
+              fontSize: "11px",
+              px: 1,
+              ":hover": {
+                ...(variant === "filled" && { backgroundColor: hoverColor }),
+                ...(variant === "outlined" && { borderColor: hoverColor, color: textColor }),
+              },
+            }}
+            label={data.status}
+          />
+        </Tooltip>
+      </>
     );
   };
+
+  const isCancelled = requisitionData?.data?.map((item) => item.status).includes("Cancelled");
 
   return (
     <Box className="mcontainer">
@@ -439,8 +441,7 @@ const Requisition = () => {
                           Date Created
                         </TableSortLabel>
                       </TableCell>
-
-                      <TableCell className="tbl-cell">Action</TableCell>
+                      {!isCancelled && <TableCell className="tbl-cell">Action</TableCell>}
                     </TableRow>
                   </TableHead>
 
@@ -474,11 +475,13 @@ const Requisition = () => {
                                   {data.is_addcost === 1 && "Additional Cost"}
                                 </Typography> */}
                               </TableCell>
+
                               <TableCell className="tbl-cell">
                                 <Typography fontSize={14} fontWeight={600} color="secondary.main">
                                   {data.ymir_pr_number}
                                 </Typography>
                               </TableCell>
+
                               <TableCell className="tbl-cell tr-cen-pad45">{data.item_count}</TableCell>
                               <TableCell className="tbl-cell text-center">
                                 <Tooltip placement="top" title="View Request Information" arrow>
@@ -493,18 +496,19 @@ const Requisition = () => {
                                   ? Moment(data.deleted_at).format("MMM DD, YYYY")
                                   : Moment(data.created_at).format("MMM DD, YYYY")}
                               </TableCell>
-                              <TableCell className="tbl-cell ">
-                                <ActionMenu
-                                  disableVoid={
-                                    data.status !== ("For Approval of Approver 1" && "Returned") ? true : false
-                                  }
-                                  status={data.status}
-                                  data={data}
-                                  showVoid
-                                  onVoidHandler={onVoidHandler}
-                                  hideArchive
-                                />
-                              </TableCell>
+                              {!isCancelled && (
+                                <TableCell className="tbl-cell ">
+                                  {(data.status === "For Approval of Approver 1" || data.status === "Returned") && (
+                                    <ActionMenu
+                                      status={data.status}
+                                      data={data}
+                                      showVoid
+                                      onVoidHandler={onVoidHandler}
+                                      hideArchive
+                                    />
+                                  )}
+                                </TableCell>
+                              )}
                             </TableRow>
                           ))}
                       </>
