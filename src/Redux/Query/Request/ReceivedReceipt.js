@@ -13,7 +13,7 @@ export const receivedReceiptApi = createApi({
         headers.set("Authorization", `Bearer ${token}`);
       } else if (endpoint === "cancelRrYmirApi") {
         const ymirToken = process.env.YMIR_KEY; // Ymir API token
-        headers.set("Authorization", `Bearer ${ymirToken}`);
+        headers.set("Token", `Bearer ${ymirToken}`);
       }
 
       headers.set("Accept", "application/json");

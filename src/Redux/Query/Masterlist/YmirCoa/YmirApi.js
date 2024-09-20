@@ -9,7 +9,7 @@ export const ymirApi = createApi({
     prepareHeaders: (headers) => {
       const token = process.env.YMIR_KEY;
 
-      headers.set("Authorization", `Bearer ${token}`);
+      headers.set("Token", `Bearer ${token}`);
       headers.set("Accept", `application/json`);
 
       return headers;
