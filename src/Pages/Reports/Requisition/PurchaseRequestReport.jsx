@@ -299,7 +299,7 @@ const PurchaseRequestReport = (props) => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell className="tbl-cell">PR/PO Number</TableCell>
+                      <TableCell className="tbl-cell">Chart Of Accounts</TableCell>
 
                       <TableCell className="tbl-cell" align="center">
                         Status
