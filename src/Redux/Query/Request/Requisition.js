@@ -41,7 +41,7 @@ export const requisitionApi = createApi({
     }),
 
     getRequisitionIdApi: builder.query({
-      query: (id) => `asset-request/${id}`,
+      query: ({ id }) => `asset-request/${id}`,
       providesTags: ["Requisition"],
     }),
 
