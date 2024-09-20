@@ -193,6 +193,7 @@ const ExportFixedAsset = () => {
             name="startDate"
             label="Start Date"
             size="small"
+            disableFuture
             error={!!errors?.startDate}
             helperText={errors?.startDate?.message}
           />
@@ -202,6 +203,7 @@ const ExportFixedAsset = () => {
             name="endDate"
             label="End Date"
             size="small"
+            disableFuture
             error={!!errors?.endDate}
             helperText={errors?.endDate?.message}
           />
