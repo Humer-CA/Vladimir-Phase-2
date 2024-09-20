@@ -37,6 +37,7 @@ import {
   FormGroup,
   Grow,
   IconButton,
+  InputAdornment,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -52,6 +53,7 @@ import {
   AddCard,
   Archive,
   CheckBox,
+  Close,
   DateRange,
   FileCopy,
   Filter,
@@ -104,6 +106,8 @@ const MasterlistToolbar = (props) => {
     setDateTo,
     showDateFilter,
   } = props;
+
+  const [searchValue, setSearchValue] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -784,6 +788,8 @@ const MasterlistToolbar = (props) => {
               type="text"
               size="small"
               color="secondary"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               sx={{
                 ".MuiInputBase-root": {
                   borderRadius: "15px",
@@ -794,6 +800,21 @@ const MasterlistToolbar = (props) => {
                 },
               }}
               onKeyDown={searchHandler}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ position: "relative" }}>
+                    {searchValue && (
+                      <IconButton
+                        sx={{ position: "absolute", right: 0, bgcolor: "#f0f0f0", ":hover": { bgcolor: "#f0f0f0" } }}
+                        size="small"
+                        onClick={() => setSearchValue("")}
+                      >
+                        <Close fontSize="14px" />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
             />
           )}
 
