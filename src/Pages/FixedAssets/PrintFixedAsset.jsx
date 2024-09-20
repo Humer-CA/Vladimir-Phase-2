@@ -196,8 +196,8 @@ const PrintFixedAsset = (props) => {
       id: "",
       tagNumber: [],
       search: "",
-      startDate: startDate,
-      endDate: endDate,
+      startDate: null,
+      endDate: null,
       // endDate: new Date(),
     },
   });
@@ -443,7 +443,13 @@ const PrintFixedAsset = (props) => {
             <FormControlLabel
               label="Assignment Memo"
               control={
-                <Checkbox size="small" color="primary" checked={printMemo} onChange={() => setPrintMemo(!printMemo)} />
+                <Checkbox
+                  size="small"
+                  color="primary"
+                  checked={printMemo}
+                  onChange={() => setPrintMemo(!printMemo)}
+                  sx={{ p: 0, px: 1 }}
+                />
               }
               sx={{
                 pr: 2,
@@ -496,14 +502,12 @@ const PrintFixedAsset = (props) => {
                 name="startDate"
                 label="Start Date"
                 size="small"
-                views={["year", "month", "day"]}
-                // openTo="year"
                 fullWidth
                 disableFuture
                 reduceAnimations
-                onChange={(_, value) => {
+                onChange={(newValue) => {
                   setValue("endDate", null);
-                  return value;
+                  return newValue;
                 }}
               />
 
@@ -513,6 +517,7 @@ const PrintFixedAsset = (props) => {
                 label="End Date"
                 size="small"
                 // views={["year", "month", "day"]}
+                minDate={watch("startDate")}
                 fullWidth
                 disableFuture
                 reduceAnimations
@@ -520,24 +525,27 @@ const PrintFixedAsset = (props) => {
               />
             </Stack>
 
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleSearchClick}
-              sx={{
-                backgroundColor: "primary",
-                width: isSmallScreen && "100%",
-                maxWidth: "100%",
-              }}
-            >
-              {isSmallScreen ? (
-                <>
-                  <Search /> {"  "}Search
-                </>
-              ) : (
+            {isSmallScreen ? (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleSearchClick}
+                sx={{
+                  backgroundColor: "primary",
+                  width: isSmallScreen && "100%",
+                  // maxWidth: "100%",
+                }}
+              >
+                <Search /> {"  "}Search
+              </Button>
+            ) : (
+              <IconButton
+                onClick={handleSearchClick}
+                sx={{ bgcolor: "primary.main", ":hover": { bgcolor: "primary.dark" } }}
+              >
                 <Search />
-              )}
-            </Button>
+              </IconButton>
+            )}
           </Stack>
         </Stack>
         <Box
@@ -758,6 +766,7 @@ const PrintFixedAsset = (props) => {
 
           <Stack gap={1.2} flexDirection="row" alignSelf="flex-end">
             <LoadingButton
+              size="small"
               variant="contained"
               loading={isLoading}
               startIcon={isLoading ? null : <Print color={watch("tagNumber").length === 0 ? "gray" : "primary"} />}
