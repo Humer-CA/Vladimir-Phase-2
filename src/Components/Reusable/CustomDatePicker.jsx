@@ -11,6 +11,7 @@ const CustomDatePicker = ({
   error,
   helperText,
   fullWidth,
+  minDate,
   ...datepicker
 }) => {
   return (
@@ -19,19 +20,24 @@ const CustomDatePicker = ({
       control={control}
       render={({ field }) => {
         const { value, onChange: setValue } = field;
-
         return (
           <DatePicker
             {...datepicker}
             reduceAnimations
-            value={value}
+            value={value || null}
             size="small"
-            onChange={(value) => {
-              // if (!moment(value).isValid()) return;
+            minDate={minDate}
+            onChange={(newValue) => {
+              // Check if the value is valid using moment
+              if (!moment(newValue).isValid()) return;
 
-              if (onValueChange) return setValue(onValueChange(value));
+              // If there's a parent onChange handler, call it
+              if (onValueChange) {
+                onValueChange(newValue); // Call parent onChange
+              }
 
-              setValue(value);
+              // Set the value in the form state
+              setValue(newValue);
             }}
             slotProps={{
               textField: {
