@@ -123,6 +123,7 @@ const ViewApproveRequest = (props) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+  console.log(approveRequestData?.data?.map((data) => data?.fa_approval).includes(1));
 
   const onApprovalApproveHandler = (transaction_number) => {
     const nextData = dispatch(
@@ -147,41 +148,7 @@ const ViewApproveRequest = (props) => {
         ),
 
         onConfirm: async () => {
-          try {
-            dispatch(onLoading());
-
-            const result = await patchApprovalStatus({
-              action: "Approve",
-              transaction_number: transaction_number,
-            }).unwrap();
-
-            dispatch(
-              openToast({
-                message: result.message,
-                duration: 5000,
-              })
-            );
-            // console.log(approveRequestData?.data?.map((data) => data?.fa_approval).includes(1));
-
-            if (approveRequestData?.data?.map((data) => data.fa_approval).includes(1)) {
-              try {
-                const getYmirDataApi = await getYmirData({ transaction_number }).unwrap();
-
-                const postYmirData = await postPr(getYmirDataApi);
-                // console.log(postYmirData);
-
-                const next = await getNextRequest().unwrap();
-
-                return navigate(`/approving/request/${next?.[0].transaction_number}`, {
-                  state: next?.[0],
-                  replace: true,
-                });
-              } catch (err) {
-                console.error("Error occurred:", err);
-              }
-            }
-          } catch (err) {
-            console.log(err);
+          const noNextData = (err) => {
             if (err?.status === 404) {
               navigate(`/approving/request`);
             } else if (err?.status === 422) {
@@ -202,6 +169,44 @@ const ViewApproveRequest = (props) => {
                 })
               );
             }
+          };
+          try {
+            dispatch(onLoading());
+
+            const result = await patchApprovalStatus({
+              action: "Approve",
+              transaction_number: transaction_number,
+            }).unwrap();
+
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+
+            if (approveRequestData?.data?.map((data) => data.fa_approval).includes(1)) {
+              try {
+                const getYmirDataApi = await getYmirData({ transaction_number }).unwrap();
+
+                const postYmirData = await postPr(getYmirDataApi);
+                console.log(postYmirData);
+
+                const next = await getNextRequest().unwrap();
+
+                return navigate(`/approving/request/${next?.[0].transaction_number}`, {
+                  state: next?.[0],
+                  replace: true,
+                });
+              } catch (err) {
+                noNextData(err);
+              }
+            } else {
+              const next = await getNextRequest().unwrap();
+              navigate(`/approving/request/${next?.[0].transaction_number}`, { state: next?.[0], replace: true });
+            }
+          } catch (err) {
+            noNextData(err);
           }
         },
       })
