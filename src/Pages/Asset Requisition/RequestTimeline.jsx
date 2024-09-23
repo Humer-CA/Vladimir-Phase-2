@@ -207,14 +207,23 @@ const RequestTimeline = (props) => {
                             border: "none",
                           }}
                         />
+
                         <Box>
                           <Typography fontSize={14} fontWeight={600} textTransform="uppercase" color="text.main">
                             {item?.action}
                           </Typography>
-
                           <Typography fontSize={12} color="text.light">
                             {`(${item?.causer?.employee_id}) - ${item?.causer?.firstname}  ${item?.causer?.lastname}`}
                           </Typography>
+
+                          {/* --------------------------------- ADDITIONAL INFO -----------------------------------*/}
+
+                          {/* PRINTED */}
+                          {item?.action === "Printed" && (
+                            <Typography fontSize={12} fontWeight={600} color="text.light">
+                              Vladimir Tag: {item?.vladimir_tag_number}
+                            </Typography>
+                          )}
 
                           {/* PO */}
                           {item?.action === "Added PO Number and RR Number" && (
@@ -234,7 +243,6 @@ const RequestTimeline = (props) => {
                               </Typography>
                             </>
                           )}
-
                           {item?.action === "Claimed" && (
                             <Typography fontSize={12} fontWeight={600} color="primary.dark">
                               Received by: {item?.received_by}
@@ -247,7 +255,6 @@ const RequestTimeline = (props) => {
                               Asset Description: {item?.asset_description}
                             </Typography>
                           )}
-
                           {item?.remarks && (
                             <Typography fontSize={12} fontWeight={600}>
                               Remarks: {item?.remarks}
