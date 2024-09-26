@@ -266,6 +266,12 @@ const Sidebar = () => {
           path: "masterlist/unit-of-measurement",
           permission: "unit-of-measurement",
         },
+        {
+          label: "Small Tools",
+          icon: HomeRepairService,
+          path: "/masterlist/small-tools",
+          permission: "small-tools",
+        },
 
         // * CRUD Operations
         {
