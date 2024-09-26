@@ -83,6 +83,7 @@ import RrSummary from "./Pages/Asset Requisition/RrSummary";
 import AdditionalCost from "./Pages/FixedAssets/Additional Cost/AdditionalCost";
 import Reports from "./Pages/Reports/Reports";
 import PurchaseRequestReport from "./Pages/Reports/Requisition/PurchaseRequestReport";
+import SmallTools from "./Pages/Masterlist/SmallTools";
 
 const userData = JSON.parse(localStorage.getItem("user"));
 const userRole = userData.role.access_permission.split(", ");
@@ -165,6 +166,17 @@ const router = createBrowserRouter([
                 handle: { permission: "supplier" },
               },
               {
+                path: "unit-of-measurement",
+                element: <UnitOfMeasurement />,
+                handle: { permission: "unit-of-measurement" },
+              },
+
+              {
+                path: "small-tools",
+                element: <SmallTools />,
+                handle: { permission: "small-tools" },
+              },
+              {
                 path: "division",
                 element: <Division />,
                 handle: { permission: "division" },
@@ -199,16 +211,6 @@ const router = createBrowserRouter([
                 element: <FaStatusCategory />,
                 handle: { permission: "status-category" },
               },
-              {
-                path: "unit-of-measurement",
-                element: <UnitOfMeasurement />,
-                handle: { permission: "unit-of-measurement" },
-              },
-
-              // {
-              //   path: "create-asset-registration",
-              //   element: <CreateAssetRegistration />,
-              // },
             ],
           },
 
