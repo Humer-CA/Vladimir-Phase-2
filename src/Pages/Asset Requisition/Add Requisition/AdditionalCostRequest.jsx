@@ -11,8 +11,8 @@ import {
   useDeleteRequestContainerAllApiMutation,
   useDeleteRequestContainerApiMutation,
 } from "../../../Redux/Query/Request/RequestContainer";
-import AttachmentIcon from "../../../Img/SVG/SVG/Attachment.svg";
-import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
+import AttachmentIcon from "../../../Img/SVG/Attachment.svg";
+import AttachmentActive from "../../../Img/SVG/AttachmentActive.svg";
 
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

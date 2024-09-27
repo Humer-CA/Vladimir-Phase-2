@@ -4,7 +4,7 @@ import CustomTextField from "../../../Components/Reusable/CustomTextField";
 import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete";
 import { useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 
-import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
+import AttachmentActive from "../../../Img/SVG/AttachmentActive.svg";
 
 import { Controller, useForm, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

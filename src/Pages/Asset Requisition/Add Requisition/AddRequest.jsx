@@ -11,7 +11,7 @@ import {
   useDeleteRequestContainerAllApiMutation,
   useDeleteRequestContainerApiMutation,
 } from "../../../Redux/Query/Request/RequestContainer";
-import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
+import AttachmentActive from "../../../Img/SVG/AttachmentActive.svg";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -1748,7 +1748,8 @@ const AddRequisition = (props) => {
                   <CustomAttachment
                     control={control}
                     name="letter_of_request"
-                    label="Letter of Request"
+                    label={`Letter of Request ${watch("attachment_type") === "Unbudgeted" ? "" : "(Optional)"}`}
+                    optional={watch("attachment_type") === "Unbudgeted" ? false : true}
                     disabled={updateRequest && disable}
                     inputRef={LetterOfRequestRef}
                     error={!!errors?.letter_of_request?.message}
@@ -1771,7 +1772,8 @@ const AddRequisition = (props) => {
                   <CustomAttachment
                     control={control}
                     name="quotation"
-                    label="Quotation"
+                    label="Quotation (Optional)"
+                    optional
                     disabled={updateRequest && disable}
                     inputRef={QuotationRef}
                   />
@@ -1789,7 +1791,8 @@ const AddRequisition = (props) => {
                   <CustomAttachment
                     control={control}
                     name="specification_form"
-                    label="Specification (Form)"
+                    label="Specification Form (Optional)"
+                    optional
                     disabled={updateRequest && disable}
                     inputRef={SpecificationRef}
                     // updateData={updateRequest}
@@ -1810,7 +1813,8 @@ const AddRequisition = (props) => {
                   <CustomAttachment
                     control={control}
                     name="tool_of_trade"
-                    label="Tool of Trade"
+                    label="Tool of Trade (Optional)"
+                    optional
                     disabled={updateRequest && disable}
                     inputRef={ToolOfTradeRef}
                   />
@@ -1828,7 +1832,8 @@ const AddRequisition = (props) => {
                   <CustomAttachment
                     control={control}
                     name="other_attachments"
-                    label="Other Attachments"
+                    label="Other Attachments (Optional)"
+                    optional
                     disabled={updateRequest && disable}
                     inputRef={OthersRef}
                     error={!!errors?.other_attachments?.message}

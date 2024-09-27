@@ -36,7 +36,7 @@ import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/Ym
 import { useLazyGetLocationAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Location";
 import { useLazyGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 import CustomImgAttachment from "../../../Components/Reusable/CustomImgAttachment";
-import AttachmentActive from "../../../Img/SVG/SVG/AttachmentActive.svg";
+import AttachmentActive from "../../../Img/SVG/AttachmentActive.svg";
 
 const schema = yup.object().shape({
   department_id: yup.object().required().label("Department").typeError("Department is a required field"),
@@ -90,6 +90,7 @@ const schemaSave = yup.object().shape({
 
 const AddReleasingInfo = (props) => {
   const { data, refetch, warehouseNumber, hideWN, commonData, personalData } = props;
+  const userData = JSON.parse(localStorage.getItem("user"));
   const [signature, setSignature] = useState();
   const [trimmedDataURL, setTrimmedDataURL] = useState(null);
   const [viewImage, setViewImage] = useState(null);
@@ -270,6 +271,16 @@ const AddReleasingInfo = (props) => {
     }
   }, [isPostSuccess]);
 
+  useEffect(() => {
+    const { department, company, business_unit, unit, subunit, location } = userData?.coa;
+    setValue("department_id", department);
+    setValue("company_id", company);
+    setValue("business_unit_id", business_unit);
+    setValue("unit_id", unit);
+    setValue("subunit_id", subunit);
+    setValue("location_id", location);
+  }, [userData]);
+
   const handleCloseDialog = () => {
     dispatch(closeDialog());
   };
@@ -299,7 +310,7 @@ const AddReleasingInfo = (props) => {
       ?.filter((item) => warehouseNumber?.warehouse_number_id?.includes(item?.warehouse_number?.warehouse_number))
       ?.map((data) => data?.warehouse_number?.id) || [];
 
-  console.log(warehouseNumberData);
+  // console.log(warehouseNumberData);
 
   const onSubmitHandler = async (formData) => {
     console.log(formData);
@@ -344,7 +355,7 @@ const AddReleasingInfo = (props) => {
       authorization_memo_img: authorizationLetterImgBase64,
     };
 
-    console.log(newFormData);
+    // console.log(newFormData);
 
     dispatch(
       openConfirm({
@@ -715,7 +726,6 @@ const AddReleasingInfo = (props) => {
                 <RemoveFile title="Assignment Memo" value="assignment_memo_img" />
               )}
             </Stack>
-
             <Stack flexDirection="row" gap={1} alignItems="center">
               {watch("authorization_memo_img") !== null ? (
                 <UpdateField
