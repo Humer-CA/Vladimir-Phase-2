@@ -220,9 +220,10 @@ const LoginPage = () => {
               helperText={errors?.username?.message}
             />
 
-            <TextField
+            <CustomTextField
               autoComplete="off"
-              {...register("password")}
+              // {...register("password")}
+              control={control}
               label="Password"
               name="password"
               type={showPassword ? "text" : "password"}
