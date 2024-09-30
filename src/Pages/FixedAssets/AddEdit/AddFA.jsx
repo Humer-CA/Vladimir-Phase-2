@@ -34,7 +34,7 @@ import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useLazyGetMinorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 import { useLazyGetCompanyAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Company";
 import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/BusinessUnit";
 import { useLazyGetDepartmentAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Department";
@@ -56,6 +56,7 @@ import { useLazyGetAssetMovementStatusAllApiQuery } from "../../../Redux/Query/M
 import { useLazyGetCycleCountStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/CycleCountStatus";
 import { useLazyGetDepreciationStatusAllApiQuery } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
 import { AddBox, Close } from "@mui/icons-material";
+import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -1177,7 +1178,7 @@ const AddFa = (props) => {
                 control={control}
                 size="small"
                 includeInputInList
-                disablePortal
+                // disablePortal
                 filterOptions={filterOptions}
                 options={sedarData}
                 onOpen={() => (isSedarSuccess ? null : sedarTrigger())}

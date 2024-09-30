@@ -745,6 +745,7 @@ const AddTransfer = (props) => {
                   name="remarks"
                   disabled={edit ? false : transactionData?.view}
                   label="Remarks (Optional)"
+                  optional
                   type="text"
                   error={!!errors?.remarks}
                   helperText={errors?.remarks?.message}

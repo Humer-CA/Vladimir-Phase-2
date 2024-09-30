@@ -42,10 +42,10 @@ import {
   useGetMinorCategoryAllApiQuery,
   useLazyGetMinorCategoryAllApiQuery,
 } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import {
-  useGetMajorCategoryAllApiQuery,
-  useLazyGetMajorCategoryAllApiQuery,
-} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import {
+//   useGetMajorCategoryAllApiQuery,
+//   useLazyGetMajorCategoryAllApiQuery,
+// } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
 import {
   useGetCompanyAllApiQuery,
@@ -100,6 +100,7 @@ import { useLazyGetBusinessUnitAllApiQuery } from "../../../Redux/Query/Masterli
 import { useLazyGetUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/Unit";
 import { useLazyGetSubUnitAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/SubUnit";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
+import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -1388,6 +1389,7 @@ const AddCost = (props) => {
             color="secondary"
             name="cellphone_number"
             label="Cellphone # (optional)"
+            optional
             type="text"
             size="small"
             error={!!errors?.cellphone_number}
@@ -1403,6 +1405,7 @@ const AddCost = (props) => {
             control={control}
             name="brand"
             label="Brand (optional)"
+            optional
             type="text"
             color="secondary"
             size="small"
@@ -1416,6 +1419,7 @@ const AddCost = (props) => {
             control={control}
             name="care_of"
             label="Care of (optional)"
+            optional
             type="text"
             color="secondary"
             size="small"
@@ -1430,6 +1434,7 @@ const AddCost = (props) => {
               control={control}
               name="voucher"
               label="Voucher (optional)"
+              optional
               color="secondary"
               size="small"
               error={!!errors?.voucher}
@@ -1457,6 +1462,7 @@ const AddCost = (props) => {
             control={control}
             name="receipt"
             label="Receipt (optional)"
+            optional
             color="secondary"
             size="small"
             error={!!errors?.receipt}

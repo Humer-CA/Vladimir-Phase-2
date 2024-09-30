@@ -1053,6 +1053,7 @@ const AddTransfer = (props) => {
                     name="remarks"
                     disabled={edit ? false : view}
                     label="Remarks (Optional)"
+                    optional
                     type="text"
                     error={!!errors?.remarks}
                     helperText={errors?.remarks?.message}

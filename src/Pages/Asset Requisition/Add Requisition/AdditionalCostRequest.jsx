@@ -1367,6 +1367,7 @@ const AdditionalCostRequest = (props) => {
                   control={control}
                   name="cip_number"
                   label="CIP Number (Optional)"
+                  optional
                   type="text"
                   disabled={updateRequest && disable}
                   error={!!errors?.cip_number}
@@ -1757,6 +1758,7 @@ const AdditionalCostRequest = (props) => {
                 control={control}
                 name="cellphone_number"
                 label="Cellphone # (Optional)"
+                optional
                 type="text"
                 disabled={updateRequest && disable}
                 error={!!errors?.cellphone_number}
@@ -1770,6 +1772,7 @@ const AdditionalCostRequest = (props) => {
                 control={control}
                 name="additional_info"
                 label="Additional Info. (Optional)"
+                optional
                 type="text"
                 disabled={updateRequest && disable}
                 fullWidth

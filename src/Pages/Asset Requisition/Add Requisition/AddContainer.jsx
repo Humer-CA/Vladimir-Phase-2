@@ -731,6 +731,7 @@ const AddContainer = (props) => {
                     color="secondary"
                     name="cellphone_number"
                     label="Cellphone # (optional)"
+                    optional
                     type="text"
                     size="small"
                     error={!!errors?.cellphone_number}
@@ -744,6 +745,7 @@ const AddContainer = (props) => {
                     control={control}
                     name="remarks"
                     label="Remarks (Optional)"
+                    optional
                     type="text"
                     color="secondary"
                     size="small"
