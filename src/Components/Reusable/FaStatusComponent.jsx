@@ -122,7 +122,7 @@ const faStatusComponent = ({ faStatus, data }) => {
         size="small"
         variant="contained"
         icon={<RadioButtonUncheckedRounded size="small" />}
-        label={data}
+        label={faStatus}
         sx={{
           backgroundColor: "#c7c7c742",
 
