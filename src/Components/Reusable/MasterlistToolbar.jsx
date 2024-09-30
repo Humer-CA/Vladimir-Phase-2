@@ -279,7 +279,7 @@ const MasterlistToolbar = (props) => {
 
   return (
     <Box className="masterlist-toolbar">
-      <Box className="masterlist-toolbar__container">
+      <Box className="masterlist-toolbar__container" sx={hideArchive && { justifyContent: "flex-end" }}>
         {!hideArchive && (
           <Button size="small" color="secondary" variant="text" sx={{ borderRadius: "12px", p: 0.2, ml: -1.5 }}>
             <FormControlLabel
