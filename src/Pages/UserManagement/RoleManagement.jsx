@@ -188,6 +188,7 @@ const Role = () => {
   const onUpdateResetHandler = () => {
     setUpdateRole({
       status: false,
+      action: "view",
       id: null,
       role_name: "",
       access_permission: null,

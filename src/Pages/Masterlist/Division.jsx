@@ -187,6 +187,7 @@ const Division = () => {
   const onUpdateResetHandler = () => {
     setUpdateDivision({
       status: false,
+      action: "view",
       id: null,
       sync_id: [],
       division_name: "",

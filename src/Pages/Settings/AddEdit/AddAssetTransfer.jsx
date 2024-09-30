@@ -240,7 +240,7 @@ const AddAssetTransfer = (props) => {
           options={unitData}
           loading={isUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
@@ -266,7 +266,7 @@ const AddAssetTransfer = (props) => {
           options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
           loading={isSubUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
@@ -378,7 +378,7 @@ const AddAssetTransfer = (props) => {
               >
                 {watch("approver_id")?.map((approver, index) => (
                   <Stack key={index} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
-                    <Slide direction="left" in={checked} timeout={500} mountOnEnter unmountOnExit>
+                    <Slide in={checked} timeout={500} mountOnEnter unmountOnExit>
                       <Stack
                         flexDirection="row"
                         alignItems="center"

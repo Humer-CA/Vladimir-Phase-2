@@ -250,6 +250,7 @@ const AssetPullout = () => {
   const onUpdateResetHandler = () => {
     setUpdateAssetPullout({
       status: false,
+      action: "view",
       unit_id: null,
       subunit_id: null,
       approvers: [],

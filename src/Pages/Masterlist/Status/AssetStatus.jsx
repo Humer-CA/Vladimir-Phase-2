@@ -108,8 +108,6 @@ const AssetStatus = () => {
 
   const dispatch = useDispatch();
 
-  // console.log(divisionData);
-
   const onArchiveRestoreHandler = async (id) => {
     dispatch(
       openConfirm({

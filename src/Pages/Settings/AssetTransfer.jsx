@@ -250,6 +250,7 @@ const AssetTransfer = () => {
   const onUpdateResetHandler = () => {
     setUpdateAssetTransfer({
       status: false,
+      action: "view",
       unit_id: null,
       subunit_id: null,
       approvers: [],

@@ -20,6 +20,7 @@ import {
   Autocomplete,
   Tooltip,
   Zoom,
+  Slide,
 } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
@@ -47,6 +48,7 @@ const schema = yup.object().shape({
 const AddAssetDisposal = (props) => {
   const { data, onUpdateResetHandler } = props;
   const [selectedApprovers, setSelectedApprovers] = useState(null);
+  const [checked, setChecked] = useState(true);
   const dispatch = useDispatch();
 
   const [
@@ -237,7 +239,7 @@ const AddAssetDisposal = (props) => {
           options={unitData}
           loading={isUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
@@ -263,7 +265,7 @@ const AddAssetDisposal = (props) => {
           options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
           loading={isSubUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
@@ -369,52 +371,54 @@ const AddAssetDisposal = (props) => {
                 setList={setListApprovers}
               >
                 {watch("approver_id")?.map((approver, index) => (
-                  <Stack key={index} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
-                    <Stack
-                      flexDirection="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      p={1}
-                      sx={{
-                        backgroundColor: "background.light",
-                        width: "100%",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Stack flexDirection="row" alignItems="center" gap={2.5}>
-                        <DragIndicator sx={{ color: "black.light" }} />
-                        <Avatar
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            backgroundColor: data.action === "view" ? "gray" : "primary.main",
-                            fontSize: "16px",
-                          }}
-                        >
-                          {index + 1}
-                        </Avatar>
-                        <Stack>
-                          <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
-                          <Typography fontSize="12px" color="gray" mt="-2px">
-                            {approver?.approver?.employee_id}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                      <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
-                        <span>
-                          <IconButton
-                            aria-label="Delete"
-                            disabled={data.action === "view"}
-                            onClick={() => {
-                              deleteApproverHandler(approver?.id);
+                  <Slide key={index} in={checked} timeout={500} mountOnEnter unmountOnExit>
+                    <Stack flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
+                      <Stack
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        p={1}
+                        sx={{
+                          backgroundColor: "background.light",
+                          width: "100%",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <Stack flexDirection="row" alignItems="center" gap={2.5}>
+                          <DragIndicator sx={{ color: "black.light" }} />
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              backgroundColor: data.action === "view" ? "gray" : "primary.main",
+                              fontSize: "16px",
                             }}
                           >
-                            <Close sx={{ fontSize: "18px" }} />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
+                            {index + 1}
+                          </Avatar>
+                          <Stack>
+                            <Typography>{`${approver?.approver?.firstname} ${approver?.approver?.lastname}`}</Typography>
+                            <Typography fontSize="12px" color="gray" mt="-2px">
+                              {approver?.approver?.employee_id}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                        <Tooltip title="Remove" TransitionComponent={Zoom} arrow>
+                          <span>
+                            <IconButton
+                              aria-label="Delete"
+                              disabled={data.action === "view"}
+                              onClick={() => {
+                                deleteApproverHandler(approver?.id);
+                              }}
+                            >
+                              <Close sx={{ fontSize: "18px" }} />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Stack>
                     </Stack>
-                  </Stack>
+                  </Slide>
                 ))}
               </ReactSortable>
             </Box>

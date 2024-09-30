@@ -240,7 +240,7 @@ const AddUnitApprovers = (props) => {
           options={unitData}
           loading={isUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.unit_code} - ${option.unit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
@@ -266,7 +266,7 @@ const AddUnitApprovers = (props) => {
           options={subUnitData?.filter((item) => item?.unit?.id === watch("unit_id")?.id)}
           loading={isSubUnitLoading}
           size="small"
-          disabled={data.status}
+          disabled={data.action === "view"}
           getOptionLabel={(option) => `${option.subunit_code} - ${option.subunit_name}`}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (

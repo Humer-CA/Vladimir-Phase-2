@@ -50,9 +50,12 @@ const UnitApprovers = () => {
   const [updateUnitApprovers, setUpdateUnitApprovers] = useState({
     status: false,
     id: null,
+    action: "view",
     requester_id: null,
     approver_id: [],
   });
+
+  console.log(updateUnitApprovers);
 
   const drawer = useSelector((state) => state.booleanState.drawer);
 
@@ -250,6 +253,7 @@ const UnitApprovers = () => {
   const onUpdateResetHandler = () => {
     setUpdateUnitApprovers({
       status: false,
+      action: "view",
       unit_id: null,
       subunit_id: null,
       approvers: [],
@@ -406,7 +410,9 @@ const UnitApprovers = () => {
           sx: { borderRadius: "10px", maxWidth: "1200px" },
         }}
       >
-        <AddUnitApprovers data={updateUnitApprovers} onUpdateResetHandler={onUpdateResetHandler} />
+        {updateUnitApprovers !== null && (
+          <AddUnitApprovers data={updateUnitApprovers} onUpdateResetHandler={onUpdateResetHandler} />
+        )}
       </Dialog>
     </Stack>
   );
