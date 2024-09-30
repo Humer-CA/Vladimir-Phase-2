@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { TextField } from "@mui/material";
 import { NumericFormat } from "react-number-format";
 
-const CustomNumberField = ({ name, control, keepPrefix = false, ...numberfield }) => {
+const CustomNumberField = ({ name, control, optional, keepPrefix = false, ...numberfield }) => {
   return (
     <Controller
       name={name}
@@ -28,12 +28,23 @@ const CustomNumberField = ({ name, control, keepPrefix = false, ...numberfield }
               onChange(Number(data.value));
             }}
             sx={{
+              overscrollBehavior: "contain",
               ".MuiInputBase-root": {
                 borderRadius: "10px",
-                ".Mui-disabled": {
-                  backgroundColor: "background.light",
-                  borderRadius: "10px",
-                },
+              },
+
+              ".MuiOutlinedInput-notchedOutline": {
+                bgcolor: optional ? null : "#f5c9861c",
+                border: optional ? "1px dashed lightgray" : null,
+              },
+
+              ".MuiInputLabel-root.Mui-disabled": {
+                backgroundColor: "transparent",
+              },
+
+              ".Mui-disabled": {
+                backgroundColor: "background.light",
+                borderRadius: "10px",
               },
             }}
           />

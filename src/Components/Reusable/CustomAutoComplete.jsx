@@ -17,6 +17,7 @@ const CustomAutoComplete = ({ name, control, optional, onChange: onValueChange, 
               if (onValueChange) return setValue(onValueChange(e, value));
               setValue(value);
             }}
+            // options={options}
             size="small"
             color="secondary"
             onOpen={onOpen}
@@ -27,7 +28,7 @@ const CustomAutoComplete = ({ name, control, optional, onChange: onValueChange, 
               },
 
               ".MuiOutlinedInput-notchedOutline": {
-                // bgcolor: optional ? null : "#ff9d4c0c",
+                bgcolor: optional ? null : "#f5c9861c",
                 border: optional ? "1px dashed #c7c7c742" : null,
               },
 

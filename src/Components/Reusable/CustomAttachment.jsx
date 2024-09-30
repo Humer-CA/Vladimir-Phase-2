@@ -5,7 +5,7 @@ import AttachmentActive from "../../Img/SVG/SVG/AttachmentActive.svg";
 import AttachmentError from "../../Img/SVG/SVG/AttachmentError.svg";
 
 const CustomAttachment = (props) => {
-  const { name, control, errors, inputRef, ...textfield } = props;
+  const { name, control, errors, inputRef, optional, ...textfield } = props;
 
   return (
     <Controller
@@ -57,6 +57,12 @@ const CustomAttachment = (props) => {
                   borderRadius: "10px",
                   color: textfield.error ? "red" : "#636363",
                 },
+
+                ".MuiOutlinedInput-notchedOutline": {
+                  bgcolor: optional ? null : "#f5c9861c",
+                  border: optional ? "1px dashed #c7c7c742" : null,
+                },
+
                 ".MuiInputLabel-root.Mui-disabled": {
                   backgroundColor: "transparent",
                 },
