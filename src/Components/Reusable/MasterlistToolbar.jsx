@@ -778,46 +778,6 @@ const MasterlistToolbar = (props) => {
             </Menu>
           )}
 
-          {!hideSearch && (
-            <TextField
-              autoComplete="off"
-              variant="outlined"
-              name="search"
-              label="🔍︎ Search"
-              // label="🔍 Search"
-              type="text"
-              size="small"
-              color="secondary"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              sx={{
-                ".MuiInputBase-root": {
-                  borderRadius: "15px",
-                  border: ".5px",
-                  background: "#f4f4f4",
-                  width: "100%",
-                  minWidth: "100px",
-                },
-              }}
-              onKeyDown={searchHandler}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end" sx={{ position: "relative" }}>
-                    {searchValue && (
-                      <IconButton
-                        sx={{ position: "absolute", right: 0, bgcolor: "#f0f0f0", ":hover": { bgcolor: "#f0f0f0" } }}
-                        size="small"
-                        onClick={() => setSearchValue("")}
-                      >
-                        <Close fontSize="14px" />
-                      </IconButton>
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-
           {showDateFilter && (
             <>
               <Tooltip title="Filter" placement="top" arrow>
@@ -896,6 +856,46 @@ const MasterlistToolbar = (props) => {
                 </Menu>
               )}
             </>
+          )}
+
+          {!hideSearch && (
+            <TextField
+              autoComplete="off"
+              variant="outlined"
+              name="search"
+              label="🔍︎ Search"
+              // label="🔍 Search"
+              type="text"
+              size="small"
+              color="secondary"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              sx={{
+                ".MuiInputBase-root": {
+                  borderRadius: "15px",
+                  border: ".5px",
+                  background: "#f4f4f4",
+                  width: "100%",
+                  minWidth: "100px",
+                },
+              }}
+              onKeyDown={searchHandler}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ position: "relative" }}>
+                    {searchValue && (
+                      <IconButton
+                        sx={{ position: "absolute", right: 0, bgcolor: "#f0f0f0", ":hover": { bgcolor: "#f0f0f0" } }}
+                        size="small"
+                        onClick={() => setSearchValue("")}
+                      >
+                        <Close fontSize="14px" />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
           )}
         </Box>
       </Box>
