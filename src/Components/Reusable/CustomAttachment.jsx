@@ -1,8 +1,8 @@
 import { InputAdornment, TextField as MuiTextField, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
-import AttachmentIcon from "../../Img/SVG/SVG/Attachment.svg";
-import AttachmentActive from "../../Img/SVG/SVG/AttachmentActive.svg";
-import AttachmentError from "../../Img/SVG/SVG/AttachmentError.svg";
+import AttachmentIcon from "../../Img/SVG/Attachment.svg";
+import AttachmentActive from "../../Img/SVG/AttachmentActive.svg";
+import AttachmentError from "../../Img/SVG/AttachmentError.svg";
 
 const CustomAttachment = (props) => {
   const { name, control, errors, inputRef, optional, ...textfield } = props;
@@ -60,7 +60,7 @@ const CustomAttachment = (props) => {
 
                 ".MuiOutlinedInput-notchedOutline": {
                   bgcolor: optional ? null : "#f5c9861c",
-                  border: optional ? "1px dashed #c7c7c742" : null,
+                  // border: optional ? "1px dashed #c7c7c742" : null,
                 },
 
                 ".MuiInputLabel-root.Mui-disabled": {

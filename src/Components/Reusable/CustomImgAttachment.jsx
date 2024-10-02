@@ -1,8 +1,8 @@
 import { InputAdornment, TextField as MuiTextField, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
-import AttachmentIcon from "../../Img/SVG/SVG/Attachment.svg";
-import AttachmentActive from "../../Img/SVG/SVG/AttachmentActive.svg";
-import AttachmentError from "../../Img/SVG/SVG/AttachmentError.svg";
+import AttachmentIcon from "../../Img/SVG/Attachment.svg";
+import AttachmentActive from "../../Img/SVG/AttachmentActive.svg";
+import AttachmentError from "../../Img/SVG/AttachmentError.svg";
 
 const CustomImgAttachment = (props) => {
   const { name, control, errors, inputRef, ...textfield } = props;
@@ -20,8 +20,7 @@ const CustomImgAttachment = (props) => {
               // disabled={disabled}
               inputRef={inputRef}
               onChange={(e) => {
-                console.log(e.target.files[0]);
-
+                // console.log(e.target.files[0]);
                 setValue(e.target.files[0]);
                 e.target.value = null;
               }}

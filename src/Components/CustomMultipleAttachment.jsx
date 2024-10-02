@@ -1,8 +1,8 @@
 import { InputAdornment, TextField as MuiTextField, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
-import AttachmentIcon from "../Img/SVG/SVG/Attachment.svg";
-import AttachmentActive from "../Img/SVG/SVG/AttachmentActive.svg";
-import AttachmentError from "../Img/SVG/SVG/AttachmentError.svg";
+import AttachmentIcon from "../Img/SVG/Attachment.svg";
+import AttachmentActive from "../Img/SVG/AttachmentActive.svg";
+import AttachmentError from "../Img/SVG/AttachmentError.svg";
 import { useRef, useState } from "react";
 
 const CustomMultipleAttachment = (props) => {
