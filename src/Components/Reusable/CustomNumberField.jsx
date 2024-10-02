@@ -35,7 +35,7 @@ const CustomNumberField = ({ name, control, optional, keepPrefix = false, ...num
 
               ".MuiOutlinedInput-notchedOutline": {
                 bgcolor: optional ? null : "#f5c9861c",
-                border: optional ? "1px dashed lightgray" : null,
+                // border: optional ? "1px dashed lightgray" : null,
               },
 
               ".MuiInputLabel-root.Mui-disabled": {

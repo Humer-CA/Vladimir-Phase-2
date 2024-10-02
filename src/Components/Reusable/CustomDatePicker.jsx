@@ -56,7 +56,7 @@ const CustomDatePicker = ({
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderRadius: "10px",
                     bgcolor: optional ? null : "#f5c9861c",
-                    border: optional ? "1px dashed lightgray" : null,
+                    // border: optional ? "1px dashed lightgray" : null,
                   },
 
                   ".Mui-disabled": {

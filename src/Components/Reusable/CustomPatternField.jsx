@@ -35,8 +35,8 @@ const CustomPatternField = ({ name, control, keepPrefix = false, optional, ...pa
               },
 
               ".MuiOutlinedInput-notchedOutline": {
-                // bgcolor: optional ? null : "#ff9d4c0c",
-                border: optional ? "1px dashed lightgray" : null,
+                bgcolor: optional ? null : "#f5c9861c",
+                // border: optional ? "1px dashed lightgray" : null,
               },
 
               ".Mui-disabled": {
