@@ -17,7 +17,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import RdfLogo from "../../Img/SVG/SVG/RDF Logo.svg";
+import RdfLogo from "../../Img/SVG/RDF Logo.svg";
 import moment from "moment";
 import { useReactToPrint } from "react-to-print";
 
