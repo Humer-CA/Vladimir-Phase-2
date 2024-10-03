@@ -58,6 +58,8 @@ const ViewReceivedReceipt = (props) => {
         justifyContent="center"
         gap={2}
         maxHeight="450px"
+        width={data.length === 0 ? "300px" : "100%"}
+        maxWidth="1000px"
         overflow="auto"
         pb={1}
       >
