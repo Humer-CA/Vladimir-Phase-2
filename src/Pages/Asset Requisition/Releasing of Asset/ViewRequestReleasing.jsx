@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../../../Style/Fixed Asset/assetViewing.scss";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams, useNavigate, Link } from "react-router-dom";
-import {
-  useArchiveFixedAssetStatusApiMutation,
-  useGetFixedAssetIdApiQuery,
-  usePostCalcDepreApiMutation,
-} from "../../../Redux/Query/FixedAsset/FixedAssets";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import FaStatusChange from "../../../Components/Reusable/FaStatusComponent";
 import NoDataFile from "../../../Img/PNG/no-data.png";
-import moment from "moment";
 
 import {
   Accordion,
@@ -22,63 +17,38 @@ import {
   Chip,
   Dialog,
   Divider,
-  Drawer,
   Grow,
   IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableRow,
-  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import {
-  ArrowBackIosRounded,
-  Circle,
-  CircleTwoTone,
-  DescriptionRounded,
-  ExpandMore,
-  Help,
-  Output,
-  PriceChange,
-  Print,
-  ReportProblem,
-  Sell,
-} from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-
-import { usePostPrintApiMutation } from "../../../Redux/Query/FixedAsset/FixedAssets";
-import ActionMenu from "../../../Components/Reusable/ActionMenu";
-import { usePostPrintOfflineApiMutation } from "../../../Redux/Query/FixedAsset/OfflinePrintingFA";
-import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
-
-import { openToast } from "../../../Redux/StateManagement/toastSlice";
+import { ArrowBackIosRounded, DescriptionRounded, ExpandMore, Output } from "@mui/icons-material";
 
 import ErrorFetchFA from "../../ErrorFetching";
 import FixedAssetViewSkeleton from "../../FixedAssets/FixedAssetViewSkeleton";
-import { useForm } from "react-hook-form";
-import { useArchiveAdditionalCostApiMutation } from "../../../Redux/Query/FixedAsset/AdditionalCost";
-import useScanDetection from "use-scan-detection-react18";
-import { useGetIpApiQuery } from "../../../Redux/Query/IpAddressSetup";
+
 import { useGetByWarehouseNumberApiQuery } from "../../../Redux/Query/Request/AssetReleasing";
-import { closeDialog, openDialog } from "../../../Redux/StateManagement/booleanStateSlice";
+import { closeDialog, closeDialog1, openDialog, openDialog1 } from "../../../Redux/StateManagement/booleanStateSlice";
 import AddReleasingInfo from "./AddReleasingInfo";
+// import noImageFound from "../../../Img/SVG/NoImageFound.svg";
+import NoImageFound from "../../../Img/SVG/NoImageFound.svg";
 
 const ViewRequestReleasing = (props) => {
   const { state: data } = useLocation();
   const isSmallScreen = useMediaQuery("(max-width: 350px)");
+  const [viewImage, setViewImage] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const dialog = useSelector((state) => state.booleanState.dialog);
+  const dialog1 = useSelector((state) => state.booleanState.dialogMultiple.dialog1);
 
   const {
     data: releasingData,
@@ -100,6 +70,11 @@ const ViewRequestReleasing = (props) => {
 
   const handleReleasing = () => {
     dispatch(openDialog());
+  };
+
+  const handleViewImage = (data) => {
+    setViewImage(data);
+    dispatch(openDialog1());
   };
 
   return (
@@ -783,6 +758,54 @@ const ViewRequestReleasing = (props) => {
                   </TableContainer>
                 </Accordion>
               )}
+
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "1rem" }}>
+                    ATTACHMENTS
+                  </Typography>
+                </AccordionSummary>
+
+                <Divider />
+
+                <AccordionDetails sx={{ display: "flex", flexDirection: "column" }}>
+                  <Box className="tableCard__properties">
+                    Receiver Image:
+                    <Button
+                      className="tableCard__info"
+                      variant="outlined"
+                      sx={{ fontSize: "10px" }}
+                      onClick={() => handleViewImage(releasingData?.receiverImg)}
+                    >
+                      Show Image
+                    </Button>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Assignment Memo:
+                    <Button
+                      className="tableCard__info"
+                      variant="outlined"
+                      sx={{ fontSize: "10px" }}
+                      onClick={() => handleViewImage(releasingData?.assignmentMemoImg)}
+                    >
+                      Show Image
+                    </Button>
+                  </Box>
+
+                  <Box className="tableCard__properties">
+                    Authorization Letter:
+                    <Button
+                      className="tableCard__info"
+                      variant="outlined"
+                      sx={{ fontSize: "10px" }}
+                      onClick={() => handleViewImage(releasingData?.authorizationMemoImg)}
+                    >
+                      Show Image
+                    </Button>
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
             </Box>
           </Box>
         </Box>
@@ -804,6 +827,31 @@ const ViewRequestReleasing = (props) => {
         }}
       >
         <AddReleasingInfo data={releasingData} hideWN refetch={releasingDataRefetch} />
+      </Dialog>
+
+      <Dialog
+        open={dialog1}
+        TransitionComponent={Grow}
+        onClose={() => dispatch(closeDialog1())}
+        PaperProps={{
+          sx: {
+            borderRadius: "10px",
+            maxWidth: "90%",
+            padding: "20px",
+            overflow: "hidden",
+            // width: "400px",
+          },
+        }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {viewImage?.viewing !== "data:image/png;base64," ? (
+            <img src={viewImage?.viewing} alt={viewImage?.file_name} />
+          ) : (
+            <Box width="300px" p={4} pl={2}>
+              <img src={NoImageFound} alt="No Image Found" />
+            </Box>
+          )}
+        </Box>
       </Dialog>
     </>
   );
