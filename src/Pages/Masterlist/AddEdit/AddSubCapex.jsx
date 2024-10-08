@@ -174,6 +174,11 @@ const AddSubCapex = (props) => {
                 // backgroundColor: "white",
               },
 
+              ".MuiOutlinedInput-notchedOutline": {
+                bgcolor: "#f5c9861c",
+                // border: optional ? "1px dashed lightgray" : null,
+              },
+
               ".MuiInputLabel-root.Mui-disabled": {
                 backgroundColor: "transparent",
               },
