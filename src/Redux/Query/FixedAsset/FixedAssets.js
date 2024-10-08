@@ -57,6 +57,30 @@ export const fixedAssetApi = createApi({
       providesTags: ["FixedAsset"],
     }),
 
+    getPrintViewingApi: builder.query({
+      query: (params) => {
+        const queryParams = [
+          `search=${params.search}`,
+          `per_page=${params.per_page}`,
+          `page=${params.page}`,
+          `isRequest=${params.isRequest}`,
+          `printMemo=${params.printMemo}`,
+        ];
+
+        if (params.startDate) {
+          queryParams.push(`startDate=${params.startDate}`);
+        }
+
+        if (params.endDate) {
+          queryParams.push(`endDate=${params.endDate}`);
+        }
+
+        const queryString = queryParams.join("&");
+        return `/print-barcode-show?${queryString}`;
+      },
+      providesTags: ["FixedAsset"],
+    }),
+
     archiveFixedAssetStatusApi: builder.mutation({
       query: ({ id, status, remarks }) => ({
         url: `/fixed-asset/archived-fixed-asset/${id}`,
@@ -101,6 +125,13 @@ export const fixedAssetApi = createApi({
         url: `/export-masterlist?search=${params.search}&startDate=${params.startDate}&endDate=${params.endDate}`,
         // providesTags: ["FixedAsset"]
       }),
+    }),
+
+    getCalcDepreApi: builder.query({
+      query: (params) => ({
+        url: `/asset-depreciation/${params.id}?date=${params.date}`,
+      }),
+      providesTags: ["FixedAsset"],
     }),
 
     // * -------------- Stalwart Printing --------------------
@@ -155,37 +186,13 @@ export const fixedAssetApi = createApi({
       invalidatesTags: ["FixedAsset"],
     }),
 
-    postCalcDepreApi: builder.mutation({
+    postDepreciateApi: builder.mutation({
       query: (params) => ({
-        url: `/asset-depreciation/${params.id}`,
+        url: `/depreciate/${params.vladimir_tag_number}`,
         method: "POST",
         body: params,
       }),
       invalidatesTags: ["FixedAsset"],
-    }),
-
-    getPrintViewingApi: builder.query({
-      query: (params) => {
-        const queryParams = [
-          `search=${params.search}`,
-          `per_page=${params.per_page}`,
-          `page=${params.page}`,
-          `isRequest=${params.isRequest}`,
-          `printMemo=${params.printMemo}`,
-        ];
-
-        if (params.startDate) {
-          queryParams.push(`startDate=${params.startDate}`);
-        }
-
-        if (params.endDate) {
-          queryParams.push(`endDate=${params.endDate}`);
-        }
-
-        const queryString = queryParams.join("&");
-        return `/print-barcode-show?${queryString}`;
-      },
-      providesTags: ["FixedAsset"],
     }),
   }),
 });
@@ -198,7 +205,9 @@ export const {
   useLazyGetVoucherFaApiQuery,
   useGetReprintMemoApiQuery,
   useGetDepreciationHistoryApiQuery,
+  useGetPrintViewingApiQuery,
   useLazyGetDepreciationHistoryApiQuery,
+  useLazyGetCalcDepreApiQuery,
   useArchiveFixedAssetStatusApiMutation,
   usePostFixedAssetApiMutation,
   useUpdateFixedAssetApiMutation,
@@ -207,6 +216,6 @@ export const {
   usePostPrintApiMutation,
   usePutMemoPrintApiMutation,
   usePostLocalPrintApiMutation,
-  usePostCalcDepreApiMutation,
-  useGetPrintViewingApiQuery,
+
+  usePostDepreciateApiMutation,
 } = fixedAssetApi;
