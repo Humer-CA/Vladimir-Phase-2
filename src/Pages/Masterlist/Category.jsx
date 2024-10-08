@@ -14,38 +14,17 @@ const Category = () => {
 
   return (
     <Box className="mcontainer">
-      <Typography
-        className="mcontainer__title"
-        sx={{ fontFamily: "Anton", fontSize: "1.6rem" }}
-      >
+      <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "1.6rem" }}>
         Category Management
       </Typography>
 
       <Box>
         <TabContext value={value}>
           <Tabs onChange={handleChange} value={value}>
-            {/* <Tab
-              label="Category List"
-              value="0"
-              className={value === "0" ? "tab__background" : null}
-            /> */}
+            <Tab label="Major Category" value="1" className={value === "1" ? "tab__background" : null} />
 
-            <Tab
-              label="Major Category"
-              value="1"
-              className={value === "1" ? "tab__background" : null}
-            />
-
-            <Tab
-              label="Minor Category"
-              value="2"
-              className={value === "2" ? "tab__background" : null}
-            />
+            <Tab label="Minor Category" value="2" className={value === "2" ? "tab__background" : null} />
           </Tabs>
-
-          {/* <TabPanel sx={{ p: 0 }} value="0" index="0">
-            <CategoryList />
-          </TabPanel> */}
 
           <TabPanel sx={{ p: 0 }} value="1" index="1">
             <MajorCategory />
