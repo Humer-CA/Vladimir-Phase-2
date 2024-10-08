@@ -6,7 +6,7 @@ import { useLocation, useParams, useNavigate, Link } from "react-router-dom";
 import {
   useArchiveFixedAssetStatusApiMutation,
   useGetFixedAssetIdApiQuery,
-  usePostCalcDepreApiMutation,
+  useLazyGetCalcDepreApiQuery,
 } from "../../Redux/Query/FixedAsset/FixedAssets";
 import FaStatusChange from "../../Components/Reusable/FaStatusComponent";
 import NoDataFile from "../../Img/PNG/no-data.png";
@@ -172,7 +172,7 @@ const FixedAssetView = (props) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const [postCalcDepreApi, { data: calcDepreApi }] = usePostCalcDepreApiMutation();
+  const [getCalcDepreApi, { data: calcDepreApi, refetch: calcDepreApiRefetch }] = useLazyGetCalcDepreApiQuery();
   const [postCalcDepreAddCostApi, { data: calcDepreAddCostApi }] = usePostCalcDepreAddCostApiMutation();
   const [patchFixedAssetStatusApi, { isLoading: isPatchLoading }] = useArchiveFixedAssetStatusApiMutation();
   const [patchAdditionalCostStatusApi, { isLoading: isAdditionalCostLoading }] = useArchiveAdditionalCostApiMutation();
@@ -483,12 +483,10 @@ const FixedAssetView = (props) => {
     });
   };
 
-  const handleDepreciation = () => {
-    const newDate = {
-      ...data,
-      date: moment(new Date(currentDate)).format("YYYY-MM-DD"),
-    };
-    dataApi.data?.is_additional_cost === 1 ? postCalcDepreAddCostApi(newDate) : postCalcDepreApi(newDate);
+  const handleDepreciation = (id) => {
+    dataApi.data?.is_additional_cost === 1
+      ? postCalcDepreAddCostApi(newDate)
+      : getCalcDepreApi({ id, date: moment(new Date(currentDate)).format("YYYY-MM") });
     // console.log(newDate);
     setViewDepre(true);
   };
@@ -615,7 +613,7 @@ const FixedAssetView = (props) => {
                     variant="contained"
                     size="small"
                     color="secondary"
-                    onClick={() => handleDepreciation()}
+                    onClick={() => handleDepreciation(dataApi?.data.id)}
                     startIcon={
                       isSmallScreen ? null : (
                         <PriceChange
@@ -1344,6 +1342,7 @@ const FixedAssetView = (props) => {
         <Depreciation
           calcDepreApi={calcDepreApi || calcDepreAddCostApi}
           setViewDepre={setViewDepre}
+          refetch={calcDepreApiRefetch}
           vladimirTag={dataApi?.data?.vladimir_tag_number}
         />
       </Dialog>
