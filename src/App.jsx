@@ -86,7 +86,7 @@ import PurchaseRequestReport from "./Pages/Reports/Requisition/PurchaseRequestRe
 import SmallTools from "./Pages/Masterlist/SmallTools";
 
 const userData = JSON.parse(localStorage.getItem("user"));
-const userRole = userData.role.access_permission.split(", ");
+const userRole = userData?.role?.access_permission.split(", ");
 
 const router = createBrowserRouter([
   {

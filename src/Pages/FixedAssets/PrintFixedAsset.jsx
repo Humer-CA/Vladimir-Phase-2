@@ -479,6 +479,7 @@ const PrintFixedAsset = (props) => {
               name="search"
               label="Search"
               type="text"
+              optional
               color="secondary"
               onKeyDown={searchHandler}
               fullWidth={isSmallScreen ? true : false}
@@ -503,6 +504,7 @@ const PrintFixedAsset = (props) => {
                 label="Start Date"
                 size="small"
                 fullWidth
+                optional
                 disableFuture
                 reduceAnimations
                 onChange={(newValue) => {
@@ -519,6 +521,7 @@ const PrintFixedAsset = (props) => {
                 // views={["year", "month", "day"]}
                 minDate={watch("startDate")}
                 fullWidth
+                optional
                 disableFuture
                 reduceAnimations
                 disabled={watch("startDate") === null || watch("startDate") === ""}

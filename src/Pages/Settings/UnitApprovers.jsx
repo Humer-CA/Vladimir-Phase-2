@@ -55,8 +55,6 @@ const UnitApprovers = () => {
     approver_id: [],
   });
 
-  console.log(updateUnitApprovers);
-
   const drawer = useSelector((state) => state.booleanState.drawer);
 
   // Table Sorting --------------------------------

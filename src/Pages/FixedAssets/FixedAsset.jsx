@@ -295,7 +295,7 @@ const FixedAsset = (props) => {
             faStatus
             faFilter={faFilter}
             setFaFilter={setFaFilter}
-            scanAsset
+            // scanAsset
             openScan
             hideArchive
             isRequest
@@ -703,7 +703,7 @@ const FixedAsset = (props) => {
         <AssignmentMemoReprint />
       </Dialog>
 
-      <Dialog
+      {/* <Dialog
         open={scanFile}
         TransitionComponent={Grow}
         onClose={() => dispatch(closeScan())}
@@ -717,7 +717,7 @@ const FixedAsset = (props) => {
         }}
       >
         <ScanFixedAsset />
-      </Dialog>
+      </Dialog> */}
     </Box>
   );
 };
