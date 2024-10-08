@@ -5,7 +5,6 @@ import CustomAutoComplete from "../../../Components/Reusable/CustomAutoComplete"
 import CustomPatternField from "../../../Components/Reusable/CustomPatternField";
 import CustomNumberField from "../../../Components/Reusable/CustomNumberField";
 import CustomDatePicker from "../../../Components/Reusable/CustomDatePicker";
-import CustomRadioGroup from "../../../Components/Reusable/CustomRadioGroup";
 import { useGetSedarUsersApiQuery, useLazyGetSedarUsersApiQuery } from "../../../Redux/Query/SedarUserApi";
 
 import { useForm } from "react-hook-form";
@@ -36,10 +35,10 @@ import {
   useGetMinorCategoryAllApiQuery,
   useLazyGetMinorCategoryAllApiQuery,
 } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import {
-  useGetMajorCategoryAllApiQuery,
-  useLazyGetMajorCategoryAllApiQuery,
-} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import {
+//   useGetMajorCategoryAllApiQuery,
+//   useLazyGetMajorCategoryAllApiQuery,
+// } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
 import {
   useGetCompanyAllApiQuery,
@@ -96,6 +95,7 @@ import {
   useLazyGetDepreciationStatusAllApiQuery,
 } from "../../../Redux/Query/Masterlist/Status/DepreciationStatus";
 import { closeConfirm, onLoading, openConfirm } from "../../../Redux/StateManagement/confirmSlice";
+import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const schema = yup.object().shape({
   id: yup.string(),
