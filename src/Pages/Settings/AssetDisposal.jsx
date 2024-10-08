@@ -249,7 +249,7 @@ const AssetDisposal = () => {
   const onUpdateResetHandler = () => {
     setUpdateAssetDisposal({
       status: false,
-      action: "view",
+      // action: "view",
       unit_id: null,
       subunit_id: null,
       approvers: [],
