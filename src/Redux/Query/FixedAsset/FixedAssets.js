@@ -134,7 +134,7 @@ export const fixedAssetApi = createApi({
       providesTags: ["FixedAsset"],
     }),
 
-    // * -------------- Stalwart Printing --------------------
+    // * -------------- Stalwart / PRODUCTION Printing --------------------
     // postPrintApi: builder.mutation({
     //   query: ({ ip, ...params }) => {
     //     if (ip === `210.5.110.212`) {
