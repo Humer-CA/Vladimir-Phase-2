@@ -51,7 +51,6 @@ import {
   useLazyGetPrWithExportApiQuery,
 } from "../../../Redux/Query/Request/PurchaseRequest";
 import moment from "moment";
-import ExportCsv from "../../../Components/Reusable/ExportCsv";
 import ExportPr from "./ExportPr";
 
 const PurchaseRequestReport = (props) => {

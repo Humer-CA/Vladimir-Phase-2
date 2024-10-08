@@ -96,7 +96,6 @@ import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
 import { assetReceivingApi } from "../Query/Request/AssetReceiving";
 import { receivedReceiptApi } from "../Query/Request/ReceivedReceipt";
 import { assetReleasingApi } from "../Query/Request/AssetReleasing";
-import { vladimirApi } from "../Query/vladApi";
 import { masterlistApi } from "../Query/Masterlist/Masterlist";
 
 export const store = configureStore({
@@ -118,7 +117,6 @@ export const store = configureStore({
     // exportFile: exportFileReducer,
     // scanFile: scanFileReducer,
 
-    [vladimirApi.reducerPath]: vladimirApi.reducer,
     [masterlistApi.reducerPath]: masterlistApi.reducer,
     [changePasswordApi.reducerPath]: changePasswordApi.reducer,
     // [modulesApi.reducerPath]: modulesApi.reducer,
@@ -204,7 +202,6 @@ export const store = configureStore({
 
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat([
-      vladimirApi.middleware,
       masterlistApi.middleware,
       changePasswordApi.middleware,
       // modulesApi.middleware,
