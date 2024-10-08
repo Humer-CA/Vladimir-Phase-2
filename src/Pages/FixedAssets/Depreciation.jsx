@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { useLocation, useParams } from "react-router-dom";
 import {
+  fixedAssetApi,
   useGetDepreciationHistoryApiQuery,
   useLazyGetDepreciationHistoryApiQuery,
-  usePostCalcDepreApiMutation,
+  usePostDepreciateApiMutation,
 } from "../../Redux/Query/FixedAsset/FixedAssets";
 
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import {
   Button,
   Card,
   Chip,
+  Dialog,
   Grow,
   IconButton,
   Slide,
@@ -26,22 +28,66 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { ArrowLeft, Close, CurrencyExchangeRounded, History, KeyboardArrowLeftSharp, Watch } from "@mui/icons-material";
+import {
+  ArrowLeft,
+  Close,
+  CurrencyExchangeRounded,
+  Help,
+  History,
+  KeyboardArrowLeftSharp,
+  TrendingDownTwoTone,
+  Watch,
+} from "@mui/icons-material";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openToast } from "../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
 import CustomDatePicker from "../../Components/Reusable/CustomDatePicker";
 import { usePostCalcDepreAddCostApiMutation } from "../../Redux/Query/FixedAsset/AdditionalCost";
+import { closeDialog1, openDialog, openDialog1 } from "../../Redux/StateManagement/booleanStateSlice";
+import { onLoading, openConfirm } from "../../Redux/StateManagement/confirmSlice";
+import CustomAutoComplete from "../../Components/Reusable/CustomAutoComplete";
+import {
+  useGetAccountTitleAllApiQuery,
+  useLazyGetAccountTitleAllApiQuery,
+} from "../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
 
 const schema = yup.object().shape({
   id: yup.string(),
-  endDate: yup.string().typeError("Please enter a validate date").label("End Date"),
+  depreciation_credit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Depreciation Credit"),
+  depreciation_debit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Depreciation Debit"),
+  initial_credit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Initial Credit"),
+  initial_debit_id: yup
+    .string()
+    .transform((value) => {
+      return value?.id.toString();
+    })
+    .required()
+    .label("Initial Debit"),
 });
 
 const formatCost = (value) => {
@@ -50,26 +96,51 @@ const formatCost = (value) => {
 };
 
 const Depreciation = (props) => {
-  const { setViewDepre, calcDepreApi, vladimirTag } = props;
+  const { setViewDepre, calcDepreApi, vladimirTag, refetch } = props;
   const isSmallScreen = useMediaQuery("(max-width: 1000px)");
 
   const [openHistory, setOpenHistory] = useState(false);
 
-  // const {
-  //   data: historyData,
-  //   isLoading: isHistoryLoading,
-  //   isSuccess: isHistorySuccess,
-  // } = useGetDepreciationHistoryApiQuery({ vladimir_tag_number: vladimirTag }, { refetchOnMountOrArgChange: true });
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isValid },
+    setError,
+    reset,
+    watch,
+    setValue,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      id: "",
+      depreciation_credit_id: null,
+      depreciation_debit_id: null,
+      initial_credit_id: null,
+      initial_debit_id: null,
+    },
+  });
+
   const [getDepreciationHistory, { data: historyData, isLoading: isHistoryLoading, isSuccess: isHistorySuccess }] =
     useLazyGetDepreciationHistoryApiQuery();
 
-  const dispatch = useDispatch();
+  // const [
+  //   getAccountTitle,
+  //   { data: accountTitleData, isLoading: isAccountTitleLoading, isSuccess: isAccountTitleSuccess },
+  // ] = useLazyGetAccountTitleAllApiQuery();
+  const {
+    data: accountTitleData = [],
+    isLoading: isAccountTitleLoading,
+    isSuccess: isAccountTitleSuccess,
+  } = useGetAccountTitleAllApiQuery();
 
-  const handleClose = () => {
-    setViewDepre(false);
-  };
+  const [
+    postDepreciation,
+    { data: depreciationData, isLoading: isDepreciationLoading, isSuccess: isDepreciationSuccess },
+  ] = usePostDepreciateApiMutation();
 
   const data = calcDepreApi?.data;
+  const dispatch = useDispatch();
+  const dialog = useSelector((state) => state.booleanState.dialogMultiple.dialog1);
 
   const handleViewHistory = () => {
     setOpenHistory(!openHistory);
@@ -177,6 +248,64 @@ const Depreciation = (props) => {
     );
   };
 
+  const onSubmitHandler = (formData) => {
+    dispatch(
+      openConfirm({
+        icon: Help,
+        iconColor: "info",
+        message: (
+          <Box>
+            <Typography> Are you sure you want to</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                color: "secondary.main",
+                fontWeight: "bold",
+                fontFamily: "Raleway",
+              }}
+            >
+              DEPRECIATE
+            </Typography>{" "}
+            this asset?
+          </Box>
+        ),
+        onConfirm: async () => {
+          try {
+            dispatch(onLoading());
+            const result = await postDepreciation({
+              ...formData,
+              vladimir_tag_number: vladimirTag,
+            }).unwrap();
+
+            dispatch(
+              openToast({
+                message: result.message,
+                duration: 5000,
+              })
+            );
+            refetch();
+            dispatch(fixedAssetApi.util.invalidateTags(["FixedAsset"]));
+            setViewDepre(false);
+          } catch (err) {
+            console.log(err);
+            if (err?.status === 404) {
+              navigate(`/approving/request`);
+            } else if (err?.status === 422) {
+              dispatch(
+                openToast({
+                  // message: err.data.message,
+                  message: err?.data?.errors?.detail,
+                  duration: 5000,
+                  variant: "error",
+                })
+              );
+            }
+          }
+        },
+      })
+    );
+  };
+
   return (
     <Stack>
       {/* Header */}
@@ -185,30 +314,34 @@ const Depreciation = (props) => {
           sx={{
             display: " flex",
             alignItems: "center",
+            justifyContent: "space-between",
             gap: 1.5,
             pl: "5px",
             mb: "15px",
+            width: "95%",
           }}
         >
-          <CurrencyExchangeRounded size="small" color="secondary" />
+          <Stack flexDirection="row" alignItems="center" gap={1}>
+            <CurrencyExchangeRounded size="small" color="secondary" />
 
-          <Typography
-            color="secondary.main"
-            sx={{
-              fontFamily: "Anton",
-              fontSize: "1.5rem",
-              justifyContent: "flex-start",
-              alignSelf: "center",
-            }}
-          >
-            Depreciation
-          </Typography>
+            <Typography
+              color="secondary.main"
+              sx={{
+                fontFamily: "Anton",
+                fontSize: "1.5rem",
+                justifyContent: "flex-start",
+                alignSelf: "center",
+              }}
+            >
+              Depreciation
+            </Typography>
+          </Stack>
         </Box>
 
         <IconButton
           color="secondary"
           variant="outlined"
-          onClick={handleClose}
+          onClick={() => setViewDepre(false)}
           sx={{ top: 10, right: 10, position: "absolute" }}
         >
           <Close size="small" />
@@ -474,37 +607,155 @@ const Depreciation = (props) => {
                 </Box>
               </Card>
 
-              <Card
-                className="tableCard__card"
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  mt: "10px",
-                  mx: "5px",
-                }}
-              >
-                <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
-                  Depreciation
-                </Typography>
+              {data?.depreciation_method !== "-" && (
+                <Card
+                  className="tableCard__card"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    mt: "10px",
+                    mx: "5px",
+                  }}
+                >
+                  <Typography color="secondary.main" sx={{ fontFamily: "Anton", fontSize: "rem" }}>
+                    Depreciation
+                  </Typography>
 
-                <Box>
-                  <Box className="tableCard__properties">
-                    Debit:
-                    <Typography className="tableCard__info" fontSize="14px">
-                      {data?.depreciation_debit?.account_title_code} - {data?.depreciation_debit?.account_title_name}
-                    </Typography>
+                  <Box>
+                    <Box className="tableCard__properties">
+                      Debit:
+                      <Typography className="tableCard__info" fontSize="14px">
+                        {data?.depreciation_debit?.account_title_code} - {data?.depreciation_debit?.account_title_name}
+                      </Typography>
+                    </Box>
+                    <Box className="tableCard__properties">
+                      Credit:
+                      <Typography className="tableCard__info" fontSize="14px">
+                        {data?.depreciation_credit?.account_title_code} -{" "}
+                        {data?.depreciation_credit?.account_title_name}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Box className="tableCard__properties">
-                    Credit:
-                    <Typography className="tableCard__info" fontSize="14px">
-                      {data?.depreciation_credit?.account_title_code} - {data?.depreciation_credit?.account_title_name}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Card>
+                </Card>
+              )}
             </Stack>
             {isSmallScreen && <HistoryTable />}
+            {(data?.depreciation_method === "-" || data?.is_released === 1) && (
+              <Stack pb={1}>
+                <Card
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    mt: "10px",
+                    mx: "5px",
+                    p: "20px",
+                  }}
+                >
+                  <Stack gap={2} component="form" onSubmit={handleSubmit(onSubmitHandler)}>
+                    <Typography fontFamily="Anton" color="secondary">
+                      Depreciate Asset
+                    </Typography>
+                    <CustomAutoComplete
+                      name="initial_debit_id"
+                      // onOpen={() => (isAccountTitleSuccess ? null : getAccountTitle())}
+                      control={control}
+                      options={accountTitleData}
+                      loading={isAccountTitleLoading}
+                      size="small"
+                      getOptionLabel={(option) => option?.account_title_code + " - " + option?.account_title_name}
+                      isOptionEqualToValue={(option, value) => option?.account_title_code === value?.account_title_code}
+                      renderInput={(params) => (
+                        <TextField
+                          color="secondary"
+                          {...params}
+                          label="Initial Debit"
+                          error={!!errors?.initial_debit_id}
+                          helperText={errors?.initial_debit_id?.message}
+                        />
+                      )}
+                    />
+
+                    <CustomAutoComplete
+                      autoComplete
+                      name="initial_credit_id"
+                      // onOpen={() => (isAccountTitleSuccess ? null : getAccountTitle())}
+                      control={control}
+                      options={accountTitleData}
+                      loading={isAccountTitleLoading}
+                      size="small"
+                      getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+                      isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+                      renderInput={(params) => (
+                        <TextField
+                          color="secondary"
+                          {...params}
+                          label="Initial Credit"
+                          error={!!errors?.initial_credit_id}
+                          helperText={errors?.initial_credit_id?.message}
+                        />
+                      )}
+                    />
+
+                    <CustomAutoComplete
+                      autoComplete
+                      name="depreciation_debit_id"
+                      // onOpen={() => (isAccountTitleSuccess ? null : getAccountTitle())}
+                      control={control}
+                      options={accountTitleData}
+                      loading={isAccountTitleLoading}
+                      size="small"
+                      getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+                      isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+                      renderInput={(params) => (
+                        <TextField
+                          color="secondary"
+                          {...params}
+                          label="Depreciation Debit"
+                          error={!!errors?.depreciation_debit_id}
+                          helperText={errors?.depreciation_debit_id?.message}
+                        />
+                      )}
+                    />
+
+                    <CustomAutoComplete
+                      autoComplete
+                      name="depreciation_credit_id"
+                      // onOpen={() => (isAccountTitleSuccess ? null : getAccountTitle())}
+                      control={control}
+                      options={accountTitleData}
+                      loading={isAccountTitleLoading}
+                      size="small"
+                      getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+                      isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+                      renderInput={(params) => (
+                        <TextField
+                          color="secondary"
+                          {...params}
+                          label="Depreciation Credit"
+                          error={!!errors?.depreciation_credit_id}
+                          helperText={errors?.depreciation_credit_id?.message}
+                        />
+                      )}
+                    />
+
+                    <Stack flexDirection="row" gap={2} sx={{ alignSelf: "end" }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="small"
+                        startIcon={<TrendingDownTwoTone />}
+                        disabled={!isValid}
+                        sx={{ alignSelf: "end" }}
+                      >
+                        Depreciate
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </Card>
+              </Stack>
+            )}
           </Stack>
         </Box>
 
