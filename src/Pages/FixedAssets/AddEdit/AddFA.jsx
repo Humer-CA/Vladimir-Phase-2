@@ -150,13 +150,13 @@ const schema = yup.object().shape({
     })
     .required()
     .label("Location"),
-  account_title_id: yup
-    .string()
-    .transform((value) => {
-      return value?.id.toString();
-    })
-    .required()
-    .label("Account Title"),
+  // account_title_id: yup
+  //   .string()
+  //   .transform((value) => {
+  //     return value?.id.toString();
+  //   })
+  //   .required()
+  //   .label("Account Title"),
   asset_description: yup.string().required().label("Asset Description"),
   asset_specification: yup.string().required().label("Asset Specification"),
   acquisition_date: yup.string().required().label("Acquisition Date").typeError("Acquisition Date is a required field"),
@@ -452,7 +452,7 @@ const AddFa = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
-      account_title_id: null,
+      // account_title_id: null,
 
       asset_description: "",
       asset_specification: "",
@@ -547,7 +547,7 @@ const AddFa = (props) => {
       setValue("unit_id", data.unit);
       setValue("subunit_id", data.subunit);
       setValue("location_id", data.location);
-      setValue("account_title_id", data.account_title);
+      // setValue("account_title_id", data.account_title);
 
       setValue("asset_description", data.asset_description);
       setValue("asset_specification", data.asset_specification);
@@ -856,7 +856,7 @@ const AddFa = (props) => {
 
                   if (!isIncluded) {
                     setValue("minor_category_id", null);
-                    setValue("account_title_id", null);
+                    // setValue("account_title_id", null);
                   }
 
                   setValue("est_useful_life", value.est_useful_life);
@@ -889,10 +889,10 @@ const AddFa = (props) => {
                     helperText={errors?.minor_category_id?.message}
                   />
                 )}
-                onChange={(_, value) => {
-                  setValue("account_title_id", value ? value.account_title : null);
-                  return value;
-                }}
+                // onChange={(_, value) => {
+                //   setValue("account_title_id", value ? value.account_title : null);
+                //   return value;
+                // }}
               />
             </Box>
           </Stack>
@@ -1073,7 +1073,7 @@ const AddFa = (props) => {
               )}
             />
 
-            <CustomAutoComplete
+            {/* <CustomAutoComplete
               name="account_title_id"
               disabled
               control={control}
@@ -1093,7 +1093,7 @@ const AddFa = (props) => {
                   helperText={errors?.account_title_id?.message}
                 />
               )}
-            />
+            /> */}
           </Box>
         )}
 
@@ -1254,7 +1254,8 @@ const AddFa = (props) => {
                 type="text"
                 color="secondary"
                 size="small"
-                disabled
+                optional
+                // disabled
                 error={!!errors?.voucher}
                 helperText={errors?.voucher?.message}
                 fullWidth
@@ -1265,7 +1266,8 @@ const AddFa = (props) => {
                 name="voucher_date"
                 label="Voucher Date"
                 size="small"
-                disabled
+                optional
+                // disabled
                 views={["year", "month", "day"]}
                 openTo="year"
                 error={!!errors?.voucher_date}
@@ -1464,10 +1466,11 @@ const AddFa = (props) => {
                   name="release_date"
                   label="Release Date"
                   size="small"
-                  disabled
+                  // disabled
                   // views={["year", "month", "day"]}
                   // openTo="year"
                   error={!!errors?.release_date}
+                  optional
                   helperText={errors?.release_date?.message}
                   fullWidth={isFullWidth ? true : false}
                   minDate={watch("acquisition_date")}
