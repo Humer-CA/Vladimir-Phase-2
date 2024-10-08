@@ -30,7 +30,7 @@ import { typeOfRequestApi } from "../Query/Masterlist/TypeOfRequest";
 import { capexApi } from "../Query/Masterlist/Capex";
 import { subCapexApi } from "../Query/Masterlist/SubCapex";
 import { warehouseApi } from "../Query/Masterlist/Warehouse";
-import { majorCategoryApi } from "../Query/Masterlist/Category/MajorCategory";
+// import { majorCategoryApi } from "../Query/Masterlist/Category/MajorCategory";
 import { minorCategoryApi } from "../Query/Masterlist/Category/MinorCategory";
 // import { categoryListApi } from '../Query/Masterlist/Category/CategoryList'
 // import { serviceProviderApi } from '../Query/Masterlist/ServiceProviderApi'
@@ -53,6 +53,7 @@ import { accountTitleApi } from "../Query/Masterlist/YmirCoa/AccountTitle";
 import { supplierApi } from "../Query/Masterlist/YmirCoa/Supplier";
 import { divisionApi } from "../Query/Masterlist/Division";
 import { unitOfMeasurementApi } from "../Query/Masterlist/YmirCoa/UnitOfMeasurement";
+import { smallToolsApi } from "../Query/Masterlist/YmirCoa/SmallTools";
 
 import { ymirApi } from "../Query/Masterlist/YmirCoa/YmirApi";
 import { ymirPrApi } from "../Query/Masterlist/YmirCoa/YmirPr";
@@ -95,6 +96,8 @@ import { requisitionSmsApi } from "../Query/Request/RequisitionSms";
 import { assetReceivingApi } from "../Query/Request/AssetReceiving";
 import { receivedReceiptApi } from "../Query/Request/ReceivedReceipt";
 import { assetReleasingApi } from "../Query/Request/AssetReleasing";
+import { vladimirApi } from "../Query/vladApi";
+import { masterlistApi } from "../Query/Masterlist/Masterlist";
 
 export const store = configureStore({
   reducer: {
@@ -115,6 +118,8 @@ export const store = configureStore({
     // exportFile: exportFileReducer,
     // scanFile: scanFileReducer,
 
+    [vladimirApi.reducerPath]: vladimirApi.reducer,
+    [masterlistApi.reducerPath]: masterlistApi.reducer,
     [changePasswordApi.reducerPath]: changePasswordApi.reducer,
     // [modulesApi.reducerPath]: modulesApi.reducer,
 
@@ -125,7 +130,7 @@ export const store = configureStore({
     [warehouseApi.reducerPath]: warehouseApi.reducer,
     // [serviceProviderApi.reducerPath]: serviceProviderApi.reducer,
 
-    [majorCategoryApi.reducerPath]: majorCategoryApi.reducer,
+    // [majorCategoryApi.reducerPath]: majorCategoryApi.reducer,
     [minorCategoryApi.reducerPath]: minorCategoryApi.reducer,
     // [categoryListApi.reducerPath]: categoryListApi.reducer,
 
@@ -149,6 +154,7 @@ export const store = configureStore({
     [accountTitleApi.reducerPath]: accountTitleApi.reducer,
     [supplierApi.reducerPath]: supplierApi.reducer,
     [unitOfMeasurementApi.reducerPath]: unitOfMeasurementApi.reducer,
+    [smallToolsApi.reducerPath]: smallToolsApi.reducer,
 
     [divisionApi.reducerPath]: divisionApi.reducer,
     [ipAddressSetupApi.reducerPath]: ipAddressSetupApi.reducer,
@@ -198,6 +204,8 @@ export const store = configureStore({
 
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat([
+      vladimirApi.middleware,
+      masterlistApi.middleware,
       changePasswordApi.middleware,
       // modulesApi.middleware,
 
@@ -208,7 +216,7 @@ export const store = configureStore({
       warehouseApi.middleware,
 
       // serviceProviderApi.middleware,
-      majorCategoryApi.middleware,
+      // majorCategoryApi.middleware,
       minorCategoryApi.middleware,
       // categoryListApi.middleware,
       fistoCompanyApi.middleware,
@@ -233,6 +241,7 @@ export const store = configureStore({
       accountTitleApi.middleware,
       supplierApi.middleware,
       unitOfMeasurementApi.middleware,
+      smallToolsApi.middleware,
 
       divisionApi.middleware,
       printOfflineFaApi.middleware,

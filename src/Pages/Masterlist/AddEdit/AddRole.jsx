@@ -160,6 +160,7 @@ const AddRole = (props) => {
     "warehouse",
     "category",
     "status-category",
+    "small-tools",
 
     // UserManagement
     "user-accounts",
@@ -342,6 +343,7 @@ const AddRole = (props) => {
       { label: "Account Title", value: "account-title" },
       { label: "Supplier", value: "supplier" },
       { label: "Unit of Measurement", value: "unit-of-measurement" },
+      { label: "Small Tools", value: "small-tools" },
     ];
 
     const masterlist2 = [
@@ -664,6 +666,7 @@ const AddRole = (props) => {
                                     "category",
                                     "status-category",
                                     "unit-of-measurement",
+                                    "small-tools",
                                   ]),
                                 ]);
                               } else {
