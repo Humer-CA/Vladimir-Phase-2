@@ -237,46 +237,47 @@ const AddRole = (props) => {
     dispatch(closeDrawer());
   };
 
-  const MainRoles = ({ label, value }) => {
-    const convertToCamelCase = (inputString) => {
-      return inputString
-        .split(" ")
-        .map((word, index) =>
-          index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join("");
-    };
+  // const MainRoles = ({ label, value }) => {
+  //   const convertToCamelCase = (inputString) => {
+  //     return inputString
+  //       .split(" ")
+  //       .map((word, index) =>
+  //         index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  //       )
+  //       .join("");
+  //   };
 
-    const newValue = convertToCamelCase(label);
+  //   const newValue = convertToCamelCase(label);
 
-    return (
-      <FormControlLabel
-        label={label} // "User Management"
-        value={value} // "user-management"
-        sx={{ color: "text.main", fontWeight: "bold" }}
-        disabled={data.action === "view"}
-        control={
-          <Checkbox
-            checked={watch("access_permission").includes(value)}
-            indeterminate={
-              watch("access_permission").some((perm) => perm === newValue) &&
-              !watch("access_permission").every((perm) => perm === newValue)
-            }
-            onChange={(e) => {
-              if (e.target.checked) {
-                setValue("access_permission", [...new Set([...watch("access_permission"), newValue])]);
-              } else {
-                const emptyValue = watch("access_permission").filter((perm) => ![newValue, value].includes(perm));
+  //   return (
+  //     <FormControlLabel
+  //       label={label} // "User Management"
+  //       value={value} // "user-management"
+  //       sx={{ color: "text.main", fontWeight: "bold" }}
+  //       disabled={data.action === "view"}
+  //       control={
+  //         <Checkbox
+  //           checked={watch("access_permission").includes(value)}
+  //           indeterminate={
+  //             watch("access_permission").some((perm) => perm === newValue) &&
+  //             !watch("access_permission").every((perm) => perm === newValue)
+  //           }
+  //           onChange={(e) => {
+  //             if (e.target.checked) {
+  //               setValue("access_permission", [...new Set([...watch("access_permission"), newValue])]);
+  //             } else {
+  //               const emptyValue = watch("access_permission").filter((perm) => ![newValue, value].includes(perm));
 
-                setValue("access_permission", emptyValue);
-              }
-            }}
-          />
-        }
-      />
-    );
-  };
+  //               setValue("access_permission", emptyValue);
+  //             }
+  //           }}
+  //         />
+  //       }
+  //     />
+  //   );
+  // };
 
+  // * Reusable Components ------------------------------------------ //
   const CheckboxItem = ({ label, value }) => (
     <FormControlLabel
       disabled={data.action === "view"}
@@ -298,6 +299,7 @@ const AddRole = (props) => {
     </Box>
   );
 
+  // * Role Components --------------------------------------------- //
   const Children = () => {
     const Main = [
       { label: "Dashboard", value: "dashboard" },
@@ -307,6 +309,7 @@ const AddRole = (props) => {
       { label: "Printing of Tag", value: "print-fa" },
       { label: "Settings", value: "settings" },
       { label: "Request Monitoring", value: "request-monitoring" },
+      { label: "sample", value: "sample" },
     ];
 
     const Setup = [
