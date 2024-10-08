@@ -148,7 +148,7 @@ const CustomTableCollapse = (props) => {
             if (err?.status === 422) {
               dispatch(
                 openToast({
-                  message: err.data.errors?.detail,
+                  message: err.data.error || err.data.errors?.detail,
                   duration: 5000,
                   variant: "error",
                 })
