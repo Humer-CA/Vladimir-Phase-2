@@ -11,10 +11,10 @@ import NoRecordsFound from "../../../Layout/NoRecordsFound";
 import { useDispatch, useSelector } from "react-redux";
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { closeConfirm, openConfirm, onLoading } from "../../../Redux/StateManagement/confirmSlice";
-import {
-  useGetMajorCategoryApiQuery,
-  usePutMajorCategoryStatusApiMutation,
-} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import {
+//   useGetMajorCategoryApiQuery,
+//   usePutMajorCategoryStatusApiMutation,
+// } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 // MUI
 import {
@@ -34,6 +34,10 @@ import {
 } from "@mui/material";
 import { Help, ReportProblem } from "@mui/icons-material";
 import CustomTablePagination from "../../../Components/Reusable/CustomTablePagination";
+import {
+  useGetMajorCategoryApiQuery,
+  usePutMajorCategoryStatusApiMutation,
+} from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const MajorCategory = () => {
   const [search, setSearch] = useState("");

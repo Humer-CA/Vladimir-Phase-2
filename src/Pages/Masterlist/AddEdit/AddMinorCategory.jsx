@@ -27,12 +27,14 @@ import {
   usePostMinorCategoryApiMutation,
   useUpdateMinorCategoryApiMutation,
 } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
-import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 // import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
 
 import { openToast } from "../../../Redux/StateManagement/toastSlice";
 import { LoadingButton } from "@mui/lab";
 import { useGetAccountTitleAllApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/AccountTitle";
+import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+// import { useGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Masterlist";
 
 const schema = yup.object().shape({
   id: yup.string(),
@@ -132,8 +134,6 @@ const AddMinorCategory = (props) => {
       initial_debit_id: null,
     },
   });
-
-  console.log(watch("depreciation_debit_id"));
 
   useEffect(() => {
     if ((isPostError || isUpdateError) && (postError?.status === 422 || updateError?.status === 422)) {
@@ -248,29 +248,10 @@ const AddMinorCategory = (props) => {
           <Typography fontFamily="Anton" color="secondary">
             Accounting Entries
           </Typography>
-          <CustomAutoComplete
-            autoComplete
-            name="depreciation_credit_id"
-            control={control}
-            options={accountTitleData}
-            loading={isAccountTitleLoading}
-            size="small"
-            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
-            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
-            renderInput={(params) => (
-              <TextField
-                color="secondary"
-                {...params}
-                label="Depreciation Credit"
-                error={!!errors?.depreciation_credit_id}
-                helperText={errors?.depreciation_credit_id?.message}
-              />
-            )}
-          />
 
           <CustomAutoComplete
             autoComplete
-            name="depreciation_debit_id"
+            name="initial_debit_id"
             control={control}
             options={accountTitleData}
             loading={isAccountTitleLoading}
@@ -281,9 +262,9 @@ const AddMinorCategory = (props) => {
               <TextField
                 color="secondary"
                 {...params}
-                label="Depreciation Debit"
-                error={!!errors?.depreciation_debit_id}
-                helperText={errors?.depreciation_debit_id?.message}
+                label="Initial Debit"
+                error={!!errors?.initial_debit_id}
+                helperText={errors?.initial_debit_id?.message}
               />
             )}
           />
@@ -310,7 +291,7 @@ const AddMinorCategory = (props) => {
 
           <CustomAutoComplete
             autoComplete
-            name="initial_debit_id"
+            name="depreciation_debit_id"
             control={control}
             options={accountTitleData}
             loading={isAccountTitleLoading}
@@ -321,9 +302,29 @@ const AddMinorCategory = (props) => {
               <TextField
                 color="secondary"
                 {...params}
-                label="Initial Debit"
-                error={!!errors?.initial_debit_id}
-                helperText={errors?.initial_debit_id?.message}
+                label="Depreciation Debit"
+                error={!!errors?.depreciation_debit_id}
+                helperText={errors?.depreciation_debit_id?.message}
+              />
+            )}
+          />
+
+          <CustomAutoComplete
+            autoComplete
+            name="depreciation_credit_id"
+            control={control}
+            options={accountTitleData}
+            loading={isAccountTitleLoading}
+            size="small"
+            getOptionLabel={(option) => option.account_title_code + " - " + option.account_title_name}
+            isOptionEqualToValue={(option, value) => option.account_title_code === value.account_title_code}
+            renderInput={(params) => (
+              <TextField
+                color="secondary"
+                {...params}
+                label="Depreciation Credit"
+                error={!!errors?.depreciation_credit_id}
+                helperText={errors?.depreciation_credit_id?.message}
               />
             )}
           />

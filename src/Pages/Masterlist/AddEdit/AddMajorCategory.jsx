@@ -12,13 +12,18 @@ import { Box, Button, Checkbox, TextField, Typography } from "@mui/material";
 
 import { closeDrawer } from "../../../Redux/StateManagement/booleanStateSlice";
 import { useDispatch } from "react-redux";
+// import {
+//   usePostMajorCategoryApiMutation,
+//   useUpdateMajorCategoryApiMutation,
+// } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+
+// import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
+import { openToast } from "../../../Redux/StateManagement/toastSlice";
+import { LoadingButton } from "@mui/lab";
 import {
   usePostMajorCategoryApiMutation,
   useUpdateMajorCategoryApiMutation,
 } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
-// import { useGetDivisionAllApiQuery } from "../../../Redux/Query/Masterlist/Division";
-import { openToast } from "../../../Redux/StateManagement/toastSlice";
-import { LoadingButton } from "@mui/lab";
 
 const schema = yup.object().shape({
   id: yup.string(),
