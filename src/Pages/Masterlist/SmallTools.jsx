@@ -12,6 +12,7 @@ import { openConfirm, closeConfirm, onLoading } from "../../Redux/StateManagemen
 import {
   usePostSmallToolsApiMutation,
   useGetSmallToolsApiQuery,
+  usePostItemsApiMutation,
 } from "../../Redux/Query/Masterlist/YmirCoa/SmallTools";
 
 // MUI
@@ -37,7 +38,10 @@ import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ViewTagged from "../../Components/Reusable/ViewTagged";
 import { closeDialog, openDialog, openDrawer, openTableCollapse } from "../../Redux/StateManagement/booleanStateSlice";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
-import { useLazyGetYmirSmallToolsAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import {
+  useLazyGetYmirItemsAllApiQuery,
+  useLazyGetYmirSmallToolsAllApiQuery,
+} from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 import ActionMenu from "../../Components/Reusable/ActionMenu";
 import { openCollapse } from "../../Redux/StateManagement/collapseCapexSlice";
 
@@ -89,14 +93,26 @@ const SmallTools = () => {
   };
 
   const [
-    trigger,
+    fetchYmirItems,
     {
-      data: ymirSmallToolsApi,
-      isLoading: ymirSmallToolsApiLoading,
-      isSuccess: ymirSmallToolsApiSuccess,
-      isFetching: ymirSmallToolsApiFetching,
-      isError: ymirSmallToolsApiError,
-      refetch: ymirSmallToolsApiRefetch,
+      data: ymirItems,
+      isLoading: ymirItemsLoading,
+      isSuccess: ymirItemsSuccess,
+      isFetching: ymirItemsFetching,
+      isError: ymirItemsError,
+      refetch: ymirItemsRefetch,
+    },
+  ] = useLazyGetYmirItemsAllApiQuery();
+
+  const [
+    fetchYmirSmallTools,
+    {
+      data: ymirSmallTools,
+      isLoading: ymirSmallToolsLoading,
+      isSuccess: ymirSmallToolsSuccess,
+      isFetching: ymirSmallToolsFetching,
+      isError: ymirSmallToolsError,
+      refetch: ymirSmallToolsRefetch,
     },
   ] = useLazyGetYmirSmallToolsAllApiQuery();
 
@@ -122,12 +138,25 @@ const SmallTools = () => {
     postSmallTools,
     { data: postData, isLoading: isPostLoading, isSuccess: isPostSuccess, isError: isPostError, error: postError },
   ] = usePostSmallToolsApiMutation();
+  const [
+    postItems,
+    {
+      data: postItemData,
+      isLoading: isPostItemLoading,
+      isSuccess: isPostItemSuccess,
+      isError: isPostItemError,
+      error: postItemError,
+    },
+  ] = usePostItemsApiMutation();
 
   useEffect(() => {
-    if (ymirSmallToolsApiSuccess) {
-      postSmallTools(ymirSmallToolsApi);
+    if (ymirSmallToolsSuccess) {
+      postItems(ymirSmallTools);
     }
-  }, [ymirSmallToolsApiSuccess, ymirSmallToolsApiFetching]);
+    if (ymirItemsSuccess) {
+      postSmallTools(ymirItems);
+    }
+  }, [ymirItemsSuccess, ymirItemsFetching, ymirSmallToolsSuccess, ymirSmallToolsFetching]);
 
   useEffect(() => {
     if (isPostSuccess) {
@@ -183,7 +212,8 @@ const SmallTools = () => {
         onConfirm: async () => {
           try {
             dispatch(onLoading());
-            await trigger();
+            await fetchYmirItems();
+            await fetchYmirSmallTools();
             smallToolsApiRefetch();
           } catch (err) {
             dispatch(
@@ -531,7 +561,7 @@ const CollapsibleTable = (props) => {
                         direction={orderBy === `sub_capex` ? order : `asc`}
                         onClick={() => onSort(`sub_capex`)}
                       >
-                        Sub Capex
+                        Item Code
                       </TableSortLabel>
                     </TableCell>
 
@@ -541,7 +571,7 @@ const CollapsibleTable = (props) => {
                         direction={orderBy === `sub_project` ? order : `asc`}
                         onClick={() => onSort(`sub_project`)}
                       >
-                        Sub Project Name
+                        Item Name
                       </TableSortLabel>
                     </TableCell>
 
@@ -566,8 +596,6 @@ const CollapsibleTable = (props) => {
                         Date Created
                       </TableSortLabel>
                     </TableCell>
-
-                    <TableCell className="tbl-cell-col text-center">Action</TableCell>
 
                     {/* <TableCell className="tbl-cell-col">Date Created</TableCell> */}
                   </TableRow>
@@ -616,8 +644,6 @@ const CollapsibleTable = (props) => {
 
                           <TableCell className="tbl-cell-col">{items.item_code + "-" + items.item_name}</TableCell>
 
-                          <TableCell className="tbl-cell-col">{items.sub_project}</TableCell>
-
                           <TableCell className="tbl-cell-col text-center">
                             {items.is_active ? (
                               <Chip
@@ -657,10 +683,6 @@ const CollapsibleTable = (props) => {
 
                           <TableCell className="tbl-cell-col tr-cen-pad45">
                             {Moment(items.created_at).format("MMM DD, YYYY")}
-                          </TableCell>
-
-                          <TableCell className="tbl-cell-col text-center">
-                            <ActionMenu status={items.is_active ? "active" : "deactivated"} data={items} hideEdit />
                           </TableCell>
                         </TableRow>
                       ))}

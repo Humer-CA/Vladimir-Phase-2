@@ -53,6 +53,10 @@ export const ymirApi = createApi({
       query: () => `/uoms?status=active&pagination=none&vladimir=sync`,
     }),
 
+    getYmirItemsAllApi: builder.query({
+      query: () => `/items?type=4&vladimir=sync&status=active&pagination=none`,
+    }),
+
     getYmirSmallToolsAllApi: builder.query({
       query: () => `/small_tools?status=active&pagination=none&vladimir=sync`,
     }),
@@ -104,5 +108,6 @@ export const {
   useLazyGetYmirReceivingAllApiQuery,
   usePostPrYmirApiMutation,
   useLazyGetYmirSmallToolsAllApiQuery,
+  useLazyGetYmirItemsAllApiQuery,
   usePatchPrYmirApiMutation,
 } = ymirApi;

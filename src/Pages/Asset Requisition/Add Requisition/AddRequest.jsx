@@ -99,6 +99,10 @@ import ViewItemRequest from "../ViewItemRequest";
 import { useLazyGetWarehouseAllApiQuery } from "../../../Redux/Query/Masterlist/Warehouse";
 import { useLazyGetMinorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MinorCategory";
 import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
+import {
+  useGetSmallToolsAllApiQuery,
+  useLazyGetSmallToolsAllApiQuery,
+} from "../../../Redux/Query/Masterlist/YmirCoa/SmallTools";
 // import { useLazyGetMajorCategoryAllApiQuery } from "../../../Redux/Query/Masterlist/Category/MajorCategory";
 
 const schema = yup.object().shape({
@@ -119,6 +123,7 @@ const schema = yup.object().shape({
   unit_id: yup.object().required().label("Unit").typeError("Unit is a required field"),
   subunit_id: yup.object().required().label("Subunit").typeError("Subunit is a required field"),
   location_id: yup.object().required().label("Location").typeError("Location is a required field"),
+  small_tool_id: yup.object().required().label("Small Tools").typeError("Small Tools is a required field"),
   // account_title_id: yup.object().required().label("Account Title").typeError("Account Title is a required field"),
   accountability: yup.string().typeError("Accountability is a required field").required().label("Accountability"),
   accountable: yup
@@ -173,6 +178,7 @@ const AddRequisition = (props) => {
     unit_id: null,
     subunit_id: null,
     location_id: null,
+    small_tool_id: null,
     // account_title_id: null,
 
     item_status: null,
@@ -377,6 +383,19 @@ const AddRequisition = (props) => {
   ] = useLazyGetAccountTitleAllApiQuery();
 
   const [
+    smallToolsTrigger,
+    {
+      data: smallToolsApiData = [],
+      isLoading: smallToolsApiLoading,
+      isSuccess: smallToolsApiSuccess,
+      isFetching: smallToolsApiFetching,
+      isError: smallToolsApiError,
+      error: errorData,
+      refetch: smallToolsApiRefetch,
+    },
+  ] = useLazyGetSmallToolsAllApiQuery();
+
+  const [
     sedarTrigger,
     { data: sedarData = [], isLoading: isSedarLoading, isSuccess: isSedarSuccess, isError: isSedarError },
   ] = useLazyGetSedarUsersApiQuery();
@@ -447,6 +466,7 @@ const AddRequisition = (props) => {
       unit_id: null,
       subunit_id: null,
       location_id: null,
+      small_tool_id: null,
       // account_title_id: null,
       acquisition_details: "",
 
@@ -515,6 +535,7 @@ const AddRequisition = (props) => {
       setValue("unit_id", updateRequest?.unit);
       setValue("subunit_id", updateRequest?.subunit);
       setValue("location_id", updateRequest?.location);
+      setValue("small_tool_id", updateRequest?.small_tools);
       // setValue("account_title_id", updateRequest?.account_title);
       setValue("accountability", updateRequest?.accountability);
       setValue("accountable", accountable);
@@ -595,6 +616,7 @@ const AddRequisition = (props) => {
       subunit_id: formData.subunit_id.id?.toString(),
       location_id: formData?.location_id.id?.toString(),
       // account_title_id: formData?.account_title_id.id?.toString(),
+      small_tool_id: formData?.small_tool_id.id?.toString(),
       accountability: formData?.accountability?.toString(),
       accountable: accountableFormat,
 
@@ -706,6 +728,7 @@ const AddRequisition = (props) => {
                 subunit_id: formData?.subunit_id,
                 location_id: formData?.location_id,
                 // account_title_id: formData?.account_title_id,
+                small_tool_id: formData?.small_tool_id,
                 acquisition_details: formData?.acquisition_details,
 
                 item_status: null,
@@ -1182,6 +1205,7 @@ const AddRequisition = (props) => {
       subunit_id: null,
       location_id: null,
       // account_title_id: null,
+      small_tool_id: null,
       acquisition_details: "",
 
       item_status: null,
@@ -1227,7 +1251,7 @@ const AddRequisition = (props) => {
                 loading={isTypeOfRequestLoading}
                 // disabled={transactionData ? transactionData?.length !== 0 : addRequestAllApi?.length !== 0}
                 disabled={updateRequest && disable}
-                getOptionLabel={(option) => option.type_of_request_name}
+                getOptionLabel={(option) => option?.type_of_request_name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
@@ -1624,22 +1648,63 @@ const AddRequisition = (props) => {
                 )}
               />
 
+              {watch("type_of_request_id")?.type_of_request_name === "Small Tools" && (
+                <CustomAutoComplete
+                  name="small_tool_id"
+                  control={control}
+                  options={smallToolsApiData}
+                  onOpen={() => (smallToolsApiSuccess ? null : smallToolsTrigger())}
+                  loading={smallToolsApiLoading}
+                  disabled={updateRequest && disable}
+                  size="small"
+                  getOptionLabel={(option) => `${option?.small_tool_code} - ${option?.small_tool_name}`}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderInput={(params) => (
+                    <TextField
+                      color="secondary"
+                      {...params}
+                      label="Small Tools"
+                      error={!!errors?.small_tool_id}
+                      helperText={errors?.small_tool_id?.message}
+                    />
+                  )}
+                  onChange={(_, value) => {
+                    if (value) {
+                      setValue("asset_description", value.small_tool_name);
+                      setValue(
+                        "asset_specification",
+                        value.items.map((items) => ` ${items.item_code} - ${items.item_name}`).join()
+                      );
+                    } else {
+                      setValue("asset_description", "");
+                      setValue("asset_specification", "");
+                    }
+                    return value;
+                  }}
+                />
+              )}
+
               <CustomTextField
                 control={control}
                 name="asset_description"
                 label="Asset Description"
                 type="text"
-                disabled={updateRequest && disable}
+                disabled={
+                  (updateRequest && disable) || watch("type_of_request_id")?.type_of_request_name === "Small Tools"
+                }
                 error={!!errors?.asset_description}
                 helperText={errors?.asset_description?.message}
                 fullWidth
               />
+              {console.log(errors)}
               <CustomTextField
                 control={control}
                 name="asset_specification"
                 label="Asset Specification"
                 type="text"
-                disabled={updateRequest && disable}
+                disabled={
+                  (updateRequest && disable) || watch("type_of_request_id")?.type_of_request_name === "Small Tools"
+                }
                 error={!!errors?.asset_specification}
                 helperText={errors?.asset_specification?.message}
                 fullWidth
@@ -2218,10 +2283,18 @@ const AddRequisition = (props) => {
                               <Typography fontWeight={600} fontSize="14px" color="secondary.main">
                                 {data.asset_description}
                               </Typography>
-                              <Typography fontSize="12px" color="text.light">
-                                {data.asset_specification}
-                              </Typography>
-                              <Typography fontSize="12px" fontWeight={600} color="tertiary.light">
+                              <Tooltip title={data.asset_specification} placement="bottom" arrow>
+                                <Typography
+                                  fontSize="12px"
+                                  color="text.light"
+                                  textOverflow="ellipsis"
+                                  width="300px"
+                                  overflow="hidden"
+                                >
+                                  {data.asset_specification}
+                                </Typography>
+                              </Tooltip>
+                              <Typography fontSize="12px" fontWeight={600} color="primary">
                                 STATUS - {data.item_status}
                               </Typography>
                             </TableCell>
