@@ -11,6 +11,7 @@ const initialState = {
   exportFile: false,
   scanFile: false,
   print: false,
+  tableCollapse: null,
 };
 
 export const booleanStateSlice = createSlice({
@@ -97,6 +98,15 @@ export const booleanStateSlice = createSlice({
     closePrint: (state, action) => {
       state.print = false;
     },
+
+    // TableCollapse
+    openTableCollapse: (state, action) => {
+      if (state.tableCollapse === action.payload) {
+        state.tableCollapse = null;
+      } else {
+        state.tableCollapse = action.payload;
+      }
+    },
   },
 });
 
@@ -121,5 +131,6 @@ export const {
   closeScan,
   openPrint,
   closePrint,
+  openTableCollapse,
 } = booleanStateSlice.actions;
 export default booleanStateSlice.reducer;
