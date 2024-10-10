@@ -70,6 +70,15 @@ export const ymirApi = createApi({
       }),
       invalidatesTags: ["ymir"],
     }),
+
+    patchPrYmirApi: builder.mutation({
+      query: (data) => ({
+        url: `/resubmit_pr_asset/${data.pr_number}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["ymir"],
+    }),
   }),
 });
 
@@ -95,4 +104,5 @@ export const {
   useLazyGetYmirReceivingAllApiQuery,
   usePostPrYmirApiMutation,
   useLazyGetYmirSmallToolsAllApiQuery,
+  usePatchPrYmirApiMutation,
 } = ymirApi;
