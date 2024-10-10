@@ -104,8 +104,6 @@ const CustomTableCollapse = (props) => {
   // Functions ----------------------------------------------------------------
   const dataId = openCollapsable === data?.id;
 
-  // console.log(data);
-
   const onSubCapexArchiveRestoreHandler = async (id, subCapexStatus) => {
     // console.log(id);
     // console.log(subCapexStatus);
