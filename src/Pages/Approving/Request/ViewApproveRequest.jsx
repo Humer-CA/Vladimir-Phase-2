@@ -49,7 +49,7 @@ import { closeDialog, openDialog, closeDialog1, openDialog1 } from "../../../Red
 import { useRemovePurchaseRequestApiMutation } from "../../../Redux/Query/Request/PurchaseRequest";
 import ErrorFetching from "../../ErrorFetching";
 import { useDownloadAttachment } from "../../../Hooks/useDownloadAttachment";
-import { usePostPrYmirApiMutation } from "../../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import { usePatchPrYmirApiMutation, usePostPrYmirApiMutation } from "../../../Redux/Query/Masterlist/YmirCoa/YmirApi";
 import { useGetYmirPrApiQuery, useLazyGetYmirPrApiQuery } from "../../../Redux/Query/Masterlist/YmirCoa/YmirPr";
 
 const ViewApproveRequest = (props) => {
@@ -67,6 +67,7 @@ const ViewApproveRequest = (props) => {
 
   const [patchApprovalStatus, { isLoading }] = usePatchApprovalStatusApiMutation();
   const [postPr, { data: postedYmirData, isLoading: isPostYmirLoading }] = usePostPrYmirApiMutation();
+  const [patchPr, { data: patchYmirData, isLoading: isPatchYmirLoading }] = usePatchPrYmirApiMutation();
   const [getNextRequest, { data: nextData, isLoading: isNextRequestLoading }] = useLazyGetNextRequestQuery();
   const [removePrNumber] = useRemovePurchaseRequestApiMutation();
 
@@ -123,7 +124,8 @@ const ViewApproveRequest = (props) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  console.log(approveRequestData?.data?.map((data) => data?.fa_approval).includes(1));
+  // console.log(approveRequestData?.data?.map((data) => data?.fa_approval).includes(1));
+  // console.log(requestData.is_pr_returned);
 
   const onApprovalApproveHandler = (transaction_number) => {
     const nextData = dispatch(
@@ -186,14 +188,17 @@ const ViewApproveRequest = (props) => {
             );
 
             if (approveRequestData?.data?.map((data) => data.fa_approval).includes(1)) {
+              const requestData = approveRequestData?.data[0];
               try {
                 const getYmirDataApi = await getYmirData({ transaction_number }).unwrap();
-
-                const postYmirData = await postPr(getYmirDataApi);
-                console.log(postYmirData);
+                console.log(getYmirDataApi);
+                if (requestData.is_pr_returned === 1) {
+                  const patchYmirData = await patchPr({ ...getYmirDataApi, pr_number: requestData.pr_number });
+                } else {
+                  const postYmirData = await postPr(getYmirDataApi);
+                }
 
                 const next = await getNextRequest().unwrap();
-
                 return navigate(`/approving/request/${next?.[0].transaction_number}`, {
                   state: next?.[0],
                   replace: true,
