@@ -19,7 +19,9 @@ import {
   Box,
   Button,
   Chip,
-  Dialog,
+  Collapse,
+  IconButton,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -29,26 +31,23 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { Help } from "@mui/icons-material";
+import { AddBox, CreditCard, ExpandCircleDown, Help, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import MasterlistSkeleton from "../Skeleton/MasterlistSkeleton";
 import NoRecordsFound from "../../Layout/NoRecordsFound";
 import ViewTagged from "../../Components/Reusable/ViewTagged";
-import { closeDialog, openDialog, openDrawer } from "../../Redux/StateManagement/booleanStateSlice";
+import { closeDialog, openDialog, openDrawer, openTableCollapse } from "../../Redux/StateManagement/booleanStateSlice";
 import CustomTablePagination from "../../Components/Reusable/CustomTablePagination";
 import { useLazyGetYmirSmallToolsAllApiQuery } from "../../Redux/Query/Masterlist/YmirCoa/YmirApi";
+import ActionMenu from "../../Components/Reusable/ActionMenu";
+import { openCollapse } from "../../Redux/StateManagement/collapseCapexSlice";
 
 const SmallTools = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("active");
   const [perPage, setPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const [viewLocation, setViewLocation] = useState({
-    id: null,
-    sync_id: null,
-    location_name: "",
-  });
 
-  const dialog = useSelector((state) => state.booleanState.dialog);
+  const dispatch = useDispatch();
 
   // Table Sorting --------------------------------
 
@@ -130,8 +129,6 @@ const SmallTools = () => {
     }
   }, [ymirSmallToolsApiSuccess, ymirSmallToolsApiFetching]);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (isPostSuccess) {
       dispatch(
@@ -202,41 +199,6 @@ const SmallTools = () => {
     );
   };
 
-  const onSetPage = () => {
-    setPage(1);
-  };
-
-  const onViewLocationHandler = (props) => {
-    const { id, locations, sync_id } = props;
-    setViewLocation({
-      id: id,
-      sync_id: sync_id,
-      locations: locations,
-    });
-  };
-
-  const onViewResetLocationHandler = (props) => {
-    setViewLocation({
-      id: null,
-      sync_id: null,
-      locations: null,
-    });
-  };
-
-  const handleViewLocation = (data) => {
-    // console.log(data);
-    onViewLocationHandler(data);
-    dispatch(openDialog());
-  };
-
-  // const filteredData = smallToolsApiData?.data?.flatMap((item) =>
-  //   item.locations.map(
-  //     (mapItem) => `${mapItem?.location_code} - ${mapItem?.location_name}`
-  //   )
-  // );
-  // const mapLocationData = [...new Set(filteredData)];
-  // // console.log(mapLocationData);
-
   return (
     <Box className="mcontainer">
       <Typography className="mcontainer__title" sx={{ fontFamily: "Anton", fontSize: "2rem" }}>
@@ -268,6 +230,17 @@ const SmallTools = () => {
                         },
                       }}
                     >
+                      <TableCell>
+                        <ExpandCircleDown
+                          sx={{
+                            position: "absolute",
+                            inset: 0,
+                            margin: "auto",
+                            color: "secondary.main",
+                          }}
+                        />
+                      </TableCell>
+
                       <TableCell className="tbl-cell text-center">
                         <TableSortLabel
                           active={orderBy === `id`}
@@ -299,20 +272,11 @@ const SmallTools = () => {
                       </TableCell>
 
                       <TableCell className="tbl-cell text-center">Status</TableCell>
-
-                      <TableCell className="tbl-cell text-center">
-                        <TableSortLabel
-                          active={orderBy === `updated_at`}
-                          direction={orderBy === `updated_at` ? order : `asc`}
-                          onClick={() => onSort(`updated_at`)}
-                        >
-                          Date Updated
-                        </TableSortLabel>
-                      </TableCell>
+                      <TableCell className="tbl-cell text-center">Items</TableCell>
                     </TableRow>
                   </TableHead>
 
-                  <TableBody
+                  {/* <TableBody
                     sx={{
                       position: "relative",
                       height: "100%",
@@ -372,6 +336,22 @@ const SmallTools = () => {
                           ))}
                       </>
                     )}
+                  </TableBody> */}
+                  <TableBody>
+                    {smallToolsApiData?.data?.length === 0 ? (
+                      <NoRecordsFound heightData="medium" />
+                    ) : (
+                      <>
+                        {/* {console.log(
+                          "flatData",
+                          smallToolsApiData?.data?.flatMap((items) => items?.items?.map((data) => data))
+                        )} */}
+                        {smallToolsApiData &&
+                          [...smallToolsApiData?.data]
+                            .sort(comparator(order, orderBy))
+                            ?.map((data, index) => <CollapsibleTable key={index} data={data} />)}
+                      </>
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -388,11 +368,310 @@ const SmallTools = () => {
           </Box>
         </>
       )}
-      {/* <Dialog open={dialog} onClose={() => dispatch(closeDialog())} PaperProps={{ sx: { borderRadius: "10px" } }}>
-        <ViewTagged data={viewLocation} mapData={mapLocationData} setViewLocation={setViewLocation} name="Location" />
-      </Dialog> */}
     </Box>
   );
 };
-
 export default SmallTools;
+
+// * CollapsedTable -------------------------------------------------------------------
+const CollapsibleTable = (props) => {
+  const { data } = props;
+  const tableCollapse = useSelector((state) => state.booleanState.tableCollapse);
+  const dispatch = useDispatch();
+
+  const collapseSwitch = tableCollapse === data?.id;
+
+  const [order, setOrder] = useState("desc");
+  const [orderBy, setOrderBy] = useState("id");
+
+  const descendingComparator = (a, b, orderBy) => {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const comparator = (order, orderBy) => {
+    return order === "desc"
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  };
+
+  const onSort = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  return (
+    <>
+      <TableRow className={collapseSwitch ? "tbl-row-collapsed" : "tbl-row"}>
+        <TableCell className="tbl-cell-col text-center">
+          <IconButton
+            size="small"
+            sx={collapseSwitch ? { color: "primary.main" } : null}
+            onClick={() => dispatch(openTableCollapse(data?.id))}
+          >
+            {collapseSwitch ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+
+        <TableCell className="tbl-cell-col tr-cen-pad45" sx={collapseSwitch ? { color: "white" } : null}>
+          {data?.id}
+        </TableCell>
+
+        <TableCell className="tbl-cell-col" sx={collapseSwitch ? { color: "white" } : null}>
+          {data?.small_tool_code}
+        </TableCell>
+
+        <TableCell className="tbl-cell-col" sx={collapseSwitch ? { color: "white" } : null}>
+          {data.small_tool_name}
+        </TableCell>
+
+        <TableCell className="tbl-cell-col  text-center" sx={data.is_active ? { color: "white" } : null}>
+          {data.is_active === 1 ? (
+            <Chip
+              size="small"
+              variant="contained"
+              sx={
+                collapseSwitch
+                  ? {
+                      background: "#1fff7c65",
+                      color: "whitesmoke",
+                      fontSize: "0.7rem",
+                      px: 1,
+                    }
+                  : {
+                      background: "#27ff811f",
+                      color: "active.dark",
+                      fontSize: "0.7rem",
+                      px: 1,
+                    }
+              }
+              label="ACTIVE"
+            />
+          ) : (
+            <Chip
+              size="small"
+              variant="contained"
+              sx={
+                data?.is_active
+                  ? {
+                      background: "#fc3e3ed4",
+                      color: "whitesmoke",
+                      fontSize: "0.7rem",
+                      px: 1,
+                    }
+                  : {
+                      background: "#fc3e3e34",
+                      color: "error.light",
+                      fontSize: "0.7rem",
+                      px: 1,
+                    }
+              }
+              label="INACTIVE"
+            />
+          )}
+        </TableCell>
+
+        <TableCell className="tbl-cell-col tr-cen-pad45" sx={collapseSwitch ? { color: "white" } : null}>
+          {/* <Chip
+            label={data.items === 0 ? "-" : data.items}
+            sx={{
+              backgroundColor: "background.light",
+              color: "secondary.main",
+            }}
+          /> */}
+          {data?.items?.length === 0 ? "-" : data?.items?.length}
+        </TableCell>
+      </TableRow>
+
+      <TableRow
+        sx={
+          tableCollapse
+            ? {
+                "& > *": {
+                  backgroundColor: "background.main",
+                  borderColor: "secondary.light",
+                  // borderBottom: "20px solid white!important",
+                },
+              }
+            : null
+        }
+      >
+        <TableCell sx={{ paddingBottom: 0, paddingTop: 0, border: 0 }} colSpan={999}>
+          <Collapse in={collapseSwitch} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& > *": {
+                        fontWeight: "bold!important",
+                        whiteSpace: "nowrap",
+                      },
+                    }}
+                  >
+                    <TableCell sx={{ fontWeight: "bold" }} className="tbl-cell-col text-center">
+                      <TableSortLabel
+                        active={orderBy === `id`}
+                        direction={orderBy === `id` ? order : `asc`}
+                        onClick={() => onSort(`id`)}
+                      >
+                        ID No.
+                      </TableSortLabel>
+                    </TableCell>
+
+                    <TableCell className="tbl-cell-col">
+                      <TableSortLabel
+                        active={orderBy === `sub_capex`}
+                        direction={orderBy === `sub_capex` ? order : `asc`}
+                        onClick={() => onSort(`sub_capex`)}
+                      >
+                        Sub Capex
+                      </TableSortLabel>
+                    </TableCell>
+
+                    <TableCell className="tbl-cell-col">
+                      <TableSortLabel
+                        active={orderBy === `sub_project`}
+                        direction={orderBy === `sub_project` ? order : `asc`}
+                        onClick={() => onSort(`sub_project`)}
+                      >
+                        Sub Project Name
+                      </TableSortLabel>
+                    </TableCell>
+
+                    {/* <TableCell className="tbl-cell-col text-font">
+                      <TableSortLabel
+                        active={orderBy === `capex_id`}
+                        direction={orderBy === `capex_id` ? order : `asc`}
+                        onClick={() => onSort(`capex_id`)}
+                      >
+                        Capex ID
+                      </TableSortLabel>
+                    </TableCell> */}
+
+                    <TableCell className="tbl-cell-col text-center">Status</TableCell>
+
+                    <TableCell className="tbl-cell-col text-center">
+                      <TableSortLabel
+                        active={orderBy === `capex_id`}
+                        direction={orderBy === `capex_id` ? order : `asc`}
+                        onClick={() => onSort(`capex_id`)}
+                      >
+                        Date Created
+                      </TableSortLabel>
+                    </TableCell>
+
+                    <TableCell className="tbl-cell-col text-center">Action</TableCell>
+
+                    {/* <TableCell className="tbl-cell-col">Date Created</TableCell> */}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {data?.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={999}
+                        sx={{
+                          backgroundColor: "background.light",
+                          // borderBottom: 0,
+                          py: "10px",
+                          position: "relative",
+                        }}
+                      >
+                        <Stack flexDirection="row" alignItems="center" justifyContent="center" gap="5px">
+                          <img src={NoDataFile} alt="" width="35px" />
+                          <Typography
+                            variant="p"
+                            sx={{
+                              fontFamily: "Anton, Roboto, Helvetica",
+                              color: "secondary.main",
+                              fontSize: "1.2rem",
+                            }}
+                          >
+                            No Data Found
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <>
+                      {[...data?.items].sort(comparator(order, orderBy))?.map((items) => (
+                        <TableRow
+                          key={items.id}
+                          sx={{
+                            "&:last-child td, &:last-child th": {
+                              borderBottom: 0,
+                            },
+                          }}
+                        >
+                          <TableCell className="tbl-cell-col tr-cen-pad45">{items.id}</TableCell>
+                          <TableCell className="tbl-cell-col tr-cen-pad45">{items.sync_id}</TableCell>
+
+                          <TableCell className="tbl-cell-col">{items.item_code + "-" + items.item_name}</TableCell>
+
+                          <TableCell className="tbl-cell-col">{items.sub_project}</TableCell>
+
+                          <TableCell className="tbl-cell-col text-center">
+                            {items.is_active ? (
+                              <Chip
+                                size="small"
+                                variant="contained"
+                                sx={
+                                  tableCollapse
+                                    ? {
+                                        background: "#27ff814f",
+                                        color: "active.dark",
+                                        fontSize: "0.7rem",
+                                        px: 1,
+                                      }
+                                    : {
+                                        background: "#27ff811f",
+                                        color: "active.dark",
+                                        fontSize: "0.7rem",
+                                        px: 1,
+                                      }
+                                }
+                                label="ACTIVE"
+                              />
+                            ) : (
+                              <Chip
+                                size="small"
+                                variant="contained"
+                                sx={{
+                                  background: "#fc3e3e34",
+                                  color: "error.light",
+                                  fontSize: "0.7rem",
+                                  px: 1,
+                                }}
+                                label="INACTIVE"
+                              />
+                            )}
+                          </TableCell>
+
+                          <TableCell className="tbl-cell-col tr-cen-pad45">
+                            {Moment(items.created_at).format("MMM DD, YYYY")}
+                          </TableCell>
+
+                          <TableCell className="tbl-cell-col text-center">
+                            <ActionMenu status={items.is_active ? "active" : "deactivated"} data={items} hideEdit />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  )}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+};
