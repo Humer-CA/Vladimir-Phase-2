@@ -627,10 +627,13 @@ const AddRequisition = (props) => {
 
     const token = localStorage.getItem("token");
 
+    // validation if the requestor changes the COA while the item in the container is different
+    // from the item in the input field
     const validation = () => {
       const coaValidation = (name, value) => {
         transactionData && transactionDataApi?.every((item) => item?.[name]?.id !== watch(value)?.id);
       };
+
       if (transactionData) {
         return (
           (transactionData &&
@@ -663,10 +666,10 @@ const AddRequisition = (props) => {
         .post(
           `${process.env.VLADIMIR_BASE_URL}/${
             transactionData
-              ? `update-request/${updateRequest?.reference_number}`
+              ? `update-request/${updateRequest?.reference_number}` //transaction data - reference no.
               : editRequest
-              ? `update-container/${updateRequest?.id}`
-              : "request-container"
+              ? `update-container/${updateRequest?.id}` //edit while adding
+              : "request-container" // adding
           }`,
           payload,
           {
@@ -687,12 +690,13 @@ const AddRequisition = (props) => {
           setIsLoading(false);
           // reset();
           transactionData
-            ? reset()
+            ? reset() // reset if edit was requested
             : reset({
                 type_of_request_id: formData?.type_of_request_id,
                 cip_number: formData?.cip_number,
                 attachment_type: formData?.attachment_type,
                 receiving_warehouse_id: formData?.receiving_warehouse_id,
+                major_category_id: formData?.major_category_id,
                 minor_category_id: formData?.minor_category_id,
 
                 company_id: formData?.company_id,
@@ -725,8 +729,8 @@ const AddRequisition = (props) => {
         })
         .then(() => {
           transactionData ? setDisable(true) : setDisable(false);
-          setEditRequest(false);
-          setUpdateToggle(true);
+          setEditRequest(false); // edit state
+          setUpdateToggle(true); // update button state
           isTransactionRefetch();
           isRequisitionRefetch();
           dispatch(requisitionApi.util.invalidateTags(["Requisition"]));
@@ -781,7 +785,7 @@ const AddRequisition = (props) => {
     };
 
     transactionData
-      ? validation()
+      ? validation() // coa validation
         ? addConfirmation()
         : submitData()
       : addRequestAllApi.length === 0
@@ -793,6 +797,7 @@ const AddRequisition = (props) => {
     setSelectedId(null);
   };
 
+  // CREATE button function
   const onSubmitHandler = () => {
     dispatch(
       openConfirm({
@@ -904,6 +909,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // delete function for the container when adding a request
   const onDeleteHandler = async (id) => {
     dispatch(
       openConfirm({
@@ -962,6 +968,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // delete function for the transactionData
   const onDeleteReferenceHandler = async (id) => {
     dispatch(
       openConfirm({
@@ -1020,6 +1027,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // Remove function for the attachments
   const RemoveFile = ({ title, value }) => {
     return (
       <Tooltip title={`Remove ${title}`} arrow>
@@ -1043,6 +1051,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // component used for the attachments
   const UpdateField = ({ value, label }) => {
     return (
       <Stack flexDirection="row" gap={1} alignItems="center">
@@ -1195,6 +1204,7 @@ const AddRequisition = (props) => {
     });
   };
 
+  // FORM of the request
   const formInputs = () => {
     return (
       <Box>
@@ -1868,6 +1878,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // validation for the acquisition details and warehouse
   const handleInputValidation = (watchItem, data, name) => {
     const watchData = watch(`${watchItem}`);
     const isWatchDataEmpty = watchItem === "";
@@ -1915,6 +1926,7 @@ const AddRequisition = (props) => {
     }
   };
 
+  // function for showing the items after PO to check if there are cancelled items
   const handleShowItems = (data) => {
     transactionData && data?.po_number && data?.is_removed === 0 && dispatch(openDialog()) && setItemData(data);
   };
@@ -1939,6 +1951,7 @@ const AddRequisition = (props) => {
     pb: "10px",
   };
 
+  // function to format the viewing of accountable in the container of the request
   const formatAccountable = (str) => {
     const [id, lastName, firstName] = str.split(/[\s,]+/);
     return (
@@ -1951,6 +1964,7 @@ const AddRequisition = (props) => {
     );
   };
 
+  // for the timeline view/colors
   const transactionStatus = (data) => {
     let statusColor, hoverColor, textColor, variant;
     switch (data) {
