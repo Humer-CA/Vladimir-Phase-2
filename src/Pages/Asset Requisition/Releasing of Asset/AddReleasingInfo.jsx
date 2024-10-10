@@ -333,6 +333,7 @@ const AddReleasingInfo = (props) => {
       formData?.authorization_memo_img && (await fileToBase64(formData.authorization_memo_img));
 
     const saveFormData = {
+      warehouse_number_id: warehouseNumberData,
       accountability: formData.accountability,
       accountable: formData?.accountable?.general_info?.full_id_number_full_name?.toString(),
     };
@@ -355,7 +356,7 @@ const AddReleasingInfo = (props) => {
       authorization_memo_img: authorizationLetterImgBase64,
     };
 
-    // console.log(newFormData);
+    console.log("newFormData", newFormData);
 
     dispatch(
       openConfirm({
