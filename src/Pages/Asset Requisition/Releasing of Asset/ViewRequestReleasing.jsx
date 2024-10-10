@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import FaStatusChange from "../../../Components/Reusable/FaStatusComponent";
 import NoDataFile from "../../../Img/PNG/no-data.png";
+import ImageIcon from "@mui/icons-material/Image";
 
 import {
   Accordion,
@@ -28,7 +29,14 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { ArrowBackIosRounded, DescriptionRounded, ExpandMore, Output } from "@mui/icons-material";
+import {
+  ArrowBackIosRounded,
+  AspectRatio,
+  DescriptionRounded,
+  ExpandMore,
+  FitScreen,
+  Output,
+} from "@mui/icons-material";
 
 import ErrorFetchFA from "../../ErrorFetching";
 import FixedAssetViewSkeleton from "../../FixedAssets/FixedAssetViewSkeleton";
@@ -773,8 +781,10 @@ const ViewRequestReleasing = (props) => {
                     Receiver Image:
                     <Button
                       className="tableCard__info"
-                      variant="outlined"
                       sx={{ fontSize: "10px" }}
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<ImageIcon sx={{ color: "orange" }} />}
                       onClick={() => handleViewImage(releasingData?.receiverImg)}
                     >
                       Show Image
@@ -785,8 +795,10 @@ const ViewRequestReleasing = (props) => {
                     Assignment Memo:
                     <Button
                       className="tableCard__info"
-                      variant="outlined"
                       sx={{ fontSize: "10px" }}
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<ImageIcon sx={{ color: "orange" }} />}
                       onClick={() => handleViewImage(releasingData?.assignmentMemoImg)}
                     >
                       Show Image
@@ -797,8 +809,10 @@ const ViewRequestReleasing = (props) => {
                     Authorization Letter:
                     <Button
                       className="tableCard__info"
-                      variant="outlined"
                       sx={{ fontSize: "10px" }}
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<ImageIcon sx={{ color: "orange" }} />}
                       onClick={() => handleViewImage(releasingData?.authorizationMemoImg)}
                     >
                       Show Image
@@ -843,7 +857,7 @@ const ViewRequestReleasing = (props) => {
           },
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} className="imageContainer">
           {viewImage?.viewing !== "data:image/png;base64," ? (
             <img src={viewImage?.viewing} alt={viewImage?.file_name} />
           ) : (
