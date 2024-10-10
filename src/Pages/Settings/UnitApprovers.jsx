@@ -50,7 +50,7 @@ const UnitApprovers = () => {
   const [updateUnitApprovers, setUpdateUnitApprovers] = useState({
     status: false,
     id: null,
-    action: "view",
+    // action: "view",
     requester_id: null,
     approver_id: [],
   });
